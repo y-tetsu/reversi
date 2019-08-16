@@ -1,0 +1,2 @@
+# othello
+Pythonで作るオセロゲーム
