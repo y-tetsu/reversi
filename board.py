@@ -30,9 +30,8 @@ class Board:
         if not(4 <= size <= 26 and size % 2 == 0):
             raise BoardSizeError(str(size) + " is invalid size!")
 
-        self.board = [[Board.BLANK for _ in range(size)] for _ in range(size)]
         center = size // 2
-
+        self.board = [[Board.BLANK for _ in range(size)] for _ in range(size)]
         self.board[center][center-1] = Board.BLACK
         self.board[center-1][center] = Board.BLACK
         self.board[center-1][center-1] = Board.WHITE
