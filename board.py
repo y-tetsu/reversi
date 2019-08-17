@@ -5,6 +5,9 @@
 
 
 class BoardSizeError(Exception):
+    """
+    ボードサイズのエラー
+    """
     pass
 
 
@@ -21,10 +24,10 @@ class Board:
             (-1, 0), (-1, -1), (0, -1), (1, -1)
         ]
         self.marks = {
-            Board.BLANK : "□", Board.BLACK : "〇",  Board.WHITE : "●"
+            Board.BLANK: "□", Board.BLACK: "〇", Board.WHITE: "●"
         }
 
-        if size < 4 or 26 < size or size % 2:
+        if not(4 <= size <= 26 and size % 2 == 0):
             raise BoardSizeError(str(size) + " is invalid size!")
 
         self.board = [[Board.BLANK for _ in range(size)] for _ in range(size)]
@@ -45,8 +48,8 @@ class Board:
         print("\nBLACK :", self.black_num, "WHITE :", self.white_num)
         print("   " + " ".join([chr(97 + i) for i in range(self.size)]))
 
-        for index, row in enumerate(self.board, 1):
-            print(f'{index:2d}' + "".join([self.marks[value] for value in row]))
+        for num, row in enumerate(self.board, 1):
+            print(f'{num:2d}' + "".join([self.marks[value] for value in row]))
 
     def count_stone(self):
         """
