@@ -128,7 +128,7 @@ class Board:
 
     def put_stone(self, x, y, stone):
         """
-        指定座標に石を置いてひっくり返し、その数を返す
+        指定座標に石を置いて返せる場所をひっくり返し、取れた数を返す
         """
         possibles = self.get_possibles(stone)
 
