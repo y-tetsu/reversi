@@ -3,8 +3,6 @@
 オセロのボード
 """
 
-BLACK, WHITE, BLANK = 0, 1, 2
-
 
 class BoardSizeError(Exception):
     pass
@@ -14,6 +12,8 @@ class Board:
     """
     ボードを管理する
     """
+    BLACK, WHITE, BLANK = 0, 1, 2
+
     def __init__(self, size=4):
         self.size = size
         self.directions = [
@@ -24,30 +24,30 @@ class Board:
         if size < 4 or size % 2:
             raise BoardSizeError(str(size) + " is invalid size!")
 
-        self.board = [[BLANK for _ in range(size)] for _ in range(size)]
+        self.board = [[Board.BLANK for _ in range(size)] for _ in range(size)]
         center = size // 2
 
-        self.board[center][center-1] = BLACK
-        self.board[center-1][center] = BLACK
-        self.board[center-1][center-1] = WHITE
-        self.board[center][center] = WHITE
+        self.board[center][center-1] = Board.BLACK
+        self.board[center-1][center] = Board.BLACK
+        self.board[center-1][center-1] = Board.WHITE
+        self.board[center][center] = Board.WHITE
 
-        self.black = 2
-        self.white = 2
+        self.black_num = 2
+        self.white_num = 2
 
     def print_board(self):
         """
         コンソールにボードを表示する
         """
-        print("BLACK :", self.black, "WHITE :", self.white)
+        print("BLACK :", self.black_num, "WHITE :", self.white_num)
 
         for row in self.board:
             for val in row:
-                if val == BLANK:
+                if val == Board.BLANK:
                     print("□", end="")
-                elif val == BLACK:
+                elif val == Board.BLACK:
                     print("〇", end="")
-                elif val == WHITE:
+                elif val == Board.WHITE:
                     print("●", end="")
             print()
 
@@ -57,10 +57,10 @@ class Board:
         """
         石の数を数える
         """
-        self.black = sum([row.count(BLACK) for row in self.board])
-        self.white = sum([row.count(WHITE) for row in self.board])
+        self.black_num = sum([row.count(Board.BLACK) for row in self.board])
+        self.white_num = sum([row.count(Board.WHITE) for row in self.board])
 
-        return self.black, self.white
+        return self.black_num, self.white_num
 
     def in_range(self, x, y):
         """
@@ -92,7 +92,7 @@ class Board:
         """
         ret = []
 
-        if self.in_range(x, y) and self.board[y][x] == BLANK:
+        if self.in_range(x, y) and self.board[y][x] == Board.BLANK:
             for dx, dy in self.directions:
                 tmp = self.get_reversibles_by_direction(x, y, dx, dy, stone)
 
@@ -114,7 +114,7 @@ class Board:
             if self.in_range(next_x, next_y):
                 next_value = self.board[next_y][next_x]
 
-                if next_value != BLANK:
+                if next_value != Board.BLANK:
                     if next_value == stone:
                         return ret
 
@@ -175,72 +175,72 @@ if __name__ == '__main__':
 
     # 初期値
     board4.print_board()
-    board4_ini = [[BLANK for _ in range(4)] for _ in range(4)]
-    board4_ini[2][1] = BLACK
-    board4_ini[1][2] = BLACK
-    board4_ini[1][1] = WHITE
-    board4_ini[2][2] = WHITE
+    board4_ini = [[Board.BLANK for _ in range(4)] for _ in range(4)]
+    board4_ini[2][1] = Board.BLACK
+    board4_ini[1][2] = Board.BLACK
+    board4_ini[1][1] = Board.WHITE
+    board4_ini[2][2] = Board.WHITE
     assert board4.board == board4_ini
 
     board6.print_board()
-    board6_ini = [[BLANK for _ in range(6)] for _ in range(6)]
-    board6_ini[3][2] = BLACK
-    board6_ini[2][3] = BLACK
-    board6_ini[2][2] = WHITE
-    board6_ini[3][3] = WHITE
+    board6_ini = [[Board.BLANK for _ in range(6)] for _ in range(6)]
+    board6_ini[3][2] = Board.BLACK
+    board6_ini[2][3] = Board.BLACK
+    board6_ini[2][2] = Board.WHITE
+    board6_ini[3][3] = Board.WHITE
     assert board6.board == board6_ini
 
     board8.print_board()
-    board8_ini = [[BLANK for _ in range(8)] for _ in range(8)]
-    board8_ini[4][3] = BLACK
-    board8_ini[3][4] = BLACK
-    board8_ini[3][3] = WHITE
-    board8_ini[4][4] = WHITE
+    board8_ini = [[Board.BLANK for _ in range(8)] for _ in range(8)]
+    board8_ini[4][3] = Board.BLACK
+    board8_ini[3][4] = Board.BLACK
+    board8_ini[3][3] = Board.WHITE
+    board8_ini[4][4] = Board.WHITE
     assert board8.board == board8_ini
 
     board10.print_board()
-    board10_ini = [[BLANK for _ in range(10)] for _ in range(10)]
-    board10_ini[5][4] = BLACK
-    board10_ini[4][5] = BLACK
-    board10_ini[4][4] = WHITE
-    board10_ini[5][5] = WHITE
+    board10_ini = [[Board.BLANK for _ in range(10)] for _ in range(10)]
+    board10_ini[5][4] = Board.BLACK
+    board10_ini[4][5] = Board.BLACK
+    board10_ini[4][4] = Board.WHITE
+    board10_ini[5][5] = Board.WHITE
     assert board10.board == board10_ini
 
     # 石を置く
-    assert board4.put_stone(0, 0, BLACK) == 0
-    assert board4.put_stone(3, 5, BLACK) == 0
-    assert board4.put_stone(1, 0, BLACK) == 1
-    assert board4.put_stone(0, 0, WHITE) == 1
-    assert board4.put_stone(0, 1, BLACK) == 1
-    assert board4.put_stone(2, 0, WHITE) == 2
-    assert board4.put_stone(3, 0, BLACK) == 1
-    assert board4.put_stone(1, 3, WHITE) == 2
-    assert board4.put_stone(0, 3, BLACK) == 1
-    assert board4.put_stone(0, 2, WHITE) == 2
-    assert board4.put_stone(2, 3, BLACK) == 2
-    assert board4.put_stone(3, 2, WHITE) == 2
-    assert board4.put_stone(3, 1, BLACK) == 1
-    assert board4.put_stone(3, 3, WHITE) == 1
+    assert board4.put_stone(0, 0, Board.BLACK) == 0
+    assert board4.put_stone(3, 5, Board.BLACK) == 0
+    assert board4.put_stone(1, 0, Board.BLACK) == 1
+    assert board4.put_stone(0, 0, Board.WHITE) == 1
+    assert board4.put_stone(0, 1, Board.BLACK) == 1
+    assert board4.put_stone(2, 0, Board.WHITE) == 2
+    assert board4.put_stone(3, 0, Board.BLACK) == 1
+    assert board4.put_stone(1, 3, Board.WHITE) == 2
+    assert board4.put_stone(0, 3, Board.BLACK) == 1
+    assert board4.put_stone(0, 2, Board.WHITE) == 2
+    assert board4.put_stone(2, 3, Board.BLACK) == 2
+    assert board4.put_stone(3, 2, Board.WHITE) == 2
+    assert board4.put_stone(3, 1, Board.BLACK) == 1
+    assert board4.put_stone(3, 3, Board.WHITE) == 1
 
     # プレイ結果
     board4.print_board()
-    board4_ret = [[BLANK for _ in range(4)] for _ in range(4)]
-    board4_ret[0][0] = WHITE
-    board4_ret[0][1] = WHITE
-    board4_ret[0][2] = WHITE
-    board4_ret[0][3] = BLACK
-    board4_ret[1][0] = WHITE
-    board4_ret[1][1] = WHITE
-    board4_ret[1][2] = WHITE
-    board4_ret[1][3] = BLACK
-    board4_ret[2][0] = WHITE
-    board4_ret[2][1] = WHITE
-    board4_ret[2][2] = WHITE
-    board4_ret[2][3] = WHITE
-    board4_ret[3][0] = BLACK
-    board4_ret[3][1] = BLACK
-    board4_ret[3][2] = BLACK
-    board4_ret[3][3] = WHITE
+    board4_ret = [[Board.BLANK for _ in range(4)] for _ in range(4)]
+    board4_ret[0][0] = Board.WHITE
+    board4_ret[0][1] = Board.WHITE
+    board4_ret[0][2] = Board.WHITE
+    board4_ret[0][3] = Board.BLACK
+    board4_ret[1][0] = Board.WHITE
+    board4_ret[1][1] = Board.WHITE
+    board4_ret[1][2] = Board.WHITE
+    board4_ret[1][3] = Board.BLACK
+    board4_ret[2][0] = Board.WHITE
+    board4_ret[2][1] = Board.WHITE
+    board4_ret[2][2] = Board.WHITE
+    board4_ret[2][3] = Board.WHITE
+    board4_ret[3][0] = Board.BLACK
+    board4_ret[3][1] = Board.BLACK
+    board4_ret[3][2] = Board.BLACK
+    board4_ret[3][3] = Board.WHITE
     assert board4.board == board4_ret
-    assert board4.black == 5
-    assert board4.white == 11
+    assert board4.black_num == 5
+    assert board4.white_num == 11
