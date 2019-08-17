@@ -20,6 +20,9 @@ class Board:
             (1, 0), (1, 1), (0, 1), (-1, 1),
             (-1, 0), (-1, -1), (0, -1), (1, -1)
         ]
+        self.marks = {
+            Board.BLANK : "□", Board.BLACK : "〇",  Board.WHITE : "●"
+        }
 
         if size < 4 or size % 2:
             raise BoardSizeError(str(size) + " is invalid size!")
@@ -40,22 +43,10 @@ class Board:
         コンソールにボードを表示する
         """
         print("\nBLACK :", self.black_num, "WHITE :", self.white_num)
-        print("  ", end="")
-
-        for i in range(self.size):
-            print(" " + chr(97 + i), end="")
-        print()
+        print("   " + " ".join([chr(97 + i) for i in range(self.size)]))
 
         for index, row in enumerate(self.board, 1):
-            print(f'{index:2d}', end="")
-            for val in row:
-                if val == Board.BLANK:
-                    print("□", end="")
-                elif val == Board.BLACK:
-                    print("〇", end="")
-                elif val == Board.WHITE:
-                    print("●", end="")
-            print()
+            print(f'{index:2d}' + "".join([self.marks[value] for value in row]))
 
     def count_stone(self):
         """
