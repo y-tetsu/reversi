@@ -127,20 +127,18 @@ class Board:
             for tmp_x, tmp_y, in reversibles:
                 self.board[tmp_y][tmp_x] = stone
 
-            self.count_stone()
+            self.update_stones()
 
             return len(reversibles)
 
         return 0
 
-    def count_stone(self):
+    def update_stones(self):
         """
-        石の数を数える
+        石の数を更新する
         """
         self.black_num = sum([row.count(Board.BLACK) for row in self.board])
         self.white_num = sum([row.count(Board.WHITE) for row in self.board])
-
-        return self.black_num, self.white_num
 
 
 if __name__ == '__main__':
