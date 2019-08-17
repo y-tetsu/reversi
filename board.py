@@ -24,7 +24,7 @@ class Board:
             Board.BLANK : "□", Board.BLACK : "〇",  Board.WHITE : "●"
         }
 
-        if size < 4 or size % 2:
+        if size < 4 or 26 < size or size % 2:
             raise BoardSizeError(str(size) + " is invalid size!")
 
         self.board = [[Board.BLANK for _ in range(size)] for _ in range(size)]
@@ -161,11 +161,21 @@ if __name__ == '__main__':
 
     assert invalid3
 
+    invalid28 = False
+    try:
+        board28 = Board(28)
+    except BoardSizeError as e:
+        print(e)
+        invalid28 = True
+
+    assert invalid28
+
     # 初期値
     board4 = Board()
     board6 = Board(6)
     board8 = Board(8)
     board10 = Board(10)
+    board26 = Board(26)
 
     board4.print_board()
     board4_ini = [[Board.BLANK for _ in range(4)] for _ in range(4)]
@@ -198,6 +208,14 @@ if __name__ == '__main__':
     board10_ini[4][4] = Board.WHITE
     board10_ini[5][5] = Board.WHITE
     assert board10.board == board10_ini
+
+    board26.print_board()
+    board26_ini = [[Board.BLANK for _ in range(26)] for _ in range(26)]
+    board26_ini[13][12] = Board.BLACK
+    board26_ini[12][13] = Board.BLACK
+    board26_ini[12][12] = Board.WHITE
+    board26_ini[13][13] = Board.WHITE
+    assert board26.board == board26_ini
 
     # 石を置く
     assert board4.put_stone(Board.BLACK, 0, 0) == 0
