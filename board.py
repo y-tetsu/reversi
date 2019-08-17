@@ -40,8 +40,14 @@ class Board:
         コンソールにボードを表示する
         """
         print("\nBLACK :", self.black_num, "WHITE :", self.white_num)
+        print("  ", end="")
 
-        for row in self.board:
+        for i in range(self.size):
+            print(" " + chr(97 + i), end="")
+        print()
+
+        for index, row in enumerate(self.board, 1):
+            print(f'{index:2d}', end="")
             for val in row:
                 if val == Board.BLANK:
                     print("□", end="")
