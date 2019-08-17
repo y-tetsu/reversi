@@ -32,10 +32,15 @@ class Board:
         self.board[center-1][center-1] = WHITE
         self.board[center][center] = WHITE
 
+        self.black = 2
+        self.white = 2
+
     def print_board(self):
         """
         コンソールにボードを表示する
         """
+        print("BLACK :", self.black, "WHITE :", self.white)
+
         for row in self.board:
             for val in row:
                 if val == BLANK:
@@ -47,6 +52,15 @@ class Board:
             print()
 
         print()
+
+    def count_stone(self):
+        """
+        石の数を数える
+        """
+        self.black = sum([row.count(BLACK) for row in self.board])
+        self.white = sum([row.count(WHITE) for row in self.board])
+
+        return self.black, self.white
 
     def in_range(self, x, y):
         """
@@ -124,6 +138,8 @@ class Board:
 
             for tmp_x, tmp_y, in reversibles:
                 self.board[tmp_y][tmp_x] = stone
+
+            self.count_stone()
 
             return len(reversibles)
 
