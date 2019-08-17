@@ -242,3 +242,5 @@ if __name__ == '__main__':
     board4_ret[3][2] = BLACK
     board4_ret[3][3] = WHITE
     assert board4.board == board4_ret
+    assert board4.black == 5
+    assert board4.white == 11
