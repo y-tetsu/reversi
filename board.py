@@ -50,24 +50,6 @@ class Board:
         for num, row in enumerate(self.board, 1):
             print(f'{num:2d}' + "".join([self.marks[value] for value in row]))
 
-    def count_stone(self):
-        """
-        石の数を数える
-        """
-        self.black_num = sum([row.count(Board.BLACK) for row in self.board])
-        self.white_num = sum([row.count(Board.WHITE) for row in self.board])
-
-        return self.black_num, self.white_num
-
-    def in_range(self, x, y):
-        """
-        座標がボードの範囲内かどうかを返す
-        """
-        if 0 <= x < self.size and 0 <= y < self.size:
-            return True
-
-        return False
-
     def get_possibles(self, stone):
         """
         石が置ける場所をすべて返す
@@ -123,6 +105,15 @@ class Board:
 
         return []
 
+    def in_range(self, x, y):
+        """
+        座標がボードの範囲内かどうかを返す
+        """
+        if 0 <= x < self.size and 0 <= y < self.size:
+            return True
+
+        return False
+
     def put_stone(self, stone, x, y):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた数を返す
@@ -141,6 +132,15 @@ class Board:
             return len(reversibles)
 
         return 0
+
+    def count_stone(self):
+        """
+        石の数を数える
+        """
+        self.black_num = sum([row.count(Board.BLACK) for row in self.board])
+        self.white_num = sum([row.count(Board.WHITE) for row in self.board])
+
+        return self.black_num, self.white_num
 
 
 if __name__ == '__main__':
