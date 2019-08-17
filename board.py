@@ -39,7 +39,7 @@ class Board:
         """
         コンソールにボードを表示する
         """
-        print("BLACK :", self.black_num, "WHITE :", self.white_num)
+        print("\nBLACK :", self.black_num, "WHITE :", self.white_num)
 
         for row in self.board:
             for val in row:
@@ -50,8 +50,6 @@ class Board:
                 elif val == Board.WHITE:
                     print("●", end="")
             print()
-
-        print()
 
     def count_stone(self):
         """
@@ -147,21 +145,7 @@ class Board:
 
 
 if __name__ == '__main__':
-    board4 = Board()
-    board6 = Board(6)
-    board8 = Board(8)
-    board10 = Board(10)
-
     # サイズ異常
-    invalid3 = False
-    try:
-        board3 = Board(3)
-    except BoardSizeError as e:
-        print(e)
-        invalid3 = True
-
-    assert invalid3
-
     invalid2 = False
     try:
         board2 = Board(2)
@@ -171,9 +155,21 @@ if __name__ == '__main__':
 
     assert invalid2
 
-    print()
+    invalid3 = False
+    try:
+        board3 = Board(3)
+    except BoardSizeError as e:
+        print(e)
+        invalid3 = True
+
+    assert invalid3
 
     # 初期値
+    board4 = Board()
+    board6 = Board(6)
+    board8 = Board(8)
+    board10 = Board(10)
+
     board4.print_board()
     board4_ini = [[Board.BLANK for _ in range(4)] for _ in range(4)]
     board4_ini[2][1] = Board.BLACK
