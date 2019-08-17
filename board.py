@@ -79,14 +79,14 @@ class Board:
 
         for y in range(self.size):
             for x in range(self.size):
-                reversibles = self.get_reversibles(x, y, stone)
+                reversibles = self.get_reversibles(stone, x, y)
 
                 if reversibles:
                     ret[(x, y)] = reversibles
 
         return ret
 
-    def get_reversibles(self, x, y, stone):
+    def get_reversibles(self, stone, x, y):
         """
         指定座標のひっくり返せる石の場所をすべて返す
         """
@@ -94,14 +94,14 @@ class Board:
 
         if self.in_range(x, y) and self.board[y][x] == Board.BLANK:
             for dx, dy in self.directions:
-                tmp = self.get_reversibles_by_direction(x, y, dx, dy, stone)
+                tmp = self.get_reversibles_by_direction(stone, x, y, dx, dy)
 
                 if tmp:
                     ret += tmp
 
         return ret
 
-    def get_reversibles_by_direction(self, x, y, dx, dy, stone):
+    def get_reversibles_by_direction(self, stone, x, y, dx, dy):
         """
         指定座標から指定方向に向けてひっくり返せる石の場所を返す
         """
@@ -126,7 +126,7 @@ class Board:
 
         return []
 
-    def put_stone(self, x, y, stone):
+    def put_stone(self, stone, x, y):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた数を返す
         """
@@ -207,20 +207,20 @@ if __name__ == '__main__':
     assert board10.board == board10_ini
 
     # 石を置く
-    assert board4.put_stone(0, 0, Board.BLACK) == 0
-    assert board4.put_stone(3, 5, Board.BLACK) == 0
-    assert board4.put_stone(1, 0, Board.BLACK) == 1
-    assert board4.put_stone(0, 0, Board.WHITE) == 1
-    assert board4.put_stone(0, 1, Board.BLACK) == 1
-    assert board4.put_stone(2, 0, Board.WHITE) == 2
-    assert board4.put_stone(3, 0, Board.BLACK) == 1
-    assert board4.put_stone(1, 3, Board.WHITE) == 2
-    assert board4.put_stone(0, 3, Board.BLACK) == 1
-    assert board4.put_stone(0, 2, Board.WHITE) == 2
-    assert board4.put_stone(2, 3, Board.BLACK) == 2
-    assert board4.put_stone(3, 2, Board.WHITE) == 2
-    assert board4.put_stone(3, 1, Board.BLACK) == 1
-    assert board4.put_stone(3, 3, Board.WHITE) == 1
+    assert board4.put_stone(Board.BLACK, 0, 0) == 0
+    assert board4.put_stone(Board.BLACK, 3, 5) == 0
+    assert board4.put_stone(Board.BLACK, 1, 0) == 1
+    assert board4.put_stone(Board.WHITE, 0, 0) == 1
+    assert board4.put_stone(Board.BLACK, 0, 1) == 1
+    assert board4.put_stone(Board.WHITE, 2, 0) == 2
+    assert board4.put_stone(Board.BLACK, 3, 0) == 1
+    assert board4.put_stone(Board.WHITE, 1, 3) == 2
+    assert board4.put_stone(Board.BLACK, 0, 3) == 1
+    assert board4.put_stone(Board.WHITE, 0, 2) == 2
+    assert board4.put_stone(Board.BLACK, 2, 3) == 2
+    assert board4.put_stone(Board.WHITE, 3, 2) == 2
+    assert board4.put_stone(Board.BLACK, 3, 1) == 1
+    assert board4.put_stone(Board.WHITE, 3, 3) == 1
 
     # プレイ結果
     board4.print_board()
