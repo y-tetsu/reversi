@@ -11,26 +11,26 @@ class Player:
     def __init__(self, stone, name, strategy):
         self.stone = stone
         self.name = name
-        self.next_move = strategy
+        self.strategy = strategy
 
     def put_stone(self, board):
         """
         次の手を決めて石を置く
         """
-        x, y = self.next_move(self.stone, board)
+        x, y = self.strategy.next_move(self.stone, board)
 
         return board.put_stone(self.stone, x, y)
 
 
 if __name__ == '__main__':
     from board import Board
-    import strategies
+    from strategies import ConsoleUserInput
 
     board4 = Board()
     board4.print_board()
 
-    p1 = Player(Board.BLACK, "ユーザ1", strategies.console_user_input)
-    p2 = Player(Board.WHITE, "ユーザ2", strategies.console_user_input)
+    p1 = Player(Board.BLACK, "ユーザ1", ConsoleUserInput())
+    p2 = Player(Board.WHITE, "ユーザ2", ConsoleUserInput())
 
     while True:
         move = 0
