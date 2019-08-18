@@ -37,7 +37,7 @@ class Game:
                             self.board.print_board()
                             cnt += 1
                         else:
-                            self.foul()
+                            self.foul(player)
                             break
 
                 if not cnt:
@@ -97,4 +97,5 @@ if __name__ == '__main__':
 
     game = Game(board, black, white)
     game.play()
+
     print(game.result)
