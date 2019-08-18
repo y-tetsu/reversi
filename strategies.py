@@ -47,6 +47,22 @@ class Random:
         return possibles[select]
 
 
+class Max:
+    """
+    一番多くとれる手を選ぶ(複数存在する場合はランダム)
+    """
+    def next_move(self, stone, board):
+        """
+        次の一手
+        """
+        possibles = board.get_possibles(stone)
+        max_count = max([len(value) for value in possibles.values()])
+        moves = [key for key, value in possibles.items() if len(value) == max_count]
+        move = random.choice(moves)
+
+        return move
+
+
 if __name__ == '__main__':
     from board import Board
     from player import Player
@@ -55,7 +71,7 @@ if __name__ == '__main__':
     board4.print_board()
 
     p1 = Player(Board.BLACK, "BLACK: あなた", ConsoleUserInput())
-    p2 = Player(Board.WHITE, "WHITE: コンピュータ(ランダム)", Random())
+    p2 = Player(Board.WHITE, "WHITE: コンピュータ(Max)", Max())
 
     while True:
         cnt = 0
