@@ -3,6 +3,8 @@
 オセロの戦略
 """
 
+import random
+
 
 class ConsoleUserInput:
     """
@@ -31,19 +33,41 @@ class ConsoleUserInput:
         return possibles[select]
 
 
+class Random:
+    """
+    ランダム
+    """
+    def next_move(self, stone, board):
+        """
+        次の一手
+        """
+        possibles = list(board.get_possibles(stone).keys())
+        select = random.randint(0, len(possibles) - 1)
+
+        return possibles[select]
+
+
 if __name__ == '__main__':
     from board import Board
+    from player import Player
 
     board4 = Board()
     board4.print_board()
-    strategy = ConsoleUserInput()
 
-    print('\n* 黒の番です')
-    x, y = strategy.next_move(Board.BLACK, board4)
-    board4.put_stone(Board.BLACK, x, y)
-    board4.print_board()
+    p1 = Player(Board.BLACK, "あなた", ConsoleUserInput())
+    p2 = Player(Board.WHITE, "COM(ランダム)", Random())
 
-    print('\n* 白の番です')
-    x, y = strategy.next_move(Board.WHITE, board4)
-    board4.put_stone(Board.WHITE, x, y)
-    board4.print_board()
+    while True:
+        move = 0
+
+        for player in [p1, p2]:
+            if board4.get_possibles(player.stone):
+                print("\n" + player.name + "の番です")
+                player.put_stone(board4)
+                print(player.move, "に置きました")
+                board4.print_board()
+                move += 1
+
+        if not move:
+            print("\n終了")
+            break
