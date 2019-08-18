@@ -63,6 +63,22 @@ class Max:
         return move
 
 
+class Min:
+    """
+    一番少なくとれる手を選ぶ(複数存在する場合はランダム)
+    """
+    def next_move(self, stone, board):
+        """
+        次の一手
+        """
+        possibles = board.get_possibles(stone)
+        min_count = min([len(value) for value in possibles.values()])
+        moves = [key for key, value in possibles.items() if len(value) == min_count]
+        move = random.choice(moves)
+
+        return move
+
+
 if __name__ == '__main__':
     from board import Board
     from player import Player
@@ -71,7 +87,7 @@ if __name__ == '__main__':
     board4.print_board()
 
     p1 = Player(Board.BLACK, "BLACK: あなた", ConsoleUserInput())
-    p2 = Player(Board.WHITE, "WHITE: コンピュータ(Max)", Max())
+    p2 = Player(Board.WHITE, "WHITE: コンピュータ(Min)", Min())
 
     while True:
         cnt = 0
