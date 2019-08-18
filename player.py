@@ -12,12 +12,14 @@ class Player:
         self.stone = stone
         self.name = name
         self.strategy = strategy
+        self.move = (None, None)
 
     def put_stone(self, board):
         """
         次の手を決めて石を置く
         """
         x, y = self.strategy.next_move(self.stone, board)
+        self.move = (chr(x + 97), str(y + 1))
 
         return board.put_stone(self.stone, x, y)
 
