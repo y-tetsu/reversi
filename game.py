@@ -70,21 +70,36 @@ class Game:
         """
         黒の勝ち
         """
-        self.result = [Game.BLACK_WIN, self.board.black_num, self.board.white_num]
+        self.result = [
+            Game.BLACK_WIN,
+            (self.black.name, self.white.name),
+            (self.board.black_num, self.board.white_num),
+        ]
+
         print("\n" + self.black.name + " の勝ちです")
 
     def white_win(self):
         """
         白の勝ち
         """
-        self.result = [Game.WHITE_WIN, self.board.black_num, self.board.white_num]
+        self.result = [
+            Game.WHITE_WIN,
+            (self.black.name, self.white.name),
+            (self.board.black_num, self.board.white_num),
+        ]
+
         print("\n" + self.white.name + " の勝ちです")
 
     def draw(self):
         """
         引き分け
         """
-        self.result = [Game.DRAW, self.board.black_num, self.board.white_num]
+        self.result = [
+            Game.DRAW,
+            (self.black.name, self.white.name),
+            (self.board.black_num, self.board.white_num),
+        ]
+
         print("\n引き分けです")
 
 
@@ -94,8 +109,8 @@ if __name__ == '__main__':
     import strategies
 
     board = Board()
-    black = Player(Board.BLACK, "BLACK:Max", strategies.Max())
-    white = Player(Board.WHITE, "WHITE:Min", strategies.Min())
+    black = Player(Board.BLACK, "Max", strategies.Max())
+    white = Player(Board.WHITE, "Min", strategies.Min())
 
     game = Game(board, black, white)
     game.play()
