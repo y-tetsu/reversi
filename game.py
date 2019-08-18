@@ -33,6 +33,7 @@ class Game:
                         if player.put_stone(self.board):
                             x = chr(player.move[0] + 97)
                             y = str(player.move[1] + 1)
+
                             print((x, y), "に置きました")
 
                             self.board.print_board()
