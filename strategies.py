@@ -86,7 +86,7 @@ if __name__ == '__main__':
     board4 = Board()
     board4.print_board()
 
-    p1 = Player(Board.BLACK, "BLACK: あなた", ConsoleUserInput())
+    p1 = Player(Board.BLACK, "BLACK: コンピュータ(Max)", Max())
     p2 = Player(Board.WHITE, "WHITE: コンピュータ(Min)", Min())
 
     while True:
