@@ -18,10 +18,9 @@ class Player:
         """
         次の手を決めて石を置く
         """
-        x, y = self.strategy.next_move(self.stone, board)
-        self.move = (chr(x + 97), str(y + 1))
+        self.move = self.strategy.next_move(self.stone, board)
 
-        return board.put_stone(self.stone, x, y)
+        return board.put_stone(self.stone, *self.move)
 
 
 if __name__ == '__main__':
