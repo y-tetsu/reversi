@@ -31,8 +31,9 @@ class Game:
                         print("\n" + player.name + " の番です")
 
                         if player.put_stone(self.board):
-                            move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
-                            print(move + " に置きました")
+                            x = chr(player.move[0] + 97)
+                            y = str(player.move[1] + 1)
+                            print((x, y), "に置きました")
 
                             self.board.print_board()
                             cnt += 1
