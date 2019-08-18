@@ -127,13 +127,13 @@ class Board:
             for tmp_x, tmp_y, in reversibles:
                 self.board[tmp_y][tmp_x] = stone
 
-            self.update_stones()
+            self.update_stone_num()
 
             return len(reversibles)
 
         return 0
 
-    def update_stones(self):
+    def update_stone_num(self):
         """
         石の数を更新する
         """
