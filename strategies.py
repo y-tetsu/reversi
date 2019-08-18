@@ -54,20 +54,21 @@ if __name__ == '__main__':
     board4 = Board()
     board4.print_board()
 
-    p1 = Player(Board.BLACK, "あなた", ConsoleUserInput())
-    p2 = Player(Board.WHITE, "COM(ランダム)", Random())
+    p1 = Player(Board.BLACK, "BLACK: あなた", ConsoleUserInput())
+    p2 = Player(Board.WHITE, "WHITE: コンピュータ(ランダム)", Random())
 
     while True:
-        move = 0
+        cnt = 0
 
         for player in [p1, p2]:
             if board4.get_possibles(player.stone):
                 print("\n" + player.name + "の番です")
                 player.put_stone(board4)
-                print(player.move, "に置きました")
+                move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
+                print(move + "に置きました")
                 board4.print_board()
-                move += 1
+                cnt += 1
 
-        if not move:
+        if not cnt:
             print("\n終了")
             break
