@@ -10,10 +10,11 @@ class Game:
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
-    def __init__(self, board, black, white):
+    def __init__(self, board, black, white, display=True):
         self.board = board
         self.black = black
         self.white = white
+        self.display = display
         self.result = []
 
     def play(self):
@@ -21,22 +22,24 @@ class Game:
         ゲームを開始する
         """
         if not self.result:
-            self.board.print_board()
+            if self.display:
+                self.board.print_board()
 
             while True:
                 cnt = 0
 
                 for player in [self.black, self.white]:
                     if self.board.get_possibles(player.stone):
-                        print("\n" + player.name + " の番です")
+                        if self.display:
+                            print("\n" + player.name + " の番です")
 
                         if player.put_stone(self.board):
-                            x = chr(player.move[0] + 97)
-                            y = str(player.move[1] + 1)
+                            if self.display:
+                                x = chr(player.move[0] + 97)
+                                y = str(player.move[1] + 1)
+                                print((x, y), "に置きました")
+                                self.board.print_board()
 
-                            print((x, y), "に置きました")
-
-                            self.board.print_board()
                             cnt += 1
                         else:
                             self.foul(player)
@@ -76,7 +79,8 @@ class Game:
             (self.board.black_num, self.board.white_num),
         ]
 
-        print("\n" + self.black.name + " の勝ちです")
+        if self.display:
+            print("\n" + self.black.name + " の勝ちです")
 
     def white_win(self):
         """
@@ -88,7 +92,8 @@ class Game:
             (self.board.black_num, self.board.white_num),
         ]
 
-        print("\n" + self.white.name + " の勝ちです")
+        if self.display:
+            print("\n" + self.white.name + " の勝ちです")
 
     def draw(self):
         """
@@ -100,7 +105,8 @@ class Game:
             (self.board.black_num, self.board.white_num),
         ]
 
-        print("\n引き分けです")
+        if self.display:
+            print("\n引き分けです")
 
 
 if __name__ == '__main__':
@@ -108,11 +114,36 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
-    board = Board()
-    black = Player(Board.BLACK, "Max", strategies.Max())
-    white = Player(Board.WHITE, "Min", strategies.Min())
+    blacks = [
+        Player(Board.BLACK, "Random", strategies.Random()),
+        Player(Board.BLACK, "Max", strategies.Max()),
+        Player(Board.BLACK, "Min", strategies.Min()),
+    ]
 
-    game = Game(board, black, white)
-    game.play()
+    whites = [
+        Player(Board.WHITE, "Random", strategies.Random()),
+        Player(Board.WHITE, "Max", strategies.Max()),
+        Player(Board.WHITE, "Min", strategies.Min()),
+    ]
 
-    print(game.result)
+    results = []
+
+    for black in blacks:
+        for white in whites:
+            if black.name == white.name:
+                continue
+
+            game = Game(Board(4), black, white, False)
+            game.play()
+            results.append(game.result)
+
+    print(results)
+
+    #BLACK＼WHITE | Random Min    Max
+    #-----------------------------------
+    #Randoma      | -      xx     xx
+    #Min          | xx     -      xx
+    #Max          | xx     xx     -
+    #-----------------------------------
+
+    #Total : Random
