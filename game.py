@@ -114,36 +114,8 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
-    blacks = [
-        Player(Board.BLACK, "Random", strategies.Random()),
-        Player(Board.BLACK, "Max", strategies.Max()),
-        Player(Board.BLACK, "Min", strategies.Min()),
-    ]
+    black = Player(Board.BLACK, "Random", strategies.Random())
+    white = Player(Board.WHITE, "Max", strategies.Max())
 
-    whites = [
-        Player(Board.WHITE, "Random", strategies.Random()),
-        Player(Board.WHITE, "Max", strategies.Max()),
-        Player(Board.WHITE, "Min", strategies.Min()),
-    ]
-
-    results = []
-
-    for black in blacks:
-        for white in whites:
-            if black.name == white.name:
-                continue
-
-            game = Game(Board(4), black, white, False)
-            game.play()
-            results.append(game.result)
-
-    print(results)
-
-    #BLACK＼WHITE | Random Min    Max
-    #-----------------------------------
-    #Randoma      | -      xx     xx
-    #Min          | xx     -      xx
-    #Max          | xx     xx     -
-    #-----------------------------------
-
-    #Total : Random
+    game = Game(Board(4), black, white)
+    game.play()
