@@ -111,6 +111,6 @@ if __name__ == '__main__':
     blacks = [Player(Board.BLACK, *character) for character in characters]
     whites = [Player(Board.WHITE, *character) for character in characters]
 
-    simulator = Simulator(6, blacks, whites, 250)
+    simulator = Simulator(8, blacks, whites, 250)
 
     print(timeit.timeit('simulator.start()', globals=globals(), number=1), "(s)")
