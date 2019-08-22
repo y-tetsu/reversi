@@ -95,7 +95,7 @@ if __name__ == '__main__':
         for player in [p1, p2]:
             if board4.get_possibles(player.stone):
                 print("\n" + player.name + "の番です")
-                player.put_stone(board4)
+                player.put(board4)
                 move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
                 print(move + "に置きました")
                 print(board4)

@@ -14,13 +14,13 @@ class Player:
         self.strategy = strategy
         self.move = (None, None)
 
-    def put_stone(self, board):
+    def put(self, board):
         """
         次の手を決めて石を置く
         """
         self.move = self.strategy.next_move(self.stone, board)
 
-        return board.put_stone(self.stone, *self.move)
+        return board.put(self.stone, *self.move)
 
 
 if __name__ == '__main__':
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         for player in [p1, p2]:
             if board4.get_possibles(player.stone):
                 print("\n" + player.name + "の番です")
-                player.put_stone(board4)
+                player.put(board4)
                 print(board4)
                 move += 1
 

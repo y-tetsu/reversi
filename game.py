@@ -33,7 +33,7 @@ class Game:
                         if self.display:
                             print("\n" + player.name + " の番です")
 
-                        if player.put_stone(self.board):
+                        if player.put(self.board):
                             if self.display:
                                 x = chr(player.move[0] + 97)
                                 y = str(player.move[1] + 1)
