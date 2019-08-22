@@ -33,7 +33,7 @@ class Game:
                         if self.display:
                             print("\n" + player.name + " の番です")
 
-                        if player.put(self.board):
+                        if player.put_stone(self.board):
                             if self.display:
                                 x = chr(player.move[0] + 97)
                                 y = str(player.move[1] + 1)
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     import strategies
 
     black = Player(Board.BLACK, "Random", strategies.Random())
-    white = Player(Board.WHITE, "Max", strategies.Max())
+    white = Player(Board.WHITE, "Greedy", strategies.Greedy())
 
     game = Game(Board(4), black, white)
     game.play()
