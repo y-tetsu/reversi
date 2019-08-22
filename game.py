@@ -23,7 +23,7 @@ class Game:
         """
         if not self.result:
             if self.display:
-                self.board.print_board()
+                print(self.board)
 
             while True:
                 cnt = 0
@@ -38,7 +38,7 @@ class Game:
                                 x = chr(player.move[0] + 97)
                                 y = str(player.move[1] + 1)
                                 print((x, y), "に置きました")
-                                self.board.print_board()
+                                print(self.board)
 
                             cnt += 1
                         else:

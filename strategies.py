@@ -84,7 +84,7 @@ if __name__ == '__main__':
     from player import Player
 
     board4 = Board()
-    board4.print_board()
+    print(board4)
 
     p1 = Player(Board.BLACK, "BLACK: コンピュータ(Max)", Max())
     p2 = Player(Board.WHITE, "WHITE: コンピュータ(Min)", Min())
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 player.put_stone(board4)
                 move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
                 print(move + "に置きました")
-                board4.print_board()
+                print(board4)
                 cnt += 1
 
         if not cnt:

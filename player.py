@@ -28,7 +28,7 @@ if __name__ == '__main__':
     from strategies import ConsoleUserInput
 
     board4 = Board()
-    board4.print_board()
+    print(board4)
 
     p1 = Player(Board.BLACK, "ユーザ1", ConsoleUserInput())
     p2 = Player(Board.WHITE, "ユーザ2", ConsoleUserInput())
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             if board4.get_possibles(player.stone):
                 print("\n" + player.name + "の番です")
                 player.put_stone(board4)
-                board4.print_board()
+                print(board4)
                 move += 1
 
         if not move:

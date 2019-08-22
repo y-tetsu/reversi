@@ -35,19 +35,19 @@ class Board:
         self.board[center-1][center-1] = Board.WHITE
         self.board[center][center] = Board.WHITE
 
-    def print_board(self):
-        """
-        コンソールにボードを表示する
-        """
+    def __str__(self):
         marks = {
             Board.BLANK: "□", Board.BLACK: "〇", Board.WHITE: "●"
         }
 
-        print("\nBLACK :", self.black_num, "WHITE :", self.white_num)
-        print("   " + " ".join([chr(97 + i) for i in range(self.size)]))
+        score = "\nBLACK : " + str(self.black_num) + " WHITE : " + str(self.white_num) + "\n"
+        header = "   " + " ".join([chr(97 + i) for i in range(self.size)]) + "\n"
+        body = ""
 
         for num, row in enumerate(self.board, 1):
-            print(f'{num:2d}' + "".join([marks[value] for value in row]))
+            body += f'{num:2d}' + "".join([marks[value] for value in row]) + "\n"
+
+        return score + header + body
 
     def get_possibles(self, stone):
         """
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     board10 = Board(10)
     board26 = Board(26)
 
-    board4.print_board()
+    print(board4)
     board4_ini = [[Board.BLANK for _ in range(4)] for _ in range(4)]
     board4_ini[2][1] = Board.BLACK
     board4_ini[1][2] = Board.BLACK
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     board4_ini[2][2] = Board.WHITE
     assert board4.board == board4_ini
 
-    board6.print_board()
+    print(board6)
     board6_ini = [[Board.BLANK for _ in range(6)] for _ in range(6)]
     board6_ini[3][2] = Board.BLACK
     board6_ini[2][3] = Board.BLACK
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     board6_ini[3][3] = Board.WHITE
     assert board6.board == board6_ini
 
-    board8.print_board()
+    print(board8)
     board8_ini = [[Board.BLANK for _ in range(8)] for _ in range(8)]
     board8_ini[4][3] = Board.BLACK
     board8_ini[3][4] = Board.BLACK
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     board8_ini[4][4] = Board.WHITE
     assert board8.board == board8_ini
 
-    board10.print_board()
+    print(board10)
     board10_ini = [[Board.BLANK for _ in range(10)] for _ in range(10)]
     board10_ini[5][4] = Board.BLACK
     board10_ini[4][5] = Board.BLACK
@@ -212,7 +212,7 @@ if __name__ == '__main__':
     board10_ini[5][5] = Board.WHITE
     assert board10.board == board10_ini
 
-    board26.print_board()
+    print(board26)
     board26_ini = [[Board.BLANK for _ in range(26)] for _ in range(26)]
     board26_ini[13][12] = Board.BLACK
     board26_ini[12][13] = Board.BLACK
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     assert board4.put_stone(Board.WHITE, 3, 3) == 1
 
     # プレイ結果
-    board4.print_board()
+    print(board4)
     board4_ret = [[Board.BLANK for _ in range(4)] for _ in range(4)]
     board4_ret[0][0] = Board.WHITE
     board4_ret[0][1] = Board.WHITE
