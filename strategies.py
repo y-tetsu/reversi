@@ -83,7 +83,7 @@ if __name__ == '__main__':
     from board import Board
     from player import Player
 
-    board4 = Board()
+    board4 = Board(4)
     print(board4)
 
     p1 = Player(Board.BLACK, "BLACK: コンピュータ(Max)", Max())

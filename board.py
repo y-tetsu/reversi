@@ -20,7 +20,7 @@ class Board:
     """
     BLACK, WHITE, BLANK = 0, 1, 2
 
-    def __init__(self, size=MIN_BOARD_SIZE):
+    def __init__(self, size=8):
         if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
             raise BoardSizeError(str(size) + " is invalid size!")
 
@@ -174,9 +174,9 @@ if __name__ == '__main__':
     assert invalid28
 
     # 初期値
-    board4 = Board()
+    board4 = Board(4)
     board6 = Board(6)
-    board8 = Board(8)
+    board8 = Board()
     board10 = Board(10)
     board26 = Board(26)
 
