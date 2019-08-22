@@ -69,7 +69,7 @@ class Simulator:
             table[white][black]['matches'] += 1
 
         print("\nSize :", self.board_size)
-        print("           | " + "".join([f'{key:10s}' for key in table]) + "| Total")
+        print("           | " + " ".join([f'{key:10s}' for key in table]) + "| Total")
         print("-----------------------------------------------------------------------")
 
         for key1 in table:
@@ -104,8 +104,8 @@ if __name__ == '__main__':
 
     characters = [
         ("Random", strategies.Random()),
-        ("Max", strategies.Max()),
-        ("Min", strategies.Min()),
+        ("Greedy", strategies.Greedy()),
+        ("Unselfish", strategies.Unselfish()),
     ]
 
     blacks = [Player(Board.BLACK, *character) for character in characters]
