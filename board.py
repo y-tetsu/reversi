@@ -3,6 +3,9 @@
 オセロのボード
 """
 
+MIN_BOARD_SIZE = 4
+MAX_BOARD_SIZE = 26
+
 
 class BoardSizeError(Exception):
     """
@@ -18,17 +21,12 @@ class Board:
     BLACK, WHITE, BLANK = 0, 1, 2
 
     def __init__(self, size=4):
-        self.size = size
-        self.directions = [
-            (1, 0), (1, 1), (0, 1), (-1, 1),
-            (-1, 0), (-1, -1), (0, -1), (1, -1)
-        ]
-        self.marks = {
-            Board.BLANK: "□", Board.BLACK: "〇", Board.WHITE: "●"
-        }
-
-        if not(4 <= size <= 26 and size % 2 == 0):
+        if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
             raise BoardSizeError(str(size) + " is invalid size!")
+
+        self.size = size
+        self.black_num = 2
+        self.white_num = 2
 
         center = size // 2
         self.board = [[Board.BLANK for _ in range(size)] for _ in range(size)]
@@ -37,18 +35,19 @@ class Board:
         self.board[center-1][center-1] = Board.WHITE
         self.board[center][center] = Board.WHITE
 
-        self.black_num = 2
-        self.white_num = 2
-
     def print_board(self):
         """
         コンソールにボードを表示する
         """
+        marks = {
+            Board.BLANK: "□", Board.BLACK: "〇", Board.WHITE: "●"
+        }
+
         print("\nBLACK :", self.black_num, "WHITE :", self.white_num)
         print("   " + " ".join([chr(97 + i) for i in range(self.size)]))
 
         for num, row in enumerate(self.board, 1):
-            print(f'{num:2d}' + "".join([self.marks[value] for value in row]))
+            print(f'{num:2d}' + "".join([marks[value] for value in row]))
 
     def get_possibles(self, stone):
         """
@@ -69,10 +68,14 @@ class Board:
         """
         指定座標のひっくり返せる石の場所をすべて返す
         """
+        directions = [
+            (1, 0), (1, 1), (0, 1), (-1, 1),
+            (-1, 0), (-1, -1), (0, -1), (1, -1)
+        ]
         ret = []
 
         if self.in_range(x, y) and self.board[y][x] == Board.BLANK:
-            for dx, dy in self.directions:
+            for dx, dy in directions:
                 tmp = self.get_reversibles_by_direction(stone, x, y, dx, dy)
 
                 if tmp:
