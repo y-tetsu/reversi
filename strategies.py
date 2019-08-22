@@ -47,7 +47,7 @@ class Random:
         return possibles[select]
 
 
-class Max:
+class Greedy:
     """
     一番多くとれる手を選ぶ(複数存在する場合はランダム)
     """
@@ -63,7 +63,7 @@ class Max:
         return move
 
 
-class Min:
+class Unselfish:
     """
     一番少なくとれる手を選ぶ(複数存在する場合はランダム)
     """
@@ -86,8 +86,8 @@ if __name__ == '__main__':
     board4 = Board(4)
     print(board4)
 
-    p1 = Player(Board.BLACK, "BLACK: コンピュータ(Max)", Max())
-    p2 = Player(Board.WHITE, "WHITE: コンピュータ(Min)", Min())
+    p1 = Player(Board.BLACK, "BLACK: コンピュータ(Greedy)", Greedy())
+    p2 = Player(Board.WHITE, "WHITE: コンピュータ(Unselfish)", Unselfish())
 
     while True:
         cnt = 0
