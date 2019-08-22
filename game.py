@@ -119,3 +119,5 @@ if __name__ == '__main__':
 
     game = Game(Board(4), black, white)
     game.play()
+
+    print(game.result)
