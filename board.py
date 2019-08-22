@@ -20,7 +20,7 @@ class Board:
     """
     BLACK, WHITE, BLANK = 0, 1, 2
 
-    def __init__(self, size=4):
+    def __init__(self, size=MIN_BOARD_SIZE):
         if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
             raise BoardSizeError(str(size) + " is invalid size!")
 
