@@ -12,11 +12,11 @@ class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self, board_size, blacks, whites, matches):
-        self.board_size = board_size
+    def __init__(self, blacks, whites, matches, board_size=8):
         self.blacks = blacks
         self.whites = whites
         self.matches = matches
+        self.board_size = board_size
         self.results = []
 
     def start(self):
@@ -31,8 +31,6 @@ class Simulator:
                 game = Game(Board(self.board_size), black, white, False)
                 game.play()
                 self.results.append(game.result)
-
-        self.print_result()
 
     def print_result(self):
         """
@@ -111,6 +109,8 @@ if __name__ == '__main__':
     blacks = [Player(Board.BLACK, *character) for character in characters]
     whites = [Player(Board.WHITE, *character) for character in characters]
 
-    simulator = Simulator(8, blacks, whites, 250)
+    simulator = Simulator(blacks, whites, 1)
+    elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
 
-    print(timeit.timeit('simulator.start()', globals=globals(), number=1), "(s)")
+    simulator.print_result()
+    print(elapsed_time, "(s)")
