@@ -76,40 +76,37 @@ class Game:
         """
         黒の勝ち
         """
+        self.print_if_display("\n" + self.black.name + " の勝ちです")
+
         self.result = GameResult(
             Game.BLACK_WIN,
             self.black.name, self.white.name,
             self.board.black_num, self.board.white_num,
         )
 
-        if self.display:
-            print("\n" + self.black.name + " の勝ちです")
-
     def white_win(self):
         """
         白の勝ち
         """
+        self.print_if_display("\n" + self.white.name + " の勝ちです")
+
         self.result = GameResult(
             Game.WHITE_WIN,
             self.black.name, self.white.name,
             self.board.black_num, self.board.white_num,
         )
 
-        if self.display:
-            print("\n" + self.white.name + " の勝ちです")
-
     def draw(self):
         """
         引き分け
         """
+        self.print_if_display("\n引き分けです")
+
         self.result = GameResult(
             Game.DRAW,
             self.black.name, self.white.name,
             self.board.black_num, self.board.white_num,
         )
-
-        if self.display:
-            print("\n引き分けです")
 
 
 class GameResult:
