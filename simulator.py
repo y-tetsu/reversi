@@ -72,31 +72,31 @@ class Simulator:
         total = {}
 
         for result in self.game_results:
-            win = result[0]
-            black = result[1][0]
-            white = result[1][1]
+            winlose = result.winlose
+            black_name = result.black_name
+            white_name = result.white_name
 
-            if black not in total:
-                total[black] = {}
+            if black_name not in total:
+                total[black_name] = {}
 
-            if white not in total[black]:
-                total[black][white] = {'matches': 0, 'wins': 0}
+            if white_name not in total[black_name]:
+                total[black_name][white_name] = {'matches': 0, 'wins': 0}
 
-            if win == Game.BLACK_WIN:
-                total[black][white]['wins'] += 1
+            if winlose == Game.BLACK_WIN:
+                total[black_name][white_name]['wins'] += 1
 
-            total[black][white]['matches'] += 1
+            total[black_name][white_name]['matches'] += 1
 
-            if white not in total:
-                total[white] = {}
+            if white_name not in total:
+                total[white_name] = {}
 
-            if black not in total[white]:
-                total[white][black] = {'matches': 0, 'wins': 0}
+            if black_name not in total[white_name]:
+                total[white_name][black_name] = {'matches': 0, 'wins': 0}
 
-            if win == Game.WHITE_WIN:
-                total[white][black]['wins'] += 1
+            if winlose == Game.WHITE_WIN:
+                total[white_name][black_name]['wins'] += 1
 
-            total[white][black]['matches'] += 1
+            total[white_name][black_name]['matches'] += 1
 
         self.total = total
 
