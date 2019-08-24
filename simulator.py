@@ -22,29 +22,31 @@ class Simulator:
 
     def __str__(self):
         board_size = "\nSize : " + str(self.board_size) + "\n"
-        header = "           | " + " ".join([f'{key:10s}' for key in self.total]) + "| Total\n"
-        hr = "-----------------------------------------------------------------------\n"
+        header = "                | " + " ".join([f'{key:15s}' for key in self.total]) + " | Total  | Win   Lose  Draw  Match\n"
+        hr = "----------------------------------------------------------------------------------------------------\n"
 
         body = ""
         for key1 in self.total:
-            row = f'{key1:10s} | '
-            wins, matches = 0, 0
+            row = f'{key1:15s} | '
+            wins, draws, matches = 0, 0, 0
 
             for key2 in self.total:
                 if key1 == key2:
-                    row += "------    "
+                    row += "------          "
                     continue
 
                 wins += self.total[key1][key2]['wins']
+                draws += self.total[key1][key2]['draws']
                 matches += self.total[key1][key2]['matches']
                 ratio = self.total[key1][key2]['wins'] / self.total[key1][key2]['matches'] * 100
                 ratio = f'{ratio:3.1f}%'
-                row += f'{ratio:>6s}    '
+                row += f'{ratio:>6s}          '
 
             row += "| "
             ratio = wins / matches * 100
             ratio = f'{ratio:3.1f}%'
-            row += f'{ratio:>6s} ({wins} / {matches})'
+            loses = matches - wins - draws
+            row += f'{ratio:>6s} | {wins:>5d} {loses:>5d} {draws:>5d} {matches:>5d}'
             body += f'{row}\n'
 
         return board_size + header + hr + body + hr
@@ -80,10 +82,12 @@ class Simulator:
                 total[black_name] = {}
 
             if white_name not in total[black_name]:
-                total[black_name][white_name] = {'matches': 0, 'wins': 0}
+                total[black_name][white_name] = {'matches': 0, 'wins': 0, 'draws': 0}
 
             if winlose == Game.BLACK_WIN:
                 total[black_name][white_name]['wins'] += 1
+            elif winlose == Game.DRAW:
+                total[black_name][white_name]['draws'] += 1
 
             total[black_name][white_name]['matches'] += 1
 
@@ -91,10 +95,12 @@ class Simulator:
                 total[white_name] = {}
 
             if black_name not in total[white_name]:
-                total[white_name][black_name] = {'matches': 0, 'wins': 0}
+                total[white_name][black_name] = {'matches': 0, 'wins': 0, 'draws': 0}
 
             if winlose == Game.WHITE_WIN:
                 total[white_name][black_name]['wins'] += 1
+            elif winlose == Game.DRAW:
+                total[white_name][black_name]['draws'] += 1
 
             total[white_name][black_name]['matches'] += 1
 
@@ -115,7 +121,7 @@ if __name__ == '__main__':
     blacks = [Player(Board.BLACK, *character) for character in characters]
     whites = [Player(Board.WHITE, *character) for character in characters]
 
-    simulator = Simulator(blacks, whites, 25)
+    simulator = Simulator(blacks, whites, 250)
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, "(s)")
