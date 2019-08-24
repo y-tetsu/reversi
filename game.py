@@ -76,11 +76,11 @@ class Game:
         """
         黒の勝ち
         """
-        self.result = [
+        self.result = GameResult(
             Game.BLACK_WIN,
-            (self.black.name, self.white.name),
-            (self.board.black_num, self.board.white_num),
-        ]
+            self.black.name, self.white.name,
+            self.board.black_num, self.board.white_num,
+        )
 
         if self.display:
             print("\n" + self.black.name + " の勝ちです")
@@ -89,11 +89,11 @@ class Game:
         """
         白の勝ち
         """
-        self.result = [
+        self.result = GameResult(
             Game.WHITE_WIN,
-            (self.black.name, self.white.name),
-            (self.board.black_num, self.board.white_num),
-        ]
+            self.black.name, self.white.name,
+            self.board.black_num, self.board.white_num,
+        )
 
         if self.display:
             print("\n" + self.white.name + " の勝ちです")
@@ -102,14 +102,26 @@ class Game:
         """
         引き分け
         """
-        self.result = [
+        self.result = GameResult(
             Game.DRAW,
-            (self.black.name, self.white.name),
-            (self.board.black_num, self.board.white_num),
-        ]
+            self.black.name, self.white.name,
+            self.board.black_num, self.board.white_num,
+        )
 
         if self.display:
             print("\n引き分けです")
+
+
+class GameResult:
+    """
+    ゲームの結果
+    """
+    def __init__(self, winlose, black_name, white_name, black_num, white_num):
+        self.winlose = winlose
+        self.black_name = black_name
+        self.white_name = white_name
+        self.black_num = black_num
+        self.white_num = white_num
 
 
 if __name__ == '__main__':
@@ -123,4 +135,6 @@ if __name__ == '__main__':
     game = Game(Board(4), black, white)
     game.play()
 
-    print(game.result)
+    print(game.result.winlose)
+    print(game.result.black_name, game.result.black_num)
+    print(game.result.white_name, game.result.white_num)
