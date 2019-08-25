@@ -22,61 +22,61 @@ class Game:
         ゲームを開始する
         """
         if not self.result:
-            self.print_if_display(self.board)
+            self._print_if_display(self.board)
 
             while True:
                 cnt = 0
 
                 for player in [self.black, self.white]:
                     if self.board.get_possibles(player.stone):
-                        self.print_if_display("\n" + player.name + " の番です")
+                        self._print_if_display("\n" + player.name + " の番です")
 
                         if player.put_stone(self.board):
                             x = chr(player.move[0] + 97)
                             y = str(player.move[1] + 1)
-                            self.print_if_display((x, y), "に置きました")
-                            self.print_if_display(self.board)
+                            self._print_if_display((x, y), "に置きました")
+                            self._print_if_display(self.board)
                             cnt += 1
                         else:
-                            self.foul(player)
+                            self._foul(player)
                             break
 
                 if not cnt:
-                    self.judge()
+                    self._judge()
                     break
 
-    def print_if_display(self, *messages):
+    def _print_if_display(self, *messages):
         """
         表示
         """
         if self.display:
             print(*messages)
 
-    def judge(self):
+    def _judge(self):
         """
         結果判定
         """
         if self.board.black_num > self.board.white_num:
-            self.black_win()
+            self._black_win()
         elif self.board.white_num > self.board.black_num:
-            self.white_win()
+            self._white_win()
         else:
-            self.draw()
+            self._draw()
 
-    def foul(self, player):
+    def _foul(self, player):
         """
         反則負け
         """
         if player.stone == self.black.stone:
-            self.white_win()
+            self._white_win()
         else:
-            self.black_win()
+            self._black_win()
 
-    def black_win(self):
+    def _black_win(self):
         """
         黒の勝ち
         """
-        self.print_if_display("\n" + self.black.name + " の勝ちです")
+        self._print_if_display("\n" + self.black.name + " の勝ちです")
 
         self.result = GameResult(
             Game.BLACK_WIN,
@@ -84,11 +84,11 @@ class Game:
             self.board.black_num, self.board.white_num,
         )
 
-    def white_win(self):
+    def _white_win(self):
         """
         白の勝ち
         """
-        self.print_if_display("\n" + self.white.name + " の勝ちです")
+        self._print_if_display("\n" + self.white.name + " の勝ちです")
 
         self.result = GameResult(
             Game.WHITE_WIN,
@@ -96,11 +96,11 @@ class Game:
             self.board.black_num, self.board.white_num,
         )
 
-    def draw(self):
+    def _draw(self):
         """
         引き分け
         """
-        self.print_if_display("\n引き分けです")
+        self._print_if_display("\n引き分けです")
 
         self.result = GameResult(
             Game.DRAW,
