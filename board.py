@@ -141,8 +141,14 @@ class Board:
         """
         石の数を更新する
         """
-        self.black_num = sum([row.count(Board.BLACK) for row in self._board])
-        self.white_num = sum([row.count(Board.WHITE) for row in self._board])
+        self.black_num = self._count_stone_num(Board.BLACK)
+        self.white_num = self._count_stone_num(Board.WHITE)
+
+    def _count_stone_num(self, stone):
+        """
+        石の数を数える
+        """
+        return sum([row.count(stone) for row in self._board])
 
 
 if __name__ == '__main__':
