@@ -46,7 +46,7 @@ class ConsoleUserInput(AbstractStrategy):
         return self.digit.match(string) is not None
 
 
-class Random:
+class Random(AbstractStrategy):
     """
     ランダム
     """
@@ -57,9 +57,9 @@ class Random:
         return random.choice(list(board.get_possibles(stone).keys()))
 
 
-class Greedy:
+class Greedy(AbstractStrategy):
     """
-    一番多くとれる手を選ぶ(複数存在する場合はランダム)
+    なるべく多くとり、複数ある場合はランダム
     """
     def next_move(self, stone, board):
         """
@@ -73,9 +73,9 @@ class Greedy:
         return move
 
 
-class Unselfish:
+class Unselfish(AbstractStrategy):
     """
-    一番少なくとれる手を選ぶ(複数存在する場合はランダム)
+    Greedyの逆
     """
     def next_move(self, stone, board):
         """
@@ -109,5 +109,29 @@ if __name__ == '__main__':
     print("User", console_user_input.next_move(Board.BLACK, board))
 
     random_player = Random()
-
     print("Random", random_player.next_move(Board.BLACK, board))
+
+    from board import Board
+    from player import Player
+
+    board4x4 = Board(4)
+    print(board4x4)
+
+    p1 = Player(Board.BLACK, "BLACK: Random", Random())
+    p2 = Player(Board.WHITE, "WHITE: Greedy", Greedy())
+
+    while True:
+        cnt = 0
+
+        for player in [p1, p2]:
+            if board4x4.get_possibles(player.stone):
+                print("\n" + player.name + "の番です")
+                player.put_stone(board4x4)
+                move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
+                print(move + "に置きました")
+                print(board4x4)
+                cnt += 1
+
+        if not cnt:
+            print("\n終了")
+            break
