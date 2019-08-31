@@ -40,14 +40,13 @@ class Board:
             Board.BLANK: "□", Board.BLACK: "〇", Board.WHITE: "●"
         }
 
-        score = "\nBLACK : " + str(self.black_num) + " WHITE : " + str(self.white_num) + "\n"
         header = "   " + " ".join([chr(97 + i) for i in range(self.size)]) + "\n"
         body = ""
 
         for num, row in enumerate(self._board, 1):
             body += f'{num:2d}' + "".join([marks[value] for value in row]) + "\n"
 
-        return score + header + body
+        return header + body
 
     def get_possibles(self, stone):
         """
