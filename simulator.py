@@ -6,6 +6,7 @@
 import itertools
 from game import Game
 from board import Board
+from display import NoneDisplay
 
 
 class Simulator:
@@ -60,7 +61,7 @@ class Simulator:
                 continue
 
             for _ in range(self.matches):
-                game = Game(Board(self.board_size), black, white, False)
+                game = Game(Board(self.board_size), black, white, NoneDisplay())
                 game.play()
                 self.game_results.append(game.result)
 
