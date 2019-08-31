@@ -63,7 +63,16 @@ class ConsoleDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print((x, y), "に置きました(" + str(len(captures)) + "個取得)\n")
+        print((x, y), "に置きました(" + str(len(captures)) + "個取得)")
+
+        if not captures:
+            if player.stone == Board.BLACK:
+                print("〇" + player.name, "の反則")
+            else:
+                print("●" + player.name, "の反則")
+
+        print()
+
         self.start(board, black, white)
 
     def win(self, player):

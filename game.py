@@ -36,12 +36,12 @@ class Game:
 
                     self.display.turn(player, possibles)
                     captures = player.put_stone(self.board)
+                    self.display.move(player, captures, self.board, self.black, self.white)
 
                     if not captures:
                         foul_player = player
                         break
 
-                    self.display.move(player, captures, self.board, self.black, self.white)
                     playable += 1
 
                 if foul_player:
