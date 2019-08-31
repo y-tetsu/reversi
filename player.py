@@ -33,16 +33,15 @@ if __name__ == '__main__':
     p1 = Player(Board.BLACK, "ユーザ1", ConsoleUserInput())
     p2 = Player(Board.WHITE, "ユーザ2", ConsoleUserInput())
 
-    while True:
-        move = 0
+    for player in [p1, p2]:
+        possibles = board4.get_possibles(player.stone)
 
-        for player in [p1, p2]:
-            if board4.get_possibles(player.stone):
-                print("\n" + player.name + "の番です")
-                player.put_stone(board4)
-                print(board4)
-                move += 1
+        if possibles:
+            print("\n" + player.name + "の番です")
 
-        if not move:
-            print("\n終了")
-            break
+            for index, value in enumerate(possibles, 1):
+                coordinate = (chr(value[0] + 97), str(value[1] + 1))
+                print(f'{index:2d}:', coordinate)
+
+            player.put_stone(board4)
+            print(board4)
