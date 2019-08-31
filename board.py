@@ -120,7 +120,7 @@ class Board:
 
     def put(self, stone, x, y):
         """
-        指定座標に石を置いて返せる場所をひっくり返し、取れた数を返す
+        指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
         possibles = self.get_possibles(stone)
 
@@ -133,9 +133,9 @@ class Board:
 
             self._update_stone_num()
 
-            return len(reversibles)
+            return reversibles
 
-        return 0
+        return []
 
     def _update_stone_num(self):
         """
@@ -228,20 +228,20 @@ if __name__ == '__main__':
     assert board26._board == board26_ini
 
     # 石を置く
-    assert board4.put(Board.BLACK, 0, 0) == 0
-    assert board4.put(Board.BLACK, 3, 5) == 0
-    assert board4.put(Board.BLACK, 1, 0) == 1
-    assert board4.put(Board.WHITE, 0, 0) == 1
-    assert board4.put(Board.BLACK, 0, 1) == 1
-    assert board4.put(Board.WHITE, 2, 0) == 2
-    assert board4.put(Board.BLACK, 3, 0) == 1
-    assert board4.put(Board.WHITE, 1, 3) == 2
-    assert board4.put(Board.BLACK, 0, 3) == 1
-    assert board4.put(Board.WHITE, 0, 2) == 2
-    assert board4.put(Board.BLACK, 2, 3) == 2
-    assert board4.put(Board.WHITE, 3, 2) == 2
-    assert board4.put(Board.BLACK, 3, 1) == 1
-    assert board4.put(Board.WHITE, 3, 3) == 1
+    assert board4.put(Board.BLACK, 0, 0) == []
+    assert board4.put(Board.BLACK, 3, 5) == []
+    assert board4.put(Board.BLACK, 1, 0) == [(1, 1)]
+    assert board4.put(Board.WHITE, 0, 0) == [(1, 1)]
+    assert board4.put(Board.BLACK, 0, 1) == [(1, 1)]
+    assert board4.put(Board.WHITE, 2, 0) == [(2, 1), (1, 0)]
+    assert board4.put(Board.BLACK, 3, 0) == [(2, 1)]
+    assert board4.put(Board.WHITE, 1, 3) == [(1, 2), (1, 1)]
+    assert board4.put(Board.BLACK, 0, 3) == [(1, 2)]
+    assert board4.put(Board.WHITE, 0, 2) == [(1, 2), (0, 1)]
+    assert board4.put(Board.BLACK, 2, 3) == [(1, 3), (2, 2)]
+    assert board4.put(Board.WHITE, 3, 2) == [(2, 2), (2, 1)]
+    assert board4.put(Board.BLACK, 3, 1) == [(2, 2)]
+    assert board4.put(Board.WHITE, 3, 3) == [(2, 2)]
 
     # プレイ結果
     print(board4)
