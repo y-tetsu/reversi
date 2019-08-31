@@ -25,7 +25,8 @@ class Game:
             self._print_if_display(self.board)
 
             while True:
-                cnt = 0
+                playable = 0
+                foul_player = None
 
                 for player in [self.black, self.white]:
                     if self.board.get_possibles(player.stone):
@@ -36,12 +37,16 @@ class Game:
                             y = str(player.move[1] + 1)
                             self._print_if_display((x, y), "に置きました")
                             self._print_if_display(self.board)
-                            cnt += 1
+                            playable += 1
                         else:
-                            self._foul(player)
+                            foul_player = player
                             break
 
-                if not cnt:
+                if foul_player:
+                    self._foul(foul_player)
+                    break
+
+                if not playable:
                     self._judge()
                     break
 
@@ -126,8 +131,12 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
+    class Foul():
+        def next_move(self, stone, board):
+            return (1, 1)
+
     black = Player(Board.BLACK, "Random", strategies.Random())
-    white = Player(Board.WHITE, "Greedy", strategies.Greedy())
+    white = Player(Board.WHITE, "Foul", Foul())
 
     game = Game(Board(4), black, white)
     game.play()
