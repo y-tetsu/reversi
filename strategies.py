@@ -3,13 +3,24 @@
 オセロの戦略
 """
 
+import abc
+import re
 import random
 
 
-class ConsoleUserInput:
+class AbstractStrategy(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def next_move(self, stone, board):
+        pass
+
+
+class ConsoleUserInput(AbstractStrategy):
     """
     コンソールからのユーザ入力
     """
+    def __init__(self):
+        self.digit = re.compile(r'^[0-9]+$')
+
     def next_move(self, stone, board):
         """
         次の一手
@@ -18,19 +29,21 @@ class ConsoleUserInput:
         select = None
 
         while True:
-            for index, value in enumerate(possibles, 1):
-                coordinate = (chr(value[0] + 97), str(value[1] + 1))
-                print(f'{index:2d}:', coordinate)
-
             user_in = input(">> ")
 
-            if user_in.isdecimal():
+            if self._is_digit(user_in):
                 select = int(user_in) - 1
 
                 if 0 <= select < len(possibles):
                     break
 
         return possibles[select]
+
+    def _is_digit(self, string):
+        """
+        半角数字の判定
+        """
+        return self.digit.match(string) is not None
 
 
 class Random:
@@ -81,26 +94,15 @@ class Unselfish:
 
 if __name__ == '__main__':
     from board import Board
-    from player import Player
 
-    board4 = Board(4)
-    print(board4)
+    board = Board()
+    strategy = ConsoleUserInput()
 
-    p1 = Player(Board.BLACK, "BLACK: コンピュータ(Greedy)", Greedy())
-    p2 = Player(Board.WHITE, "WHITE: コンピュータ(Unselfish)", Unselfish())
+    possibles = board.get_possibles(Board.BLACK)
 
-    while True:
-        cnt = 0
+    for index, value in enumerate(possibles, 1):
+        coordinate = (chr(value[0] + 97), str(value[1] + 1))
+        print(f'{index:2d}:', coordinate)
 
-        for player in [p1, p2]:
-            if board4.get_possibles(player.stone):
-                print("\n" + player.name + "の番です")
-                player.put_stone(board4)
-                move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
-                print(move + "に置きました")
-                print(board4)
-                cnt += 1
+    print(strategy.next_move(Board.BLACK, board))
 
-        if not cnt:
-            print("\n終了")
-            break
