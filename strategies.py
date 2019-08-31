@@ -97,6 +97,7 @@ if __name__ == '__main__':
     from board import Board
 
     board = Board()
+    print(board)
     console_user_input = ConsoleUserInput()
 
     possibles = board.get_possibles(Board.BLACK)
