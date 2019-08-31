@@ -54,10 +54,7 @@ class Random:
         """
         次の一手
         """
-        possibles = list(board.get_possibles(stone).keys())
-        select = random.randint(0, len(possibles) - 1)
-
-        return possibles[select]
+        return random.choice(list(board.get_possibles(stone).keys()))
 
 
 class Greedy:
@@ -93,10 +90,14 @@ class Unselfish:
 
 
 if __name__ == '__main__':
+    def input(string):
+        print(string + "1")
+        return "1"
+
     from board import Board
 
     board = Board()
-    strategy = ConsoleUserInput()
+    console_user_input = ConsoleUserInput()
 
     possibles = board.get_possibles(Board.BLACK)
 
@@ -104,5 +105,8 @@ if __name__ == '__main__':
         coordinate = (chr(value[0] + 97), str(value[1] + 1))
         print(f'{index:2d}:', coordinate)
 
-    print(strategy.next_move(Board.BLACK, board))
+    print("User", console_user_input.next_move(Board.BLACK, board))
 
+    random_player = Random()
+
+    print("Random", random_player.next_move(Board.BLACK, board))
