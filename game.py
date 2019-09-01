@@ -3,8 +3,6 @@
 オセロゲーム
 """
 
-from board import Board
-
 
 class Game:
     """
@@ -82,7 +80,7 @@ class Game:
         """
         self.display.win(player)
 
-        if player.stone == Board.BLACK:
+        if player.stone == self.black.stone:
             result = Game.BLACK_WIN
         else:
             result = Game.WHITE_WIN
