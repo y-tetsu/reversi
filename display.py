@@ -16,7 +16,7 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def move(self, player, captures, board):
+    def move(self, player, captures):
         pass
 
     @abc.abstractmethod
@@ -56,7 +56,7 @@ class ConsoleDisplay(AbstractDisplay):
             coordinate = (chr(value[0] + 97), str(value[1] + 1))
             print(f'{index:2d}:', coordinate)
 
-    def move(self, player, captures, board, black, white):
+    def move(self, player, captures):
         """
         手の表示
         """
@@ -94,7 +94,7 @@ class NoneDisplay(AbstractDisplay):
     def turn(self, player, possibles):
         pass
 
-    def move(self, player, captures, board, black, white):
+    def move(self, player, captures):
         pass
 
     def foul(self, player):
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     display.turn(black, possibles)
 
     captures = black.put_stone(board)
-    display.move(black, captures, board, black, white)
+    display.move(black, captures)
     display.board(board, black, white)
 
     display.foul(black)

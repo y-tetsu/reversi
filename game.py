@@ -38,7 +38,7 @@ class Game:
 
                     captures = player.put_stone(self.board)
 
-                    self.display.move(player, captures, self.board, self.black, self.white)
+                    self.display.move(player, captures)
                     self.display.board(self.board, self.black, self.white)
 
                     if not captures:
