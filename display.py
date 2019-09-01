@@ -21,7 +21,11 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def win(self, name):
+    def foul(self, player):
+        pass
+
+    @abc.abstractmethod
+    def win(self, player):
         pass
 
     @abc.abstractmethod
@@ -63,17 +67,17 @@ class ConsoleDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print((x, y), "に置きました(" + str(len(captures)) + "個取得)")
-
-        if not captures:
-            if player.stone == Board.BLACK:
-                print("〇" + player.name, "の反則")
-            else:
-                print("●" + player.name, "の反則")
-
-        print()
-
+        print((x, y), "に置きました(" + str(len(captures)) + "個取得)\n")
         self.start(board, black, white)
+
+    def foul(self, player):
+        """
+        反則プレイヤーの表示
+        """
+        if player.stone == Board.BLACK:
+            print("〇" + player.name, "の反則")
+        else:
+            print("●" + player.name, "の反則")
 
     def win(self, player):
         """
@@ -104,6 +108,9 @@ class NoneDisplay(AbstractDisplay):
     def move(self, player, captures, board, black, white):
         pass
 
+    def foul(self, player):
+        pass
+
     def win(self, player):
         pass
 
@@ -129,5 +136,6 @@ if __name__ == '__main__':
     captures = black.put_stone(board)
     display.move(black, captures, board, black, white)
 
+    display.foul(black)
     display.win(black)
     display.draw()

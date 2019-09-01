@@ -58,6 +58,8 @@ class Game:
         """
         反則負け
         """
+        self.display.foul(player)
+
         if player.stone == self.black.stone:
             self._win(self.white)
         else:
@@ -136,6 +138,7 @@ if __name__ == '__main__':
     print(game.result.winlose)
     print(game.result.black_name, game.result.black_num)
     print(game.result.white_name, game.result.white_num)
+    print()
 
     black = Player(Board.BLACK, "Random", strategies.Random())
     white = Player(Board.WHITE, "Unselfish", strategies.Unselfish())
