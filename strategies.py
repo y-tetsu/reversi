@@ -117,18 +117,18 @@ if __name__ == '__main__':
     board4x4 = Board(4)
     print(board4x4)
 
-    p1 = Player(Board.BLACK, "BLACK: Random", Random())
-    p2 = Player(Board.WHITE, "WHITE: Greedy", Greedy())
+    p1 = Player(Board.BLACK, "Random", Random())
+    p2 = Player(Board.WHITE, "Greedy", Greedy())
 
     while True:
         cnt = 0
 
         for player in [p1, p2]:
             if board4x4.get_possibles(player.stone):
-                print("\n" + player.name + "の番です")
+                print(player, "の番です")
                 player.put_stone(board4x4)
                 move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
-                print(move + "に置きました")
+                print(move + "に置きました\n")
                 print(board4x4)
                 cnt += 1
 
