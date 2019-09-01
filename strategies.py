@@ -54,7 +54,9 @@ class Random(AbstractStrategy):
         """
         次の一手
         """
-        return random.choice(list(board.get_possibles(stone).keys()))
+        moves = list(board.get_possibles(stone).keys())
+
+        return random.choice(moves)
 
 
 class Greedy(AbstractStrategy):
@@ -68,9 +70,8 @@ class Greedy(AbstractStrategy):
         possibles = board.get_possibles(stone)
         max_count = max([len(value) for value in possibles.values()])
         moves = [key for key, value in possibles.items() if len(value) == max_count]
-        move = random.choice(moves)
 
-        return move
+        return random.choice(moves)
 
 
 class Unselfish(AbstractStrategy):
@@ -84,9 +85,8 @@ class Unselfish(AbstractStrategy):
         possibles = board.get_possibles(stone)
         min_count = min([len(value) for value in possibles.values()])
         moves = [key for key, value in possibles.items() if len(value) == min_count]
-        move = random.choice(moves)
 
-        return move
+        return random.choice(moves)
 
 
 if __name__ == '__main__':
