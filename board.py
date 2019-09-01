@@ -19,6 +19,9 @@ class Board:
     ボードを管理する
     """
     BLACK, WHITE, BLANK = 0, 1, 2
+    MARK = {
+        BLANK: "□", BLACK: "〇", WHITE: "●"
+    }
 
     def __init__(self, size=8):
         if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
@@ -36,15 +39,11 @@ class Board:
         self._board[center][center] = Board.WHITE
 
     def __str__(self):
-        marks = {
-            Board.BLANK: "□", Board.BLACK: "〇", Board.WHITE: "●"
-        }
-
         header = "   " + " ".join([chr(97 + i) for i in range(self.size)]) + "\n"
         body = ""
 
         for num, row in enumerate(self._board, 1):
-            body += f'{num:2d}' + "".join([marks[value] for value in row]) + "\n"
+            body += f'{num:2d}' + "".join([self.MARK[value] for value in row]) + "\n"
 
         return header + body
 
