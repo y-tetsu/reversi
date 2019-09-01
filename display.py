@@ -9,7 +9,7 @@ from board import Board
 
 class AbstractDisplay(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def start(self, board, black, white):
+    def board(self, board, black, white):
         pass
 
     @abc.abstractmethod
@@ -37,12 +37,12 @@ class ConsoleDisplay(AbstractDisplay):
     """
     コンソールへの表示
     """
-    def start(self, board, black, white):
+    def board(self, board, black, white):
         """
         開始時の表示
         """
-        score_b = "〇:" + str(board.black_num) + " " + black.name
-        score_w = "●:" + str(board.white_num) + " " + white.name
+        score_b = str(black) + ":" + str(board.black_num)
+        score_w = str(white) + ":" + str(board.white_num)
 
         print(score_b, score_w)
         print(board)
@@ -51,10 +51,7 @@ class ConsoleDisplay(AbstractDisplay):
         """
         手番の表示
         """
-        if player.stone == Board.BLACK:
-            print("〇" + player.name, "の番です")
-        else:
-            print("●" + player.name, "の番です")
+        print(player, "の番です")
 
         for index, value in enumerate(possibles, 1):
             coordinate = (chr(value[0] + 97), str(value[1] + 1))
@@ -68,25 +65,18 @@ class ConsoleDisplay(AbstractDisplay):
         y = str(player.move[1] + 1)
 
         print((x, y), "に置きました(" + str(len(captures)) + "個取得)\n")
-        self.start(board, black, white)
 
     def foul(self, player):
         """
         反則プレイヤーの表示
         """
-        if player.stone == Board.BLACK:
-            print("〇" + player.name, "の反則")
-        else:
-            print("●" + player.name, "の反則")
+        print(player, "の反則")
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
-        if player.stone == Board.BLACK:
-            print("〇" + player.name, "の勝ちです")
-        else:
-            print("●" + player.name, "の勝ちです")
+        print(player, "の勝ちです")
 
     def draw(self):
         """
@@ -99,7 +89,7 @@ class NoneDisplay(AbstractDisplay):
     """
     表示なし
     """
-    def start(self, board, black, white):
+    def board(self, board, black, white):
         pass
 
     def turn(self, player, possibles):
@@ -128,13 +118,14 @@ if __name__ == '__main__':
     white = Player(Board.WHITE, "User", strategies.ConsoleUserInput())
 
     display = ConsoleDisplay()
-    display.start(board, black, white)
+    display.board(board, black, white)
 
     possibles = board.get_possibles(black.stone)
     display.turn(black, possibles)
 
     captures = black.put_stone(board)
     display.move(black, captures, board, black, white)
+    display.board(board, black, white)
 
     display.foul(black)
     display.win(black)
