@@ -3,6 +3,8 @@
 オセロプレイヤー
 """
 
+from board import Board
+
 
 class Player:
     """
@@ -12,7 +14,11 @@ class Player:
         self.stone = stone
         self.name = name
         self.strategy = strategy
+        self.mark = Board.MARK[stone]
         self.move = (None, None)
+
+    def __str__(self):
+        return self.mark + self.name
 
     def put_stone(self, board):
         """
@@ -24,7 +30,6 @@ class Player:
 
 
 if __name__ == '__main__':
-    from board import Board
     from strategies import ConsoleUserInput
 
     board4 = Board(4)
@@ -37,7 +42,7 @@ if __name__ == '__main__':
         possibles = board4.get_possibles(player.stone)
 
         if possibles:
-            print("\n" + player.name + "の番です")
+            print(player, "の番です")
 
             for index, value in enumerate(possibles, 1):
                 coordinate = (chr(value[0] + 97), str(value[1] + 1))
