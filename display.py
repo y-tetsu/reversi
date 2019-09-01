@@ -4,7 +4,6 @@
 """
 
 import abc
-from board import Board
 
 
 class AbstractDisplay(metaclass=abc.ABCMeta):
@@ -39,7 +38,7 @@ class ConsoleDisplay(AbstractDisplay):
     """
     def board(self, board, black, white):
         """
-        開始時の表示
+        ボードの表示
         """
         score_b = str(black) + ":" + str(board.black_num)
         score_w = str(white) + ":" + str(board.white_num)
