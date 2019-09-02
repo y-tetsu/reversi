@@ -25,17 +25,25 @@ class Window(tk.Frame):
         self.black_name = self.canvas.create_text( 200, 80, text="●User1", tag="black_name", font=('', 32), fill='black')
         self.white_name = self.canvas.create_text(1150, 80, text="●User2", tag="white_name", font=('', 32), fill='white')
 
-        self.black_num = self.canvas.create_text( 200, 250, text="676", tag="black_num", font=('', 140), fill='black')
-        self.white_num = self.canvas.create_text(1150, 250, text="676", tag="white_num", font=('', 140), fill='white')
+        #self.black_num = self.canvas.create_text( 200, 250, text="676", tag="black_num", font=('', 140), fill='black')
+        #self.white_num = self.canvas.create_text(1150, 250, text="676", tag="white_num", font=('', 140), fill='white')
+        self.black_num = self.canvas.create_text( 200, 250, text="2", tag="black_num", font=('', 140), fill='black')
+        self.white_num = self.canvas.create_text(1150, 250, text="2", tag="white_num", font=('', 140), fill='white')
 
-        self.black_result = self.canvas.create_text( 200, 400, text="勝ち", tag="black_result", font=('', 32), fill='black')
-        self.white_result = self.canvas.create_text(1150, 400, text="反則", tag="white_result", font=('', 32), fill='white')
+        #self.black_result = self.canvas.create_text( 200, 400, text="勝ち", tag="black_result", font=('', 32), fill='black')
+        #self.white_result = self.canvas.create_text(1150, 400, text="反則", tag="white_result", font=('', 32), fill='white')
+        self.black_result = self.canvas.create_text( 200, 400, text="", tag="black_result", font=('', 32), fill='black')
+        self.white_result = self.canvas.create_text(1150, 400, text="", tag="white_result", font=('', 32), fill='white')
 
-        self.black_turn = self.canvas.create_text( 200, 500, text="手番です", tag="black_turn", font=('', 32), fill='orange')
-        self.white_turn = self.canvas.create_text(1150, 500, text="手番です", tag="white_turn", font=('', 32), fill='orange')
+        #self.black_turn = self.canvas.create_text( 200, 500, text="手番です", tag="black_turn", font=('', 32), fill='orange')
+        #self.white_turn = self.canvas.create_text(1150, 500, text="手番です", tag="white_turn", font=('', 32), fill='orange')
+        self.black_turn = self.canvas.create_text( 200, 500, text="", tag="black_turn", font=('', 32), fill='orange')
+        self.white_turn = self.canvas.create_text(1150, 500, text="", tag="white_turn", font=('', 32), fill='orange')
 
-        self.black_move = self.canvas.create_text( 200, 600, text="(z, 26)に置きました", tag="black_move", font=('', 32), fill='black')
-        self.white_move = self.canvas.create_text(1150, 600, text="(z, 26)に置きました", tag="white_move", font=('', 32), fill='white')
+        #self.black_move = self.canvas.create_text( 200, 600, text="(z, 26)に置きました", tag="black_move", font=('', 32), fill='black')
+        #self.white_move = self.canvas.create_text(1150, 600, text="(z, 26)に置きました", tag="white_move", font=('', 32), fill='white')
+        self.black_move = self.canvas.create_text( 200, 600, text="", tag="black_move", font=('', 32), fill='black')
+        self.white_move = self.canvas.create_text(1150, 600, text="", tag="white_move", font=('', 32), fill='white')
 
         self.start = self.canvas.create_text(680, 620, text="クリックでスタート", tag="start", font=('', 32), fill='yellow')
 
@@ -317,10 +325,13 @@ def change_board_size(size, master):
     ボードサイズの変更
     """
     def redraw_board_square():
-        master.remove_stones()
-        master.remove_squares()
-        master.draw_squares(size)
-        master.put_init_stones()
+        with threading.Lock():
+            master.remove_stones()
+            master.remove_squares()
+            master.draw_squares(size)
+            master.put_init_stones()
+
+        time.sleep(1)
 
     return redraw_board_square
 
@@ -329,44 +340,108 @@ if __name__ == '__main__':
     import time
     import threading
 
-    def test_game(window):
+    def demo(window):
         pre_center = window.size // 2
 
         while True:
             print("board size", window.size)
-            center = window.size // 2
 
+            center = window.size // 2
             if center != pre_center:
+                pre_center = center
+                time.sleep(0.1)
                 window.remove_stones()
                 window.put_init_stones()
 
             for x, y in [(center, center-1), (center-1, center)]:
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_black(x, y)
                 window.put_turnblack(x, y)
+                center = window.size // 2
+
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_turnblack(x, y)
                 window.put_white(x, y)
+                center = window.size // 2
+
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_white(x, y)
                 window.put_turnwhite(x, y)
+                center = window.size // 2
+
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_turnwhite(x, y)
                 window.put_black(x, y)
+                center = window.size // 2
 
             for x, y in [(center-1, center-1), (center, center)]:
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_white(x, y)
                 window.put_turnwhite(x, y)
+                center = window.size // 2
+
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_turnwhite(x, y)
                 window.put_black(x, y)
+                center = window.size // 2
+
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_black(x, y)
                 window.put_turnblack(x, y)
+                center = window.size // 2
+
+                if center != pre_center:
+                    pre_center = center
+                    time.sleep(0.1)
+                    window.remove_stones()
+                    window.put_init_stones()
+                    break
                 time.sleep(0.1)
                 window.remove_turnblack(x, y)
                 window.put_white(x, y)
+                center = window.size // 2
 
             pre_center = center
 
@@ -378,7 +453,7 @@ if __name__ == '__main__':
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
     window.master['menu'] = Menu(window)                # メニューをセット
 
-    game = threading.Thread(target=test_game, args=([window]))
+    game = threading.Thread(target=demo, args=([window]))
     game.daemon = True
     game.start()
 
