@@ -31,8 +31,8 @@ class Window(tk.Frame):
         self.black_result = self.canvas.create_text( 200, 400, text="勝ち", tag="black_result", font=('', 32), fill='black')
         self.white_result = self.canvas.create_text(1150, 400, text="反則", tag="white_result", font=('', 32), fill='white')
 
-        self.black_turn = self.canvas.create_text( 200, 500, text="手番です", tag="black_turn", font=('', 32), fill='black')
-        self.white_turn = self.canvas.create_text(1150, 500, text="手番です", tag="white_turn", font=('', 32), fill='white')
+        self.black_turn = self.canvas.create_text( 200, 500, text="手番です", tag="black_turn", font=('', 32), fill='orange')
+        self.white_turn = self.canvas.create_text(1150, 500, text="手番です", tag="white_turn", font=('', 32), fill='orange')
 
         self.black_move = self.canvas.create_text( 200, 600, text="(z, 26)に置きました", tag="black_move", font=('', 32), fill='black')
         self.white_move = self.canvas.create_text(1150, 600, text="(z, 26)に置きました", tag="white_move", font=('', 32), fill='white')
@@ -47,9 +47,13 @@ class Window(tk.Frame):
         self.oval_w2 = 0
 
         self.draw_squares(size)
-        self.put_init_stone()
+        self.put_init_stones()
 
-    def put_init_stone(self):
+    def update_board(self, board):
+        """
+        ボードの状態を反映する
+        """
+    def put_init_stones(self):
         """
         石を初期位置に置く
         """
@@ -58,8 +62,6 @@ class Window(tk.Frame):
         self.put_stone(Board.BLACK, center-1, center)
         self.put_stone(Board.WHITE, center-1, center-1)
         self.put_stone(Board.WHITE, center, center)
-        self.put_blackwhite(0, 0)
-        self.put_whiteblack(0, 1)
 
     def put_stone(self, stone, index_x, index_y):
         """
@@ -74,47 +76,71 @@ class Window(tk.Frame):
         """
         黒を置く
         """
+        label = self.get_label("black", index_x, index_y)
+
         x, y = self.get_coordinate(index_x, index_y)
 
-        label_x = chr(x + 97)
-        label_y = str(y + 1)
+        x1 = x - self.oval_w1/2
+        y1 = y - self.oval_w1/2
+        x2 = x + self.oval_w1/2
+        y2 = y + self.oval_w1/2
 
-        black_id = self.canvas.create_oval( x - self.oval_w1/2, y - self.oval_w1/2, x + self.oval_w1/2, y + self.oval_w1/2, tag="black" + label_x + label_y, fill='black', outline='black')
+        black_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill='black', outline='black')
 
     def put_white(self, index_x, index_y):
         """
         白を置く
         """
+        label = self.get_label("white", index_x, index_y)
+
         x, y = self.get_coordinate(index_x, index_y)
 
-        label_x = chr(x + 97)
-        label_y = str(y + 1)
+        x1 = x - self.oval_w1/2
+        y1 = y - self.oval_w1/2
+        x2 = x + self.oval_w1/2
+        y2 = y + self.oval_w1/2
 
-        white_id = self.canvas.create_oval( x - self.oval_w1/2, y - self.oval_w1/2, x + self.oval_w1/2, y + self.oval_w1/2, tag="white" + label_x + label_y, fill='white', outline='white')
+        white_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill='white', outline='white')
 
-    def put_blackwhite(self, index_x, index_y):
+    def put_turnblack(self, index_x, index_y):
         """
         黒をひっくり返す途中
         """
+        label1 = self.get_label("turnblack1", index_x, index_y)
+        label2 = self.get_label("turnblack2", index_x, index_y)
+
         x, y = self.get_coordinate(index_x, index_y)
 
-        label_x = chr(x + 97)
-        label_y = str(y + 1)
+        x1 = x - self.oval_w2
+        y1 = y - self.oval_w1/2
+        x2 = x
+        y2 = y + self.oval_w1/2
 
-        white_id = self.canvas.create_rectangle( x - self.oval_w2, y - self.oval_w1/2, x, y + self.oval_w1/2, tag="blackwhite1_" + label_x + label_y, fill='white', outline='white')
-        black_id = self.canvas.create_rectangle( x, y - self.oval_w1/2, x + self.oval_w2, y + self.oval_w1/2, tag="blackwhite2_" + label_x + label_y, fill='black', outline='black')
+        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill='white', outline='white')
 
-    def put_whiteblack(self, index_x, index_y):
+        x1 = x
+        x2 = x + self.oval_w2
+        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill='black', outline='black')
+
+    def put_turnwhite(self, index_x, index_y):
         """
         白をひっくり返す途中
         """
+        label1 = self.get_label("turnwhite1", index_x, index_y)
+        label2 = self.get_label("turnwhite2", index_x, index_y)
+
         x, y = self.get_coordinate(index_x, index_y)
 
-        label_x = chr(x + 97)
-        label_y = str(y + 1)
+        x1 = x - self.oval_w2
+        y1 = y - self.oval_w1/2
+        x2 = x
+        y2 = y + self.oval_w1/2
 
-        black_id = self.canvas.create_rectangle( x - self.oval_w2, y - self.oval_w1/2, x, y + self.oval_w1/2, tag="whiteblack1_" + label_x + label_y, fill='black', outline='black')
-        white_id = self.canvas.create_rectangle( x, y - self.oval_w1/2, x + self.oval_w2, y + self.oval_w1/2, tag="whitebalck2_" + label_x + label_y, fill='white', outline='white')
+        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill='black', outline='black')
+
+        x1 = x
+        x2 = x + self.oval_w2
+        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill='white', outline='white')
 
     def remove_stones(self):
         """
@@ -124,52 +150,40 @@ class Window(tk.Frame):
             for x in range(self.size):
                 self.remove_black(x, y)
                 self.remove_white(x, y)
-                self.remove_blackwhite(x, y)
-                self.remove_whiteblack(x, y)
+                self.remove_turnblack(x, y)
+                self.remove_turnwhite(x, y)
 
     def remove_black(self, index_x, index_y):
         """
         黒を消す
         """
-        label_x = chr(index_x + 97)
-        label_y = str(index_y + 1)
-
-        self.remove_stone('black', label_x, label_y)
-
+        label = self.get_label("black", index_x, index_y)
+        self.canvas.delete(label)
 
     def remove_white(self, index_x, index_y):
         """
         白を消す
         """
-        label_x = chr(index_x + 97)
-        label_y = str(index_y + 1)
+        label = self.get_label("white", index_x, index_y)
+        self.canvas.delete(label)
 
-        self.remove_stone('white', label_x, label_y)
-
-    def remove_blackwhite(self, index_x, index_y):
+    def remove_turnblack(self, index_x, index_y):
         """
-        黒白を消す
+        黒ひっくり返し途中を消す
         """
-        label_x = chr(index_x + 97)
-        label_y = str(index_y + 1)
+        label1 = self.get_label("turnblack1", index_x, index_y)
+        label2 = self.get_label("turnblack2", index_x, index_y)
+        self.canvas.delete(label1)
+        self.canvas.delete(label2)
 
-        self.remove_stone('blackwhite', label_x, label_y)
-
-    def remove_whiteblack(self, index_x, index_y):
+    def remove_turnwhite(self, index_x, index_y):
         """
-        白黒を消す
+        白ひっくり返し途中を消す
         """
-        label_x = chr(index_x + 97)
-        label_y = str(index_y + 1)
-
-        self.remove_stone('whiteblack', label_x, label_y)
-
-    def remove_stone(self, stone, label_x, label_y):
-        """
-        石を消す
-        """
-        self.canvas.delete(stone + label_x + label_y)
-
+        label1 = self.get_label("turnwhite1", index_x, index_y)
+        label2 = self.get_label("turnwhite2", index_x, index_y)
+        self.canvas.delete(label1)
+        self.canvas.delete(label2)
 
     def get_coordinate(self, index_x, index_y):
         """
@@ -204,7 +218,8 @@ class Window(tk.Frame):
                 if not y:
                     self.canvas.create_text((x1+x2)//2, y1-15, fill='white', text=label_x, tag='header_row', font=('', 20))
 
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill='green', outline='white', tag='square' + label_x + label_y)
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill='green', outline='white', tag='square_' + label_x + label_y)
+
                 x1 = x2
             y1 = y2
 
@@ -228,16 +243,15 @@ class Window(tk.Frame):
 
         for y in range(self.size):
             for x in range(self.size):
-                #label_x = chr(x + 97)
-                #label_y = str(y + 1)
-                label_x, label_y = self.get_label_index(x, y)
-                self.canvas.delete('square' + label_x + label_y)
+                label = self.get_label('square', x, y)
+                print(label)
+                self.canvas.delete(label)
 
-    def get_label_index(self, x, y):
+    def get_label(self, name, x, y):
         """
-        表示ラベルのインデックスを返す
+        表示ラベルを返す
         """
-        return chr(x + 97), str(y + 1)
+        return name + "_" + chr(x + 97) + str(y + 1)
 
 
 class Menu(tk.Menu):
@@ -249,7 +263,6 @@ class Menu(tk.Menu):
         self.create_size_menu()
         self.create_black_menu()
         self.create_white_menu()
-        self.master = master
 
     def create_size_menu(self):
         """
@@ -288,6 +301,7 @@ def change_black_player(player, master):
         master.black_name = master.canvas.create_text( 200, 80, text="●" + player, tag="black_name", font=('', 32), fill='black')
     return change_player
 
+
 def change_white_player(player, master):
     """
     白プレーヤーを変更
@@ -297,26 +311,76 @@ def change_white_player(player, master):
         master.white_name = master.canvas.create_text(1150, 80, text="●" + player, tag="white_name", font=('', 32), fill='white')
     return change_player
 
+
 def change_board_size(size, master):
     """
     ボードサイズの変更
     """
     def redraw_board_square():
-        print(str(size))
         master.remove_stones()
         master.remove_squares()
-        print(str(master.oval_w1))
-        print(str(master.oval_w2))
-
         master.draw_squares(size)
-        master.put_init_stone()
+        master.put_init_stones()
 
     return redraw_board_square
 
 
 if __name__ == '__main__':
-    window = Window(4)
+    import time
+    import threading
+
+    def test_game(window):
+        pre_center = window.size // 2
+
+        while True:
+            print("board size", window.size)
+            center = window.size // 2
+
+            if center != pre_center:
+                window.remove_stones()
+                window.put_init_stones()
+
+            for x, y in [(center, center-1), (center-1, center)]:
+                time.sleep(0.1)
+                window.remove_black(x, y)
+                window.put_turnblack(x, y)
+                time.sleep(0.1)
+                window.remove_turnblack(x, y)
+                window.put_white(x, y)
+                time.sleep(0.1)
+                window.remove_white(x, y)
+                window.put_turnwhite(x, y)
+                time.sleep(0.1)
+                window.remove_turnwhite(x, y)
+                window.put_black(x, y)
+
+            for x, y in [(center-1, center-1), (center, center)]:
+                time.sleep(0.1)
+                window.remove_white(x, y)
+                window.put_turnwhite(x, y)
+                time.sleep(0.1)
+                window.remove_turnwhite(x, y)
+                window.put_black(x, y)
+                time.sleep(0.1)
+                window.remove_black(x, y)
+                window.put_turnblack(x, y)
+                time.sleep(0.1)
+                window.remove_turnblack(x, y)
+                window.put_white(x, y)
+
+            pre_center = center
+
+    app = tk.Tk()
+    app.withdraw()  # 表示が整うまで隠す
+
+    window = Window(master=app)
     window.master.title('othello')                      # タイトル
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
     window.master['menu'] = Menu(window)                # メニューをセット
-    window.master.mainloop()
+
+    game = threading.Thread(target=test_game, args=([window]))
+    game.daemon = True
+    game.start()
+
+    app.deiconify()  # 表示する
+    app.mainloop()
