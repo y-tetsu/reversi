@@ -354,6 +354,7 @@ if __name__ == '__main__':
                 window.put_init_stones()
 
             for x, y in [(center, center-1), (center-1, center)]:
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -363,8 +364,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_black(x, y)
                 window.put_turnblack(x, y)
-                center = window.size // 2
 
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -374,8 +375,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_turnblack(x, y)
                 window.put_white(x, y)
-                center = window.size // 2
 
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -385,8 +386,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_white(x, y)
                 window.put_turnwhite(x, y)
-                center = window.size // 2
 
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -396,9 +397,9 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_turnwhite(x, y)
                 window.put_black(x, y)
-                center = window.size // 2
 
             for x, y in [(center-1, center-1), (center, center)]:
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -408,8 +409,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_white(x, y)
                 window.put_turnwhite(x, y)
-                center = window.size // 2
 
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -419,8 +420,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_turnwhite(x, y)
                 window.put_black(x, y)
-                center = window.size // 2
 
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -430,8 +431,8 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_black(x, y)
                 window.put_turnblack(x, y)
-                center = window.size // 2
 
+                center = window.size // 2
                 if center != pre_center:
                     pre_center = center
                     time.sleep(0.1)
@@ -441,7 +442,6 @@ if __name__ == '__main__':
                 time.sleep(0.1)
                 window.remove_turnblack(x, y)
                 window.put_white(x, y)
-                center = window.size // 2
 
             pre_center = center
 
