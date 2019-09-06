@@ -220,11 +220,11 @@ class Window(tk.Frame):
         self.put_stone(Board.WHITE, center-1, center-1)
         self.put_stone(Board.WHITE, center, center)
 
-    def update_board(self, board):
+    def reflect_board(self, board):
         """
         ボードの状態を反映する
         """
-        pass
+        print(board.get_board_info())
 
     def put_stone(self, stone, index_x, index_y):
         """
@@ -480,6 +480,7 @@ if __name__ == '__main__':
     import time
     import threading
     import queue
+    from player import Player
 
     event = threading.Event()
     q = queue.Queue()
@@ -549,6 +550,12 @@ if __name__ == '__main__':
                 break
 
         print("start", window.size, window.black_player, window.white_player)
+
+        board = Board(window.size)
+        black_player = Player(board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
+        white_player = Player(board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
+
+        window.reflect_board(board)
 
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す

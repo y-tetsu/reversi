@@ -148,6 +148,12 @@ class Board:
         """
         return sum([row.count(stone) for row in self._board])
 
+    def get_board_info(self):
+        """
+        ボードの情報を返す
+        """
+        return self._board
+
 
 if __name__ == '__main__':
     # サイズ異常
