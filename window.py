@@ -8,9 +8,37 @@ import board
 from board import Board
 
 
+WINDOW_TITLE = 'othello'
 WINDOW_WIDTH = 1360
 WINDOW_HEIGHT = 680
+BLACK_X_OFFSET = 200
+WHITE_X_OFFSET = 1150
+NAME_Y_OFFSET = 80
+NUM_Y_OFFSET = 250
+RESULT_Y_OFFSET = 400
+TURN_Y_OFFSET = 500
+MOVE_Y_OFFSET = 600
+START_X_OFFSET = 680
+START_Y_OFFSET = 620
+COLOR_GREEN = 'green'
+COLOR_BLACK = 'black'
+COLOR_WHITE = 'white'
+COLOR_ORANGE = 'orange'
+COLOR_YELLOW = 'yellow'
+TEXT_FONT_SIZE = 32
+SCORE_FONT_SIZE = 140
+SQUARE_HEADER_FONT_SIZE = 20
 
+SQUARE_Y_OFFSET = 40
+SQUARE_BOTTOM_MARGIN = 120
+OVAL_SIZE_RATIO = 0.8
+TURNOVAL_SIZE_DIVISOR = 10
+SQUARE_HEADER_OFFSET = 15
+
+DEFAULT_BLACK_PLAYER = 'User1'
+DEFAULT_WHITE_PLAYER = 'User2'
+DEFAULT_BLACK_NUM = "2"
+DEFAULT_WHITE_NUM = "2"
 
 
 class Window(tk.Frame):
@@ -21,26 +49,103 @@ class Window(tk.Frame):
         super().__init__(master)
         self.pack()
 
-        self.event = event
-        self.queue = queue
+        self.event = event  # GUIからのイベント発生通知
+        self.queue = queue  # GUIからのデータ受け渡し
 
-        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg='green')
-        self.canvas.grid(row=0, column=1)
+        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
+        self.canvas.grid(row=0, column=0)
 
-        self.black_name = self.canvas.create_text( 200, 80, text="●User1", tag="black_name", font=('', 32), fill='black')
-        self.white_name = self.canvas.create_text(1150, 80, text="●User2", tag="white_name", font=('', 32), fill='white')
-        self.black_num = self.canvas.create_text( 200, 250, text="2", tag="black_num", font=('', 140), fill='black')
-        self.white_num = self.canvas.create_text(1150, 250, text="2", tag="white_num", font=('', 140), fill='white')
-        self.black_result = self.canvas.create_text( 200, 400, text="", tag="black_result", font=('', 32), fill='black')
-        self.white_result = self.canvas.create_text(1150, 400, text="", tag="white_result", font=('', 32), fill='white')
-        self.black_turn = self.canvas.create_text( 200, 500, text="", tag="black_turn", font=('', 32), fill='orange')
-        self.white_turn = self.canvas.create_text(1150, 500, text="", tag="white_turn", font=('', 32), fill='orange')
-        self.black_move = self.canvas.create_text( 200, 600, text="", tag="black_move", font=('', 32), fill='black')
-        self.white_move = self.canvas.create_text(1150, 600, text="", tag="white_move", font=('', 32), fill='white')
+        self.black_name = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            NAME_Y_OFFSET,
+            text="●" + DEFAULT_BLACK_PLAYER,
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
 
-        self.start = self.canvas.create_text(680, 620, text="クリックでスタート", tag="start", font=('', 32), fill='yellow')
+        self.white_name = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            NAME_Y_OFFSET,
+            text="●" + DEFAULT_WHITE_PLAYER,
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
+
+        self.black_num = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            NUM_Y_OFFSET,
+            text=DEFAULT_BLACK_NUM,
+            font=('', SCORE_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+        self.white_num = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            NUM_Y_OFFSET,
+            text=DEFAULT_WHITE_NUM,
+            font=('', SCORE_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
+
+        self.black_result = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            RESULT_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+        self.white_result = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            RESULT_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
+
+        self.black_turn = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            TURN_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_ORANGE
+        )
+
+        self.white_turn = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            TURN_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_ORANGE
+        )
+
+        self.black_move = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            MOVE_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+        self.white_move = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            MOVE_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
+
+        self.start = self.canvas.create_text(
+            START_X_OFFSET,
+            START_Y_OFFSET,
+            text="クリックでスタート",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_YELLOW
+        )
 
         self.size = size
+        self.black_player = DEFAULT_BLACK_PLAYER
+        self.white_player = DEFAULT_WHITE_PLAYER
         self.square_x_ini = 0
         self.square_y_ini = 0
         self.square_w = 0
@@ -58,12 +163,12 @@ class Window(tk.Frame):
         """
         サイズ計算
         """
-        self.square_y_ini = 40
-        self.square_w = (WINDOW_HEIGHT - self.square_y_ini - 120) // self.size
+        self.square_y_ini = SQUARE_Y_OFFSET
+        self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // self.size
         self.square_x_ini = WINDOW_WIDTH // 2 - (self.square_w * self.size) // 2
 
-        self.oval_w1 = int(self.square_w * 0.8)
-        self.oval_w2 = int(self.square_w // 10)
+        self.oval_w1 = int(self.square_w * OVAL_SIZE_RATIO)
+        self.oval_w2 = int(self.square_w // TURNOVAL_SIZE_DIVISOR)
 
     def put_init_stones(self):
         """
@@ -103,7 +208,7 @@ class Window(tk.Frame):
         x2 = x + self.oval_w1/2
         y2 = y + self.oval_w1/2
 
-        black_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill='black', outline='black')
+        black_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=COLOR_BLACK, outline=COLOR_BLACK)
 
     def put_white(self, index_x, index_y):
         """
@@ -118,7 +223,7 @@ class Window(tk.Frame):
         x2 = x + self.oval_w1/2
         y2 = y + self.oval_w1/2
 
-        white_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill='white', outline='white')
+        white_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=COLOR_WHITE, outline=COLOR_WHITE)
 
     def put_turnblack(self, index_x, index_y):
         """
@@ -134,11 +239,11 @@ class Window(tk.Frame):
         x2 = x
         y2 = y + self.oval_w1/2
 
-        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill='white', outline='white')
+        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=COLOR_WHITE, outline=COLOR_WHITE)
 
         x1 = x
         x2 = x + self.oval_w2
-        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill='black', outline='black')
+        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_BLACK, outline=COLOR_BLACK)
 
     def put_turnwhite(self, index_x, index_y):
         """
@@ -154,11 +259,11 @@ class Window(tk.Frame):
         x2 = x
         y2 = y + self.oval_w1/2
 
-        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill='black', outline='black')
+        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=COLOR_BLACK, outline=COLOR_BLACK)
 
         x1 = x
         x2 = x + self.oval_w2
-        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill='white', outline='white')
+        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_WHITE, outline=COLOR_WHITE)
 
     def remove_stones(self):
         """
@@ -229,12 +334,12 @@ class Window(tk.Frame):
                 x2 = x1 + self.square_w
 
                 if not x:
-                    self.canvas.create_text(x1-15, (y1+y2)//2, fill='white', text=label_y, tag='header_col', font=('', 20))
+                    self.canvas.create_text(x1-SQUARE_HEADER_OFFSET, (y1+y2)//2, fill=COLOR_WHITE, text=label_y, tag='header_col', font=('', SQUARE_HEADER_FONT_SIZE))
 
                 if not y:
-                    self.canvas.create_text((x1+x2)//2, y1-15, fill='white', text=label_x, tag='header_row', font=('', 20))
+                    self.canvas.create_text((x1+x2)//2, y1-SQUARE_HEADER_OFFSET, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
 
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill='green', outline='white', tag='square_' + label_x + label_y)
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
 
                 x1 = x2
             y1 = y2
@@ -249,7 +354,6 @@ class Window(tk.Frame):
         for y in range(self.size):
             for x in range(self.size):
                 label = self.get_label('square', x, y)
-                print(label)
                 self.canvas.delete(label)
 
     def get_label(self, name, x, y):
@@ -317,6 +421,7 @@ class Menu(tk.Menu):
         """
         def change_player():
             master.canvas.itemconfigure(master.black_name, text="●" + player)
+            master.black_player = player
 
         return change_player
 
@@ -326,6 +431,7 @@ class Menu(tk.Menu):
         """
         def change_player():
             master.canvas.itemconfigure(master.white_name, text="●" + player)
+            master.white_player = player
 
         return change_player
 
@@ -339,23 +445,18 @@ if __name__ == '__main__':
     q = queue.Queue()
 
     def demo(window):
-        global event, q
-
-        print("board size", window.size)
-
         while True:
+            # GUIメニューでサイズ変更時
             if event.is_set():
-                window.remove_stones()
-                window.remove_squares()
+                window.remove_stones()    # 石を消す
+                window.remove_squares()   # マスを消す
+                window.size = q.get()     # 変更後のサイズをセット
+                window.calc_size()        # 変更後の石やマスのサイズを計算
+                window.draw_squares()     # マスを描く
+                window.put_init_stones()  # 初期位置に石を置く
+                event.clear()             # イベントをクリア
 
-                window.size = q.get()
-                print("board size changed", window.size)
-                window.calc_size()
-                window.draw_squares()
-                window.put_init_stones()
-                event.clear()
-
-                window.menubar.entryconfigure('Size', state='normal')
+                window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
 
             center = window.size // 2
 
@@ -405,7 +506,7 @@ if __name__ == '__main__':
     app.withdraw()  # 表示が整うまで隠す
 
     window = Window(master=app, event=event, queue=q)
-    window.master.title('othello')                      # タイトル
+    window.master.title(WINDOW_TITLE)                   # タイトル
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
     game = threading.Thread(target=demo, args=([window]))
