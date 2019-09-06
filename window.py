@@ -25,6 +25,7 @@ COLOR_BLACK = 'black'
 COLOR_WHITE = 'white'
 COLOR_ORANGE = 'orange'
 COLOR_YELLOW = 'yellow'
+COLOR_RED = 'red'
 TEXT_FONT_SIZE = 32
 SCORE_FONT_SIZE = 140
 SQUARE_HEADER_FONT_SIZE = 20
@@ -143,6 +144,10 @@ class Window(tk.Frame):
             fill=COLOR_YELLOW
         )
 
+        self.canvas.tag_bind(self.start, '<Enter>', self.enter_start)
+        self.canvas.tag_bind(self.start, '<Leave>', self.leave_start)
+        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self.on_start)
+
         self.size = size
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
@@ -158,6 +163,24 @@ class Window(tk.Frame):
 
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
+
+    def enter_start(self, event):
+        """
+        スタートボタンにカーソルが合った時
+        """
+        self.canvas.itemconfigure(self.start, fill=COLOR_RED)
+
+    def leave_start(self, event):
+        """
+        スタートボタンからカーソルが離れた時
+        """
+        self.canvas.itemconfigure(self.start, fill=COLOR_YELLOW)
+
+    def on_start(self, event):
+        """
+        スタートボタンを押した場合
+        """
+        print("start", self.size, self.black_player, self.white_player)
 
     def calc_size(self):
         """
@@ -448,6 +471,7 @@ if __name__ == '__main__':
         while True:
             # GUIメニューでサイズ変更時
             if event.is_set():
+                window.canvas.config(state='disable')
                 window.remove_stones()    # 石を消す
                 window.remove_squares()   # マスを消す
                 window.size = q.get()     # 変更後のサイズをセット
@@ -456,6 +480,7 @@ if __name__ == '__main__':
                 window.put_init_stones()  # 初期位置に石を置く
                 event.clear()             # イベントをクリア
 
+                window.canvas.config(state='normal')
                 window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
 
             center = window.size // 2
