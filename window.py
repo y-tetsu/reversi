@@ -4,6 +4,7 @@ GUIウィンドウ
 """
 
 import tkinter as tk
+import board
 from board import Board
 
 
@@ -11,37 +12,29 @@ WINDOW_WIDTH = 1360
 WINDOW_HEIGHT = 680
 
 
+
 class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, size=8, master=None):
+    def __init__(self, size=8, master=None, event=None, queue=None):
         super().__init__(master)
         self.pack()
+
+        self.event = event
+        self.queue = queue
 
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg='green')
         self.canvas.grid(row=0, column=1)
 
         self.black_name = self.canvas.create_text( 200, 80, text="●User1", tag="black_name", font=('', 32), fill='black')
         self.white_name = self.canvas.create_text(1150, 80, text="●User2", tag="white_name", font=('', 32), fill='white')
-
-        #self.black_num = self.canvas.create_text( 200, 250, text="676", tag="black_num", font=('', 140), fill='black')
-        #self.white_num = self.canvas.create_text(1150, 250, text="676", tag="white_num", font=('', 140), fill='white')
         self.black_num = self.canvas.create_text( 200, 250, text="2", tag="black_num", font=('', 140), fill='black')
         self.white_num = self.canvas.create_text(1150, 250, text="2", tag="white_num", font=('', 140), fill='white')
-
-        #self.black_result = self.canvas.create_text( 200, 400, text="勝ち", tag="black_result", font=('', 32), fill='black')
-        #self.white_result = self.canvas.create_text(1150, 400, text="反則", tag="white_result", font=('', 32), fill='white')
         self.black_result = self.canvas.create_text( 200, 400, text="", tag="black_result", font=('', 32), fill='black')
         self.white_result = self.canvas.create_text(1150, 400, text="", tag="white_result", font=('', 32), fill='white')
-
-        #self.black_turn = self.canvas.create_text( 200, 500, text="手番です", tag="black_turn", font=('', 32), fill='orange')
-        #self.white_turn = self.canvas.create_text(1150, 500, text="手番です", tag="white_turn", font=('', 32), fill='orange')
         self.black_turn = self.canvas.create_text( 200, 500, text="", tag="black_turn", font=('', 32), fill='orange')
         self.white_turn = self.canvas.create_text(1150, 500, text="", tag="white_turn", font=('', 32), fill='orange')
-
-        #self.black_move = self.canvas.create_text( 200, 600, text="(z, 26)に置きました", tag="black_move", font=('', 32), fill='black')
-        #self.white_move = self.canvas.create_text(1150, 600, text="(z, 26)に置きました", tag="white_move", font=('', 32), fill='white')
         self.black_move = self.canvas.create_text( 200, 600, text="", tag="black_move", font=('', 32), fill='black')
         self.white_move = self.canvas.create_text(1150, 600, text="", tag="white_move", font=('', 32), fill='white')
 
@@ -54,13 +47,24 @@ class Window(tk.Frame):
         self.oval_w1 = 0
         self.oval_w2 = 0
 
-        self.draw_squares(size)
+        self.calc_size()
+        self.draw_squares()
         self.put_init_stones()
 
-    def update_board(self, board):
+        self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
+        master.configure(menu=self.menubar)
+
+    def calc_size(self):
         """
-        ボードの状態を反映する
+        サイズ計算
         """
+        self.square_y_ini = 40
+        self.square_w = (WINDOW_HEIGHT - self.square_y_ini - 120) // self.size
+        self.square_x_ini = WINDOW_WIDTH // 2 - (self.square_w * self.size) // 2
+
+        self.oval_w1 = int(self.square_w * 0.8)
+        self.oval_w2 = int(self.square_w // 10)
+
     def put_init_stones(self):
         """
         石を初期位置に置く
@@ -70,6 +74,12 @@ class Window(tk.Frame):
         self.put_stone(Board.BLACK, center-1, center)
         self.put_stone(Board.WHITE, center-1, center-1)
         self.put_stone(Board.WHITE, center, center)
+
+    def update_board(self, board):
+        """
+        ボードの状態を反映する
+        """
+        pass
 
     def put_stone(self, stone, index_x, index_y):
         """
@@ -203,19 +213,17 @@ class Window(tk.Frame):
 
         return x_ini + w * index_x + w // 2, y_ini + w * index_y + w // 2
 
-    def draw_squares(self, size):
+    def draw_squares(self):
         """
         オセロのマスを描く
         """
-        self.size = size
-        self.calc_size()
 
         y1 = self.square_y_ini
 
-        for y in range(size):
+        for y in range(self.size):
             x1 = self.square_x_ini
             y2 = y1 + self.square_w
-            for x in range(size):
+            for x in range(self.size):
                 label_x = chr(x + 97)
                 label_y = str(y + 1)
                 x2 = x1 + self.square_w
@@ -230,17 +238,6 @@ class Window(tk.Frame):
 
                 x1 = x2
             y1 = y2
-
-    def calc_size(self):
-        """
-        サイズ計算
-        """
-        self.square_y_ini = 40
-        self.square_w = (WINDOW_HEIGHT - self.square_y_ini - 120) // self.size
-        self.square_x_ini = WINDOW_WIDTH // 2 - (self.square_w * self.size) // 2
-
-        self.oval_w1 = int(self.square_w * 0.8)
-        self.oval_w2 = int(self.square_w // 10)
 
     def remove_squares(self):
         """
@@ -266,19 +263,21 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, master=None):
+    def __init__(self, master, event, queue):
         super().__init__(master)
         self.create_size_menu()
         self.create_black_menu()
         self.create_white_menu()
+        self.event = event
+        self.queue = queue
 
     def create_size_menu(self):
         """
         ボードのサイズ
         """
         menu_size = tk.Menu(self)
-        for i in range(4, 27, 2):
-            menu_size.add_command(label=str(i), command=change_board_size(i, self.master))
+        for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
+            menu_size.add_command(label=str(i), command=self.change_board_size(i))
         self.add_cascade(menu=menu_size, label='Size')
 
     def create_black_menu(self):
@@ -287,7 +286,7 @@ class Menu(tk.Menu):
         """
         menu_black = tk.Menu(self)
         for player in ['User1', 'Random', 'Greedy', 'Unselfish']:
-            menu_black.add_command(label=player, command=change_black_player(player, self.master))
+            menu_black.add_command(label=player, command=self.change_black_player(player, self.master))
         self.add_cascade(menu=menu_black, label='Black')
 
     def create_white_menu(self):
@@ -295,163 +294,119 @@ class Menu(tk.Menu):
         白プレイヤー
         """
         menu_white = tk.Menu(self)
-        for player in ['User1', 'Random', 'Greedy', 'Unselfish']:
-            menu_white.add_command(label=player, command=change_white_player(player, self.master))
+        for player in ['User2', 'Random', 'Greedy', 'Unselfish']:
+            menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
         self.add_cascade(menu=menu_white, label='White')
 
+    def change_board_size(self, size):
+        """
+        ボードサイズの変更
+        """
+        def change_board_size_event():
+            self.entryconfigure('Size', state='disable')
 
-def change_black_player(player, master):
-    """
-    黒プレーヤーを変更
-    """
-    def change_player():
-        master.canvas.delete('black_name')
-        master.black_name = master.canvas.create_text( 200, 80, text="●" + player, tag="black_name", font=('', 32), fill='black')
-    return change_player
+            if self.queue.empty():
+                self.event.set()
+                self.queue.put(size)
 
+        return change_board_size_event
 
-def change_white_player(player, master):
-    """
-    白プレーヤーを変更
-    """
-    def change_player():
-        master.canvas.delete('white_name')
-        master.white_name = master.canvas.create_text(1150, 80, text="●" + player, tag="white_name", font=('', 32), fill='white')
-    return change_player
+    def change_black_player(self, player, master):
+        """
+        黒プレーヤーを変更
+        """
+        def change_player():
+            master.canvas.itemconfigure(master.black_name, text="●" + player)
 
+        return change_player
 
-def change_board_size(size, master):
-    """
-    ボードサイズの変更
-    """
-    def redraw_board_square():
-        with threading.Lock():
-            master.remove_stones()
-            master.remove_squares()
-            master.draw_squares(size)
-            master.put_init_stones()
+    def change_white_player(self, player, master):
+        """
+        白プレーヤーを変更
+        """
+        def change_player():
+            master.canvas.itemconfigure(master.white_name, text="●" + player)
 
-        time.sleep(1)
-
-    return redraw_board_square
+        return change_player
 
 
 if __name__ == '__main__':
     import time
     import threading
+    import queue
+
+    event = threading.Event()
+    q = queue.Queue()
 
     def demo(window):
-        pre_center = window.size // 2
+        global event, q
+
+        print("board size", window.size)
 
         while True:
-            print("board size", window.size)
+            if event.is_set():
+                window.remove_stones()
+                window.remove_squares()
+
+                window.size = q.get()
+                print("board size changed", window.size)
+                window.calc_size()
+                window.draw_squares()
+                window.put_init_stones()
+                event.clear()
+
+                window.menubar.entryconfigure('Size', state='normal')
 
             center = window.size // 2
-            if center != pre_center:
-                pre_center = center
-                time.sleep(0.1)
-                window.remove_stones()
-                window.put_init_stones()
 
             for x, y in [(center, center-1), (center-1, center)]:
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_black(x, y)
                 window.put_turnblack(x, y)
 
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_turnblack(x, y)
                 window.put_white(x, y)
 
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_white(x, y)
                 window.put_turnwhite(x, y)
 
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_turnwhite(x, y)
                 window.put_black(x, y)
 
             for x, y in [(center-1, center-1), (center, center)]:
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_white(x, y)
                 window.put_turnwhite(x, y)
 
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_turnwhite(x, y)
                 window.put_black(x, y)
 
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_black(x, y)
                 window.put_turnblack(x, y)
 
                 center = window.size // 2
-                if center != pre_center:
-                    pre_center = center
-                    time.sleep(0.1)
-                    window.remove_stones()
-                    window.put_init_stones()
-                    break
                 time.sleep(0.1)
                 window.remove_turnblack(x, y)
                 window.put_white(x, y)
 
-            pre_center = center
-
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
 
-    window = Window(master=app)
+    window = Window(master=app, event=event, queue=q)
     window.master.title('othello')                      # タイトル
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
-    window.master['menu'] = Menu(window)                # メニューをセット
 
     game = threading.Thread(target=demo, args=([window]))
     game.daemon = True
