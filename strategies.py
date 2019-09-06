@@ -46,6 +46,19 @@ class ConsoleUserInput(AbstractStrategy):
         return self.digit.match(string) is not None
 
 
+class WindowUserInput(AbstractStrategy):
+    """
+    ウィンドウからのユーザ入力
+    """
+    def next_move(self, stone, board):
+        """
+        次の一手
+        """
+        moves = list(board.get_possibles(stone).keys())
+
+        return random.choice(moves)
+
+
 class Random(AbstractStrategy):
     """
     ランダム

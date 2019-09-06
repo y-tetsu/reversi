@@ -6,6 +6,7 @@ GUIウィンドウ
 import tkinter as tk
 import board
 from board import Board
+import strategies
 
 
 WINDOW_TITLE = 'othello'
@@ -41,6 +42,20 @@ DEFAULT_WHITE_PLAYER = 'User2'
 DEFAULT_BLACK_NUM = "2"
 DEFAULT_WHITE_NUM = "2"
 
+BLACK_PLAYERS = {
+    'User1': strategies.WindowUserInput(),
+    'Random': strategies.Random(),
+    'Greedy': strategies.Greedy(),
+    'Unselfish': strategies.Unselfish(),
+}
+
+WHITE_PLAYERS = {
+    'User2': strategies.WindowUserInput(),
+    'Random': strategies.Random(),
+    'Greedy': strategies.Greedy(),
+    'Unselfish': strategies.Unselfish(),
+}
+
 
 class Window(tk.Frame):
     """
@@ -49,6 +64,8 @@ class Window(tk.Frame):
     def __init__(self, size=8, master=None, event=None, queue=None):
         super().__init__(master)
         self.pack()
+
+        self.state = 'DEMO'
 
         self.event = event  # GUIからのイベント発生通知
         self.queue = queue  # GUIからのデータ受け渡し
@@ -180,7 +197,7 @@ class Window(tk.Frame):
         """
         スタートボタンを押した場合
         """
-        print("start", self.size, self.black_player, self.white_player)
+        self.state = 'GAME_START'
 
     def calc_size(self):
         """
@@ -412,7 +429,7 @@ class Menu(tk.Menu):
         黒プレイヤー
         """
         menu_black = tk.Menu(self)
-        for player in ['User1', 'Random', 'Greedy', 'Unselfish']:
+        for player in BLACK_PLAYERS.keys():
             menu_black.add_command(label=player, command=self.change_black_player(player, self.master))
         self.add_cascade(menu=menu_black, label='Black')
 
@@ -421,7 +438,7 @@ class Menu(tk.Menu):
         白プレイヤー
         """
         menu_white = tk.Menu(self)
-        for player in ['User2', 'Random', 'Greedy', 'Unselfish']:
+        for player in WHITE_PLAYERS.keys():
             menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
         self.add_cascade(menu=menu_white, label='White')
 
@@ -469,63 +486,69 @@ if __name__ == '__main__':
 
     def demo(window):
         while True:
-            # GUIメニューでサイズ変更時
-            if event.is_set():
-                window.canvas.config(state='disable')
-                window.remove_stones()    # 石を消す
-                window.remove_squares()   # マスを消す
-                window.size = q.get()     # 変更後のサイズをセット
-                window.calc_size()        # 変更後の石やマスのサイズを計算
-                window.draw_squares()     # マスを描く
-                window.put_init_stones()  # 初期位置に石を置く
-                event.clear()             # イベントをクリア
+            if window.state == 'DEMO':
+                # GUIメニューでサイズ変更時
+                if event.is_set():
+                    window.canvas.config(state='disable')
+                    window.remove_stones()    # 石を消す
+                    window.remove_squares()   # マスを消す
+                    window.size = q.get()     # 変更後のサイズをセット
+                    window.calc_size()        # 変更後の石やマスのサイズを計算
+                    window.draw_squares()     # マスを描く
+                    window.put_init_stones()  # 初期位置に石を置く
+                    event.clear()             # イベントをクリア
 
-                window.canvas.config(state='normal')
-                window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
-
-            center = window.size // 2
-
-            for x, y in [(center, center-1), (center-1, center)]:
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_black(x, y)
-                window.put_turnblack(x, y)
+                    window.canvas.config(state='normal')
+                    window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
 
                 center = window.size // 2
-                time.sleep(0.1)
-                window.remove_turnblack(x, y)
-                window.put_white(x, y)
 
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_white(x, y)
-                window.put_turnwhite(x, y)
+                for x, y in [(center, center-1), (center-1, center)]:
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_black(x, y)
+                    window.put_turnblack(x, y)
 
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_turnwhite(x, y)
-                window.put_black(x, y)
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_turnblack(x, y)
+                    window.put_white(x, y)
 
-            for x, y in [(center-1, center-1), (center, center)]:
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_white(x, y)
-                window.put_turnwhite(x, y)
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_white(x, y)
+                    window.put_turnwhite(x, y)
 
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_turnwhite(x, y)
-                window.put_black(x, y)
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_turnwhite(x, y)
+                    window.put_black(x, y)
 
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_black(x, y)
-                window.put_turnblack(x, y)
+                for x, y in [(center-1, center-1), (center, center)]:
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_white(x, y)
+                    window.put_turnwhite(x, y)
 
-                center = window.size // 2
-                time.sleep(0.1)
-                window.remove_turnblack(x, y)
-                window.put_white(x, y)
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_turnwhite(x, y)
+                    window.put_black(x, y)
+
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_black(x, y)
+                    window.put_turnblack(x, y)
+
+                    center = window.size // 2
+                    time.sleep(0.1)
+                    window.remove_turnblack(x, y)
+                    window.put_white(x, y)
+
+            if window.state == 'GAME_START':
+                break
+
+        print("start", window.size, window.black_player, window.white_player)
 
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
