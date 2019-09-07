@@ -47,10 +47,12 @@ class Main:
 
     @property
     def state(self):
-        return self.state
+        return self._state
 
     @state.setter
     def state(self, state):
+        self._state = state
+
         if state == Main.START:
             self.game = self.__start
         elif state == Main.MENU:
