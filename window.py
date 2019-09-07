@@ -40,6 +40,10 @@ SQUARE_HEADER_OFFSET = 15
 WINDOW_STATE_DEMO = 'DEMO'
 WINDOW_STATE_GAME_START = 'GAME_START'
 
+MENU_SIZE = 'Size'
+MENU_BLACK = 'Black'
+MENU_WHITE = 'White'
+
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'User2'
 DEFAULT_BLACK_NUM = "2"
@@ -265,6 +269,11 @@ class Window(tk.Frame):
         スタートボタンを押した場合
         """
         self.canvas.itemconfigure(self.start, text='')
+
+        self.menubar.entryconfigure(MENU_SIZE, state='disable')
+        self.menubar.entryconfigure(MENU_BLACK, state='disable')
+        self.menubar.entryconfigure(MENU_WHITE, state='disable')
+
         self.state = WINDOW_STATE_GAME_START
 
     def init_board_on_canvas(self):
@@ -505,7 +514,7 @@ class Menu(tk.Menu):
         menu_size = tk.Menu(self)
         for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
             menu_size.add_command(label=str(i), command=self.change_board_size(i))
-        self.add_cascade(menu=menu_size, label='Size')
+        self.add_cascade(menu=menu_size, label=MENU_SIZE)
 
     def create_black_menu(self):
         """
@@ -514,7 +523,7 @@ class Menu(tk.Menu):
         menu_black = tk.Menu(self)
         for player in BLACK_PLAYERS.keys():
             menu_black.add_command(label=player, command=self.change_black_player(player, self.master))
-        self.add_cascade(menu=menu_black, label='Black')
+        self.add_cascade(menu=menu_black, label=MENU_BLACK)
 
     def create_white_menu(self):
         """
@@ -523,14 +532,14 @@ class Menu(tk.Menu):
         menu_white = tk.Menu(self)
         for player in WHITE_PLAYERS.keys():
             menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
-        self.add_cascade(menu=menu_white, label='White')
+        self.add_cascade(menu=menu_white, label=MENU_WHITE)
 
     def change_board_size(self, size):
         """
         ボードサイズの変更
         """
         def change_board_size_event():
-            self.entryconfigure('Size', state='disable')
+            self.entryconfigure(MENU_SIZE, state='disable')
 
             if self.queue.empty():
                 self.event.set()
@@ -582,7 +591,7 @@ if __name__ == '__main__':
                     event.clear()                   # イベントをクリア
 
                     window.canvas.config(state='normal')
-                    window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
+                    window.menubar.entryconfigure(MENU_SIZE, state='normal')  # サイズメニューを有効にする
 
                 center = window.size // 2
 
