@@ -41,6 +41,7 @@ SQUARE_BOTTOM_MARGIN = 120
 OVAL_SIZE_RATIO = 0.8
 TURNOVAL_SIZE_DIVISOR = 10
 
+WINDOW_STATE_INIT = 'INIT'
 WINDOW_STATE_DEMO = 'DEMO'
 WINDOW_STATE_GAME_START = 'GAME_START'
 WINDOW_STATE_GAME_END = 'GAME_END'
@@ -78,37 +79,51 @@ class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, size=8, master=None, event=None, queue=None):
+    def __init__(self, size=8, master=None, resize_event=None, queue=None):
         super().__init__(master)
         self.pack()
 
+        # 引数の取得
         self.size = size
-        self.event = event  # GUIからのイベント発生通知
-        self.queue = queue  # GUIからのデータ受け渡し
+        self.resize_event = resize_event  # ウィンドウからのイベント発生通知
+        self.queue = queue  # ウィンドウからのデータ受け渡し
 
-        self._create_game_screen()
-        self._create_menu(master)
-
-        self.state = WINDOW_STATE_DEMO
+        # 初期値設定
+        self.state = WINDOW_STATE_INIT
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
 
-    def _create_game_screen(self):
-        """
-        ゲーム画面を配置
-        """
-        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
-        self.canvas.grid(row=0, column=0)
-
-        self._create_text_on_canvas()
-        self.init_board_on_canvas()
+        # ウィンドウ初期化
+        self._create_menu(master)
+        self._create_game_screen()
 
     def _create_menu(self, master):
         """
         メニューを配置
         """
-        self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
+        self.menubar = Menu(self, self.resize_event, self.queue)
         master.configure(menu=self.menubar)
+
+    def _create_game_screen(self):
+        """
+        ゲーム画面を配置
+        """
+        # キャンバスを生成
+        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
+        self.canvas.grid(row=0, column=0)
+
+    def init_game_screen(self):
+        """
+        ゲーム画面の初期化
+        """
+        # 全オブジェクト削除
+        self.canvas.delete('all')
+
+        # テキストを配置
+        self._create_text_on_canvas()
+
+        # ボードを配置
+        self.init_board_on_canvas()
 
     def _create_text_on_canvas(self):
         """
@@ -133,7 +148,7 @@ class Window(tk.Frame):
         self.black_name = self.canvas.create_text(
             OFFSET_BLACK_X,
             OFFSET_NAME_Y,
-            text=STONE_MARK + DEFAULT_BLACK_PLAYER,
+            text=STONE_MARK + self.black_player,
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_BLACK
         )
@@ -145,7 +160,7 @@ class Window(tk.Frame):
         self.white_name = self.canvas.create_text(
             OFFSET_WHITE_X,
             OFFSET_NAME_Y,
-            text=STONE_MARK + DEFAULT_WHITE_PLAYER,
+            text=STONE_MARK + self.white_player,
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_WHITE
         )
@@ -279,10 +294,7 @@ class Window(tk.Frame):
         スタートボタンを押した場合
         """
         self.canvas.itemconfigure(self.start, text='')
-
-        self.menubar.entryconfigure(MENU_SIZE, state='disable')
-        self.menubar.entryconfigure(MENU_BLACK, state='disable')
-        self.menubar.entryconfigure(MENU_WHITE, state='disable')
+        self.menubar.disable_menu()
 
         self.state = WINDOW_STATE_GAME_START
 
@@ -551,29 +563,65 @@ class Window(tk.Frame):
             self.put_white(x, y)
         time.sleep(TURN_STONE_WAIT)
 
+    def disable_canvas(self):
+        """
+        キャンバスを無効化
+        """
+        self.canvas.config(state='disable')
+
+    def enable_canvas(self):
+        """
+        キャンバスを有効化
+        """
+        self.canvas.config(state='normal')
+
+    def disable_start(self):
+        """
+        スタートを無効化
+        """
+        self.canvas.itemconfigure(self.start, text='', state='disable')
+
+    def enable_start(self):
+        """
+        スタートを有効化
+        """
+        self.canvas.itemconfigure(self.start, text=START_TEXT, state='normal')
+
+    def enable_window(self):
+        """
+        ウィンドウを有効化
+        """
+        self.menubar.enable_menu()
+        self.enable_canvas()
+        self.enable_start()
+
 
 class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, master, event, queue):
+    def __init__(self, master, resize_event, queue):
         super().__init__(master)
-        self.create_size_menu()
-        self.create_black_menu()
-        self.create_white_menu()
-        self.event = event
+
+        # 引数取得
+        self.resize_event = resize_event
         self.queue = queue
 
-    def create_size_menu(self):
+        # メニュー初期化
+        self._create_size_menu()
+        self._create_black_menu()
+        self._create_white_menu()
+
+    def _create_size_menu(self):
         """
         ボードのサイズ
         """
         menu_size = tk.Menu(self)
         for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
-            menu_size.add_command(label=str(i), command=self.change_board_size(i, self.master))
+            menu_size.add_command(label=str(i), command=self._change_board_size(i, self.master))
         self.add_cascade(menu=menu_size, label=MENU_SIZE)
 
-    def create_black_menu(self):
+    def _create_black_menu(self):
         """
         黒プレイヤー
         """
@@ -582,7 +630,7 @@ class Menu(tk.Menu):
             menu_black.add_command(label=player, command=self.change_black_player(player, self.master))
         self.add_cascade(menu=menu_black, label=MENU_BLACK)
 
-    def create_white_menu(self):
+    def _create_white_menu(self):
         """
         白プレイヤー
         """
@@ -591,15 +639,22 @@ class Menu(tk.Menu):
             menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
         self.add_cascade(menu=menu_white, label=MENU_WHITE)
 
-    def change_board_size(self, size, master):
+    def _change_board_size(self, size, master):
         """
         ボードサイズの変更
         """
         def change_board_size_event():
             if self.queue.empty():
-                master.state = WINDOW_STATE_DEMO
-                self.entryconfigure(MENU_SIZE, state='disable')
-                self.event.set()
+                # ウィンドウ無効化
+                self.master.disable_start()
+                self.master.disable_canvas()
+                self.disable_menu()
+
+                # 状態変更
+                master.state = WINDOW_STATE_INIT
+
+                # 設定変更を通知
+                self.resize_event.set()
                 self.queue.put(size)
 
         return change_board_size_event
@@ -609,9 +664,20 @@ class Menu(tk.Menu):
         黒プレーヤーを変更
         """
         def change_player():
-            master.state = WINDOW_STATE_DEMO
-            master.canvas.itemconfigure(master.black_name, text=STONE_MARK + player)
-            master.black_player = player
+            if self.queue.empty():
+                # ウィンドウ無効化
+                self.master.disable_start()
+                self.master.disable_canvas()
+                self.disable_menu()
+
+                # 設定変更
+                master.black_player = player
+                master.canvas.itemconfigure(master.black_name, text=STONE_MARK + player)
+                master.state = WINDOW_STATE_INIT
+
+                # 設定変更を通知
+                self.resize_event.set()
+                self.queue.put(master.size)
 
         return change_player
 
@@ -620,11 +686,38 @@ class Menu(tk.Menu):
         白プレーヤーを変更
         """
         def change_player():
-            master.state = WINDOW_STATE_DEMO
-            master.canvas.itemconfigure(master.white_name, text=STONE_MARK + player)
-            master.white_player = player
+            if self.queue.empty():
+                # ウィンドウ無効化
+                self.master.disable_start()
+                self.master.disable_canvas()
+                self.disable_menu()
+
+                # 設定変更
+                master.white_player = player
+                master.canvas.itemconfigure(master.white_name, text=STONE_MARK + player)
+                master.state = WINDOW_STATE_INIT
+
+                # 設定変更を通知
+                self.resize_event.set()
+                self.queue.put(master.size)
 
         return change_player
+
+    def disable_menu(self):
+        """
+        メニューを無効化
+        """
+        self.entryconfigure(MENU_SIZE, state='disable')
+        self.entryconfigure(MENU_BLACK, state='disable')
+        self.entryconfigure(MENU_WHITE, state='disable')
+
+    def enable_menu(self):
+        """
+        メニューを有効化
+        """
+        self.entryconfigure(MENU_SIZE, state='normal')
+        self.entryconfigure(MENU_BLACK, state='normal')
+        self.entryconfigure(MENU_WHITE, state='normal')
 
 
 if __name__ == '__main__':
@@ -633,21 +726,14 @@ if __name__ == '__main__':
     import queue
     from player import Player
 
-    event = threading.Event()
+    resize_event = threading.Event()
     q = queue.Queue()
 
     def resize_board(window):
-        if event.is_set():
-            window.canvas.config(state='disable')
-
-            window.clear_board_on_canvas()  # 石とマスを消す
-            window.size = q.get()           # 変更後のサイズをセット
-            window.init_board_on_canvas()   # 石とマスの初期配置
-
-            event.clear()                   # イベントをクリア
-
-            window.canvas.config(state='normal')
-            window.menubar.entryconfigure(MENU_SIZE, state='normal')  # サイズメニューを有効にする
+        if resize_event.is_set():
+            window.size = q.get()                  # 変更後のサイズをセット
+            window.state = WINDOW_STATE_INIT
+            resize_event.clear()                          # イベントをクリア
 
             return True
 
@@ -655,68 +741,87 @@ if __name__ == '__main__':
 
     def test_play(window):
         while True:
+            if window.state == WINDOW_STATE_INIT:
+                window.init_game_screen()
+                window.enable_window()
+                window.state = WINDOW_STATE_DEMO
+
             if window.state == WINDOW_STATE_DEMO:
+                resize_flag = False
                 center = window.size // 2
 
                 for x, y in [(center, center-1), (center-1, center)]:
                     if resize_board(window):
+                        resize_flag = True
                         break
+
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_black(x, y)
                     window.put_turnblack(x, y)
 
                     if resize_board(window):
+                        resize_flag = True
                         break
+
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_turnblack(x, y)
                     window.put_white(x, y)
 
                     if resize_board(window):
+                        resize_flag = True
                         break
+
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_white(x, y)
                     window.put_turnwhite(x, y)
 
                     if resize_board(window):
+                        resize_flag = True
                         break
+
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_turnwhite(x, y)
                     window.put_black(x, y)
 
-                center = window.size // 2
-
-                for x, y in [(center-1, center-1), (center, center)]:
-                    if resize_board(window):
-                        break
+                if not resize_flag:
                     center = window.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.remove_white(x, y)
-                    window.put_turnwhite(x, y)
 
-                    if resize_board(window):
-                        break
-                    center = window.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.remove_turnwhite(x, y)
-                    window.put_black(x, y)
+                    for x, y in [(center-1, center-1), (center, center)]:
+                        if resize_board(window):
+                            break
 
-                    if resize_board(window):
-                        break
-                    center = window.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.remove_black(x, y)
-                    window.put_turnblack(x, y)
+                        center = window.size // 2
+                        time.sleep(TURN_STONE_WAIT)
+                        window.remove_white(x, y)
+                        window.put_turnwhite(x, y)
 
-                    if resize_board(window):
-                        break
-                    center = window.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.remove_turnblack(x, y)
-                    window.put_white(x, y)
+                        if resize_board(window):
+                            break
+
+                        center = window.size // 2
+                        time.sleep(TURN_STONE_WAIT)
+                        window.remove_turnwhite(x, y)
+                        window.put_black(x, y)
+
+                        if resize_board(window):
+                            break
+
+                        center = window.size // 2
+                        time.sleep(TURN_STONE_WAIT)
+                        window.remove_black(x, y)
+                        window.put_turnblack(x, y)
+
+                        if resize_board(window):
+                            break
+
+                        center = window.size // 2
+                        time.sleep(TURN_STONE_WAIT)
+                        window.remove_turnblack(x, y)
+                        window.put_white(x, y)
 
             if window.state == WINDOW_STATE_GAME_START:
                 window.clear_board_on_canvas()  # 石とマスを消す
@@ -757,10 +862,7 @@ if __name__ == '__main__':
 
                     if not playable:
                         window.state = WINDOW_STATE_GAME_END
-                        window.canvas.itemconfigure(window.start, text=START_TEXT)
-                        window.menubar.entryconfigure(MENU_SIZE, state='normal')
-                        window.menubar.entryconfigure(MENU_BLACK, state='normal')
-                        window.menubar.entryconfigure(MENU_WHITE, state='normal')
+                        window.enable_window()
                         break
 
             if window.state == WINDOW_STATE_GAME_END:
@@ -769,7 +871,7 @@ if __name__ == '__main__':
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
 
-    window = Window(master=app, event=event, queue=q)
+    window = Window(master=app, resize_event=resize_event, queue=q)
     window.master.title(WINDOW_TITLE)                   # タイトル
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
