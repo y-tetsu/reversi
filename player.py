@@ -16,6 +16,7 @@ class Player:
         self.strategy = strategy
         self.mark = Board.MARK[stone]
         self.move = (None, None)
+        self.captures = []
 
     def __str__(self):
         return self.mark + self.name
@@ -25,8 +26,7 @@ class Player:
         次の手を決めて石を置く
         """
         self.move = self.strategy.next_move(self.stone, board)
-
-        return board.put(self.stone, *self.move)
+        self.captures =  board.put(self.stone, *self.move)
 
 
 if __name__ == '__main__':
