@@ -258,11 +258,11 @@ class Window(tk.Frame):
         """
         盤面の表示の初期化
         """
-        self.calc_size()        # 変更後の石やマスのサイズを計算
-        self.draw_squares()     # マスの描画
-        self.put_init_stones()  # 初期位置に石を置く
+        self._calc_size()        # 変更後の石やマスのサイズを計算
+        self._draw_squares()     # マスの描画
+        self._put_init_stones()  # 初期位置に石を置く
 
-    def calc_size(self):
+    def _calc_size(self):
         """
         サイズ計算
         """
@@ -273,7 +273,33 @@ class Window(tk.Frame):
         self.oval_w1 = int(self.square_w * OVAL_SIZE_RATIO)
         self.oval_w2 = int(self.square_w // TURNOVAL_SIZE_DIVISOR)
 
-    def put_init_stones(self):
+    def _draw_squares(self):
+        """
+        オセロのマスを描く
+        """
+
+        y1 = self.square_y_ini
+
+        for y in range(self.size):
+            x1 = self.square_x_ini
+            y2 = y1 + self.square_w
+            for x in range(self.size):
+                label_x = chr(x + 97)
+                label_y = str(y + 1)
+                x2 = x1 + self.square_w
+
+                if not x:
+                    self.canvas.create_text(x1-SQUARE_HEADER_OFFSET, (y1+y2)//2, fill=COLOR_WHITE, text=label_y, tag='header_col', font=('', SQUARE_HEADER_FONT_SIZE))
+
+                if not y:
+                    self.canvas.create_text((x1+x2)//2, y1-SQUARE_HEADER_OFFSET, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
+
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
+
+                x1 = x2
+            y1 = y2
+
+    def _put_init_stones(self):
         """
         石を初期位置に置く
         """
@@ -420,32 +446,6 @@ class Window(tk.Frame):
         w = self.square_w
 
         return x_ini + w * index_x + w // 2, y_ini + w * index_y + w // 2
-
-    def draw_squares(self):
-        """
-        オセロのマスを描く
-        """
-
-        y1 = self.square_y_ini
-
-        for y in range(self.size):
-            x1 = self.square_x_ini
-            y2 = y1 + self.square_w
-            for x in range(self.size):
-                label_x = chr(x + 97)
-                label_y = str(y + 1)
-                x2 = x1 + self.square_w
-
-                if not x:
-                    self.canvas.create_text(x1-SQUARE_HEADER_OFFSET, (y1+y2)//2, fill=COLOR_WHITE, text=label_y, tag='header_col', font=('', SQUARE_HEADER_FONT_SIZE))
-
-                if not y:
-                    self.canvas.create_text((x1+x2)//2, y1-SQUARE_HEADER_OFFSET, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
-
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
-
-                x1 = x2
-            y1 = y2
 
     def remove_squares(self):
         """
