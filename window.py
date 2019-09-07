@@ -197,6 +197,7 @@ class Window(tk.Frame):
         """
         スタートボタンを押した場合
         """
+        self.canvas.itemconfigure(self.start, text='')
         self.state = 'GAME_START'
 
     def calc_size(self):
