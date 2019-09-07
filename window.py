@@ -158,11 +158,6 @@ class Window(tk.Frame):
         self.size = size
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
-        self.square_x_ini = 0
-        self.square_y_ini = 0
-        self.square_w = 0
-        self.oval_w1 = 0
-        self.oval_w2 = 0
 
         self.calc_size()
         self.draw_squares()
