@@ -39,10 +39,13 @@ SQUARE_HEADER_OFFSET = 15
 
 WINDOW_STATE_DEMO = 'DEMO'
 WINDOW_STATE_GAME_START = 'GAME_START'
+WINDOW_STATE_GAME_END = 'GAME_END'
 
 MENU_SIZE = 'Size'
 MENU_BLACK = 'Black'
 MENU_WHITE = 'White'
+
+START_TEXT = 'クリックでスタート'
 
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'User2'
@@ -243,7 +246,7 @@ class Window(tk.Frame):
         self.start = self.canvas.create_text(
             START_X_OFFSET,
             START_Y_OFFSET,
-            text="クリックでスタート",
+            text=START_TEXT,
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_YELLOW
         )
@@ -519,7 +522,7 @@ class Menu(tk.Menu):
         """
         menu_size = tk.Menu(self)
         for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
-            menu_size.add_command(label=str(i), command=self.change_board_size(i))
+            menu_size.add_command(label=str(i), command=self.change_board_size(i, self.master))
         self.add_cascade(menu=menu_size, label=MENU_SIZE)
 
     def create_black_menu(self):
@@ -540,14 +543,14 @@ class Menu(tk.Menu):
             menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
         self.add_cascade(menu=menu_white, label=MENU_WHITE)
 
-    def change_board_size(self, size):
+    def change_board_size(self, size, master):
         """
         ボードサイズの変更
         """
         def change_board_size_event():
-            self.entryconfigure(MENU_SIZE, state='disable')
-
             if self.queue.empty():
+                master.state = WINDOW_STATE_DEMO
+                self.entryconfigure(MENU_SIZE, state='disable')
                 self.event.set()
                 self.queue.put(size)
 
@@ -558,6 +561,7 @@ class Menu(tk.Menu):
         黒プレーヤーを変更
         """
         def change_player():
+            master.state = WINDOW_STATE_DEMO
             master.canvas.itemconfigure(master.black_name, text="●" + player)
             master.black_player = player
 
@@ -568,6 +572,7 @@ class Menu(tk.Menu):
         白プレーヤーを変更
         """
         def change_player():
+            master.state = WINDOW_STATE_DEMO
             master.canvas.itemconfigure(master.white_name, text="●" + player)
             master.white_player = player
 
@@ -583,9 +588,9 @@ if __name__ == '__main__':
     event = threading.Event()
     q = queue.Queue()
 
-    def demo(window):
+    def test_play(window):
         while True:
-            if window.state == 'DEMO':
+            if window.state == WINDOW_STATE_DEMO:
                 # GUIメニューでサイズ変更時
                 if event.is_set():
                     window.canvas.config(state='disable')
@@ -644,39 +649,44 @@ if __name__ == '__main__':
                     window.put_white(x, y)
 
             if window.state == WINDOW_STATE_GAME_START:
-                break
+                window.clear_board_on_canvas()  # 石とマスを消す
+                window.init_board_on_canvas()   # 石とマスの初期配置
 
-            window.menubar.entryconfigure(MENU_SIZE, state='normal')
-            window.menubar.entryconfigure(MENU_BLACK, state='normal')
-            window.menubar.entryconfigure(MENU_WHITE, state='normal')
+                print("start", window.size, window.black_player, window.white_player)
 
-        print("start", window.size, window.black_player, window.white_player)
+                board = Board(window.size)
+                black_player = Player(board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
+                white_player = Player(board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
 
-        board = Board(window.size)
-        black_player = Player(board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
-        white_player = Player(board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
+                while True:
+                    playable = 0
 
-        while True:
-            playable = 0
+                    moves = list(board.get_possibles(board.BLACK).keys())
 
-            moves = list(board.get_possibles(board.BLACK).keys())
+                    if moves:
+                        time.sleep(0.2)
+                        board.put(board.BLACK, *moves[0])
+                        window.reflect_board(board)
+                        playable += 1
 
-            if moves:
-                time.sleep(0.5)
-                board.put(board.BLACK, *moves[0])
-                window.reflect_board(board)
-                playable += 1
+                    moves = list(board.get_possibles(board.WHITE).keys())
 
-            moves = list(board.get_possibles(board.WHITE).keys())
+                    if moves:
+                        time.sleep(0.2)
+                        board.put(board.WHITE, *moves[0])
+                        window.reflect_board(board)
+                        playable += 1
 
-            if moves:
-                time.sleep(0.5)
-                board.put(board.WHITE, *moves[0])
-                window.reflect_board(board)
-                playable += 1
+                    if not playable:
+                        window.state = WINDOW_STATE_GAME_END
+                        window.canvas.itemconfigure(window.start, text=START_TEXT)
+                        window.menubar.entryconfigure(MENU_SIZE, state='normal')
+                        window.menubar.entryconfigure(MENU_BLACK, state='normal')
+                        window.menubar.entryconfigure(MENU_WHITE, state='normal')
+                        break
 
-            if not playable:
-                break
+            if window.state == WINDOW_STATE_GAME_END:
+                pass
 
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
@@ -685,7 +695,7 @@ if __name__ == '__main__':
     window.master.title(WINDOW_TITLE)                   # タイトル
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
-    game = threading.Thread(target=demo, args=([window]))
+    game = threading.Thread(target=test_play, args=([window]))
     game.daemon = True
     game.start()
 
