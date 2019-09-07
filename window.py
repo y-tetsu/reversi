@@ -108,7 +108,6 @@ class Window(tk.Frame):
         """
         ゲーム画面を配置
         """
-        # キャンバスを生成
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
 
@@ -119,11 +118,11 @@ class Window(tk.Frame):
         # 全オブジェクト削除
         self.canvas.delete('all')
 
+        # ボードを配置
+        self._init_board_on_canvas()
+
         # テキストを配置
         self._create_text_on_canvas()
-
-        # ボードを配置
-        self.init_board_on_canvas()
 
     def _create_text_on_canvas(self):
         """
@@ -293,12 +292,12 @@ class Window(tk.Frame):
         """
         スタートボタンを押した場合
         """
-        self.canvas.itemconfigure(self.start, text='')
+        self.disable_start()
         self.menubar.disable_menu()
 
         self.state = WINDOW_STATE_GAME_START
 
-    def init_board_on_canvas(self):
+    def _init_board_on_canvas(self):
         """
         盤面の表示の初期化
         """
@@ -366,9 +365,9 @@ class Window(tk.Frame):
         """
         黒を置く
         """
-        label = self.get_label("black", index_x, index_y)
+        label = self._get_label("black", index_x, index_y)
 
-        x, y = self.get_coordinate(index_x, index_y)
+        x, y = self._get_coordinate(index_x, index_y)
 
         x1 = x - self.oval_w1/2
         y1 = y - self.oval_w1/2
@@ -381,9 +380,9 @@ class Window(tk.Frame):
         """
         白を置く
         """
-        label = self.get_label("white", index_x, index_y)
+        label = self._get_label("white", index_x, index_y)
 
-        x, y = self.get_coordinate(index_x, index_y)
+        x, y = self._get_coordinate(index_x, index_y)
 
         x1 = x - self.oval_w1/2
         y1 = y - self.oval_w1/2
@@ -396,10 +395,10 @@ class Window(tk.Frame):
         """
         黒をひっくり返す途中
         """
-        label1 = self.get_label("turnblack1", index_x, index_y)
-        label2 = self.get_label("turnblack2", index_x, index_y)
+        label1 = self._get_label("turnblack1", index_x, index_y)
+        label2 = self._get_label("turnblack2", index_x, index_y)
 
-        x, y = self.get_coordinate(index_x, index_y)
+        x, y = self._get_coordinate(index_x, index_y)
 
         x1 = x - self.oval_w2
         y1 = y - self.oval_w1/2
@@ -416,10 +415,10 @@ class Window(tk.Frame):
         """
         白をひっくり返す途中
         """
-        label1 = self.get_label("turnwhite1", index_x, index_y)
-        label2 = self.get_label("turnwhite2", index_x, index_y)
+        label1 = self._get_label("turnwhite1", index_x, index_y)
+        label2 = self._get_label("turnwhite2", index_x, index_y)
 
-        x, y = self.get_coordinate(index_x, index_y)
+        x, y = self._get_coordinate(index_x, index_y)
 
         x1 = x - self.oval_w2
         y1 = y - self.oval_w1/2
@@ -432,44 +431,26 @@ class Window(tk.Frame):
         x2 = x + self.oval_w2
         white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_WHITE, outline=COLOR_WHITE)
 
-    def clear_board_on_canvas(self):
-        """
-        ボードの石とマスをすべてクリア
-        """
-        self.remove_stones()
-        self.remove_squares()
-
-    def remove_stones(self):
-        """
-        すべての石を消す
-        """
-        for y in range(self.size):
-            for x in range(self.size):
-                self.remove_black(x, y)
-                self.remove_white(x, y)
-                self.remove_turnblack(x, y)
-                self.remove_turnwhite(x, y)
-
     def remove_black(self, index_x, index_y):
         """
         黒を消す
         """
-        label = self.get_label("black", index_x, index_y)
+        label = self._get_label("black", index_x, index_y)
         self.canvas.delete(label)
 
     def remove_white(self, index_x, index_y):
         """
         白を消す
         """
-        label = self.get_label("white", index_x, index_y)
+        label = self._get_label("white", index_x, index_y)
         self.canvas.delete(label)
 
     def remove_turnblack(self, index_x, index_y):
         """
         黒ひっくり返し途中を消す
         """
-        label1 = self.get_label("turnblack1", index_x, index_y)
-        label2 = self.get_label("turnblack2", index_x, index_y)
+        label1 = self._get_label("turnblack1", index_x, index_y)
+        label2 = self._get_label("turnblack2", index_x, index_y)
         self.canvas.delete(label1)
         self.canvas.delete(label2)
 
@@ -477,12 +458,12 @@ class Window(tk.Frame):
         """
         白ひっくり返し途中を消す
         """
-        label1 = self.get_label("turnwhite1", index_x, index_y)
-        label2 = self.get_label("turnwhite2", index_x, index_y)
+        label1 = self._get_label("turnwhite1", index_x, index_y)
+        label2 = self._get_label("turnwhite2", index_x, index_y)
         self.canvas.delete(label1)
         self.canvas.delete(label2)
 
-    def get_coordinate(self, index_x, index_y):
+    def _get_coordinate(self, index_x, index_y):
         """
         座標を計算する
         """
@@ -492,19 +473,7 @@ class Window(tk.Frame):
 
         return x_ini + w * index_x + w // 2, y_ini + w * index_y + w // 2
 
-    def remove_squares(self):
-        """
-        オセロのマスを消す
-        """
-        self.canvas.delete('header_col')
-        self.canvas.delete('header_row')
-
-        for y in range(self.size):
-            for x in range(self.size):
-                label = self.get_label('square', x, y)
-                self.canvas.delete(label)
-
-    def get_label(self, name, x, y):
+    def _get_label(self, name, x, y):
         """
         表示ラベルを返す
         """
@@ -563,17 +532,21 @@ class Window(tk.Frame):
             self.put_white(x, y)
         time.sleep(TURN_STONE_WAIT)
 
-    def disable_canvas(self):
+    def disable_window(self):
         """
-        キャンバスを無効化
+        ウィンドウを無効化
         """
-        self.canvas.config(state='disable')
+        self.disable_start()
+        self.disable_canvas()
+        self.menubar.disable_menu()
 
-    def enable_canvas(self):
+    def enable_window(self):
         """
-        キャンバスを有効化
+        ウィンドウを有効化
         """
-        self.canvas.config(state='normal')
+        self.menubar.enable_menu()
+        self.enable_canvas()
+        self.enable_start()
 
     def disable_start(self):
         """
@@ -587,13 +560,17 @@ class Window(tk.Frame):
         """
         self.canvas.itemconfigure(self.start, text=START_TEXT, state='normal')
 
-    def enable_window(self):
+    def disable_canvas(self):
         """
-        ウィンドウを有効化
+        キャンバスを無効化
         """
-        self.menubar.enable_menu()
-        self.enable_canvas()
-        self.enable_start()
+        self.canvas.config(state='disable')
+
+    def enable_canvas(self):
+        """
+        キャンバスを有効化
+        """
+        self.canvas.config(state='normal')
 
 
 class Menu(tk.Menu):
@@ -646,12 +623,7 @@ class Menu(tk.Menu):
         def change_board_size_event():
             if self.queue.empty():
                 # ウィンドウ無効化
-                self.master.disable_start()
-                self.master.disable_canvas()
-                self.disable_menu()
-
-                # 状態変更
-                master.state = WINDOW_STATE_INIT
+                self.master.disable_window()
 
                 # 設定変更を通知
                 self.event.set()
@@ -666,14 +638,11 @@ class Menu(tk.Menu):
         def change_player():
             if self.queue.empty():
                 # ウィンドウ無効化
-                self.master.disable_start()
-                self.master.disable_canvas()
-                self.disable_menu()
+                self.master.disable_window()
 
                 # 設定変更
                 master.black_player = player
                 master.canvas.itemconfigure(master.black_name, text=STONE_MARK + player)
-                master.state = WINDOW_STATE_INIT
 
                 # 設定変更を通知
                 self.event.set()
@@ -688,14 +657,11 @@ class Menu(tk.Menu):
         def change_player():
             if self.queue.empty():
                 # ウィンドウ無効化
-                self.master.disable_start()
-                self.master.disable_canvas()
-                self.disable_menu()
+                self.master.disable_window()
 
                 # 設定変更
                 master.white_player = player
                 master.canvas.itemconfigure(master.white_name, text=STONE_MARK + player)
-                master.state = WINDOW_STATE_INIT
 
                 # 設定変更を通知
                 self.event.set()
@@ -731,9 +697,9 @@ if __name__ == '__main__':
 
     def resize_board(window):
         if event.is_set():
-            window.size = q.get()                  # 変更後のサイズをセット
-            window.state = WINDOW_STATE_INIT
-            event.clear()                          # イベントをクリア
+            window.size = q.get()             # 変更後のサイズをセット
+            window.state = WINDOW_STATE_INIT  # ウィンドウ初期化
+            event.clear()                     # イベントをクリア
 
             return True
 
@@ -743,6 +709,7 @@ if __name__ == '__main__':
         demo = False
 
         while True:
+            resize_board(window)
 
             if window.state == WINDOW_STATE_INIT:
                 demo = False
@@ -831,6 +798,8 @@ if __name__ == '__main__':
             if window.state == WINDOW_STATE_GAME_START:
                 if not demo:
                     window.init_game_screen()
+                    window.disable_start()
+                    window.menubar.disable_menu()
 
                 demo = False
                 print("start", window.size, window.black_player, window.white_player)
