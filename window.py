@@ -71,7 +71,7 @@ class Window(tk.Frame):
         self.event = event  # GUIからのイベント発生通知
         self.queue = queue  # GUIからのデータ受け渡し
 
-        self.create_game_screen()
+        self._create_game_screen()
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
 
@@ -79,33 +79,33 @@ class Window(tk.Frame):
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
 
-    def create_game_screen(self):
+    def _create_game_screen(self):
         """
         ゲーム画面を配置
         """
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
 
-        self.create_text_on_canvas()
+        self._create_text_on_canvas()
         self.init_board_on_canvas()
 
-    def create_text_on_canvas(self):
+    def _create_text_on_canvas(self):
         """
         キャンバス上にテキストを配置
         """
-        self.create_black_name()
-        self.create_white_name()
-        self.create_black_stonenum()
-        self.create_white_stonenum()
-        self.create_black_winlose()
-        self.create_white_winlose()
-        self.create_black_turn()
-        self.create_white_turn()
-        self.create_black_move()
-        self.create_white_move()
-        self.create_start()
+        self._create_black_name()
+        self._create_white_name()
+        self._create_black_stonenum()
+        self._create_white_stonenum()
+        self._create_black_winlose()
+        self._create_white_winlose()
+        self._create_black_turn()
+        self._create_white_turn()
+        self._create_black_move()
+        self._create_white_move()
+        self._create_start()
 
-    def create_black_name(self):
+    def _create_black_name(self):
         """
         黒のプレイヤー名の表示テキスト作成
         """
@@ -117,7 +117,7 @@ class Window(tk.Frame):
             fill=COLOR_BLACK
         )
 
-    def create_white_name(self):
+    def _create_white_name(self):
         """
         白のプレイヤー名の表示テキスト作成
         """
@@ -129,7 +129,7 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-    def create_black_stonenum(self):
+    def _create_black_stonenum(self):
         """
         黒の石の数の表示テキスト作成
         """
@@ -141,7 +141,7 @@ class Window(tk.Frame):
             fill=COLOR_BLACK
         )
 
-    def create_white_stonenum(self):
+    def _create_white_stonenum(self):
         """
         白の石の数の表示テキスト作成
         """
@@ -153,7 +153,7 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-    def create_black_winlose(self):
+    def _create_black_winlose(self):
         """
         黒の勝敗の表示テキスト作成
         """
@@ -165,7 +165,7 @@ class Window(tk.Frame):
             fill=COLOR_BLACK
         )
 
-    def create_white_winlose(self):
+    def _create_white_winlose(self):
         """
         白の勝敗の表示テキスト作成
         """
@@ -177,7 +177,7 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-    def create_black_turn(self):
+    def _create_black_turn(self):
         """
         黒の手番の表示テキスト作成
         """
@@ -189,7 +189,7 @@ class Window(tk.Frame):
             fill=COLOR_ORANGE
         )
 
-    def create_white_turn(self):
+    def _create_white_turn(self):
         """
         白の手番の表示テキスト作成
         """
@@ -201,7 +201,7 @@ class Window(tk.Frame):
             fill=COLOR_ORANGE
         )
 
-    def create_black_move(self):
+    def _create_black_move(self):
         """
         黒の手の表示テキスト作成
         """
@@ -213,7 +213,7 @@ class Window(tk.Frame):
             fill=COLOR_BLACK
         )
 
-    def create_white_move(self):
+    def _create_white_move(self):
         """
         白の手の表示テキスト作成
         """
@@ -225,7 +225,7 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-    def create_start(self):
+    def _create_start(self):
         """
         スタートボタンの作成
         """
@@ -237,23 +237,23 @@ class Window(tk.Frame):
             fill=COLOR_YELLOW
         )
 
-        self.canvas.tag_bind(self.start, '<Enter>', self.enter_start)
-        self.canvas.tag_bind(self.start, '<Leave>', self.leave_start)
-        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self.on_start)
+        self.canvas.tag_bind(self.start, '<Enter>', self._enter_start)
+        self.canvas.tag_bind(self.start, '<Leave>', self._leave_start)
+        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self._on_start)
 
-    def enter_start(self, event):
+    def _enter_start(self, event):
         """
         スタートボタンにカーソルが合った時
         """
         self.canvas.itemconfigure(self.start, fill=COLOR_RED)
 
-    def leave_start(self, event):
+    def _leave_start(self, event):
         """
         スタートボタンからカーソルが離れた時
         """
         self.canvas.itemconfigure(self.start, fill=COLOR_YELLOW)
 
-    def on_start(self, event):
+    def _on_start(self, event):
         """
         スタートボタンを押した場合
         """
