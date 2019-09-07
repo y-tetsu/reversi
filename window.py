@@ -52,6 +52,8 @@ MENU_WHITE = 'White'
 START_TEXT = 'クリックでスタート'
 STONE_MARK = '●'
 
+TURN_STONE_WAIT = 0.1
+
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'User2'
 DEFAULT_BLACK_NUM = "2"
@@ -496,17 +498,58 @@ class Window(tk.Frame):
         """
         return name + "_" + chr(x + 97) + str(y + 1)
 
-    def reflect_board(self, board):
+    def turn_stone(self, stone, captures):
         """
-        ボードの状態を反映する
+        石をひっくり返す
         """
-        board_info = board.get_board_info()
-        print(board_info)
+        if stone == Board.BLACK:
+            self.turn_black_stone(captures)
+        elif stone == Board.WHITE:
+            self.turn_white_stone(captures)
 
-        for y in range(self.size):
-            for x in range(self.size):
-                stone = board_info[y][x]
-                self.put_stone(board_info[y][x], x, y)
+    def turn_black_stone(self, captures):
+        """
+        白の石を黒の石にひっくり返す
+        """
+        # captures座標の白の石を消す
+        for x, y in captures:
+            self.remove_white(x, y)
+
+        # captures座標に白をひっくり返す途中の石を置く
+        for x, y in captures:
+            self.put_turnwhite(x, y)
+        time.sleep(TURN_STONE_WAIT)
+
+        # captures座標の白をひっくり返す途中の石を消す
+        for x, y in captures:
+            self.remove_turnwhite(x, y)
+
+        # capturesの石を黒にする
+        for x, y in captures:
+            self.put_black(x, y)
+        time.sleep(TURN_STONE_WAIT)
+
+    def turn_white_stone(self, captures):
+        """
+        黒の石を白の石にひっくり返す
+        """
+        # captures座標の黒の石を消す
+        for x, y in captures:
+            self.remove_black(x, y)
+
+        # captures座標に黒をひっくり返す途中の石を置く
+        for x, y in captures:
+            self.put_turnblack(x, y)
+        time.sleep(TURN_STONE_WAIT)
+
+        # captures座標の黒をひっくり返す途中の石を消す
+        for x, y in captures:
+            self.remove_turnblack(x, y)
+
+        # capturesの石を白にする
+        for x, y in captures:
+            self.put_white(x, y)
+        time.sleep(TURN_STONE_WAIT)
 
 
 class Menu(tk.Menu):
@@ -613,43 +656,43 @@ if __name__ == '__main__':
 
                 for x, y in [(center, center-1), (center-1, center)]:
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_black(x, y)
                     window.put_turnblack(x, y)
 
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_turnblack(x, y)
                     window.put_white(x, y)
 
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_white(x, y)
                     window.put_turnwhite(x, y)
 
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_turnwhite(x, y)
                     window.put_black(x, y)
 
                 for x, y in [(center-1, center-1), (center, center)]:
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_white(x, y)
                     window.put_turnwhite(x, y)
 
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_turnwhite(x, y)
                     window.put_black(x, y)
 
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_black(x, y)
                     window.put_turnblack(x, y)
 
                     center = window.size // 2
-                    time.sleep(0.1)
+                    time.sleep(TURN_STONE_WAIT)
                     window.remove_turnblack(x, y)
                     window.put_white(x, y)
 
@@ -660,8 +703,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
-                white_player = Player(board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
+                black_player = Player(Board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
+                white_player = Player(Board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
 
                 while True:
                     playable = 0
@@ -670,16 +713,24 @@ if __name__ == '__main__':
 
                     if moves:
                         time.sleep(0.2)
-                        board.put(board.BLACK, *moves[0])
-                        window.reflect_board(board)
+                        black_player.put_stone(board)
+                        window.put_stone(Board.BLACK, *black_player.move)
+
+                        time.sleep(1.2)
+                        window.turn_stone(Board.BLACK, black_player.captures)
+
                         playable += 1
 
-                    moves = list(board.get_possibles(board.WHITE).keys())
+                    moves = list(board.get_possibles(Board.WHITE).keys())
 
                     if moves:
                         time.sleep(0.2)
-                        board.put(board.WHITE, *moves[0])
-                        window.reflect_board(board)
+                        white_player.put_stone(board)
+                        window.put_stone(Board.WHITE, *white_player.move)
+
+                        time.sleep(1.2)
+                        window.turn_stone(Board.WHITE, white_player.captures)
+
                         playable += 1
 
                     if not playable:
