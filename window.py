@@ -74,7 +74,7 @@ class Window(tk.Frame):
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
         self.create_text_on_canvas()
-        self.init_board()
+        self.init_board_on_canvas()
 
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
@@ -254,7 +254,7 @@ class Window(tk.Frame):
         self.canvas.itemconfigure(self.start, text='')
         self.state = 'GAME_START'
 
-    def init_board(self):
+    def init_board_on_canvas(self):
         """
         盤面の表示の初期化
         """
@@ -554,11 +554,11 @@ if __name__ == '__main__':
                 # GUIメニューでサイズ変更時
                 if event.is_set():
                     window.canvas.config(state='disable')
-                    window.remove_stones()    # 石を消す
-                    window.remove_squares()   # マスを消す
-                    window.size = q.get()     # 変更後のサイズをセット
-                    window.init_board()
-                    event.clear()             # イベントをクリア
+                    window.remove_stones()         # 石を消す
+                    window.remove_squares()        # マスを消す
+                    window.size = q.get()          # 変更後のサイズをセット
+                    window.init_board_on_canvas()  # 石とマスの初期配置
+                    event.clear()                  # イベントをクリア
 
                     window.canvas.config(state='normal')
                     window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
