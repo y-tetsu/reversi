@@ -38,6 +38,7 @@ TURNOVAL_SIZE_DIVISOR = 10
 SQUARE_HEADER_OFFSET = 15
 
 WINDOW_STATE_DEMO = 'DEMO'
+WINDOW_STATE_GAME_START = 'GAME_START'
 
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'User2'
@@ -264,7 +265,7 @@ class Window(tk.Frame):
         スタートボタンを押した場合
         """
         self.canvas.itemconfigure(self.start, text='')
-        self.state = 'GAME_START'
+        self.state = WINDOW_STATE_GAME_START
 
     def init_board_on_canvas(self):
         """
@@ -619,7 +620,7 @@ if __name__ == '__main__':
                     window.remove_turnblack(x, y)
                     window.put_white(x, y)
 
-            if window.state == 'GAME_START':
+            if window.state == WINDOW_STATE_GAME_START:
                 break
 
         print("start", window.size, window.black_player, window.white_player)
