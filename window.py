@@ -123,22 +123,6 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-        self.black_turn = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            TURN_Y_OFFSET,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_ORANGE
-        )
-
-        self.white_turn = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            TURN_Y_OFFSET,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_ORANGE
-        )
-
         self.create_text_on_canvas()
 
         self.size = size
@@ -156,9 +140,35 @@ class Window(tk.Frame):
         """
         キャンバス上にテキストを配置
         """
+        self.create_black_turn()
+        self.create_white_turn()
         self.create_black_move()
         self.create_white_move()
         self.create_start()
+
+    def create_black_turn(self):
+        """
+        黒の手番の表示テキスト作成
+        """
+        self.black_turn = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            TURN_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_ORANGE
+        )
+
+    def create_white_turn(self):
+        """
+        白の手番の表示テキスト作成
+        """
+        self.white_turn = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            TURN_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_ORANGE
+        )
 
     def create_black_move(self):
         """
