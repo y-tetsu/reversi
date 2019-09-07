@@ -337,7 +337,7 @@ class Window(tk.Frame):
         """
         if stone == Board.BLACK:
             self.put_black(index_x, index_y)
-        else:
+        elif stone == Board.WHITE:
             self.put_white(index_x, index_y)
 
     def put_black(self, index_x, index_y):
@@ -492,7 +492,13 @@ class Window(tk.Frame):
         """
         ボードの状態を反映する
         """
-        print(board.get_board_info())
+        board_info = board.get_board_info()
+        print(board_info)
+
+        for y in range(self.size):
+            for x in range(self.size):
+                stone = board_info[y][x]
+                self.put_stone(board_info[y][x], x, y)
 
 
 class Menu(tk.Menu):
@@ -640,13 +646,37 @@ if __name__ == '__main__':
             if window.state == WINDOW_STATE_GAME_START:
                 break
 
+            window.menubar.entryconfigure(MENU_SIZE, state='normal')
+            window.menubar.entryconfigure(MENU_BLACK, state='normal')
+            window.menubar.entryconfigure(MENU_WHITE, state='normal')
+
         print("start", window.size, window.black_player, window.white_player)
 
         board = Board(window.size)
         black_player = Player(board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
         white_player = Player(board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
 
-        window.reflect_board(board)
+        while True:
+            playable = 0
+
+            moves = list(board.get_possibles(board.BLACK).keys())
+
+            if moves:
+                time.sleep(0.5)
+                board.put(board.BLACK, *moves[0])
+                window.reflect_board(board)
+                playable += 1
+
+            moves = list(board.get_possibles(board.WHITE).keys())
+
+            if moves:
+                time.sleep(0.5)
+                board.put(board.WHITE, *moves[0])
+                window.reflect_board(board)
+                playable += 1
+
+            if not playable:
+                break
 
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
