@@ -401,6 +401,13 @@ class Window(tk.Frame):
         x2 = x + self.oval_w2
         white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_WHITE, outline=COLOR_WHITE)
 
+    def clear_board_on_canvas(self):
+        """
+        ボードの石とマスをすべてクリア
+        """
+        self.remove_stones()
+        self.remove_squares()
+
     def remove_stones(self):
         """
         すべての石を消す
@@ -567,11 +574,12 @@ if __name__ == '__main__':
                 # GUIメニューでサイズ変更時
                 if event.is_set():
                     window.canvas.config(state='disable')
-                    window.remove_stones()         # 石を消す
-                    window.remove_squares()        # マスを消す
-                    window.size = q.get()          # 変更後のサイズをセット
-                    window.init_board_on_canvas()  # 石とマスの初期配置
-                    event.clear()                  # イベントをクリア
+
+                    window.clear_board_on_canvas()  # 石とマスを消す
+                    window.size = q.get()           # 変更後のサイズをセット
+                    window.init_board_on_canvas()   # 石とマスの初期配置
+
+                    event.clear()                   # イベントをクリア
 
                     window.canvas.config(state='normal')
                     window.menubar.entryconfigure('Size', state='normal')  # サイズメニューを有効にする
