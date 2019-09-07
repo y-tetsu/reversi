@@ -91,22 +91,6 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-        self.black_num = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            NUM_Y_OFFSET,
-            text=DEFAULT_BLACK_NUM,
-            font=('', SCORE_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-        self.white_num = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            NUM_Y_OFFSET,
-            text=DEFAULT_WHITE_NUM,
-            font=('', SCORE_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
         self.create_text_on_canvas()
 
         self.size = size
@@ -124,6 +108,8 @@ class Window(tk.Frame):
         """
         キャンバス上にテキストを配置
         """
+        self.create_black_stonenum()
+        self.create_white_stonenum()
         self.create_black_winlose()
         self.create_white_winlose()
         self.create_black_turn()
@@ -131,6 +117,30 @@ class Window(tk.Frame):
         self.create_black_move()
         self.create_white_move()
         self.create_start()
+
+    def create_black_stonenum(self):
+        """
+        黒の石の数の表示テキスト作成
+        """
+        self.black_stonenum = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            NUM_Y_OFFSET,
+            text=DEFAULT_BLACK_NUM,
+            font=('', SCORE_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+    def create_white_stonenum(self):
+        """
+        白の石の数の表示テキスト作成
+        """
+        self.white_stonenum = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            NUM_Y_OFFSET,
+            text=DEFAULT_WHITE_NUM,
+            font=('', SCORE_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
 
     def create_black_winlose(self):
         """
