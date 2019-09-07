@@ -79,13 +79,13 @@ class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, size=8, master=None, resize_event=None, queue=None):
+    def __init__(self, size=8, master=None, event=None, queue=None):
         super().__init__(master)
         self.pack()
 
         # 引数の取得
         self.size = size
-        self.resize_event = resize_event  # ウィンドウからのイベント発生通知
+        self.event = event  # ウィンドウからのイベント発生通知
         self.queue = queue  # ウィンドウからのデータ受け渡し
 
         # 初期値設定
@@ -101,7 +101,7 @@ class Window(tk.Frame):
         """
         メニューを配置
         """
-        self.menubar = Menu(self, self.resize_event, self.queue)
+        self.menubar = Menu(self, self.event, self.queue)
         master.configure(menu=self.menubar)
 
     def _create_game_screen(self):
@@ -600,11 +600,11 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, master, resize_event, queue):
+    def __init__(self, master, event, queue):
         super().__init__(master)
 
         # 引数取得
-        self.resize_event = resize_event
+        self.event = event
         self.queue = queue
 
         # メニュー初期化
@@ -654,7 +654,7 @@ class Menu(tk.Menu):
                 master.state = WINDOW_STATE_INIT
 
                 # 設定変更を通知
-                self.resize_event.set()
+                self.event.set()
                 self.queue.put(size)
 
         return change_board_size_event
@@ -676,7 +676,7 @@ class Menu(tk.Menu):
                 master.state = WINDOW_STATE_INIT
 
                 # 設定変更を通知
-                self.resize_event.set()
+                self.event.set()
                 self.queue.put(master.size)
 
         return change_player
@@ -698,7 +698,7 @@ class Menu(tk.Menu):
                 master.state = WINDOW_STATE_INIT
 
                 # 設定変更を通知
-                self.resize_event.set()
+                self.event.set()
                 self.queue.put(master.size)
 
         return change_player
@@ -726,27 +726,32 @@ if __name__ == '__main__':
     import queue
     from player import Player
 
-    resize_event = threading.Event()
+    event = threading.Event()
     q = queue.Queue()
 
     def resize_board(window):
-        if resize_event.is_set():
+        if event.is_set():
             window.size = q.get()                  # 変更後のサイズをセット
             window.state = WINDOW_STATE_INIT
-            resize_event.clear()                          # イベントをクリア
+            event.clear()                          # イベントをクリア
 
             return True
 
         return False
 
     def test_play(window):
+        demo = False
+
         while True:
+
             if window.state == WINDOW_STATE_INIT:
+                demo = False
                 window.init_game_screen()
                 window.enable_window()
                 window.state = WINDOW_STATE_DEMO
 
             if window.state == WINDOW_STATE_DEMO:
+                demo = True
                 resize_flag = False
                 center = window.size // 2
 
@@ -824,9 +829,10 @@ if __name__ == '__main__':
                         window.put_white(x, y)
 
             if window.state == WINDOW_STATE_GAME_START:
-                window.clear_board_on_canvas()  # 石とマスを消す
-                window.init_board_on_canvas()   # 石とマスの初期配置
+                if not demo:
+                    window.init_game_screen()
 
+                demo = False
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
@@ -866,12 +872,13 @@ if __name__ == '__main__':
                         break
 
             if window.state == WINDOW_STATE_GAME_END:
+                demo = False
                 pass
 
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
 
-    window = Window(master=app, resize_event=resize_event, queue=q)
+    window = Window(master=app, event=event, queue=q)
     window.master.title(WINDOW_TITLE)                   # タイトル
     window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
