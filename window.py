@@ -139,23 +139,7 @@ class Window(tk.Frame):
             fill=COLOR_ORANGE
         )
 
-        self.black_move = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            MOVE_Y_OFFSET,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-        self.white_move = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            MOVE_Y_OFFSET,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
-        self.create_start()
+        self.create_text_on_canvas()
 
         self.size = size
         self.black_player = DEFAULT_BLACK_PLAYER
@@ -167,6 +151,38 @@ class Window(tk.Frame):
 
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
+
+    def create_text_on_canvas(self):
+        """
+        キャンバス上にテキストを配置
+        """
+        self.create_black_move()
+        self.create_white_move()
+        self.create_start()
+
+    def create_black_move(self):
+        """
+        黒の手の表示テキスト作成
+        """
+        self.black_move = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            MOVE_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+    def create_white_move(self):
+        """
+        白の手の表示テキスト作成
+        """
+        self.white_move = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            MOVE_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
 
     def create_start(self):
         """
