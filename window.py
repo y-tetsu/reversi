@@ -4,6 +4,7 @@ GUIウィンドウ
 """
 
 import tkinter as tk
+
 import board
 from board import Board
 import strategies
@@ -12,30 +13,33 @@ import strategies
 WINDOW_TITLE = 'othello'
 WINDOW_WIDTH = 1360
 WINDOW_HEIGHT = 680
-BLACK_X_OFFSET = 200
-WHITE_X_OFFSET = 1150
-NAME_Y_OFFSET = 80
-NUM_Y_OFFSET = 250
-RESULT_Y_OFFSET = 400
-TURN_Y_OFFSET = 500
-MOVE_Y_OFFSET = 600
-START_X_OFFSET = 680
-START_Y_OFFSET = 620
+
+OFFSET_BLACK_X = 200
+OFFSET_WHITE_X = 1150
+OFFSET_NAME_Y = 80
+OFFSET_NUM_Y = 250
+OFFSET_RESULT_Y = 400
+OFFSET_TURN_Y = 500
+OFFSET_MOVE_Y = 600
+OFFSET_START_X = 680
+OFFSET_START_Y = 620
+OFFSET_SQUARE_Y = 40
+OFFSET_SQUARE_HEADER = 15
+
 COLOR_GREEN = 'green'
 COLOR_BLACK = 'black'
 COLOR_WHITE = 'white'
 COLOR_ORANGE = 'orange'
 COLOR_YELLOW = 'yellow'
 COLOR_RED = 'red'
+
 TEXT_FONT_SIZE = 32
 SCORE_FONT_SIZE = 140
 SQUARE_HEADER_FONT_SIZE = 20
 
-SQUARE_Y_OFFSET = 40
 SQUARE_BOTTOM_MARGIN = 120
 OVAL_SIZE_RATIO = 0.8
 TURNOVAL_SIZE_DIVISOR = 10
-SQUARE_HEADER_OFFSET = 15
 
 WINDOW_STATE_DEMO = 'DEMO'
 WINDOW_STATE_GAME_START = 'GAME_START'
@@ -46,6 +50,7 @@ MENU_BLACK = 'Black'
 MENU_WHITE = 'White'
 
 START_TEXT = 'クリックでスタート'
+STONE_MARK = '●'
 
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'User2'
@@ -124,9 +129,9 @@ class Window(tk.Frame):
         黒のプレイヤー名の表示テキスト作成
         """
         self.black_name = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            NAME_Y_OFFSET,
-            text="●" + DEFAULT_BLACK_PLAYER,
+            OFFSET_BLACK_X,
+            OFFSET_NAME_Y,
+            text=STONE_MARK + DEFAULT_BLACK_PLAYER,
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_BLACK
         )
@@ -136,9 +141,9 @@ class Window(tk.Frame):
         白のプレイヤー名の表示テキスト作成
         """
         self.white_name = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            NAME_Y_OFFSET,
-            text="●" + DEFAULT_WHITE_PLAYER,
+            OFFSET_WHITE_X,
+            OFFSET_NAME_Y,
+            text=STONE_MARK + DEFAULT_WHITE_PLAYER,
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_WHITE
         )
@@ -148,8 +153,8 @@ class Window(tk.Frame):
         黒の石の数の表示テキスト作成
         """
         self.black_stonenum = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            NUM_Y_OFFSET,
+            OFFSET_BLACK_X,
+            OFFSET_NUM_Y,
             text=DEFAULT_BLACK_NUM,
             font=('', SCORE_FONT_SIZE),
             fill=COLOR_BLACK
@@ -160,8 +165,8 @@ class Window(tk.Frame):
         白の石の数の表示テキスト作成
         """
         self.white_stonenum = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            NUM_Y_OFFSET,
+            OFFSET_WHITE_X,
+            OFFSET_NUM_Y,
             text=DEFAULT_WHITE_NUM,
             font=('', SCORE_FONT_SIZE),
             fill=COLOR_WHITE
@@ -172,8 +177,8 @@ class Window(tk.Frame):
         黒の勝敗の表示テキスト作成
         """
         self.black_result = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            RESULT_Y_OFFSET,
+            OFFSET_BLACK_X,
+            OFFSET_RESULT_Y,
             text="",
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_BLACK
@@ -184,8 +189,8 @@ class Window(tk.Frame):
         白の勝敗の表示テキスト作成
         """
         self.white_winlose = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            RESULT_Y_OFFSET,
+            OFFSET_WHITE_X,
+            OFFSET_RESULT_Y,
             text="",
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_WHITE
@@ -196,8 +201,8 @@ class Window(tk.Frame):
         黒の手番の表示テキスト作成
         """
         self.black_turn = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            TURN_Y_OFFSET,
+            OFFSET_BLACK_X,
+            OFFSET_TURN_Y,
             text="",
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_ORANGE
@@ -208,8 +213,8 @@ class Window(tk.Frame):
         白の手番の表示テキスト作成
         """
         self.white_turn = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            TURN_Y_OFFSET,
+            OFFSET_WHITE_X,
+            OFFSET_TURN_Y,
             text="",
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_ORANGE
@@ -220,8 +225,8 @@ class Window(tk.Frame):
         黒の手の表示テキスト作成
         """
         self.black_move = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            MOVE_Y_OFFSET,
+            OFFSET_BLACK_X,
+            OFFSET_MOVE_Y,
             text="",
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_BLACK
@@ -232,8 +237,8 @@ class Window(tk.Frame):
         白の手の表示テキスト作成
         """
         self.white_move = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            MOVE_Y_OFFSET,
+            OFFSET_WHITE_X,
+            OFFSET_MOVE_Y,
             text="",
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_WHITE
@@ -244,8 +249,8 @@ class Window(tk.Frame):
         スタートボタンの作成
         """
         self.start = self.canvas.create_text(
-            START_X_OFFSET,
-            START_Y_OFFSET,
+            OFFSET_START_X,
+            OFFSET_START_Y,
             text=START_TEXT,
             font=('', TEXT_FONT_SIZE),
             fill=COLOR_YELLOW
@@ -291,7 +296,7 @@ class Window(tk.Frame):
         """
         サイズ計算
         """
-        self.square_y_ini = SQUARE_Y_OFFSET
+        self.square_y_ini = OFFSET_SQUARE_Y
         self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // self.size
         self.square_x_ini = WINDOW_WIDTH // 2 - (self.square_w * self.size) // 2
 
@@ -314,10 +319,10 @@ class Window(tk.Frame):
                 x2 = x1 + self.square_w
 
                 if not x:
-                    self.canvas.create_text(x1-SQUARE_HEADER_OFFSET, (y1+y2)//2, fill=COLOR_WHITE, text=label_y, tag='header_col', font=('', SQUARE_HEADER_FONT_SIZE))
+                    self.canvas.create_text(x1-OFFSET_SQUARE_HEADER, (y1+y2)//2, fill=COLOR_WHITE, text=label_y, tag='header_col', font=('', SQUARE_HEADER_FONT_SIZE))
 
                 if not y:
-                    self.canvas.create_text((x1+x2)//2, y1-SQUARE_HEADER_OFFSET, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
+                    self.canvas.create_text((x1+x2)//2, y1-OFFSET_SQUARE_HEADER, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
 
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
 
@@ -562,7 +567,7 @@ class Menu(tk.Menu):
         """
         def change_player():
             master.state = WINDOW_STATE_DEMO
-            master.canvas.itemconfigure(master.black_name, text="●" + player)
+            master.canvas.itemconfigure(master.black_name, text=STONE_MARK + player)
             master.black_player = player
 
         return change_player
@@ -573,7 +578,7 @@ class Menu(tk.Menu):
         """
         def change_player():
             master.state = WINDOW_STATE_DEMO
-            master.canvas.itemconfigure(master.white_name, text="●" + player)
+            master.canvas.itemconfigure(master.white_name, text=STONE_MARK + player)
             master.white_player = player
 
         return change_player
