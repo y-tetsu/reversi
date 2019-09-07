@@ -3,6 +3,7 @@
 表示の管理
 """
 
+import time
 import abc
 
 
@@ -50,6 +51,7 @@ class ConsoleDisplay(AbstractDisplay):
         """
         手番の表示
         """
+        time.sleep(1)
         print(player, "の番です")
 
         for index, value in enumerate(possibles, 1):
@@ -64,6 +66,7 @@ class ConsoleDisplay(AbstractDisplay):
         y = str(player.move[1] + 1)
 
         print((x, y), "に置きました(" + str(len(player.captures)) + "個取得)\n")
+        time.sleep(1)
 
     def foul(self, player):
         """
