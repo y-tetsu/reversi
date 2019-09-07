@@ -107,22 +107,6 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-        self.black_result = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            RESULT_Y_OFFSET,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-        self.white_result = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            RESULT_Y_OFFSET,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
         self.create_text_on_canvas()
 
         self.size = size
@@ -140,11 +124,37 @@ class Window(tk.Frame):
         """
         キャンバス上にテキストを配置
         """
+        self.create_black_winlose()
+        self.create_white_winlose()
         self.create_black_turn()
         self.create_white_turn()
         self.create_black_move()
         self.create_white_move()
         self.create_start()
+
+    def create_black_winlose(self):
+        """
+        黒の勝敗の表示テキスト作成
+        """
+        self.black_result = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            RESULT_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+    def create_white_winlose(self):
+        """
+        白の勝敗の表示テキスト作成
+        """
+        self.white_winlose = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            RESULT_Y_OFFSET,
+            text="",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
 
     def create_black_turn(self):
         """
