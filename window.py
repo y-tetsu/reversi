@@ -636,61 +636,83 @@ if __name__ == '__main__':
     event = threading.Event()
     q = queue.Queue()
 
+    def resize_board(window):
+        if event.is_set():
+            window.canvas.config(state='disable')
+
+            window.clear_board_on_canvas()  # 石とマスを消す
+            window.size = q.get()           # 変更後のサイズをセット
+            window.init_board_on_canvas()   # 石とマスの初期配置
+
+            event.clear()                   # イベントをクリア
+
+            window.canvas.config(state='normal')
+            window.menubar.entryconfigure(MENU_SIZE, state='normal')  # サイズメニューを有効にする
+
+            return True
+
+        return False
+
     def test_play(window):
         while True:
             if window.state == WINDOW_STATE_DEMO:
-                # GUIメニューでサイズ変更時
-                if event.is_set():
-                    window.canvas.config(state='disable')
-
-                    window.clear_board_on_canvas()  # 石とマスを消す
-                    window.size = q.get()           # 変更後のサイズをセット
-                    window.init_board_on_canvas()   # 石とマスの初期配置
-
-                    event.clear()                   # イベントをクリア
-
-                    window.canvas.config(state='normal')
-                    window.menubar.entryconfigure(MENU_SIZE, state='normal')  # サイズメニューを有効にする
-
                 center = window.size // 2
 
                 for x, y in [(center, center-1), (center-1, center)]:
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_black(x, y)
                     window.put_turnblack(x, y)
 
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_turnblack(x, y)
                     window.put_white(x, y)
 
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_white(x, y)
                     window.put_turnwhite(x, y)
 
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_turnwhite(x, y)
                     window.put_black(x, y)
+
+                center = window.size // 2
 
                 for x, y in [(center-1, center-1), (center, center)]:
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_white(x, y)
                     window.put_turnwhite(x, y)
 
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_turnwhite(x, y)
                     window.put_black(x, y)
 
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_black(x, y)
                     window.put_turnblack(x, y)
 
+                    if resize_board(window):
+                        break
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.remove_turnblack(x, y)
