@@ -5,6 +5,7 @@
 
 import sys
 import time
+
 import board
 from board import Board
 from player import Player
@@ -36,15 +37,15 @@ class Main:
     """
     コンソールゲーム
     """
-    MENU, GAME = 'MENU', 'GAME'
+    START, MENU, GAME = 'START', 'MENU', 'GAME'
 
     def __init__(self):
         self.board_size = DEFAULT_BOARD_SIZE
         self.black = DEFAULT_BLACK_PLAYER
         self.white = DEFAULT_WHITE_PLAYER
-        self.state = Main.MENU
+        self.state = Main.START
 
-    def show_setting(self):
+    def start(self):
         """
         設定を表示
         """
@@ -53,6 +54,7 @@ class Main:
         print('BlackPlayer =', self.black)
         print('WhitePlayer =', self.white)
         print('=============================\n')
+        self.state = Main.MENU
 
     def menu(self):
         """
@@ -85,7 +87,6 @@ class Main:
             elif user_in == 'q':
                 print('See you!')
                 sys.exit()
-                break
 
     def get_board_size(self):
         """
@@ -107,10 +108,8 @@ class Main:
 
         print('select number for player')
         print('-----------------------------')
-
         for num, value in enumerate(player_list, 1):
             print(f' {num:2d} : {value}')
-
         print('-----------------------------')
 
         while True:
@@ -131,16 +130,17 @@ class Main:
         game = Game(Board(self.board_size), black, white, ConsoleDisplay())
         game.play()
 
-        # 少し待ってメニューに戻る
+        # 少し待ってスタートに戻る
         time.sleep(2)
-        self.state = Main.MENU
+        self.state = Main.START
 
 
 if __name__ == '__main__':
     main = Main()
 
     while True:
-        main.show_setting()
+        if main.state == Main.START:
+            main.start()
 
         if main.state == Main.MENU:
             main.menu()
