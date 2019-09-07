@@ -153,17 +153,7 @@ class Window(tk.Frame):
             fill=COLOR_WHITE
         )
 
-        self.start = self.canvas.create_text(
-            START_X_OFFSET,
-            START_Y_OFFSET,
-            text="クリックでスタート",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_YELLOW
-        )
-
-        self.canvas.tag_bind(self.start, '<Enter>', self.enter_start)
-        self.canvas.tag_bind(self.start, '<Leave>', self.leave_start)
-        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self.on_start)
+        self.create_start()
 
         self.size = size
         self.black_player = DEFAULT_BLACK_PLAYER
@@ -180,6 +170,22 @@ class Window(tk.Frame):
 
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
+
+    def create_start(self):
+        """
+        スタートボタンの作成
+        """
+        self.start = self.canvas.create_text(
+            START_X_OFFSET,
+            START_Y_OFFSET,
+            text="クリックでスタート",
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_YELLOW
+        )
+
+        self.canvas.tag_bind(self.start, '<Enter>', self.enter_start)
+        self.canvas.tag_bind(self.start, '<Leave>', self.leave_start)
+        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self.on_start)
 
     def enter_start(self, event):
         """
