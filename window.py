@@ -67,26 +67,21 @@ class Window(tk.Frame):
         super().__init__(master)
         self.pack()
 
-        self.state = WINDOW_STATE_DEMO
-
+        self.size = size
         self.event = event  # GUIからのイベント発生通知
         self.queue = queue  # GUIからのデータ受け渡し
 
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
-
         self.create_text_on_canvas()
-
-        self.size = size
-        self.black_player = DEFAULT_BLACK_PLAYER
-        self.white_player = DEFAULT_WHITE_PLAYER
-
-        self.calc_size()
-        self.draw_squares()
-        self.put_init_stones()
+        self.init_board()
 
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
+
+        self.state = WINDOW_STATE_DEMO
+        self.black_player = DEFAULT_BLACK_PLAYER
+        self.white_player = DEFAULT_WHITE_PLAYER
 
     def create_text_on_canvas(self):
         """
@@ -258,6 +253,14 @@ class Window(tk.Frame):
         """
         self.canvas.itemconfigure(self.start, text='')
         self.state = 'GAME_START'
+
+    def init_board(self):
+        """
+        盤面の表示の初期化
+        """
+        self.calc_size()        # 変更後の石やマスのサイズを計算
+        self.draw_squares()     # マスの描画
+        self.put_init_stones()  # 初期位置に石を置く
 
     def calc_size(self):
         """
@@ -554,9 +557,7 @@ if __name__ == '__main__':
                     window.remove_stones()    # 石を消す
                     window.remove_squares()   # マスを消す
                     window.size = q.get()     # 変更後のサイズをセット
-                    window.calc_size()        # 変更後の石やマスのサイズを計算
-                    window.draw_squares()     # マスを描く
-                    window.put_init_stones()  # 初期位置に石を置く
+                    window.init_board()
                     event.clear()             # イベントをクリア
 
                     window.canvas.config(state='normal')
