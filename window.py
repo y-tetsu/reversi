@@ -322,12 +322,6 @@ class Window(tk.Frame):
         self.put_stone(Board.WHITE, center-1, center-1)
         self.put_stone(Board.WHITE, center, center)
 
-    def reflect_board(self, board):
-        """
-        ボードの状態を反映する
-        """
-        print(board.get_board_info())
-
     def put_stone(self, stone, index_x, index_y):
         """
         石を置く
@@ -477,6 +471,12 @@ class Window(tk.Frame):
         表示ラベルを返す
         """
         return name + "_" + chr(x + 97) + str(y + 1)
+
+    def reflect_board(self, board):
+        """
+        ボードの状態を反映する
+        """
+        print(board.get_board_info())
 
 
 class Menu(tk.Menu):
