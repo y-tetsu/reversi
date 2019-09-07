@@ -71,17 +71,23 @@ class Window(tk.Frame):
         self.event = event  # GUIからのイベント発生通知
         self.queue = queue  # GUIからのデータ受け渡し
 
-        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
-        self.canvas.grid(row=0, column=0)
-        self.create_text_on_canvas()
-        self.init_board_on_canvas()
-
+        self.create_game_screen()
         self.menubar = Menu(self, self.event, self.queue)  # メニューをセット
         master.configure(menu=self.menubar)
 
         self.state = WINDOW_STATE_DEMO
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
+
+    def create_game_screen(self):
+        """
+        ゲーム画面を配置
+        """
+        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
+        self.canvas.grid(row=0, column=0)
+
+        self.create_text_on_canvas()
+        self.init_board_on_canvas()
 
     def create_text_on_canvas(self):
         """
