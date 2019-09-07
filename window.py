@@ -75,22 +75,6 @@ class Window(tk.Frame):
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
 
-        self.black_name = self.canvas.create_text(
-            BLACK_X_OFFSET,
-            NAME_Y_OFFSET,
-            text="●" + DEFAULT_BLACK_PLAYER,
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-        self.white_name = self.canvas.create_text(
-            WHITE_X_OFFSET,
-            NAME_Y_OFFSET,
-            text="●" + DEFAULT_WHITE_PLAYER,
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
         self.create_text_on_canvas()
 
         self.size = size
@@ -108,6 +92,8 @@ class Window(tk.Frame):
         """
         キャンバス上にテキストを配置
         """
+        self.create_black_name()
+        self.create_white_name()
         self.create_black_stonenum()
         self.create_white_stonenum()
         self.create_black_winlose()
@@ -117,6 +103,30 @@ class Window(tk.Frame):
         self.create_black_move()
         self.create_white_move()
         self.create_start()
+
+    def create_black_name(self):
+        """
+        黒のプレイヤー名の表示テキスト作成
+        """
+        self.black_name = self.canvas.create_text(
+            BLACK_X_OFFSET,
+            NAME_Y_OFFSET,
+            text="●" + DEFAULT_BLACK_PLAYER,
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_BLACK
+        )
+
+    def create_white_name(self):
+        """
+        白のプレイヤー名の表示テキスト作成
+        """
+        self.white_name = self.canvas.create_text(
+            WHITE_X_OFFSET,
+            NAME_Y_OFFSET,
+            text="●" + DEFAULT_WHITE_PLAYER,
+            font=('', TEXT_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
 
     def create_black_stonenum(self):
         """
