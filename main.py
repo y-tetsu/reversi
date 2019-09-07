@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロゲーム(コンソール版)
+オセロアプリ(コンソール版)
 """
 
 import sys
@@ -37,7 +37,7 @@ class Main:
     """
     コンソールゲーム
     """
-    START, MENU, GAME = 'START', 'MENU', 'GAME'
+    START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
     def __init__(self):
         self.board_size = DEFAULT_BOARD_SIZE
@@ -45,7 +45,27 @@ class Main:
         self.white = DEFAULT_WHITE_PLAYER
         self.state = Main.START
 
-    def start(self):
+    @property
+    def state(self):
+        return self.state
+
+    @state.setter
+    def state(self, state):
+        if state == Main.START:
+            self.game = self.__start
+        elif state == Main.MENU:
+            self.game = self.__menu
+        else:
+            self.game = self.__play
+
+    def mainloop(self):
+        """
+        メインループ
+        """
+        while True:
+            self.game()
+
+    def __start(self):
         """
         設定を表示
         """
@@ -56,7 +76,7 @@ class Main:
         print('=============================\n')
         self.state = Main.MENU
 
-    def menu(self):
+    def __menu(self):
         """
         メニュー
         """
@@ -73,22 +93,25 @@ class Main:
             user_in = input('>> ')
 
             if not user_in:
-                self.state = Main.GAME
+                self.state = Main.PLAY
                 break
             elif user_in == 's':
-                self.board_size = self.get_board_size()
+                self.board_size = self._get_board_size()
+                self.state = Main.START
                 break
             elif user_in == 'b':
-                self.black = self.get_player(BLACK_PLAYERS)
+                self.black = self._get_player(BLACK_PLAYERS)
+                self.state = Main.START
                 break
             elif user_in == 'w':
-                self.white = self.get_player(WHITE_PLAYERS)
+                self.white = self._get_player(WHITE_PLAYERS)
+                self.state = Main.START
                 break
             elif user_in == 'q':
                 print('See you!')
                 sys.exit()
 
-    def get_board_size(self):
+    def _get_board_size(self):
         """
         ボードサイズの取得
         """
@@ -100,7 +123,7 @@ class Main:
             if board.MIN_BOARD_SIZE <= user_in <= board.MAX_BOARD_SIZE and not user_in % 2:
                 return user_in
 
-    def get_player(self, players):
+    def _get_player(self, players):
         """
         プレイヤーの取得
         """
@@ -118,9 +141,9 @@ class Main:
             if 1 <= user_in <= len(player_list):
                 return player_list[user_in-1]
 
-    def game(self):
+    def __play(self):
         """
-        ゲーム
+        ゲームプレイ
         """
         # プレイヤー準備
         black = Player(Board.BLACK, self.black, BLACK_PLAYERS[self.black])
@@ -136,14 +159,5 @@ class Main:
 
 
 if __name__ == '__main__':
-    main = Main()
-
-    while True:
-        if main.state == Main.START:
-            main.start()
-
-        if main.state == Main.MENU:
-            main.menu()
-
-        if main.state == Main.GAME:
-            main.game()
+    console_app = Main()
+    console_app.mainloop()
