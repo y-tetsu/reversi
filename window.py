@@ -116,6 +116,7 @@ class Window(tk.Frame):
         ゲーム画面の初期化
         """
         # 全オブジェクト削除
+        self._squares = []
         self.canvas.delete('all')
 
         # ボードを配置
@@ -321,6 +322,7 @@ class Window(tk.Frame):
         オセロのマスを描く
         """
 
+        self._squares = [[None for _ in range(self.size)] for _ in range(self.size)]
         y1 = self.square_y_ini
 
         for y in range(self.size):
@@ -337,7 +339,7 @@ class Window(tk.Frame):
                 if not y:
                     self.canvas.create_text((x1+x2)//2, y1-OFFSET_SQUARE_HEADER, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
 
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
 
                 x1 = x2
             y1 = y2
@@ -572,6 +574,82 @@ class Window(tk.Frame):
         """
         self.canvas.config(state='normal')
 
+    def enable_moves(self, moves):
+        """
+        打てる場所をハイライトする
+        """
+        for x, y in moves:
+            square = self._squares[y][x]
+            self.canvas.itemconfigure(square, fill=COLOR_YELLOW)
+
+    def disable_moves(self, moves):
+        """
+        打てる場所のハイライトを元に戻す
+        """
+        for x, y in moves:
+            square = self._squares[y][x]
+            self.canvas.itemconfigure(square, fill=COLOR_GREEN)
+
+    def enable_move(self, x, y):
+        """
+        打った場所をハイライトする
+        """
+        square = self._squares[y][x]
+        self.canvas.itemconfigure(square, fill=COLOR_RED)
+
+    def disable_move(self, x, y):
+        """
+        打った場所のハイライトを元に戻す
+        """
+        square = self._squares[y][x]
+        self.canvas.itemconfigure(square, fill=COLOR_GREEN)
+
+    def selectable_moves(self, moves):
+        """
+        打てる場所を選択できるようにする
+        """
+        for x, y in moves:
+            square = self._squares[y][x]
+            self.canvas.tag_bind(square, '<Enter>', self._enter_selectable_moves(square))
+            self.canvas.tag_bind(square, '<Leave>', self._leave_selectable_moves(square))
+            self.canvas.tag_bind(square, '<ButtonPress-1>', self._press_selectable_moves(x, y))
+
+    def unselectable_moves(self, moves):
+        """
+        打てる場所を選択できないようにする
+        """
+        for x, y in moves:
+            square = self._squares[y][x]
+            self.canvas.tag_bind(square, '<Enter>', lambda *args: None)
+            self.canvas.tag_bind(square, '<Leave>', lambda *args: None)
+            self.canvas.tag_bind(square, '<ButtonPress-1>', lambda *args: None)
+
+    def _enter_selectable_moves(self, square):
+        """
+        打てる場所にカーソルが合ったとき
+        """
+        def _enter(event):
+            self.canvas.itemconfigure(square, fill=COLOR_RED)
+
+        return _enter
+
+    def _leave_selectable_moves(self, square):
+        """
+        打てる場所からカーソルが離れた
+        """
+        def _leave(event):
+            self.canvas.itemconfigure(square, fill=COLOR_YELLOW)
+
+        return _leave
+
+    def _press_selectable_moves(self, x, y):
+        """
+        打てる場所をクリックしたとき
+        """
+        def _press(event):
+            print("select", x, y)
+
+        return _press
 
 class Menu(tk.Menu):
     """
@@ -814,24 +892,41 @@ if __name__ == '__main__':
                     moves = list(board.get_possibles(board.BLACK).keys())
 
                     if moves:
+                        window.enable_moves(moves)
+                        window.selectable_moves(moves)
+
                         time.sleep(0.2)
                         black_player.put_stone(board)
+
+                        window.disable_moves(moves)
+                        window.enable_move(*black_player.move)
+
                         window.put_stone(Board.BLACK, *black_player.move)
 
                         time.sleep(1.2)
                         window.turn_stone(Board.BLACK, black_player.captures)
+
+                        window.unselectable_moves(moves)
+                        window.disable_move(*black_player.move)
 
                         playable += 1
 
                     moves = list(board.get_possibles(Board.WHITE).keys())
 
                     if moves:
+                        window.enable_moves(moves)
+
                         time.sleep(0.2)
                         white_player.put_stone(board)
+
+                        window.disable_moves(moves)
+                        window.enable_move(*white_player.move)
+
                         window.put_stone(Board.WHITE, *white_player.move)
 
                         time.sleep(1.2)
                         window.turn_stone(Board.WHITE, white_player.captures)
+                        window.disable_move(*white_player.move)
 
                         playable += 1
 
