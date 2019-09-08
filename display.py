@@ -190,20 +190,36 @@ class WindowDisplay(AbstractDisplay):
         """
         反則プレイヤーの表示
         """
-        print(player, "の反則")
+        if player.stone == Board.BLACK:
+            black_winlose = self.window.black_winlose
+            self.window.canvas.itemconfigure(black_winlose, text='反則')
+        elif player.stone == Board.WHITE:
+            white_winlose = self.window.white_winlose
+            self.window.canvas.itemconfigure(white_winlose, text='反則')
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
-        print(player, "の勝ちです")
+        if player.stone == Board.BLACK:
+            black_winlose = self.window.black_winlose
+            self.window.canvas.itemconfigure(black_winlose, text='勝ち')
+            white_winlose = self.window.white_winlose
+            self.window.canvas.itemconfigure(white_winlose, text='負け')
+        elif player.stone == Board.WHITE:
+            white_winlose = self.window.white_winlose
+            self.window.canvas.itemconfigure(white_winlose, text='勝ち')
+            black_winlose = self.window.black_winlose
+            self.window.canvas.itemconfigure(black_winlose, text='負け')
 
     def draw(self):
         """
         引き分けの表示
         """
-        print("引き分けです")
-
+        black_winlose = self.window.black_winlose
+        self.window.canvas.itemconfigure(black_winlose, text='引き分け')
+        white_winlose = self.window.white_winlose
+        self.window.canvas.itemconfigure(white_winlose, text='引き分け')
 
 
 if __name__ == '__main__':

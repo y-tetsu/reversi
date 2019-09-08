@@ -192,7 +192,7 @@ class Window(tk.Frame):
         """
         黒の勝敗の表示テキスト作成
         """
-        self.black_result = self.canvas.create_text(
+        self.black_winlose = self.canvas.create_text(
             OFFSET_BLACK_X,
             OFFSET_RESULT_Y,
             text="",
