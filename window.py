@@ -61,20 +61,6 @@ class Window(tk.Frame):
     """
     ウィンドウ
     """
-    BLACK_PLAYERS = {
-        'User1': strategies.WindowUserInput(),
-        'Random': strategies.Random(),
-        'Greedy': strategies.Greedy(),
-        'Unselfish': strategies.Unselfish(),
-    }
-
-    WHITE_PLAYERS = {
-        'User2': strategies.WindowUserInput(),
-        'Random': strategies.Random(),
-        'Greedy': strategies.Greedy(),
-        'Unselfish': strategies.Unselfish(),
-    }
-
     def __init__(self, size=8, master=None, event=None, queue=None):
         super().__init__(master)
         self.pack()
@@ -93,15 +79,31 @@ class Window(tk.Frame):
         self.white_player = DEFAULT_WHITE_PLAYER
 
         # ウィンドウ初期化
-        self._create_menu(master)
+        self._create_players()
+        self._create_menu()
         self._create_game_screen()
 
-    def _create_menu(self, master):
+    def _create_players(self):
+        self.black_players = {
+            'User1': strategies.WindowUserInput(self),
+            'Random': strategies.Random(),
+            'Greedy': strategies.Greedy(),
+            'Unselfish': strategies.Unselfish(),
+        }
+
+        self.white_players = {
+            'User2': strategies.WindowUserInput(self),
+            'Random': strategies.Random(),
+            'Greedy': strategies.Greedy(),
+            'Unselfish': strategies.Unselfish(),
+        }
+
+    def _create_menu(self):
         """
         メニューを配置
         """
-        self.menubar = Menu(self, self.event, self.queue)
-        master.configure(menu=self.menubar)
+        self.menubar = Menu(self, self.black_players, self.white_players, self.event, self.queue)
+        self.master.configure(menu=self.menubar)
 
     def _create_game_screen(self):
         """
@@ -650,14 +652,18 @@ class Window(tk.Frame):
 
         return _press
 
+
 class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, master, event, queue):
-        super().__init__(master)
+    def __init__(self, window, black_players, white_players, event, queue):
+        super().__init__(window.master)
 
         # 引数取得
+        self.window = window
+        self.black_players = black_players
+        self.white_players = white_players
         self.event = event
         self.queue = queue
 
@@ -672,7 +678,7 @@ class Menu(tk.Menu):
         """
         menu_size = tk.Menu(self)
         for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
-            menu_size.add_command(label=str(i), command=self._change_board_size(i, self.master))
+            menu_size.add_command(label=str(i), command=self._change_board_size(i))
         self.add_cascade(menu=menu_size, label=MENU_SIZE)
 
     def _create_black_menu(self):
@@ -680,8 +686,8 @@ class Menu(tk.Menu):
         黒プレイヤー
         """
         menu_black = tk.Menu(self)
-        for player in Window.BLACK_PLAYERS.keys():
-            menu_black.add_command(label=player, command=self.change_black_player(player, self.master))
+        for player in self.black_players.keys():
+            menu_black.add_command(label=player, command=self.change_black_player(player))
         self.add_cascade(menu=menu_black, label=MENU_BLACK)
 
     def _create_white_menu(self):
@@ -689,18 +695,18 @@ class Menu(tk.Menu):
         白プレイヤー
         """
         menu_white = tk.Menu(self)
-        for player in Window.WHITE_PLAYERS.keys():
-            menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
+        for player in self.white_players.keys():
+            menu_white.add_command(label=player, command=self.change_white_player(player))
         self.add_cascade(menu=menu_white, label=MENU_WHITE)
 
-    def _change_board_size(self, size, master):
+    def _change_board_size(self, size):
         """
         ボードサイズの変更
         """
         def change_board_size_event():
             if self.queue.empty():
                 # ウィンドウ無効化
-                self.master.disable_window()
+                self.window.disable_window()
 
                 # 設定変更を通知
                 self.event.set()
@@ -708,41 +714,41 @@ class Menu(tk.Menu):
 
         return change_board_size_event
 
-    def change_black_player(self, player, master):
+    def change_black_player(self, player):
         """
         黒プレーヤーを変更
         """
         def change_player():
             if self.queue.empty():
                 # ウィンドウ無効化
-                self.master.disable_window()
+                self.window.disable_window()
 
                 # 設定変更
-                master.black_player = player
-                master.canvas.itemconfigure(master.black_name, text=STONE_MARK + player)
+                self.window.black_player = player
+                self.window.canvas.itemconfigure(self.window.black_name, text=STONE_MARK + player)
 
                 # 設定変更を通知
                 self.event.set()
-                self.queue.put(master.size)
+                self.queue.put(self.window.size)
 
         return change_player
 
-    def change_white_player(self, player, master):
+    def change_white_player(self, player):
         """
         白プレーヤーを変更
         """
         def change_player():
             if self.queue.empty():
                 # ウィンドウ無効化
-                self.master.disable_window()
+                self.window.disable_window()
 
                 # 設定変更
-                master.white_player = player
-                master.canvas.itemconfigure(master.white_name, text=STONE_MARK + player)
+                self.window.white_player = player
+                self.window.canvas.itemconfigure(self.window.white_name, text=STONE_MARK + player)
 
                 # 設定変更を通知
                 self.event.set()
-                self.queue.put(master.size)
+                self.queue.put(self.window.size)
 
         return change_player
 
@@ -892,8 +898,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(Board.BLACK, window.black_player, Window.BLACK_PLAYERS[window.black_player])
-                white_player = Player(Board.WHITE, window.white_player, Window.WHITE_PLAYERS[window.white_player])
+                black_player = Player(Board.BLACK, window.black_player, self.window.black_players[window.black_player])
+                white_player = Player(Board.WHITE, window.white_player, self.window.white_players[window.white_player])
 
                 while True:
                     playable = 0

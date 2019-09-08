@@ -90,8 +90,8 @@ class Main:
         print('PLAY')
 
         # プレイヤー準備
-        black = Player(Board.BLACK, self.window.black_player, Window.BLACK_PLAYERS[self.window.black_player])
-        white = Player(Board.WHITE, self.window.white_player, Window.WHITE_PLAYERS[self.window.white_player])
+        black = Player(Board.BLACK, self.window.black_player, self.window.black_players[self.window.black_player])
+        white = Player(Board.WHITE, self.window.white_player, self.window.white_players[self.window.white_player])
 
         # ゲーム開始
         game = Game(Board(self.window.size), black, white, WindowDisplay(self.window))

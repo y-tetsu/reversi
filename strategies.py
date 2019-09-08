@@ -50,6 +50,9 @@ class WindowUserInput(AbstractStrategy):
     """
     ウィンドウからのユーザ入力
     """
+    def __init__(self, window):
+        self._window = window
+
     def next_move(self, stone, board):
         """
         次の一手
