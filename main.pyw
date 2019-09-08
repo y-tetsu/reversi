@@ -93,7 +93,12 @@ class Main:
             time.sleep(0.1)
 
             if self.window.start_pressed:
+                window.start_pressed = False
                 self.state = Main.PLAY
+                break
+
+            if self._setting_changed():
+                self.state = Main.INIT
                 break
 
     def __play(self):
@@ -102,16 +107,16 @@ class Main:
         """
         print('PLAY')
 
-        ## プレイヤー準備
-        #black = Player(Board.BLACK, self.black, BLACK_PLAYERS[self.black])
-        #white = Player(Board.WHITE, self.white, WHITE_PLAYERS[self.white])
+        # プレイヤー準備
+        black = Player(Board.BLACK, self.black, BLACK_PLAYERS[self.black])
+        white = Player(Board.WHITE, self.white, WHITE_PLAYERS[self.white])
 
-        ## ゲーム開始
-        #game = Game(Board(self.board_size), black, white, WindowDisplay())
-        #game.play()
+        # ゲーム開始
+        game = Game(Board(self.board_size), black, white, WindowDisplay())
+        game.play()
 
-        ## 少し待ってスタートに戻る
-        #time.sleep(2)
+        # 少し待って終了状態へ
+        time.sleep(2)
         self.state = Main.END
 
     def __end(self):
@@ -130,6 +135,10 @@ class Main:
                 self.state = Main.REINIT
                 break
 
+            if self._setting_changed():
+                self.state = Main.INIT
+                break
+
     def __reinit(self):
         """
         再初期化(ゲーム終了後再スタート時)
@@ -140,6 +149,18 @@ class Main:
         window.disable_start()
         window.menubar.disable_menu()
         self.state = Main.PLAY
+
+    def _setting_changed(self):
+        """
+        ウィンドウの設定が変更されたとき
+        """
+        if self.window.event.is_set():
+            self.window.size = self.window.queue.get()
+            self.window.event.clear()
+
+            return True
+
+        return False
 
 
 if __name__ == '__main__':
