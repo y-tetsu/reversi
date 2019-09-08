@@ -238,7 +238,7 @@ if __name__ == '__main__':
     display.turn(black, possibles)
 
     black.put_stone(board)
-    display.move(black)
+    display.move(black, possibles)
     display.board(board, black, white)
 
     display.foul(black)
