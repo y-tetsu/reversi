@@ -161,5 +161,5 @@ class Main:
 
 
 if __name__ == '__main__':
-    console_app = Main()
-    console_app.mainloop()
+    main = Main()
+    main.mainloop()
