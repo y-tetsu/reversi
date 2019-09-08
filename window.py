@@ -41,11 +41,6 @@ SQUARE_BOTTOM_MARGIN = 120
 OVAL_SIZE_RATIO = 0.8
 TURNOVAL_SIZE_DIVISOR = 10
 
-WINDOW_STATE_INIT = 'INIT'
-WINDOW_STATE_DEMO = 'DEMO'
-WINDOW_STATE_GAME_START = 'GAME_START'
-WINDOW_STATE_GAME_END = 'GAME_END'
-
 MENU_SIZE = 'Size'
 MENU_BLACK = 'Black'
 MENU_WHITE = 'White'
@@ -89,7 +84,10 @@ class Window(tk.Frame):
         self.queue = queue  # ウィンドウからのデータ受け渡し
 
         # 初期値設定
-        self.state = WINDOW_STATE_INIT
+        self.master.title(WINDOW_TITLE)                   # タイトル
+        self.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
+
+        self.start_pressed = False
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
 
@@ -296,7 +294,7 @@ class Window(tk.Frame):
         self.disable_start()
         self.menubar.disable_menu()
 
-        self.state = WINDOW_STATE_GAME_START
+        self.start_pressed = True
 
     def _init_board_on_canvas(self):
         """
@@ -773,29 +771,35 @@ if __name__ == '__main__':
     event = threading.Event()
     q = queue.Queue()
 
+    state = 'INIT'
+
     def resize_board(window):
+        global state
+
         if event.is_set():
-            window.size = q.get()             # 変更後のサイズをセット
-            window.state = WINDOW_STATE_INIT  # ウィンドウ初期化
-            event.clear()                     # イベントをクリア
+            window.size = q.get()  # 変更後のサイズをセット
+            state = 'INIT'         # ウィンドウ初期化
+            event.clear()          # イベントをクリア
 
             return True
 
         return False
 
     def test_play(window):
+        global state
+
         demo = False
 
         while True:
             resize_board(window)
 
-            if window.state == WINDOW_STATE_INIT:
+            if state == 'INIT':
                 demo = False
                 window.init_game_screen()
                 window.enable_window()
-                window.state = WINDOW_STATE_DEMO
+                state = 'DEMO'
 
-            if window.state == WINDOW_STATE_DEMO:
+            if state == 'DEMO':
                 demo = True
                 resize_flag = False
                 center = window.size // 2
@@ -873,7 +877,11 @@ if __name__ == '__main__':
                         window.remove_turnblack(x, y)
                         window.put_white(x, y)
 
-            if window.state == WINDOW_STATE_GAME_START:
+                if window.start_pressed:
+                    window.start_pressed = False
+                    state = 'START'
+
+            if state == 'START':
                 if not demo:
                     window.init_game_screen()
                     window.disable_start()
@@ -931,20 +939,21 @@ if __name__ == '__main__':
                         playable += 1
 
                     if not playable:
-                        window.state = WINDOW_STATE_GAME_END
+                        state = 'END'
                         window.enable_window()
                         break
 
-            if window.state == WINDOW_STATE_GAME_END:
+            if state == 'END':
                 demo = False
-                pass
+
+                if window.start_pressed:
+                    window.start_pressed = False
+                    state = 'START'
 
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
 
     window = Window(master=app, event=event, queue=q)
-    window.master.title(WINDOW_TITLE)                   # タイトル
-    window.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
     game = threading.Thread(target=test_play, args=([window]))
     game.daemon = True
