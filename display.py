@@ -6,6 +6,8 @@
 import time
 import abc
 
+from board import Board
+
 
 class AbstractDisplay(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -114,26 +116,37 @@ class WindowDisplay(AbstractDisplay):
     """
     GUIへの表示
     """
+    def __init__(self, window):
+        self.window = window
+
     def board(self, board, black, white):
         """
         ボードの表示
         """
-        score_b = str(black) + ":" + str(board.black_num)
-        score_w = str(white) + ":" + str(board.white_num)
+        black_num = self.window.black_stonenum
+        self.window.canvas.itemconfigure(black_num, text=str(board.black_num))
 
-        print(score_b, score_w)
-        print(board)
+        white_num = self.window.white_stonenum
+        self.window.canvas.itemconfigure(white_num, text=str(board.white_num))
 
     def turn(self, player, possibles):
         """
         手番の表示
         """
         time.sleep(1)
-        print(player, "の番です")
 
-        for index, value in enumerate(possibles, 1):
-            coordinate = (chr(value[0] + 97), str(value[1] + 1))
-            print(f'{index:2d}:', coordinate)
+        black_move = self.window.black_move
+        self.window.canvas.itemconfigure(black_move, text='')
+
+        white_move = self.window.white_move
+        self.window.canvas.itemconfigure(white_move, text='')
+
+        if player.stone == Board.BLACK:
+            black_turn = self.window.black_turn
+            self.window.canvas.itemconfigure(black_turn, text="手番です")
+        elif player.stone == Board.WHITE:
+            white_turn = self.window.white_turn
+            self.window.canvas.itemconfigure(white_turn, text="手番です")
 
     def move(self, player):
         """
@@ -142,8 +155,22 @@ class WindowDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print((x, y), "に置きました(" + str(len(player.captures)) + "個取得)\n")
-        time.sleep(1)
+        time.sleep(0.5)
+
+        black_turn = self.window.black_turn
+        self.window.canvas.itemconfigure(black_turn, text="")
+
+        white_turn = self.window.white_turn
+        self.window.canvas.itemconfigure(white_turn, text="")
+
+        if player.stone == Board.BLACK:
+            black_move = self.window.black_move
+            self.window.canvas.itemconfigure(black_move, text=f'({x}, {y}) に置きました')
+
+        elif player.stone == Board.WHITE:
+            white_move = self.window.white_move
+            self.window.canvas.itemconfigure(white_move, text=f'({x}, {y}) に置きました')
+
 
     def foul(self, player):
         """

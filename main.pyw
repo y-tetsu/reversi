@@ -112,7 +112,7 @@ class Main:
         white = Player(Board.WHITE, self.white, WHITE_PLAYERS[self.white])
 
         # ゲーム開始
-        game = Game(Board(self.board_size), black, white, WindowDisplay())
+        game = Game(Board(self.board_size), black, white, WindowDisplay(self.window))
         game.play()
 
         # 少し待って終了状態へ
