@@ -28,8 +28,6 @@ WHITE_PLAYERS = {
     'Unselfish': strategies.Unselfish(),
 }
 
-DEFAULT_BLACK_PLAYER = 'Random'
-DEFAULT_WHITE_PLAYER = 'Random'
 DEFAULT_BOARD_SIZE = 4
 
 
@@ -40,8 +38,6 @@ class Main:
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
     def __init__(self, window=None):
-        self.black = DEFAULT_BLACK_PLAYER
-        self.white = DEFAULT_WHITE_PLAYER
         self.state = Main.INIT
         self.window = window
 
@@ -107,8 +103,8 @@ class Main:
         print('PLAY')
 
         # プレイヤー準備
-        black = Player(Board.BLACK, self.black, BLACK_PLAYERS[self.black])
-        white = Player(Board.WHITE, self.white, WHITE_PLAYERS[self.white])
+        black = Player(Board.BLACK, self.window.black_player, BLACK_PLAYERS[self.window.black_player])
+        white = Player(Board.WHITE, self.window.white_player, WHITE_PLAYERS[self.window.white_player])
 
         # ゲーム開始
         game = Game(Board(self.window.size), black, white, WindowDisplay(self.window))
