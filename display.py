@@ -19,7 +19,7 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def move(self, player):
+    def move(self, player, possibles):
         pass
 
     @abc.abstractmethod
@@ -60,14 +60,14 @@ class ConsoleDisplay(AbstractDisplay):
             coordinate = (chr(value[0] + 97), str(value[1] + 1))
             print(f'{index:2d}:', coordinate)
 
-    def move(self, player):
+    def move(self, player, possibles):
         """
         手の表示
         """
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print((x, y), "に置きました(" + str(len(player.captures)) + "個取得)\n")
+        print((x, y), "に置きました\n")
         time.sleep(1)
 
     def foul(self, player):
@@ -99,7 +99,7 @@ class NoneDisplay(AbstractDisplay):
     def turn(self, player, possibles):
         pass
 
-    def move(self, player):
+    def move(self, player, possibles):
         pass
 
     def foul(self, player):
@@ -135,12 +135,14 @@ class WindowDisplay(AbstractDisplay):
         """
         time.sleep(1)
 
+        # 手の表示を消す
         black_move = self.window.black_move
         self.window.canvas.itemconfigure(black_move, text='')
 
         white_move = self.window.white_move
         self.window.canvas.itemconfigure(white_move, text='')
 
+        # 手番を表示
         if player.stone == Board.BLACK:
             black_turn = self.window.black_turn
             self.window.canvas.itemconfigure(black_turn, text="手番です")
@@ -148,7 +150,10 @@ class WindowDisplay(AbstractDisplay):
             white_turn = self.window.white_turn
             self.window.canvas.itemconfigure(white_turn, text="手番です")
 
-    def move(self, player):
+        # 候補を表示
+        self.window.enable_moves(possibles)
+
+    def move(self, player, possibles):
         """
         手の表示
         """
@@ -157,12 +162,14 @@ class WindowDisplay(AbstractDisplay):
 
         time.sleep(0.5)
 
+        # 手番を消す
         black_turn = self.window.black_turn
         self.window.canvas.itemconfigure(black_turn, text="")
 
         white_turn = self.window.white_turn
         self.window.canvas.itemconfigure(white_turn, text="")
 
+        # 手を表示
         if player.stone == Board.BLACK:
             black_move = self.window.black_move
             self.window.canvas.itemconfigure(black_move, text=f'({x}, {y}) に置きました')
@@ -171,6 +178,13 @@ class WindowDisplay(AbstractDisplay):
             white_move = self.window.white_move
             self.window.canvas.itemconfigure(white_move, text=f'({x}, {y}) に置きました')
 
+        # 石を置く表示
+        self.window.disable_moves(possibles)
+        self.window.enable_move(*player.move)
+        self.window.put_stone(player.stone, *player.move)
+        time.sleep(0.5)
+        self.window.turn_stone(player.stone, player.captures)
+        self.window.disable_move(*player.move)
 
     def foul(self, player):
         """

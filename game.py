@@ -29,7 +29,7 @@ class Game:
                 foul_player = None
 
                 for player in [self.black, self.white]:
-                    possibles = self.board.get_possibles(player.stone)
+                    possibles = list(self.board.get_possibles(player.stone).keys())
 
                     if not possibles:
                         continue
@@ -38,7 +38,7 @@ class Game:
 
                     player.put_stone(self.board)
 
-                    self.display.move(player)
+                    self.display.move(player, possibles)
                     self.display.board(self.board, self.black, self.white)
 
                     if not player.captures:

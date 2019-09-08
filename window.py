@@ -3,6 +3,7 @@
 GUIウィンドウ
 """
 
+import time
 import tkinter as tk
 
 import board

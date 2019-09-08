@@ -40,7 +40,6 @@ class Main:
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
     def __init__(self, window=None):
-        self.board_size = DEFAULT_BOARD_SIZE
         self.black = DEFAULT_BLACK_PLAYER
         self.white = DEFAULT_WHITE_PLAYER
         self.state = Main.INIT
@@ -112,7 +111,7 @@ class Main:
         white = Player(Board.WHITE, self.white, WHITE_PLAYERS[self.white])
 
         # ゲーム開始
-        game = Game(Board(self.board_size), black, white, WindowDisplay(self.window))
+        game = Game(Board(self.window.size), black, white, WindowDisplay(self.window))
         game.play()
 
         # 少し待って終了状態へ
@@ -176,7 +175,7 @@ if __name__ == '__main__':
     # ウィンドウ作成
     app = tk.Tk()
     app.withdraw()  # 表示が整うまで隠す
-    window = Window(master=app, event=event, queue=q)
+    window = Window(size=DEFAULT_BOARD_SIZE, master=app, event=event, queue=q)
 
     # ゲーム用スレッド
     main = Main(window=window)
