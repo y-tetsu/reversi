@@ -58,8 +58,6 @@ class Main:
         """
         画面初期化(初回、設定変更時)
         """
-        print('INIT')
-
         self.window.init_game_screen()
         self.window.enable_window()
 
@@ -69,8 +67,6 @@ class Main:
         """
         デモ画面
         """
-        print('DEMO')
-
         while True:
             time.sleep(0.1)
 
@@ -87,8 +83,6 @@ class Main:
         """
         ゲーム画面
         """
-        print('PLAY')
-
         # プレイヤー準備
         black = Player(Board.BLACK, self.window.black_player, self.window.black_players[self.window.black_player])
         white = Player(Board.WHITE, self.window.white_player, self.window.white_players[self.window.white_player])
@@ -105,8 +99,6 @@ class Main:
         """
         終了画面
         """
-        print('END')
-
         window.enable_window()
 
         while True:
@@ -125,8 +117,6 @@ class Main:
         """
         再初期化(ゲーム終了後再スタート時)
         """
-        print('REINIT')
-
         window.init_game_screen()
         window.disable_start()
         window.menubar.disable_menu()

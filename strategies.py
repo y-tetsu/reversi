@@ -51,7 +51,7 @@ class WindowUserInput(AbstractStrategy):
     ウィンドウからのユーザ入力
     """
     def __init__(self, window):
-        self._window = window
+        self.window = window
 
     def next_move(self, stone, board):
         """
@@ -59,7 +59,16 @@ class WindowUserInput(AbstractStrategy):
         """
         moves = list(board.get_possibles(stone).keys())
 
-        return random.choice(moves)
+        while True:
+            self.window.selectable_moves(moves)
+            self.window.wait_input = True
+            move = self.window.queue.get()
+
+            if move in moves:
+                self.window.unselectable_moves(moves)
+                break
+
+        return move
 
 
 class Random(AbstractStrategy):

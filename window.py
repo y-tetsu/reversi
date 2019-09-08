@@ -75,6 +75,7 @@ class Window(tk.Frame):
         self.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
         self.start_pressed = False
+        self.wait_input = False
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
 
@@ -648,7 +649,9 @@ class Window(tk.Frame):
         打てる場所をクリックしたとき
         """
         def _press(event):
-            print("select", x, y)
+            if self.wait_input:
+                self.wait_input = False
+                self.queue.put((x, y))
 
         return _press
 
