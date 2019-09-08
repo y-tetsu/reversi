@@ -56,25 +56,25 @@ DEFAULT_WHITE_PLAYER = 'User2'
 DEFAULT_BLACK_NUM = "2"
 DEFAULT_WHITE_NUM = "2"
 
-BLACK_PLAYERS = {
-    'User1': strategies.WindowUserInput(),
-    'Random': strategies.Random(),
-    'Greedy': strategies.Greedy(),
-    'Unselfish': strategies.Unselfish(),
-}
-
-WHITE_PLAYERS = {
-    'User2': strategies.WindowUserInput(),
-    'Random': strategies.Random(),
-    'Greedy': strategies.Greedy(),
-    'Unselfish': strategies.Unselfish(),
-}
-
 
 class Window(tk.Frame):
     """
     ウィンドウ
     """
+    BLACK_PLAYERS = {
+        'User1': strategies.WindowUserInput(),
+        'Random': strategies.Random(),
+        'Greedy': strategies.Greedy(),
+        'Unselfish': strategies.Unselfish(),
+    }
+
+    WHITE_PLAYERS = {
+        'User2': strategies.WindowUserInput(),
+        'Random': strategies.Random(),
+        'Greedy': strategies.Greedy(),
+        'Unselfish': strategies.Unselfish(),
+    }
+
     def __init__(self, size=8, master=None, event=None, queue=None):
         super().__init__(master)
         self.pack()
@@ -680,7 +680,7 @@ class Menu(tk.Menu):
         黒プレイヤー
         """
         menu_black = tk.Menu(self)
-        for player in BLACK_PLAYERS.keys():
+        for player in Window.BLACK_PLAYERS.keys():
             menu_black.add_command(label=player, command=self.change_black_player(player, self.master))
         self.add_cascade(menu=menu_black, label=MENU_BLACK)
 
@@ -689,7 +689,7 @@ class Menu(tk.Menu):
         白プレイヤー
         """
         menu_white = tk.Menu(self)
-        for player in WHITE_PLAYERS.keys():
+        for player in Window.WHITE_PLAYERS.keys():
             menu_white.add_command(label=player, command=self.change_white_player(player, self.master))
         self.add_cascade(menu=menu_white, label=MENU_WHITE)
 
@@ -892,8 +892,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(Board.BLACK, window.black_player, BLACK_PLAYERS[window.black_player])
-                white_player = Player(Board.WHITE, window.white_player, WHITE_PLAYERS[window.white_player])
+                black_player = Player(Board.BLACK, window.black_player, Window.BLACK_PLAYERS[window.black_player])
+                white_player = Player(Board.WHITE, window.white_player, Window.WHITE_PLAYERS[window.white_player])
 
                 while True:
                     playable = 0

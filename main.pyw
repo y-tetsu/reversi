@@ -11,22 +11,9 @@ from board import Board
 from player import Player
 from display import WindowDisplay
 from game import Game
+from window import Window
 import strategies
 
-
-BLACK_PLAYERS = {
-    'User1': strategies.WindowUserInput(),
-    'Random': strategies.Random(),
-    'Greedy': strategies.Greedy(),
-    'Unselfish': strategies.Unselfish(),
-}
-
-WHITE_PLAYERS = {
-    'User2': strategies.WindowUserInput(),
-    'Random': strategies.Random(),
-    'Greedy': strategies.Greedy(),
-    'Unselfish': strategies.Unselfish(),
-}
 
 DEFAULT_BOARD_SIZE = 4
 
@@ -103,8 +90,8 @@ class Main:
         print('PLAY')
 
         # プレイヤー準備
-        black = Player(Board.BLACK, self.window.black_player, BLACK_PLAYERS[self.window.black_player])
-        white = Player(Board.WHITE, self.window.white_player, WHITE_PLAYERS[self.window.white_player])
+        black = Player(Board.BLACK, self.window.black_player, Window.BLACK_PLAYERS[self.window.black_player])
+        white = Player(Board.WHITE, self.window.white_player, Window.WHITE_PLAYERS[self.window.white_player])
 
         # ゲーム開始
         game = Game(Board(self.window.size), black, white, WindowDisplay(self.window))
@@ -162,8 +149,6 @@ if __name__ == '__main__':
     import threading
     import queue
     import tkinter as tk
-
-    from window import Window
 
     event = threading.Event()
     q = queue.Queue()
