@@ -6,8 +6,6 @@
 import time
 import abc
 
-from board import Board
-
 
 class AbstractDisplay(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -143,10 +141,10 @@ class WindowDisplay(AbstractDisplay):
         self.window.canvas.itemconfigure(white_move, text='')
 
         # 手番を表示
-        if player.stone == Board.BLACK:
+        if player.stone == self.window.black:
             black_turn = self.window.black_turn
             self.window.canvas.itemconfigure(black_turn, text="手番です")
-        elif player.stone == Board.WHITE:
+        elif player.stone == self.window.white:
             white_turn = self.window.white_turn
             self.window.canvas.itemconfigure(white_turn, text="手番です")
 
@@ -170,11 +168,11 @@ class WindowDisplay(AbstractDisplay):
         self.window.canvas.itemconfigure(white_turn, text="")
 
         # 手を表示
-        if player.stone == Board.BLACK:
+        if player.stone == self.window.black:
             black_move = self.window.black_move
             self.window.canvas.itemconfigure(black_move, text=f'({x}, {y}) に置きました')
 
-        elif player.stone == Board.WHITE:
+        elif player.stone == self.window.white:
             white_move = self.window.white_move
             self.window.canvas.itemconfigure(white_move, text=f'({x}, {y}) に置きました')
 
@@ -190,10 +188,10 @@ class WindowDisplay(AbstractDisplay):
         """
         反則プレイヤーの表示
         """
-        if player.stone == Board.BLACK:
+        if player.stone == self.window.black:
             black_winlose = self.window.black_winlose
             self.window.canvas.itemconfigure(black_winlose, text='反則')
-        elif player.stone == Board.WHITE:
+        elif player.stone == self.window.white:
             white_winlose = self.window.white_winlose
             self.window.canvas.itemconfigure(white_winlose, text='反則')
 
@@ -201,12 +199,12 @@ class WindowDisplay(AbstractDisplay):
         """
         勝ちプレイヤーの表示
         """
-        if player.stone == Board.BLACK:
+        if player.stone == self.window.black:
             black_winlose = self.window.black_winlose
             self.window.canvas.itemconfigure(black_winlose, text='勝ち')
             white_winlose = self.window.white_winlose
             self.window.canvas.itemconfigure(white_winlose, text='負け')
-        elif player.stone == Board.WHITE:
+        elif player.stone == self.window.white:
             white_winlose = self.window.white_winlose
             self.window.canvas.itemconfigure(white_winlose, text='勝ち')
             black_winlose = self.window.black_winlose
@@ -227,19 +225,19 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
-    board = Board()
-    black = Player(Board.BLACK, "Random", strategies.Random())
-    white = Player(Board.WHITE, "User", strategies.ConsoleUserInput())
+    board8x8 = Board()
+    black = Player(board8x8.black, "Random", strategies.Random())
+    white = Player(board8x8.white, "User", strategies.ConsoleUserInput())
 
     display = ConsoleDisplay()
-    display.board(board, black, white)
+    display.board(board8x8, black, white)
 
-    possibles = board.get_possibles(black.stone)
+    possibles = board8x8.get_possibles(black.stone)
     display.turn(black, possibles)
 
-    black.put_stone(board)
+    black.put_stone(board8x8)
     display.move(black, possibles)
-    display.board(board, black, white)
+    display.board(board8x8, black, white)
 
     display.foul(black)
     display.win(black)
