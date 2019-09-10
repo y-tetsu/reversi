@@ -6,6 +6,7 @@ GUIウィンドウ
 import time
 import tkinter as tk
 
+from stone import StoneFactory
 import board
 from board import Board
 import strategies
@@ -69,6 +70,11 @@ class Window(tk.Frame):
         self.size = size
         self.event = event  # ウィンドウからのイベント発生通知
         self.queue = queue  # ウィンドウからのデータ受け渡し
+
+        # 石情報
+        factory = StoneFactory()
+        self.black = factory.create('black')
+        self.white = factory.create('white')
 
         # 初期値設定
         self.master.title(WINDOW_TITLE)                   # タイトル
@@ -351,18 +357,18 @@ class Window(tk.Frame):
         石を初期位置に置く
         """
         center = self.size // 2
-        self.put_stone(Board.BLACK, center, center-1)
-        self.put_stone(Board.BLACK, center-1, center)
-        self.put_stone(Board.WHITE, center-1, center-1)
-        self.put_stone(Board.WHITE, center, center)
+        self.put_stone(self.black, center, center-1)
+        self.put_stone(self.black, center-1, center)
+        self.put_stone(self.white, center-1, center-1)
+        self.put_stone(self.white, center, center)
 
     def put_stone(self, stone, index_x, index_y):
         """
         石を置く
         """
-        if stone == Board.BLACK:
+        if stone == self.black:
             self.put_black(index_x, index_y)
-        elif stone == Board.WHITE:
+        elif stone == self.white:
             self.put_white(index_x, index_y)
 
     def put_black(self, index_x, index_y):
@@ -487,9 +493,9 @@ class Window(tk.Frame):
         """
         石をひっくり返す
         """
-        if stone == Board.BLACK:
+        if stone == self.black:
             self.turn_black_stone(captures)
-        elif stone == Board.WHITE:
+        elif stone == self.white:
             self.turn_white_stone(captures)
 
     def turn_black_stone(self, captures):
@@ -901,13 +907,13 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(Board.BLACK, window.black_player, self.window.black_players[window.black_player])
-                white_player = Player(Board.WHITE, window.white_player, self.window.white_players[window.white_player])
+                black_player = Player(board.black, window.black_player, window.black_players[window.black_player])
+                white_player = Player(board.white, window.white_player, window.white_players[window.white_player])
 
                 while True:
                     playable = 0
 
-                    moves = list(board.get_possibles(board.BLACK).keys())
+                    moves = list(board.get_possibles(board.black).keys())
 
                     if moves:
                         window.enable_moves(moves)
@@ -919,17 +925,17 @@ if __name__ == '__main__':
                         window.disable_moves(moves)
                         window.enable_move(*black_player.move)
 
-                        window.put_stone(Board.BLACK, *black_player.move)
+                        window.put_stone(board.black, *black_player.move)
 
                         time.sleep(1.2)
-                        window.turn_stone(Board.BLACK, black_player.captures)
+                        window.turn_stone(board.black, black_player.captures)
 
                         window.unselectable_moves(moves)
                         window.disable_move(*black_player.move)
 
                         playable += 1
 
-                    moves = list(board.get_possibles(Board.WHITE).keys())
+                    moves = list(board.get_possibles(board.white).keys())
 
                     if moves:
                         window.enable_moves(moves)
@@ -940,10 +946,10 @@ if __name__ == '__main__':
                         window.disable_moves(moves)
                         window.enable_move(*white_player.move)
 
-                        window.put_stone(Board.WHITE, *white_player.move)
+                        window.put_stone(board.white, *white_player.move)
 
                         time.sleep(1.2)
-                        window.turn_stone(Board.WHITE, white_player.captures)
+                        window.turn_stone(board.white, white_player.captures)
                         window.disable_move(*white_player.move)
 
                         playable += 1
