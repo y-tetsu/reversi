@@ -125,16 +125,16 @@ if __name__ == '__main__':
     print(board)
     console_user_input = ConsoleUserInput()
 
-    possibles = board.get_possibles(Board.BLACK)
+    possibles = board.get_possibles(board.black)
 
     for index, value in enumerate(possibles, 1):
         coordinate = (chr(value[0] + 97), str(value[1] + 1))
         print(f'{index:2d}:', coordinate)
 
-    print("User", console_user_input.next_move(Board.BLACK, board))
+    print("User", console_user_input.next_move(board.black, board))
 
     random_player = Random()
-    print("Random", random_player.next_move(Board.BLACK, board))
+    print("Random", random_player.next_move(board.black, board))
 
     from board import Board
     from player import Player
@@ -142,8 +142,8 @@ if __name__ == '__main__':
     board4x4 = Board(4)
     print(board4x4)
 
-    p1 = Player(Board.BLACK, "Random", Random())
-    p2 = Player(Board.WHITE, "Greedy", Greedy())
+    p1 = Player(board4x4.black, "Random", Random())
+    p2 = Player(board4x4.white, "Greedy", Greedy())
 
     while True:
         cnt = 0
