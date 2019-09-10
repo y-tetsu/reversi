@@ -6,7 +6,6 @@
 import sys
 import time
 
-import board
 from board import Board
 from player import Player
 from display import WindowDisplay
@@ -83,12 +82,15 @@ class Main:
         """
         ゲーム画面
         """
+        # ボード準備
+        board = Board(self.window.size)
+
         # プレイヤー準備
-        black = Player(Board.BLACK, self.window.black_player, self.window.black_players[self.window.black_player])
-        white = Player(Board.WHITE, self.window.white_player, self.window.white_players[self.window.white_player])
+        black = Player(board.black, self.window.black_player, self.window.black_players[self.window.black_player])
+        white = Player(board.white, self.window.white_player, self.window.white_players[self.window.white_player])
 
         # ゲーム開始
-        game = Game(Board(self.window.size), black, white, WindowDisplay(self.window))
+        game = Game(board, black, white, WindowDisplay(self.window))
         game.play()
 
         # 少し待って終了状態へ
