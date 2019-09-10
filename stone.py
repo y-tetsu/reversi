@@ -45,6 +45,6 @@ if __name__ == '__main__':
 
     for check in (black, white, blank):
         obj = factory.create(check.color)
-        print(obj)
+        print(type(obj), obj)
         assert isinstance(obj, check.cls)
         assert obj == check.mark
