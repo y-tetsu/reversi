@@ -110,6 +110,7 @@ class Simulator:
 
 if __name__ == '__main__':
     import timeit
+    from stone import StoneFactory
     from player import Player
     import strategies
 
@@ -119,8 +120,12 @@ if __name__ == '__main__':
         ("Unselfish", strategies.Unselfish()),
     ]
 
-    blacks = [Player(Board.BLACK, *character) for character in characters]
-    whites = [Player(Board.WHITE, *character) for character in characters]
+    factory = StoneFactory()
+    black = factory.create('black')
+    white = factory.create('white')
+
+    blacks = [Player(black, *character) for character in characters]
+    whites = [Player(white, *character) for character in characters]
 
     simulator = Simulator(blacks, whites, 250)
 
