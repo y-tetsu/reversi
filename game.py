@@ -129,10 +129,11 @@ if __name__ == '__main__':
         def next_move(self, stone, board):
             return (1, 1)
 
-    black = Player(Board.BLACK, "Random", strategies.Random())
-    white = Player(Board.WHITE, "Foul", Foul())
+    board4x4 = Board(4)
+    black = Player(board4x4.black, "Random", strategies.Random())
+    white = Player(board4x4.white, "Foul", Foul())
 
-    game = Game(Board(4), black, white, ConsoleDisplay())
+    game = Game(board4x4, black, white, ConsoleDisplay())
     game.play()
 
     print()
@@ -141,10 +142,11 @@ if __name__ == '__main__':
     print(game.result.white_name, game.result.white_num)
     print()
 
-    black = Player(Board.BLACK, "Random", strategies.Random())
-    white = Player(Board.WHITE, "Unselfish", strategies.Unselfish())
+    board4x4 = Board(4)
+    black = Player(board4x4.black, "Random", strategies.Random())
+    white = Player(board4x4.white, "Unselfish", strategies.Unselfish())
 
-    game = Game(Board(4), black, white, ConsoleDisplay())
+    game = Game(board4x4, black, white, ConsoleDisplay())
     game.play()
 
     print()
