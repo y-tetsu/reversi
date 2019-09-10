@@ -147,12 +147,15 @@ class Main:
         """
         ゲームプレイ
         """
+        # ボード準備
+        board = Board(self.board_size)
+
         # プレイヤー準備
-        black = Player(Board.BLACK, self.black, BLACK_PLAYERS[self.black])
-        white = Player(Board.WHITE, self.white, WHITE_PLAYERS[self.white])
+        black = Player(board.black, self.black, BLACK_PLAYERS[self.black])
+        white = Player(board.white, self.white, WHITE_PLAYERS[self.white])
 
         # ゲーム開始
-        game = Game(Board(self.board_size), black, white, ConsoleDisplay())
+        game = Game(board, black, white, ConsoleDisplay())
         game.play()
 
         # 少し待ってスタートに戻る
