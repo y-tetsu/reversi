@@ -51,6 +51,16 @@ class Board:
 
         return header + body
 
+    def is_full(self):
+        """
+        すべてのマスに石が置かれている
+        """
+        for row in self._board:
+            if self.blank in row:
+                return False
+
+        return True
+
     def get_possibles(self, stone):
         """
         石が置ける場所をすべて返す
@@ -273,3 +283,9 @@ if __name__ == '__main__':
     assert board4._board == board4_ret
     assert board4.black_num == 5
     assert board4.white_num == 11
+
+    # ボードが一杯かどうか
+    assert board4.is_full()
+
+    board4._board[3][3] = board4.blank
+    assert not board4.is_full()
