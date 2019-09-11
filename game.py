@@ -25,8 +25,7 @@ class Game:
             self.display.progress(self.board, self.black, self.white)
 
             while True:
-                playable = 0
-                foul_player = None
+                playable, foul_player = 0, None
 
                 for player in [self.black, self.white]:
                     possibles = list(self.board.get_possibles(player.stone).keys())
@@ -60,48 +59,42 @@ class Game:
         反則負け
         """
         self.display.foul(player)
-
-        if player.stone == self.black.stone:
-            self._win(self.white)
-        else:
-            self._win(self.black)
+        winner = self.white if player.stone == self.black.stone else self.black
+        self._win(winner)
 
     def _judge(self):
         """
         結果判定
         """
-        if self.board.num[self.black.stone] > self.board.num[self.white.stone]:
-            self._win(self.black)
-        elif self.board.num[self.white.stone] > self.board.num[self.black.stone]:
-            self._win(self.white)
-        else:
+        black_num, white_num = self.board.num[self.black.stone], self.board.num[self.white.stone]
+
+        if black_num == white_num:
             self._draw()
+        else:
+            winner = self.black if black_num > white_num else self.white
+            self._win(winner)
 
     def _win(self, player):
         """
         勝ち
         """
         self.display.win(player)
-
-        if player.stone == self.black.stone:
-            result = Game.BLACK_WIN
-        else:
-            result = Game.WHITE_WIN
-
-        self.result = GameResult(
-            result,
-            self.black.name, self.white.name,
-            self.board.num[self.black.stone], self.board.num[self.white.stone],
-        )
+        winlose = Game.BLACK_WIN if player.stone == self.black.stone else Game.WHITE_WIN
+        self._store_result(winlose)
 
     def _draw(self):
         """
         引き分け
         """
         self.display.draw()
+        self._store_result(Game.DRAW)
 
+    def _store_result(self, winlose):
+        """
+        結果を格納する
+        """
         self.result = GameResult(
-            Game.DRAW,
+            winlose,
             self.black.name, self.white.name,
             self.board.num[self.black.stone], self.board.num[self.white.stone],
         )
