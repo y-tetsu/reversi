@@ -7,6 +7,13 @@
 BLACK, WHITE, BLANK = (("BLACK", "〇"), ("WHITE", "●"), ("BLANK", "□"))
 
 
+class Stone(str):
+    """
+    石の基底クラス
+    """
+    __slots__ = ()  # データを持たない
+
+
 class StoneFactory:
     """
     石ファクトリ
@@ -24,13 +31,6 @@ class StoneFactory:
         石オブジェクトを生成する
         """
         return globals()[color.title()]()
-
-
-class Stone(str):
-    """
-    石の基底クラス
-    """
-    __slots__ = ()  # データを持たない
 
 
 if __name__ == '__main__':
