@@ -41,8 +41,8 @@ class ConsoleDisplay(AbstractDisplay):
         """
         ゲームの進行の表示(スコア、ボード状態)
         """
-        score_b = str(black) + ":" + str(board.black_num)
-        score_w = str(white) + ":" + str(board.white_num)
+        score_b = str(black) + ":" + str(board.num[black.stone])
+        score_w = str(white) + ":" + str(board.num[white.stone])
 
         print(score_b, score_w)
         print(board)
