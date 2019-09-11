@@ -122,10 +122,10 @@ class WindowDisplay(AbstractDisplay):
         ゲームの進行の表示(スコア)
         """
         black_num = self.window.black_stonenum
-        self.window.canvas.itemconfigure(black_num, text=str(board.black_num))
+        self.window.canvas.itemconfigure(black_num, text=str(board.num[black.stone]))
 
         white_num = self.window.white_stonenum
-        self.window.canvas.itemconfigure(white_num, text=str(board.white_num))
+        self.window.canvas.itemconfigure(white_num, text=str(board.num[white.stone]))
 
     def turn(self, player, possibles):
         """
