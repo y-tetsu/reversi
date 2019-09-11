@@ -9,7 +9,7 @@ import abc
 
 class AbstractDisplay(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def board(self, board, black, white):
+    def progress(self, board, black, white):
         pass
 
     @abc.abstractmethod
@@ -37,9 +37,9 @@ class ConsoleDisplay(AbstractDisplay):
     """
     コンソールへの表示
     """
-    def board(self, board, black, white):
+    def progress(self, board, black, white):
         """
-        ボードの表示
+        ゲームの進行の表示(スコア、ボード状態)
         """
         score_b = str(black) + ":" + str(board.black_num)
         score_w = str(white) + ":" + str(board.white_num)
@@ -91,7 +91,7 @@ class NoneDisplay(AbstractDisplay):
     """
     表示なし
     """
-    def board(self, board, black, white):
+    def progress(self, board, black, white):
         pass
 
     def turn(self, player, possibles):
@@ -117,9 +117,9 @@ class WindowDisplay(AbstractDisplay):
     def __init__(self, window):
         self.window = window
 
-    def board(self, board, black, white):
+    def progress(self, board, black, white):
         """
-        ボードの表示
+        ゲームの進行の表示(スコア)
         """
         black_num = self.window.black_stonenum
         self.window.canvas.itemconfigure(black_num, text=str(board.black_num))
@@ -230,14 +230,14 @@ if __name__ == '__main__':
     white = Player(board8x8.white, "User", strategies.ConsoleUserInput())
 
     display = ConsoleDisplay()
-    display.board(board8x8, black, white)
+    display.progress(board8x8, black, white)
 
     possibles = board8x8.get_possibles(black.stone)
     display.turn(black, possibles)
 
     black.put_stone(board8x8)
     display.move(black, possibles)
-    display.board(board8x8, black, white)
+    display.progress(board8x8, black, white)
 
     display.foul(black)
     display.win(black)

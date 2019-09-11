@@ -22,7 +22,7 @@ class Game:
         ゲームを開始する
         """
         if not self.result:
-            self.display.board(self.board, self.black, self.white)
+            self.display.progress(self.board, self.black, self.white)
 
             while True:
                 playable = 0
@@ -39,7 +39,7 @@ class Game:
                     player.put_stone(self.board)
 
                     self.display.move(player, possibles)
-                    self.display.board(self.board, self.black, self.white)
+                    self.display.progress(self.board, self.black, self.white)
 
                     if not player.captures:
                         foul_player = player
