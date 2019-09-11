@@ -32,8 +32,7 @@ class Board:
         self.white = factory.create('white')
         self.blank = factory.create('blank')
 
-        self.black_num = 2
-        self.white_num = 2
+        self.num = {self.black: 2, self.white: 2}
 
         center = size // 2
         self._board = [[self.blank for _ in range(size)] for _ in range(size)]
@@ -143,14 +142,8 @@ class Board:
         """
         石の数を更新する
         """
-        self.black_num = self._count_stone_num(self.black)
-        self.white_num = self._count_stone_num(self.white)
-
-    def _count_stone_num(self, stone):
-        """
-        石の数を数える
-        """
-        return sum([row.count(stone) for row in self._board])
+        for stone in (self.black, self.white):
+            self.num[stone] = sum([row.count(stone) for row in self._board])
 
     def get_board_info(self):
         """
@@ -271,5 +264,5 @@ if __name__ == '__main__':
     board4_ret[3][2] = board4.black
     board4_ret[3][3] = board4.white
     assert board4._board == board4_ret
-    assert board4.black_num == 5
-    assert board4.white_num == 11
+    assert board4.num[board4.black] == 5
+    assert board4.num[board4.white] == 11
