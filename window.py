@@ -84,30 +84,14 @@ class Window(tk.Frame):
         self.white_player = DEFAULT_WHITE_PLAYER
 
         # ウィンドウ初期化
-        self._create_players()
         self._create_menu()
         self._create_game_screen()
-
-    def _create_players(self):
-        self.black_players = {
-            'User1': strategies.WindowUserInput(self),
-            'Random': strategies.Random(),
-            'Greedy': strategies.Greedy(),
-            'Unselfish': strategies.Unselfish(),
-        }
-
-        self.white_players = {
-            'User2': strategies.WindowUserInput(self),
-            'Random': strategies.Random(),
-            'Greedy': strategies.Greedy(),
-            'Unselfish': strategies.Unselfish(),
-        }
 
     def _create_menu(self):
         """
         メニューを配置
         """
-        self.menubar = Menu(self, self.black_players, self.white_players, self.event, self.queue)
+        self.menubar = Menu(self, self.event, self.queue)
         self.master.configure(menu=self.menubar)
 
     def _create_game_screen(self):
@@ -664,20 +648,36 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, window, black_players, white_players, event, queue):
+    def __init__(self, window, event, queue):
         super().__init__(window.master)
 
         # 引数取得
         self.window = window
-        self.black_players = black_players
-        self.white_players = white_players
         self.event = event
         self.queue = queue
 
         # メニュー初期化
+        self._create_players()
         self._create_size_menu()
         self._create_black_menu()
         self._create_white_menu()
+
+    def _create_players(self):
+        self.players = {}
+
+        self.players['black'] = {
+            'User1': strategies.WindowUserInput(self),
+            'Random': strategies.Random(),
+            'Greedy': strategies.Greedy(),
+            'Unselfish': strategies.Unselfish(),
+        }
+
+        self.players['white'] = {
+            'User2': strategies.WindowUserInput(self),
+            'Random': strategies.Random(),
+            'Greedy': strategies.Greedy(),
+            'Unselfish': strategies.Unselfish(),
+        }
 
     def _create_size_menu(self):
         """
@@ -693,7 +693,7 @@ class Menu(tk.Menu):
         黒プレイヤー
         """
         menu_black = tk.Menu(self)
-        for player in self.black_players.keys():
+        for player in self.players['black'].keys():
             menu_black.add_command(label=player, command=self.change_black_player(player))
         self.add_cascade(menu=menu_black, label=MENU_NAME['black'])
 
@@ -702,7 +702,7 @@ class Menu(tk.Menu):
         白プレイヤー
         """
         menu_white = tk.Menu(self)
-        for player in self.white_players.keys():
+        for player in self.players['white'].keys():
             menu_white.add_command(label=player, command=self.change_white_player(player))
         self.add_cascade(menu=menu_white, label=MENU_NAME['white'])
 
@@ -896,8 +896,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(board.black, window.black_player, window.black_players[window.black_player])
-                white_player = Player(board.white, window.white_player, window.white_players[window.white_player])
+                black_player = Player(board.black, window.black_player, window.players['black'][window.black_player])
+                white_player = Player(board.white, window.white_player, window.players['white'][window.white_player])
 
                 while True:
                     playable = 0
