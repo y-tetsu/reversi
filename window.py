@@ -666,14 +666,14 @@ class Menu(tk.Menu):
         self.players = {}
 
         self.players['black'] = {
-            'User1': strategies.WindowUserInput(self),
+            'User1': strategies.WindowUserInput(self.window),
             'Random': strategies.Random(),
             'Greedy': strategies.Greedy(),
             'Unselfish': strategies.Unselfish(),
         }
 
         self.players['white'] = {
-            'User2': strategies.WindowUserInput(self),
+            'User2': strategies.WindowUserInput(self.window),
             'Random': strategies.Random(),
             'Greedy': strategies.Greedy(),
             'Unselfish': strategies.Unselfish(),
@@ -896,8 +896,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(board.black, window.black_player, window.players['black'][window.black_player])
-                white_player = Player(board.white, window.white_player, window.players['white'][window.white_player])
+                black_player = Player(board.black, window.black_player, window.menubar.players['black'][window.black_player])
+                white_player = Player(board.white, window.white_player, window.menubar.players['white'][window.white_player])
 
                 while True:
                     playable = 0
