@@ -648,7 +648,7 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, window, event, queue):
+    def __init__(self, window=None, event=None, queue=None):
         super().__init__(window.master)
 
         # 引数取得
@@ -656,55 +656,44 @@ class Menu(tk.Menu):
         self.event = event
         self.queue = queue
 
-        # メニュー初期化
+        # プレイヤーの生成
         self._create_players()
-        self._create_size_menu()
-        self._create_black_menu()
-        self._create_white_menu()
+
+        # メニューの生成
+        menus = {
+            'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
+            'black': self.black_players.keys(),
+            'white': self.white_players.keys(),
+        }
+
+        for name, items in menus.items():
+            self._create_menu(name, items)
 
     def _create_players(self):
-        self.players = {}
-
-        self.players['black'] = {
+        self.black_players = {
             'User1': strategies.WindowUserInput(self.window),
             'Random': strategies.Random(),
             'Greedy': strategies.Greedy(),
             'Unselfish': strategies.Unselfish(),
         }
 
-        self.players['white'] = {
+        self.white_players = {
             'User2': strategies.WindowUserInput(self.window),
             'Random': strategies.Random(),
             'Greedy': strategies.Greedy(),
             'Unselfish': strategies.Unselfish(),
         }
 
-    def _create_size_menu(self):
+    def _create_menu(self, name, items):
         """
-        ボードのサイズ
+        メニューの追加
         """
-        menu_size = tk.Menu(self)
-        for size in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
-            menu_size.add_command(label=str(size), command=self._command('size', size))
-        self.add_cascade(menu=menu_size, label=MENU_NAME['size'])
+        menu = tk.Menu(self)
 
-    def _create_black_menu(self):
-        """
-        黒プレイヤー
-        """
-        menu_black = tk.Menu(self)
-        for player in self.players['black'].keys():
-            menu_black.add_command(label=player, command=self._command('black', player))
-        self.add_cascade(menu=menu_black, label=MENU_NAME['black'])
+        for item in items:
+            menu.add_command(label=str(item), command=self._command(name, item))
 
-    def _create_white_menu(self):
-        """
-        白プレイヤー
-        """
-        menu_white = tk.Menu(self)
-        for player in self.players['white'].keys():
-            menu_white.add_command(label=player, command=self._command('white', player))
-        self.add_cascade(menu=menu_white, label=MENU_NAME['white'])
+        self.add_cascade(menu=menu, label=MENU_NAME[name])
 
     def _command(self, name, item):
         """
@@ -862,8 +851,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(board.black, window.black_player, window.menubar.players['black'][window.black_player])
-                white_player = Player(board.white, window.white_player, window.menubar.players['white'][window.white_player])
+                black_player = Player(board.black, window.black_player, window.menubar.black_players[window.black_player])
+                white_player = Player(board.white, window.white_player, window.menubar.white_players[window.white_player])
 
                 while True:
                     playable = 0
