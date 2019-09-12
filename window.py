@@ -50,9 +50,29 @@ STONE_MARK = '●'
 
 TURN_STONE_WAIT = 0.1
 
+STRATEGY_USER1 = 'User1'
+STRATEGY_USER2 = 'User2'
+STRATEGY_UNSELFISH = 'Unselfish'
+STRATEGY_RANDOM = 'Random'
+STRATEGY_GREEDY = 'Greedy'
+
+BLACK_PLAYERS = [
+    STRATEGY_USER1,
+    STRATEGY_UNSELFISH,
+    STRATEGY_RANDOM,
+    STRATEGY_GREEDY,
+]
+
+WHITE_PLAYERS = [
+    STRATEGY_USER2,
+    STRATEGY_UNSELFISH,
+    STRATEGY_RANDOM,
+    STRATEGY_GREEDY,
+]
+
 DEFAULT_BOARD_SIZE = 8
-DEFAULT_BLACK_PLAYER = 'User1'
-DEFAULT_WHITE_PLAYER = 'User2'
+DEFAULT_BLACK_PLAYER = STRATEGY_USER1
+DEFAULT_WHITE_PLAYER = STRATEGY_RANDOM
 DEFAULT_BLACK_NUM = "2"
 DEFAULT_WHITE_NUM = "2"
 
@@ -73,21 +93,6 @@ class Window(tk.Frame):
         factory = StoneFactory()
         self.black = factory.create('black')
         self.white = factory.create('white')
-
-        # プレイヤーの生成
-        self.black_players = {
-            'User1': strategies.WindowUserInput(self),
-            'Random': strategies.Random(),
-            'Greedy': strategies.Greedy(),
-            'Unselfish': strategies.Unselfish(),
-        }
-
-        self.white_players = {
-            'User2': strategies.WindowUserInput(self),
-            'Random': strategies.Random(),
-            'Greedy': strategies.Greedy(),
-            'Unselfish': strategies.Unselfish(),
-        }
 
         # 初期値設定
         self.master.title(WINDOW_TITLE)                   # タイトル
@@ -664,19 +669,23 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, window=None, event=None, queue=None):
-        super().__init__(window.master)
+    def __init__(self, master=None, event=None, queue=None):
+        super().__init__(master)
 
         # 引数取得
-        self.window = window
         self.event = event
         self.queue = queue
+
+        # 初期値設定
+        self.size = DEFAULT_BOARD_SIZE
+        self.black_player = DEFAULT_BLACK_PLAYER
+        self.white_player = DEFAULT_WHITE_PLAYER
 
         # メニューの生成
         menu_items = {
             'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
-            'black': self.window.black_players.keys(),
-            'white': self.window.white_players.keys(),
+            'black': BLACK_PLAYERS,
+            'white': WHITE_PLAYERS,
         }
         self._create_menu_items(menu_items)
 
@@ -698,12 +707,12 @@ class Menu(tk.Menu):
         """
         def change_menu_selection():
             if self.queue.empty():
-                size = item if name == 'size' else self.window.size
-                black = item if name == 'black' else self.window.black_player
-                white = item if name == 'white' else self.window.white_player
+                size = item if name == 'size' else self.size
+                black = item if name == 'black' else self.black_player
+                white = item if name == 'white' else self.white_player
 
-                self.event.set()                      # ウィンドウへ設定変更を通知
-                self.queue.put((size, black, white))  # メニュー設定をウィンドウへ送信
+                self.event.set()                      # ウィンドウへメニュー設定変更を通知
+                self.queue.put((size, black, white))  # ウィンドウへメニュー設定変更内容を送信
 
         return change_menu_selection
 
@@ -730,15 +739,22 @@ if __name__ == '__main__':
         global state
 
         if event.is_set():
-            window.size, window.black_player, window.white_player = q.get()  # 変更後のサイズをセット
-            state = 'INIT'                                                   # ウィンドウ初期化
-            event.clear()                                                    # イベントをクリア
+            # メニューからの通知を取得
+            window.size, window.black_player, window.white_player = q.get()
+
+            # 変更内容をメニュー側に反映
+            window.menubar.size = window.size
+            window.menubar.black_player = window.black_player
+            window.menubar.white_player = window.white_player
+
+            state = 'INIT'  # ウィンドウ初期化
+            event.clear()   # イベントをクリア
 
             return True
 
         return False
 
-    def test_play(window):
+    def test_play(window, game_strategies):
         global state
 
         demo = False
@@ -844,8 +860,8 @@ if __name__ == '__main__':
                 print("start", window.size, window.black_player, window.white_player)
 
                 board = Board(window.size)
-                black_player = Player(board.black, window.black_player, window.black_players[window.black_player])
-                white_player = Player(board.white, window.white_player, window.white_players[window.white_player])
+                black_player = Player(board.black, window.black_player, game_strategies[window.black_player])
+                white_player = Player(board.white, window.white_player, game_strategies[window.white_player])
 
                 while True:
                     playable = 0
@@ -908,7 +924,15 @@ if __name__ == '__main__':
 
     window = Window(master=app, event=event, queue=q)
 
-    game = threading.Thread(target=test_play, args=([window]))
+    game_strategies = {
+        STRATEGY_USER1: strategies.WindowUserInput(window),
+        STRATEGY_USER2: strategies.WindowUserInput(window),
+        STRATEGY_UNSELFISH: strategies.Unselfish(),
+        STRATEGY_RANDOM: strategies.Random(),
+        STRATEGY_GREEDY: strategies.Greedy(),
+    }
+
+    game = threading.Thread(target=test_play, args=([window, game_strategies]))
     game.daemon = True
     game.start()
 
