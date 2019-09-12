@@ -50,6 +50,7 @@ STONE_MARK = '●'
 
 TURN_STONE_WAIT = 0.1
 
+DEFAULT_BOARD_SIZE = 8
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'User2'
 DEFAULT_BLACK_NUM = "2"
@@ -60,12 +61,11 @@ class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, size=8, master=None, event=None, queue=None):
+    def __init__(self, master=None, event=None, queue=None):
         super().__init__(master)
         self.pack()
 
         # 引数の取得
-        self.size = size
         self.event = event  # ウィンドウからのイベント発生通知
         self.queue = queue  # ウィンドウからのデータ受け渡し
 
@@ -80,6 +80,7 @@ class Window(tk.Frame):
 
         self.start_pressed = False
         self.wait_input = False
+        self.size = DEFAULT_BOARD_SIZE
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
 
@@ -657,19 +658,6 @@ class Menu(tk.Menu):
         self.queue = queue
 
         # プレイヤーの生成
-        self._create_players()
-
-        # メニューの生成
-        menus = {
-            'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
-            'black': self.black_players.keys(),
-            'white': self.white_players.keys(),
-        }
-
-        for name, items in menus.items():
-            self._create_menu(name, items)
-
-    def _create_players(self):
         self.black_players = {
             'User1': strategies.WindowUserInput(self.window),
             'Random': strategies.Random(),
@@ -683,6 +671,16 @@ class Menu(tk.Menu):
             'Greedy': strategies.Greedy(),
             'Unselfish': strategies.Unselfish(),
         }
+
+        # メニューの生成
+        menus = {
+            'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
+            'black': self.black_players.keys(),
+            'white': self.white_players.keys(),
+        }
+
+        for menu_name, menu_items in menus.items():
+            self._create_menu(menu_name, menu_items)
 
     def _create_menu(self, name, items):
         """
@@ -705,10 +703,7 @@ class Menu(tk.Menu):
                 black = item if name == 'black' else self.window.black_player
                 white = item if name == 'white' else self.window.white_player
 
-                # ウィンドウ無効化
-                self.window.disable_window()
-
-                # 設定変更を通知
+                # ウィンドウへ設定変更を通知
                 self.event.set()
                 self.queue.put((size, black, white))
 
