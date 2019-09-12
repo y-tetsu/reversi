@@ -43,9 +43,7 @@ SQUARE_BOTTOM_MARGIN = 120
 OVAL_SIZE_RATIO = 0.8
 TURNOVAL_SIZE_DIVISOR = 10
 
-MENU_SIZE = 'Size'
-MENU_BLACK = 'Black'
-MENU_WHITE = 'White'
+MENU_NAME = {'size': 'Size', 'black': 'Black', 'white': 'White'}
 
 START_TEXT = 'クリックでスタート'
 STONE_MARK = '●'
@@ -688,7 +686,7 @@ class Menu(tk.Menu):
         menu_size = tk.Menu(self)
         for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
             menu_size.add_command(label=str(i), command=self._change_board_size(i))
-        self.add_cascade(menu=menu_size, label=MENU_SIZE)
+        self.add_cascade(menu=menu_size, label=MENU_NAME['size'])
 
     def _create_black_menu(self):
         """
@@ -697,7 +695,7 @@ class Menu(tk.Menu):
         menu_black = tk.Menu(self)
         for player in self.black_players.keys():
             menu_black.add_command(label=player, command=self.change_black_player(player))
-        self.add_cascade(menu=menu_black, label=MENU_BLACK)
+        self.add_cascade(menu=menu_black, label=MENU_NAME['black'])
 
     def _create_white_menu(self):
         """
@@ -706,7 +704,7 @@ class Menu(tk.Menu):
         menu_white = tk.Menu(self)
         for player in self.white_players.keys():
             menu_white.add_command(label=player, command=self.change_white_player(player))
-        self.add_cascade(menu=menu_white, label=MENU_WHITE)
+        self.add_cascade(menu=menu_white, label=MENU_NAME['white'])
 
     def _change_board_size(self, size):
         """
@@ -765,17 +763,17 @@ class Menu(tk.Menu):
         """
         メニューを無効化
         """
-        self.entryconfigure(MENU_SIZE, state='disable')
-        self.entryconfigure(MENU_BLACK, state='disable')
-        self.entryconfigure(MENU_WHITE, state='disable')
+        self.entryconfigure(MENU_NAME['size'], state='disable')
+        self.entryconfigure(MENU_NAME['black'], state='disable')
+        self.entryconfigure(MENU_NAME['white'], state='disable')
 
     def enable_menu(self):
         """
         メニューを有効化
         """
-        self.entryconfigure(MENU_SIZE, state='normal')
-        self.entryconfigure(MENU_BLACK, state='normal')
-        self.entryconfigure(MENU_WHITE, state='normal')
+        self.entryconfigure(MENU_NAME['size'], state='normal')
+        self.entryconfigure(MENU_NAME['black'], state='normal')
+        self.entryconfigure(MENU_NAME['white'], state='normal')
 
 
 if __name__ == '__main__':
