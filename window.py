@@ -684,8 +684,8 @@ class Menu(tk.Menu):
         ボードのサイズ
         """
         menu_size = tk.Menu(self)
-        for i in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
-            menu_size.add_command(label=str(i), command=self._change_board_size(i))
+        for size in range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2):
+            menu_size.add_command(label=str(size), command=self._command('size', size))
         self.add_cascade(menu=menu_size, label=MENU_NAME['size'])
 
     def _create_black_menu(self):
@@ -694,7 +694,7 @@ class Menu(tk.Menu):
         """
         menu_black = tk.Menu(self)
         for player in self.players['black'].keys():
-            menu_black.add_command(label=player, command=self.change_black_player(player))
+            menu_black.add_command(label=player, command=self._command('black', player))
         self.add_cascade(menu=menu_black, label=MENU_NAME['black'])
 
     def _create_white_menu(self):
@@ -703,61 +703,27 @@ class Menu(tk.Menu):
         """
         menu_white = tk.Menu(self)
         for player in self.players['white'].keys():
-            menu_white.add_command(label=player, command=self.change_white_player(player))
+            menu_white.add_command(label=player, command=self._command('white', player))
         self.add_cascade(menu=menu_white, label=MENU_NAME['white'])
 
-    def _change_board_size(self, size):
+    def _command(self, name, item):
         """
-        ボードサイズの変更
+        メニュー設定変更時
         """
-        def change_board_size_event():
+        def change_menu_selection():
             if self.queue.empty():
+                size = item if name == 'size' else self.window.size
+                black = item if name == 'black' else self.window.black_player
+                white = item if name == 'white' else self.window.white_player
+
                 # ウィンドウ無効化
                 self.window.disable_window()
 
                 # 設定変更を通知
                 self.event.set()
-                self.queue.put(size)
+                self.queue.put((size, black, white))
 
-        return change_board_size_event
-
-    def change_black_player(self, player):
-        """
-        黒プレーヤーを変更
-        """
-        def change_player():
-            if self.queue.empty():
-                # ウィンドウ無効化
-                self.window.disable_window()
-
-                # 設定変更
-                self.window.black_player = player
-                self.window.canvas.itemconfigure(self.window.black_name, text=STONE_MARK + player)
-
-                # 設定変更を通知
-                self.event.set()
-                self.queue.put(self.window.size)
-
-        return change_player
-
-    def change_white_player(self, player):
-        """
-        白プレーヤーを変更
-        """
-        def change_player():
-            if self.queue.empty():
-                # ウィンドウ無効化
-                self.window.disable_window()
-
-                # 設定変更
-                self.window.white_player = player
-                self.window.canvas.itemconfigure(self.window.white_name, text=STONE_MARK + player)
-
-                # 設定変更を通知
-                self.event.set()
-                self.queue.put(self.window.size)
-
-        return change_player
+        return change_menu_selection
 
     def set_state(self, state):
         """
@@ -782,9 +748,9 @@ if __name__ == '__main__':
         global state
 
         if event.is_set():
-            window.size = q.get()  # 変更後のサイズをセット
-            state = 'INIT'         # ウィンドウ初期化
-            event.clear()          # イベントをクリア
+            window.size, window.black_player, window.white_player = q.get()  # 変更後のサイズをセット
+            state = 'INIT'                                                   # ウィンドウ初期化
+            event.clear()                                                    # イベントをクリア
 
             return True
 
