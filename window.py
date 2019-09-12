@@ -112,7 +112,7 @@ class Window(tk.Frame):
         """
         メニューを配置
         """
-        self.menubar = Menu(self, self.event, self.queue)
+        self.menubar = Menu(self, self.event)
         self.master.configure(menu=self.menubar)
 
     def _create_game_screen(self):
@@ -669,14 +669,10 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, master=None, event=None, queue=None):
+    def __init__(self, master=None, event=None):
         super().__init__(master)
 
-        # 引数取得
         self.event = event
-        self.queue = queue
-
-        # 初期値設定
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
@@ -706,13 +702,11 @@ class Menu(tk.Menu):
         メニュー設定変更時
         """
         def change_menu_selection():
-            if self.queue.empty():
-                size = item if name == 'size' else self.size
-                black = item if name == 'black' else self.black_player
-                white = item if name == 'white' else self.white_player
-
-                self.event.set()                      # ウィンドウへメニュー設定変更を通知
-                self.queue.put((size, black, white))  # ウィンドウへメニュー設定変更内容を送信
+            if not event.is_set():
+                self.size = item if name == 'size' else self.size
+                self.black_player = item if name == 'black' else self.black_player
+                self.white_player= item if name == 'white' else self.white_player
+                self.event.set()  # ウィンドウへメニューの設定変更を通知
 
         return change_menu_selection
 
@@ -740,12 +734,9 @@ if __name__ == '__main__':
 
         if event.is_set():
             # メニューからの通知を取得
-            window.size, window.black_player, window.white_player = q.get()
-
-            # 変更内容をメニュー側に反映
-            window.menubar.size = window.size
-            window.menubar.black_player = window.black_player
-            window.menubar.white_player = window.white_player
+            window.size = window.menubar.size
+            window.black_player = window.menubar.black_player
+            window.white_player = window.menubar.white_player
 
             state = 'INIT'  # ウィンドウ初期化
             event.clear()   # イベントをクリア
