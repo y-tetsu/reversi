@@ -41,8 +41,8 @@ class ConsoleDisplay(AbstractDisplay):
         """
         ゲームの進行の表示(スコア、ボード状態)
         """
-        score_b = str(black) + ":" + str(board.num[black.stone])
-        score_w = str(white) + ":" + str(board.num[white.stone])
+        score_b = str(black) + ":" + str(board.score[black.stone])
+        score_w = str(white) + ":" + str(board.score[white.stone])
 
         print(score_b, score_w)
         print(board)
@@ -122,10 +122,10 @@ class WindowDisplay(AbstractDisplay):
         ゲームの進行の表示(スコア)
         """
         black_num = self.window.black_stonenum
-        self.window.canvas.itemconfigure(black_num, text=str(board.num[black.stone]))
+        self.window.canvas.itemconfigure(black_num, text=str(board.score[black.stone]))
 
         white_num = self.window.white_stonenum
-        self.window.canvas.itemconfigure(white_num, text=str(board.num[white.stone]))
+        self.window.canvas.itemconfigure(white_num, text=str(board.score[white.stone]))
 
     def turn(self, player, possibles):
         """
