@@ -81,8 +81,8 @@ class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, master=None, event=None, queue=None):
-        super().__init__(master)
+    def __init__(self, root=None, event=None, queue=None):
+        super().__init__(root)
         self.pack()
 
         # 引数の取得
@@ -95,8 +95,8 @@ class Window(tk.Frame):
         self.white = factory.create('white')
 
         # 初期値設定
-        self.master.title(WINDOW_TITLE)                   # タイトル
-        self.master.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
+        root.title(WINDOW_TITLE)                   # タイトル
+        root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
         self.start_pressed = False
         self.wait_input = False
@@ -105,15 +105,15 @@ class Window(tk.Frame):
         self.white_player = DEFAULT_WHITE_PLAYER
 
         # ウィンドウ初期化
-        self._create_menu()
+        self._create_menu(root)
         self._create_game_screen()
 
-    def _create_menu(self):
+    def _create_menu(self, root):
         """
         メニューを配置
         """
-        self.menu = Menu(self, self.event)
-        self.master.configure(menu=self.menu)
+        self.menu = Menu(root, self.event)
+        root.configure(menu=self.menu)
 
     def _create_game_screen(self):
         """
@@ -669,8 +669,8 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, master=None, event=None):
-        super().__init__(master)
+    def __init__(self, root=None, event=None):
+        super().__init__(root)
 
         self.event = event
         self.size = DEFAULT_BOARD_SIZE
@@ -910,10 +910,10 @@ if __name__ == '__main__':
                     window.start_pressed = False
                     state = 'START'
 
-    app = tk.Tk()
-    app.withdraw()  # 表示が整うまで隠す
+    root = tk.Tk()
+    root.withdraw()  # 表示が整うまで隠す
 
-    window = Window(master=app, event=event, queue=q)
+    window = Window(root=root, event=event, queue=q)
 
     game_strategies = {
         STRATEGY_USER1: strategies.WindowUserInput(window),
@@ -927,5 +927,5 @@ if __name__ == '__main__':
     game.daemon = True
     game.start()
 
-    app.deiconify()  # 表示する
-    app.mainloop()
+    root.deiconify()  # 表示する
+    root.mainloop()
