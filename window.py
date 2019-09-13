@@ -690,7 +690,7 @@ class Menu(tk.Menu):
         メニューの追加
         """
         for name, items in menu_items.items():
-            menu = tk.Menu(self)
+            menu = tk.Menu(self, tearoff=False)
 
             for item in items:
                 menu.add_command(label=str(item), command=self._command(name, item))
