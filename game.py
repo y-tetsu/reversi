@@ -66,7 +66,7 @@ class Game:
         """
         結果判定
         """
-        black_num, white_num = self.board.num[self.black.stone], self.board.num[self.white.stone]
+        black_num, white_num = self.board.score[self.black.stone], self.board.score[self.white.stone]
 
         if black_num == white_num:
             self._draw()
@@ -96,7 +96,7 @@ class Game:
         self.result = GameResult(
             winlose,
             self.black.name, self.white.name,
-            self.board.num[self.black.stone], self.board.num[self.white.stone],
+            self.board.score[self.black.stone], self.board.score[self.white.stone],
         )
 
 
