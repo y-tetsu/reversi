@@ -5,3 +5,6 @@ Pythonで作るオセロゲーム
 Python 3.7.0<br>
 tkinter 8.6<br>
 pyinstaller 3.4<br>
+
+## コンソール版
+![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
