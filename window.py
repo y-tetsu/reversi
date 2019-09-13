@@ -110,7 +110,7 @@ class Window(tk.Frame):
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
 
-    def init_game_screen(self):
+    def init_screen(self):
         """
         ゲーム画面の初期化
         """
@@ -743,7 +743,7 @@ if __name__ == '__main__':
 
             if state == 'INIT':
                 demo = False
-                window.init_game_screen()
+                window.init_screen()
                 window.enable_window()
                 state = 'DEMO'
 
@@ -831,7 +831,7 @@ if __name__ == '__main__':
 
             if state == 'START':
                 if not demo:
-                    window.init_game_screen()
+                    window.init_screen()
                     window.disable_start()
                     window.menu.set_state('disable')
 
