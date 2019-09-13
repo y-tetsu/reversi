@@ -7,6 +7,9 @@ import time
 import abc
 
 
+PLAYER_COLORS = ('black', 'white')
+
+
 class AbstractDisplay(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def progress(self, board, black, white):
@@ -121,35 +124,20 @@ class WindowDisplay(AbstractDisplay):
         """
         ゲームの進行の表示(スコア)
         """
-        black_num = self.window.black_stonenum
-        self.window.canvas.itemconfigure(black_num, text=str(board.score[black.stone]))
-
-        white_num = self.window.white_stonenum
-        self.window.canvas.itemconfigure(white_num, text=str(board.score[white.stone]))
+        for color, stone in zip(PLAYER_COLORS, (black.stone, white.stone)):
+            self.window.set_text(color, 'score', str(board.score[stone]))
 
     def turn(self, player, possibles):
         """
         手番の表示
         """
         time.sleep(1)
+        for color in PLAYER_COLORS:
+            self.window.set_text(color, 'move', '')  # 打った手の表示を消す
 
-        # 手の表示を消す
-        black_move = self.window.black_move
-        self.window.canvas.itemconfigure(black_move, text='')
-
-        white_move = self.window.white_move
-        self.window.canvas.itemconfigure(white_move, text='')
-
-        # 手番を表示
-        if player.stone == self.window.black:
-            black_turn = self.window.black_turn
-            self.window.canvas.itemconfigure(black_turn, text="手番です")
-        elif player.stone == self.window.white:
-            white_turn = self.window.white_turn
-            self.window.canvas.itemconfigure(white_turn, text="手番です")
-
-        # 候補を表示
-        self.window.enable_moves(possibles)
+        color = 'black' if player.stone == self.window.black else 'white'
+        self.window.set_text(color, 'turn', '手番です')  # 手番の表示
+        self.window.enable_moves(possibles)  # 打てる候補を表示
 
     def move(self, player, possibles):
         """
@@ -159,65 +147,39 @@ class WindowDisplay(AbstractDisplay):
         y = str(player.move[1] + 1)
 
         time.sleep(0.5)
+        for color in PLAYER_COLORS:
+            self.window.set_text(color, 'turn', '')  # 手番の表示を消す
 
-        # 手番を消す
-        black_turn = self.window.black_turn
-        self.window.canvas.itemconfigure(black_turn, text="")
-
-        white_turn = self.window.white_turn
-        self.window.canvas.itemconfigure(white_turn, text="")
-
-        # 手を表示
-        if player.stone == self.window.black:
-            black_move = self.window.black_move
-            self.window.canvas.itemconfigure(black_move, text=f'({x}, {y}) に置きました')
-
-        elif player.stone == self.window.white:
-            white_move = self.window.white_move
-            self.window.canvas.itemconfigure(white_move, text=f'({x}, {y}) に置きました')
-
-        # 石を置く表示
-        self.window.disable_moves(possibles)
-        self.window.enable_move(*player.move)
-        self.window.put_stone(player.stone, *player.move)
+        self.window.disable_moves(possibles)  # 打てる候補のハイライトをなくす
+        self.window.enable_move(*player.move)  # 打った手をハイライト
+        self.window.put_stone(player.stone, *player.move)  # 石を置く
         time.sleep(0.5)
-        self.window.turn_stone(player.stone, player.captures)
+        color = 'black' if player.stone == self.window.black else 'white'
+        self.window.set_text(color, 'move', f'({x}, {y}) に置きました')  # 打った手を表示
+        self.window.turn_stone(player.stone, player.captures)  # 石をひっくり返すアニメーション
         self.window.disable_move(*player.move)
 
     def foul(self, player):
         """
         反則プレイヤーの表示
         """
-        if player.stone == self.window.black:
-            black_winlose = self.window.black_winlose
-            self.window.canvas.itemconfigure(black_winlose, text='反則')
-        elif player.stone == self.window.white:
-            white_winlose = self.window.white_winlose
-            self.window.canvas.itemconfigure(white_winlose, text='反則')
+        color = 'black' if player.stone == self.window.black else 'white'
+        self.window.set_text(color, 'winlose', '反則')
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
-        if player.stone == self.window.black:
-            black_winlose = self.window.black_winlose
-            self.window.canvas.itemconfigure(black_winlose, text='勝ち')
-            white_winlose = self.window.white_winlose
-            self.window.canvas.itemconfigure(white_winlose, text='負け')
-        elif player.stone == self.window.white:
-            white_winlose = self.window.white_winlose
-            self.window.canvas.itemconfigure(white_winlose, text='勝ち')
-            black_winlose = self.window.black_winlose
-            self.window.canvas.itemconfigure(black_winlose, text='負け')
+        winner, loser = ('black', 'white') if player.stone == self.window.black else ('white', 'black')
+        self.window.set_text(winner, 'winlose', '勝ち')
+        self.window.set_text(loser,  'winlose', '負け')
 
     def draw(self):
         """
         引き分けの表示
         """
-        black_winlose = self.window.black_winlose
-        self.window.canvas.itemconfigure(black_winlose, text='引き分け')
-        white_winlose = self.window.white_winlose
-        self.window.canvas.itemconfigure(white_winlose, text='引き分け')
+        for color in PLAYER_COLORS:
+            self.window.set_text(color, 'winlose', '引き分け')
 
 
 if __name__ == '__main__':

@@ -14,18 +14,16 @@ from window import Window
 import strategies
 
 
-DEFAULT_BOARD_SIZE = 4
-
-
 class Main:
     """
     GUIゲーム
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, window=None):
+    def __init__(self, window=None, strategies=None):
         self.state = Main.INIT
         self.window = window
+        self.strategies = strategies
 
     @property
     def state(self):
@@ -57,7 +55,7 @@ class Main:
         """
         画面初期化(初回、設定変更時)
         """
-        self.window.init_game_screen()
+        self.window.init_screen()
         self.window.enable_window()
 
         self.state = Main.DEMO
@@ -86,8 +84,8 @@ class Main:
         board = Board(self.window.size)
 
         # プレイヤー準備
-        black = Player(board.black, self.window.black_player, self.window.black_players[self.window.black_player])
-        white = Player(board.white, self.window.white_player, self.window.white_players[self.window.white_player])
+        black = Player(board.black, self.window.player['black'], self.strategies[self.window.player['black']])
+        white = Player(board.white, self.window.player['white'], self.strategies[self.window.player['white']])
 
         # ゲーム開始
         game = Game(board, black, white, WindowDisplay(self.window))
@@ -128,9 +126,11 @@ class Main:
         """
         ウィンドウの設定が変更されたとき
         """
-        if self.window.event.is_set():
-            self.window.size = self.window.queue.get()
-            self.window.event.clear()
+        if self.window.menu.event.is_set():
+            self.window.size = self.window.menu.size
+            self.window.player['black'] = self.window.menu.black_player
+            self.window.player['white'] = self.window.menu.white_player
+            self.window.menu.event.clear()
 
             return True
 
@@ -146,16 +146,25 @@ if __name__ == '__main__':
     q = queue.Queue()
 
     # ウィンドウ作成
-    app = tk.Tk()
-    app.withdraw()  # 表示が整うまで隠す
-    window = Window(size=DEFAULT_BOARD_SIZE, master=app, event=event, queue=q)
+    root = tk.Tk()
+    root.withdraw()  # 表示が整うまで隠す
+    window = Window(root=root, event=event, queue=q)
+
+    # ゲーム戦略
+    game_strategies = {
+        'User1': strategies.WindowUserInput(window),
+        'User2': strategies.WindowUserInput(window),
+        'Unselfish': strategies.Unselfish(),
+        'Random': strategies.Random(),
+        'Greedy': strategies.Greedy(),
+    }
 
     # ゲーム用スレッド
-    main = Main(window=window)
+    main = Main(window=window, strategies=game_strategies)
     game = threading.Thread(target=main.mainloop)
     game.daemon = True
     game.start()
 
     # GUI用スレッド
-    app.deiconify()  # 表示する
-    app.mainloop()
+    root.deiconify()  # 表示する
+    root.mainloop()

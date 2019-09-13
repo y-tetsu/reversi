@@ -32,6 +32,13 @@ COLOR_ORANGE = 'orange'
 COLOR_YELLOW = 'yellow'
 COLOR_RED = 'red'
 
+TEXT_COLOR = {
+    'name':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
+    'score':   {'black': COLOR_BLACK,  'white': COLOR_WHITE},
+    'winlose': {'black': COLOR_BLACK,  'white': COLOR_WHITE},
+    'turn':    {'black': COLOR_ORANGE, 'white': COLOR_ORANGE},
+    'move':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
+}
 TEXT_FONT_SIZE = {'name': 32, 'score': 140, 'winlose': 32, 'turn': 32, 'move': 32, 'start': 32}
 SQUARE_HEADER_FONT_SIZE = 20
 
@@ -149,8 +156,15 @@ class Window(tk.Frame):
             TEXT_OFFSET_Y[name],
             text=DEFAULT_TEXT[name][color](self),
             font=('', TEXT_FONT_SIZE[name]),
-            fill=color
+            fill=TEXT_COLOR[name][color]
         )
+
+    def set_text(self, color, name, text):
+        """
+        表示テキストの文字列を設定
+        """
+        text_id = self.text[color + "_" + name]
+        self.canvas.itemconfigure(text_id, text=text)
 
     def _create_start(self):
         """
@@ -582,7 +596,7 @@ class Menu(tk.Menu):
         メニュー設定変更時
         """
         def change_menu_selection():
-            if not event.is_set():
+            if not self.event.is_set():
                 self.size = item if name == 'size' else self.size
                 self.black_player = item if name == 'black' else self.black_player
                 self.white_player= item if name == 'white' else self.white_player
