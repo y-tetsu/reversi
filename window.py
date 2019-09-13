@@ -32,6 +32,7 @@ COLOR_ORANGE = 'orange'
 COLOR_YELLOW = 'yellow'
 COLOR_RED = 'red'
 
+TEXT_FONT_SIZE = {'name': 32, 'score': 140, 'winlose': 32, 'turn': 32, 'move': 32, 'start': 32}
 SQUARE_HEADER_FONT_SIZE = 20
 
 SQUARE_BOTTOM_MARGIN = 120
@@ -70,14 +71,15 @@ DEFAULT_BLACK_PLAYER = STRATEGY_USER1
 DEFAULT_WHITE_PLAYER = STRATEGY_RANDOM
 DEFAULT_BLACK_NUM = "2"
 DEFAULT_WHITE_NUM = "2"
+
 DEFAULT_TEXT = {
-    'name': {'black': lambda s: STONE_MARK + s.player['black'], 'white': lambda s: STONE_MARK + s.player['white']},
-    'score': {'black': lambda s: '2', 'white': lambda s: '2'},
-    'winlose': {'black': lambda s: '', 'white': lambda s: ''},
-    'turn': {'black': lambda s: '', 'white': lambda s: ''},
-    'move': {'black': lambda s: '', 'white': lambda s: ''},
+    'name':    {'black': lambda s: STONE_MARK + s.player['black'], 'white': lambda s: STONE_MARK + s.player['white']},
+    'score':   {'black': lambda s: '2',                            'white': lambda s: '2'                           },
+    'winlose': {'black': lambda s: '',                             'white': lambda s: ''                            },
+    'turn':    {'black': lambda s: '',                             'white': lambda s: ''                            },
+    'move':    {'black': lambda s: '',                             'white': lambda s: ''                            },
 }
-TEXT_FONT_SIZE = {'name': 32, 'score': 140, 'winlose': 32, 'turn': 32, 'move': 32, 'start': 32}
+
 
 
 
@@ -152,7 +154,7 @@ class Window(tk.Frame):
 
     def _create_start(self):
         """
-        スタートボタンの作成
+        スタートテキストの作成
         """
         self.start = self.canvas.create_text(
             OFFSET_START_X,
@@ -168,19 +170,19 @@ class Window(tk.Frame):
 
     def _enter_start(self, event):
         """
-        スタートボタンにカーソルが合った時
+        スタートテキストにカーソルが合った時
         """
         self.canvas.itemconfigure(self.start, fill=COLOR_RED)
 
     def _leave_start(self, event):
         """
-        スタートボタンからカーソルが離れた時
+        スタートテキストからカーソルが離れた時
         """
         self.canvas.itemconfigure(self.start, fill=COLOR_YELLOW)
 
     def _on_start(self, event):
         """
-        スタートボタンを押した場合
+        スタートテキストを押した場合
         """
         self.disable_start()
         self.menu.set_state('disable')
