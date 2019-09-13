@@ -16,15 +16,12 @@ WINDOW_TITLE = 'othello'
 WINDOW_WIDTH = 1360
 WINDOW_HEIGHT = 680
 
-OFFSET_BLACK_X = 200
-OFFSET_WHITE_X = 1150
-OFFSET_NAME_Y = 80
-OFFSET_NUM_Y = 250
-OFFSET_RESULT_Y = 400
-OFFSET_TURN_Y = 500
-OFFSET_MOVE_Y = 600
+TEXT_OFFSET_X = {'black': 200, 'white': 1150}
+TEXT_OFFSET_Y = {'name': 80, 'score': 250, 'winlose': 400, 'turn': 500, 'move': 600}
+
 OFFSET_START_X = 680
 OFFSET_START_Y = 620
+
 OFFSET_SQUARE_Y = 40
 OFFSET_SQUARE_HEADER = 15
 
@@ -35,8 +32,6 @@ COLOR_ORANGE = 'orange'
 COLOR_YELLOW = 'yellow'
 COLOR_RED = 'red'
 
-TEXT_FONT_SIZE = 32
-SCORE_FONT_SIZE = 140
 SQUARE_HEADER_FONT_SIZE = 20
 
 SQUARE_BOTTOM_MARGIN = 120
@@ -75,6 +70,15 @@ DEFAULT_BLACK_PLAYER = STRATEGY_USER1
 DEFAULT_WHITE_PLAYER = STRATEGY_RANDOM
 DEFAULT_BLACK_NUM = "2"
 DEFAULT_WHITE_NUM = "2"
+DEFAULT_TEXT = {
+    'name': {'black': lambda s: STONE_MARK + s.player['black'], 'white': lambda s: STONE_MARK + s.player['white']},
+    'score': {'black': lambda s: '2', 'white': lambda s: '2'},
+    'winlose': {'black': lambda s: '', 'white': lambda s: ''},
+    'turn': {'black': lambda s: '', 'white': lambda s: ''},
+    'move': {'black': lambda s: '', 'white': lambda s: ''},
+}
+TEXT_FONT_SIZE = {'name': 32, 'score': 140, 'winlose': 32, 'turn': 32, 'move': 32, 'start': 32}
+
 
 
 class Window(tk.Frame):
@@ -90,8 +94,8 @@ class Window(tk.Frame):
         self.start_pressed = False
         self.wait_input = False
         self.size = DEFAULT_BOARD_SIZE
-        self.black_player = DEFAULT_BLACK_PLAYER
-        self.white_player = DEFAULT_WHITE_PLAYER
+        self.player = {'black': DEFAULT_BLACK_PLAYER, 'white': DEFAULT_WHITE_PLAYER}
+        self.text = {}
 
         # 石情報
         factory = StoneFactory()
@@ -128,136 +132,22 @@ class Window(tk.Frame):
         """
         キャンバス上にテキストを配置
         """
-        self._create_black_name()
-        self._create_white_name()
-        self._create_black_stonenum()
-        self._create_white_stonenum()
-        self._create_black_winlose()
-        self._create_white_winlose()
-        self._create_black_turn()
-        self._create_white_turn()
-        self._create_black_move()
-        self._create_white_move()
-        self._create_start()
+        for name in TEXT_OFFSET_Y.keys():
+            for color in TEXT_OFFSET_X.keys():
+                self._create_text(color, name)  # 表示テキスト
 
-    def _create_black_name(self):
-        """
-        黒のプレイヤー名の表示テキスト作成
-        """
-        self.black_name = self.canvas.create_text(
-            OFFSET_BLACK_X,
-            OFFSET_NAME_Y,
-            text=STONE_MARK + self.black_player,
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
+        self._create_start()  # スタートテキスト
 
-    def _create_white_name(self):
+    def _create_text(self, color, name):
         """
-        白のプレイヤー名の表示テキスト作成
+        表示テキスト作成
         """
-        self.white_name = self.canvas.create_text(
-            OFFSET_WHITE_X,
-            OFFSET_NAME_Y,
-            text=STONE_MARK + self.white_player,
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
-    def _create_black_stonenum(self):
-        """
-        黒の石の数の表示テキスト作成
-        """
-        self.black_stonenum = self.canvas.create_text(
-            OFFSET_BLACK_X,
-            OFFSET_NUM_Y,
-            text=DEFAULT_BLACK_NUM,
-            font=('', SCORE_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-    def _create_white_stonenum(self):
-        """
-        白の石の数の表示テキスト作成
-        """
-        self.white_stonenum = self.canvas.create_text(
-            OFFSET_WHITE_X,
-            OFFSET_NUM_Y,
-            text=DEFAULT_WHITE_NUM,
-            font=('', SCORE_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
-    def _create_black_winlose(self):
-        """
-        黒の勝敗の表示テキスト作成
-        """
-        self.black_winlose = self.canvas.create_text(
-            OFFSET_BLACK_X,
-            OFFSET_RESULT_Y,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-    def _create_white_winlose(self):
-        """
-        白の勝敗の表示テキスト作成
-        """
-        self.white_winlose = self.canvas.create_text(
-            OFFSET_WHITE_X,
-            OFFSET_RESULT_Y,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_WHITE
-        )
-
-    def _create_black_turn(self):
-        """
-        黒の手番の表示テキスト作成
-        """
-        self.black_turn = self.canvas.create_text(
-            OFFSET_BLACK_X,
-            OFFSET_TURN_Y,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_ORANGE
-        )
-
-    def _create_white_turn(self):
-        """
-        白の手番の表示テキスト作成
-        """
-        self.white_turn = self.canvas.create_text(
-            OFFSET_WHITE_X,
-            OFFSET_TURN_Y,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_ORANGE
-        )
-
-    def _create_black_move(self):
-        """
-        黒の手の表示テキスト作成
-        """
-        self.black_move = self.canvas.create_text(
-            OFFSET_BLACK_X,
-            OFFSET_MOVE_Y,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_BLACK
-        )
-
-    def _create_white_move(self):
-        """
-        白の手の表示テキスト作成
-        """
-        self.white_move = self.canvas.create_text(
-            OFFSET_WHITE_X,
-            OFFSET_MOVE_Y,
-            text="",
-            font=('', TEXT_FONT_SIZE),
-            fill=COLOR_WHITE
+        self.text[color + "_" + name] = self.canvas.create_text(
+            TEXT_OFFSET_X[color],
+            TEXT_OFFSET_Y[name],
+            text=DEFAULT_TEXT[name][color](self),
+            font=('', TEXT_FONT_SIZE[name]),
+            fill=color
         )
 
     def _create_start(self):
@@ -268,7 +158,7 @@ class Window(tk.Frame):
             OFFSET_START_X,
             OFFSET_START_Y,
             text=START_TEXT,
-            font=('', TEXT_FONT_SIZE),
+            font=('', TEXT_FONT_SIZE['start']),
             fill=COLOR_YELLOW
         )
 
@@ -723,8 +613,8 @@ if __name__ == '__main__':
         if event.is_set():
             # メニューからの通知を取得
             window.size = window.menu.size
-            window.black_player = window.menu.black_player
-            window.white_player = window.menu.white_player
+            window.player['black'] = window.menu.black_player
+            window.player['white'] = window.menu.white_player
 
             state = 'INIT'  # ウィンドウ初期化
             event.clear()   # イベントをクリア
@@ -836,11 +726,11 @@ if __name__ == '__main__':
                     window.menu.set_state('disable')
 
                 demo = False
-                print("start", window.size, window.black_player, window.white_player)
+                print("start", window.size, window.player['black'], window.player['white'])
 
                 board = Board(window.size)
-                black_player = Player(board.black, window.black_player, game_strategies[window.black_player])
-                white_player = Player(board.white, window.white_player, game_strategies[window.white_player])
+                black_player = Player(board.black, window.player['black'], game_strategies[window.player['black']])
+                white_player = Player(board.white, window.player['white'], game_strategies[window.player['white']])
 
                 while True:
                     playable = 0
