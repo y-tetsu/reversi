@@ -10,4 +10,7 @@ pyinstaller 3.4<br>
 ![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 
 ## GUI版
+```
+$ python main.pyw
+```
 ![gui](https://github.com/y-tetsu/othello/blob/master/image/gui.gif?raw=true)
