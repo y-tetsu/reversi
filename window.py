@@ -112,8 +112,8 @@ class Window(tk.Frame):
         """
         メニューを配置
         """
-        self.menubar = Menu(self, self.event)
-        self.master.configure(menu=self.menubar)
+        self.menu = Menu(self, self.event)
+        self.master.configure(menu=self.menu)
 
     def _create_game_screen(self):
         """
@@ -305,7 +305,7 @@ class Window(tk.Frame):
         スタートボタンを押した場合
         """
         self.disable_start()
-        self.menubar.set_state('disable')
+        self.menu.set_state('disable')
 
         self.start_pressed = True
 
@@ -551,13 +551,13 @@ class Window(tk.Frame):
         """
         self.disable_start()
         self.disable_canvas()
-        self.menubar.set_state('disable')
+        self.menu.set_state('disable')
 
     def enable_window(self):
         """
         ウィンドウを有効化
         """
-        self.menubar.set_state('normal')
+        self.menu.set_state('normal')
         self.enable_canvas()
         self.enable_start()
 
@@ -734,9 +734,9 @@ if __name__ == '__main__':
 
         if event.is_set():
             # メニューからの通知を取得
-            window.size = window.menubar.size
-            window.black_player = window.menubar.black_player
-            window.white_player = window.menubar.white_player
+            window.size = window.menu.size
+            window.black_player = window.menu.black_player
+            window.white_player = window.menu.white_player
 
             state = 'INIT'  # ウィンドウ初期化
             event.clear()   # イベントをクリア
@@ -845,7 +845,7 @@ if __name__ == '__main__':
                 if not demo:
                     window.init_game_screen()
                     window.disable_start()
-                    window.menubar.set_state('disable')
+                    window.menu.set_state('disable')
 
                 demo = False
                 print("start", window.size, window.black_player, window.white_player)
