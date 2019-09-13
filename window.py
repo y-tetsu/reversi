@@ -85,40 +85,28 @@ class Window(tk.Frame):
         super().__init__(root)
         self.pack()
 
-        # 引数の取得
-        self.event = event  # ウィンドウからのイベント発生通知
-        self.queue = queue  # ウィンドウからのデータ受け渡し
-
-        # 石情報
-        factory = StoneFactory()
-        self.black = factory.create('black')
-        self.white = factory.create('white')
-
         # 初期値設定
-        root.title(WINDOW_TITLE)                   # タイトル
-        root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
-
+        self.queue = queue  # ウィンドウからのデータ受け渡し
         self.start_pressed = False
         self.wait_input = False
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = DEFAULT_BLACK_PLAYER
         self.white_player = DEFAULT_WHITE_PLAYER
 
-        # ウィンドウ初期化
-        self._create_menu(root)
-        self._create_game_screen()
+        # 石情報
+        factory = StoneFactory()
+        self.black = factory.create('black')
+        self.white = factory.create('white')
 
-    def _create_menu(self, root):
-        """
-        メニューを配置
-        """
-        self.menu = Menu(root, self.event)
+        # ウィンドウ設定
+        root.title(WINDOW_TITLE)                   # タイトル
+        root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
+
+        # メニューを配置
+        self.menu = Menu(root, event)
         root.configure(menu=self.menu)
 
-    def _create_game_screen(self):
-        """
-        ゲーム画面を配置
-        """
+        # キャンバスを配置
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
         self.canvas.grid(row=0, column=0)
 
