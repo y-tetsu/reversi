@@ -24,8 +24,8 @@ BLACK_PLAYERS = {
 WHITE_PLAYERS = {
     'User2': strategies.ConsoleUserInput(),
     'Unselfish': strategies.Unselfish(),
-    'Normal': strategies.Random(),
-    'Hard': strategies.Greedy(),
+    'Random': strategies.Random(),
+    'Greedy': strategies.Greedy(),
 }
 
 DEFAULT_BLACK_PLAYER = 'User1'
