@@ -14,6 +14,9 @@ from window import Window
 import strategies
 
 
+TURN_STONE_WAIT = 0.1
+
+
 class Othello:
     """
     GUIゲーム
@@ -65,14 +68,90 @@ class Othello:
         デモ画面
         """
         while True:
-            time.sleep(0.1)
-
             if self.window.start_pressed:
                 self.window.start_pressed = False
                 self.state = Othello.PLAY
                 break
 
-            if self._setting_changed():
+            resize_flag = False
+            center = self.window.size // 2
+
+            ptn = [
+                ('black', center, center-1),
+                ('black', center-1, center),
+                ('white', center-1, center-1),
+                ('white', center, center),
+            ]
+
+            for color, x, y in ptn:
+                if color == 'black':
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_black(x, y)
+                    self.window.put_turnblack(x, y)
+
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_turnblack(x, y)
+                    self.window.put_white(x, y)
+
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_white(x, y)
+                    self.window.put_turnwhite(x, y)
+
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_turnwhite(x, y)
+                    self.window.put_black(x, y)
+
+                else:
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_white(x, y)
+                    self.window.put_turnwhite(x, y)
+
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_turnwhite(x, y)
+                    self.window.put_black(x, y)
+
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_black(x, y)
+                    self.window.put_turnblack(x, y)
+
+                    if self._setting_changed():
+                        resize_flag = True
+                        break
+
+                    time.sleep(TURN_STONE_WAIT)
+                    self.window.remove_turnblack(x, y)
+                    self.window.put_white(x, y)
+
+            if resize_flag:
+                resize_flag = True
                 self.state = Othello.INIT
                 break
 
