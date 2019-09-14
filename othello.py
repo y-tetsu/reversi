@@ -173,7 +173,7 @@ class Othello:
         game.play()
 
         # 少し待って終了状態へ
-        time.sleep(2)
+        time.sleep(1.5)
         self.state = Othello.END
 
     def __end(self):
@@ -183,7 +183,7 @@ class Othello:
         self.window.enable_window()
 
         while True:
-            time.sleep(0.1)
+            time.sleep(0.01)
 
             if self.window.start_pressed:
                 self.window.start_pressed = False
