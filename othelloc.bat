@@ -1,1 +1,1 @@
-pyinstaller main.py --onefile --name othelloc
+pyinstaller othelloc.py --onefile

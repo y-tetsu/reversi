@@ -1,1 +1,1 @@
-pyinstaller main.pyw --onefile  --noconsole --name othello
+pyinstaller othello.py --onefile  --noconsole
