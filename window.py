@@ -53,29 +53,7 @@ STONE_MARK = '●'
 
 TURN_STONE_WAIT = 0.1
 
-STRATEGY_USER1 = 'User1'
-STRATEGY_USER2 = 'User2'
-STRATEGY_UNSELFISH = 'Unselfish'
-STRATEGY_RANDOM = 'Random'
-STRATEGY_GREEDY = 'Greedy'
-
-BLACK_PLAYERS = [
-    STRATEGY_USER1,
-    STRATEGY_UNSELFISH,
-    STRATEGY_RANDOM,
-    STRATEGY_GREEDY,
-]
-
-WHITE_PLAYERS = [
-    STRATEGY_USER2,
-    STRATEGY_UNSELFISH,
-    STRATEGY_RANDOM,
-    STRATEGY_GREEDY,
-]
-
 DEFAULT_BOARD_SIZE = 8
-DEFAULT_BLACK_PLAYER = STRATEGY_USER1
-DEFAULT_WHITE_PLAYER = STRATEGY_RANDOM
 DEFAULT_BLACK_NUM = "2"
 DEFAULT_WHITE_NUM = "2"
 
@@ -88,13 +66,11 @@ DEFAULT_TEXT = {
 }
 
 
-
-
 class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, root=None, event=None, queue=None):
+    def __init__(self, root=None, event=None, queue=None, black_players=None, white_players=None):
         super().__init__(root)
         self.pack()
 
@@ -103,8 +79,9 @@ class Window(tk.Frame):
         self.start_pressed = False
         self.wait_input = False
         self.size = DEFAULT_BOARD_SIZE
-        self.player = {'black': DEFAULT_BLACK_PLAYER, 'white': DEFAULT_WHITE_PLAYER}
+        self.player = {'black': black_players[0], 'white': white_players[0]}
         self.text = {}
+        self.strategies = {}
 
         # 石情報
         factory = StoneFactory()
@@ -116,7 +93,7 @@ class Window(tk.Frame):
         root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
         # メニューを配置
-        self.menu = Menu(root, event)
+        self.menu = Menu(root, event, black_players, white_players)
         root.configure(menu=self.menu)
 
         # キャンバスを配置
@@ -563,19 +540,19 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, root=None, event=None):
+    def __init__(self, root, event, black_players, white_players):
         super().__init__(root)
 
         self.event = event
         self.size = DEFAULT_BOARD_SIZE
-        self.black_player = DEFAULT_BLACK_PLAYER
-        self.white_player = DEFAULT_WHITE_PLAYER
+        self.black_player = black_players[0]
+        self.white_player = white_players[0]
 
         # メニューの生成
         menu_items = {
             'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
-            'black': BLACK_PLAYERS,
-            'white': WHITE_PLAYERS,
+            'black': black_players,
+            'white': white_players,
         }
         self._create_menu_items(menu_items)
 
@@ -807,14 +784,16 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    window = Window(root=root, event=event, queue=q)
+    b = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
+    w = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
+
+    window = Window(root=root, event=event, queue=q, black_players=b, white_players=w)
 
     game_strategies = {
-        STRATEGY_USER1: strategies.WindowUserInput(window),
-        STRATEGY_USER2: strategies.WindowUserInput(window),
-        STRATEGY_UNSELFISH: strategies.Unselfish(),
-        STRATEGY_RANDOM: strategies.Random(),
-        STRATEGY_GREEDY: strategies.Greedy(),
+        'ユーザ': strategies.WindowUserInput(window),
+        'かんたん': strategies.Unselfish(),
+        'ふつう': strategies.Random(),
+        'むずかしい': strategies.Greedy(),
     }
 
     game = threading.Thread(target=test_play, args=([window, game_strategies]))

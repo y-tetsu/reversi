@@ -14,14 +14,14 @@ from window import Window
 import strategies
 
 
-class Main:
+class Othello:
     """
     GUIゲーム
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
     def __init__(self, window=None, strategies=None):
-        self.state = Main.INIT
+        self.state = Othello.INIT
         self.window = window
         self.strategies = strategies
 
@@ -33,13 +33,13 @@ class Main:
     def state(self, state):
         self._state = state
 
-        if state == Main.INIT:
+        if state == Othello.INIT:
             self.game = self.__init
-        elif state == Main.DEMO:
+        elif state == Othello.DEMO:
             self.game = self.__demo
-        elif state == Main.PLAY:
+        elif state == Othello.PLAY:
             self.game = self.__play
-        elif state == Main.END:
+        elif state == Othello.END:
             self.game = self.__end
         else:
             self.game = self.__reinit
@@ -58,7 +58,7 @@ class Main:
         self.window.init_screen()
         self.window.enable_window()
 
-        self.state = Main.DEMO
+        self.state = Othello.DEMO
 
     def __demo(self):
         """
@@ -68,12 +68,12 @@ class Main:
             time.sleep(0.1)
 
             if self.window.start_pressed:
-                window.start_pressed = False
-                self.state = Main.PLAY
+                self.window.start_pressed = False
+                self.state = Othello.PLAY
                 break
 
             if self._setting_changed():
-                self.state = Main.INIT
+                self.state = Othello.INIT
                 break
 
     def __play(self):
@@ -84,43 +84,45 @@ class Main:
         board = Board(self.window.size)
 
         # プレイヤー準備
-        black = Player(board.black, self.window.player['black'], self.strategies[self.window.player['black']])
-        white = Player(board.white, self.window.player['white'], self.strategies[self.window.player['white']])
+        black_name = self.window.player['black']
+        white_name = self.window.player['white']
+        black_player = Player(board.black, black_name, self.strategies[black_name])
+        white_player = Player(board.white, white_name, self.strategies[white_name])
 
         # ゲーム開始
-        game = Game(board, black, white, WindowDisplay(self.window))
+        game = Game(board, black_player, white_player, WindowDisplay(self.window))
         game.play()
 
         # 少し待って終了状態へ
         time.sleep(2)
-        self.state = Main.END
+        self.state = Othello.END
 
     def __end(self):
         """
         終了画面
         """
-        window.enable_window()
+        self.window.enable_window()
 
         while True:
             time.sleep(0.1)
 
-            if window.start_pressed:
-                window.start_pressed = False
-                self.state = Main.REINIT
+            if self.window.start_pressed:
+                self.window.start_pressed = False
+                self.state = Othello.REINIT
                 break
 
             if self._setting_changed():
-                self.state = Main.INIT
+                self.state = Othello.INIT
                 break
 
     def __reinit(self):
         """
         再初期化(ゲーム終了後再スタート時)
         """
-        window.init_screen()
-        window.disable_start()
-        window.menu.set_state('disable')
-        self.state = Main.PLAY
+        self.window.init_screen()
+        self.window.disable_start()
+        self.window.menu.set_state('disable')
+        self.state = Othello.PLAY
 
     def _setting_changed(self):
         """
@@ -148,20 +150,23 @@ if __name__ == '__main__':
     # ウィンドウ作成
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
-    window = Window(root=root, event=event, queue=q)
+
+    b = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
+    w = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
+
+    w = Window(root=root, event=event, queue=q, black_players=b, white_players=w)
 
     # ゲーム戦略
-    game_strategies = {
-        'User1': strategies.WindowUserInput(window),
-        'User2': strategies.WindowUserInput(window),
-        'Unselfish': strategies.Unselfish(),
-        'Random': strategies.Random(),
-        'Greedy': strategies.Greedy(),
+    s = {
+        'ユーザ': strategies.WindowUserInput(w),
+        'かんたん': strategies.Unselfish(),
+        'ふつう': strategies.Random(),
+        'むずかしい': strategies.Greedy(),
     }
 
     # ゲーム用スレッド
-    main = Main(window=window, strategies=game_strategies)
-    game = threading.Thread(target=main.mainloop)
+    othello = Othello(window=w, strategies=s)
+    game = threading.Thread(target=othello.mainloop)
     game.daemon = True
     game.start()
 
