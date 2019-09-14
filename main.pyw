@@ -117,9 +117,9 @@ class Main:
         """
         再初期化(ゲーム終了後再スタート時)
         """
-        window.init_game_screen()
+        window.init_screen()
         window.disable_start()
-        window.menubar.disable_menu()
+        window.menu.set_state('disable')
         self.state = Main.PLAY
 
     def _setting_changed(self):
