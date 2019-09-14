@@ -67,6 +67,14 @@ class Othello:
         """
         デモ画面
         """
+        center = self.window.size // 2
+        ptn = [
+            ('black', center, center-1),
+            ('black', center-1, center),
+            ('white', center-1, center-1),
+            ('white', center, center),
+        ]
+
         while True:
             if self.window.start_pressed:
                 self.window.start_pressed = False
@@ -74,14 +82,6 @@ class Othello:
                 break
 
             resize_flag = False
-            center = self.window.size // 2
-
-            ptn = [
-                ('black', center, center-1),
-                ('black', center-1, center),
-                ('white', center-1, center-1),
-                ('white', center, center),
-            ]
 
             for color, x, y in ptn:
                 if color == 'black':
