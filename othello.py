@@ -151,17 +151,18 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
-    w = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy']
 
     w = Window(root=root, event=event, queue=q, black_players=b, white_players=w)
 
     # ゲーム戦略
     s = {
-        'ユーザ': strategies.WindowUserInput(w),
-        'かんたん': strategies.Unselfish(),
-        'ふつう': strategies.Random(),
-        'むずかしい': strategies.Greedy(),
+        'User1': strategies.WindowUserInput(w),
+        'User2': strategies.WindowUserInput(w),
+        'Unselfish': strategies.Unselfish(),
+        'Random': strategies.Random(),
+        'Greedy': strategies.Greedy(),
     }
 
     # ゲーム用スレッド
