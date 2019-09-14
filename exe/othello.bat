@@ -1,1 +1,1 @@
-pyinstaller othello.py --onefile  --noconsole
+pyinstaller ..\othello.py --onefile  --noconsole
