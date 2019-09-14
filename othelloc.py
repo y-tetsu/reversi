@@ -15,21 +15,21 @@ import strategies
 
 
 BLACK_PLAYERS = {
-    'User': strategies.ConsoleUserInput(),
-    'Easy': strategies.Unselfish(),
-    'Normal': strategies.Random(),
-    'Hard': strategies.Greedy(),
+    'User1': strategies.ConsoleUserInput(),
+    'Unselfish': strategies.Unselfish(),
+    'Random': strategies.Random(),
+    'Greedy': strategies.Greedy(),
 }
 
 WHITE_PLAYERS = {
-    'User': strategies.ConsoleUserInput(),
-    'Easy': strategies.Unselfish(),
+    'User2': strategies.ConsoleUserInput(),
+    'Unselfish': strategies.Unselfish(),
     'Normal': strategies.Random(),
     'Hard': strategies.Greedy(),
 }
 
-DEFAULT_BLACK_PLAYER = 'User'
-DEFAULT_WHITE_PLAYER = 'Normal'
+DEFAULT_BLACK_PLAYER = 'User1'
+DEFAULT_WHITE_PLAYER = 'Random'
 DEFAULT_BOARD_SIZE = 4
 
 
