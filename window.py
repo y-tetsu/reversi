@@ -106,6 +106,8 @@ class Window(tk.Frame):
         """
         # 全オブジェクト削除
         self._squares = []
+        self._xlines = []
+        self._ylines = []
         self.canvas.delete('all')
 
         # ボードを配置
@@ -184,8 +186,8 @@ class Window(tk.Frame):
         """
         盤面の表示の初期化
         """
-        self._calc_size()        # 変更後の石やマスのサイズを計算
-        self._draw_squares()     # マスの描画
+        self._calc_size()        # 変更後の石やマス目のサイズを計算
+        self._draw_squares()     # マス目の描画
         self._put_init_stones()  # 初期位置に石を置く
 
     def _calc_size(self):
@@ -201,30 +203,41 @@ class Window(tk.Frame):
 
     def _draw_squares(self):
         """
-        オセロのマスを描く
+        マス目を描画
         """
-
         self._squares = [[None for _ in range(self.size)] for _ in range(self.size)]
+
+        # 縦の番地
+        x1, y1 = self.square_x_ini, self.square_y_ini
+        for num in range(self.size):
+            xlabel = chr(num + 97)
+            x2 = x1 + self.square_w
+            self.canvas.create_text((x1+x2)//2, y1-OFFSET_SQUARE_HEADER, fill=COLOR_WHITE, text=xlabel, font=('', SQUARE_HEADER_FONT_SIZE))
+            x1 = x2
+
+        # 縦線
         y1 = self.square_y_ini
+        y2 = y1 + self.square_w * self.size
+        for num in range(self.size + 1):
+            x1 = self.square_x_ini + self.square_w * num
+            xline = self.canvas.create_line(x1, y1, x1, y2, fill=COLOR_WHITE)
+            self._xlines.append(xline)
 
-        for y in range(self.size):
-            x1 = self.square_x_ini
+        # 横の番地
+        x1, y1 = self.square_x_ini, self.square_y_ini
+        for num in range(self.size):
+            ylabel = str(num + 1)
             y2 = y1 + self.square_w
-            for x in range(self.size):
-                label_x = chr(x + 97)
-                label_y = str(y + 1)
-                x2 = x1 + self.square_w
-
-                if not x:
-                    self.canvas.create_text(x1-OFFSET_SQUARE_HEADER, (y1+y2)//2, fill=COLOR_WHITE, text=label_y, tag='header_col', font=('', SQUARE_HEADER_FONT_SIZE))
-
-                if not y:
-                    self.canvas.create_text((x1+x2)//2, y1-OFFSET_SQUARE_HEADER, fill=COLOR_WHITE, text=label_x, tag='header_row', font=('', SQUARE_HEADER_FONT_SIZE))
-
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='square_' + label_x + label_y)
-
-                x1 = x2
+            self.canvas.create_text(x1-OFFSET_SQUARE_HEADER, (y1+y2)//2, fill=COLOR_WHITE, text=ylabel, font=('', SQUARE_HEADER_FONT_SIZE))
             y1 = y2
+
+        # 横線
+        x1 = self.square_x_ini
+        x2 = x1 + self.square_w * self.size
+        for num in range(self.size + 1):
+            y1 = self.square_y_ini + self.square_w * num
+            yline = self.canvas.create_line(x1, y1, x2, y1, fill=COLOR_WHITE)
+            self._ylines.append(yline)
 
     def _put_init_stones(self):
         """
@@ -461,30 +474,33 @@ class Window(tk.Frame):
         打てる場所をハイライトする
         """
         for x, y in moves:
-            square = self._squares[y][x]
-            self.canvas.itemconfigure(square, fill=COLOR_YELLOW)
+            x1 = self.square_x_ini + self.square_w * x
+            x2 = x1 + self.square_w
+            y1 = self.square_y_ini + self.square_w * y
+            y2 = y1 + self.square_w
+            self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_YELLOW, outline=COLOR_WHITE, tag='moves')
 
     def disable_moves(self, moves):
         """
         打てる場所のハイライトを元に戻す
         """
-        for x, y in moves:
-            square = self._squares[y][x]
-            self.canvas.itemconfigure(square, fill=COLOR_GREEN)
+        self.canvas.delete('moves')
 
     def enable_move(self, x, y):
         """
         打った場所をハイライトする
         """
-        square = self._squares[y][x]
-        self.canvas.itemconfigure(square, fill=COLOR_RED)
+        x1 = self.square_x_ini + self.square_w * x
+        x2 = x1 + self.square_w
+        y1 = self.square_y_ini + self.square_w * y
+        y2 = y1 + self.square_w
+        self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_RED, outline=COLOR_WHITE, tag='move')
 
     def disable_move(self, x, y):
         """
         打った場所のハイライトを元に戻す
         """
-        square = self._squares[y][x]
-        self.canvas.itemconfigure(square, fill=COLOR_GREEN)
+        self.canvas.delete('move')
 
     def selectable_moves(self, moves):
         """
@@ -745,7 +761,6 @@ if __name__ == '__main__':
                         time.sleep(1.2)
                         window.turn_stone(board.black, black_player.captures)
 
-                        window.unselectable_moves(moves)
                         window.disable_move(*black_player.move)
 
                         playable += 1

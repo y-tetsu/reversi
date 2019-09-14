@@ -131,7 +131,7 @@ class WindowDisplay(AbstractDisplay):
         """
         手番の表示
         """
-        time.sleep(1)
+        time.sleep(0.3)
         for color in PLAYER_COLORS:
             self.window.set_text(color, 'move', '')  # 打った手の表示を消す
 
@@ -153,7 +153,7 @@ class WindowDisplay(AbstractDisplay):
         self.window.disable_moves(possibles)  # 打てる候補のハイライトをなくす
         self.window.enable_move(*player.move)  # 打った手をハイライト
         self.window.put_stone(player.stone, *player.move)  # 石を置く
-        time.sleep(0.5)
+        time.sleep(0.2)
         color = 'black' if player.stone == self.window.black else 'white'
         self.window.set_text(color, 'move', f'({x}, {y}) に置きました')  # 打った手を表示
         self.window.turn_stone(player.stone, player.captures)  # 石をひっくり返すアニメーション
