@@ -15,25 +15,25 @@ import strategies
 
 
 BLACK_PLAYERS = {
-    'User1': strategies.ConsoleUserInput(),
-    'Random': strategies.Random(),
-    'Greedy': strategies.Greedy(),
-    'Unselfish': strategies.Unselfish(),
+    'User': strategies.ConsoleUserInput(),
+    'Easy': strategies.Unselfish(),
+    'Normal': strategies.Random(),
+    'Hard': strategies.Greedy(),
 }
 
 WHITE_PLAYERS = {
-    'User2': strategies.ConsoleUserInput(),
-    'Random': strategies.Random(),
-    'Greedy': strategies.Greedy(),
-    'Unselfish': strategies.Unselfish(),
+    'User': strategies.ConsoleUserInput(),
+    'Easy': strategies.Unselfish(),
+    'Normal': strategies.Random(),
+    'Hard': strategies.Greedy(),
 }
 
-DEFAULT_BLACK_PLAYER = 'User1'
-DEFAULT_WHITE_PLAYER = 'Random'
+DEFAULT_BLACK_PLAYER = 'User'
+DEFAULT_WHITE_PLAYER = 'Normal'
 DEFAULT_BOARD_SIZE = 4
 
 
-class Main:
+class Othelloc:
     """
     コンソールゲーム
     """
@@ -43,7 +43,7 @@ class Main:
         self.board_size = DEFAULT_BOARD_SIZE
         self.black = DEFAULT_BLACK_PLAYER
         self.white = DEFAULT_WHITE_PLAYER
-        self.state = Main.START
+        self.state = Othelloc.START
 
     @property
     def state(self):
@@ -53,9 +53,9 @@ class Main:
     def state(self, state):
         self._state = state
 
-        if state == Main.START:
+        if state == Othelloc.START:
             self.game = self.__start
-        elif state == Main.MENU:
+        elif state == Othelloc.MENU:
             self.game = self.__menu
         else:
             self.game = self.__play
@@ -76,7 +76,7 @@ class Main:
         print('BlackPlayer =', self.black)
         print('WhitePlayer =', self.white)
         print('=============================\n')
-        self.state = Main.MENU
+        self.state = Othelloc.MENU
 
     def __menu(self):
         """
@@ -95,19 +95,19 @@ class Main:
             user_in = input('>> ')
 
             if not user_in:
-                self.state = Main.PLAY
+                self.state = Othelloc.PLAY
                 break
             elif user_in == 's':
                 self.board_size = self._get_board_size()
-                self.state = Main.START
+                self.state = Othelloc.START
                 break
             elif user_in == 'b':
                 self.black = self._get_player(BLACK_PLAYERS)
-                self.state = Main.START
+                self.state = Othelloc.START
                 break
             elif user_in == 'w':
                 self.white = self._get_player(WHITE_PLAYERS)
-                self.state = Main.START
+                self.state = Othelloc.START
                 break
             elif user_in == 'q':
                 print('See you!')
@@ -160,9 +160,9 @@ class Main:
 
         # 少し待ってスタートに戻る
         time.sleep(2)
-        self.state = Main.START
+        self.state = Othelloc.START
 
 
 if __name__ == '__main__':
-    main = Main()
-    main.mainloop()
+    othelloc = Othelloc()
+    othelloc.mainloop()
