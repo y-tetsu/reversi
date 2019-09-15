@@ -59,15 +59,15 @@ class WindowUserInput(AbstractStrategy):
         次の一手
         """
         moves = list(board.get_possibles(stone).keys())
-        self.window.selectable_moves(moves)
+        self.window.board.selectable_moves(moves)
 
         while True:
-            if self.window.event.is_set():
-                move = self.window.move
-                self.window.event.clear()
+            if self.window.board.event.is_set():
+                move = self.window.board.move
+                self.window.board.event.clear()
 
                 if move in moves:
-                    self.window.unselectable_moves(moves)
+                    self.window.board.unselectable_moves(moves)
                     break
 
             time.sleep(0.01)

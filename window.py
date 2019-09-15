@@ -75,20 +75,9 @@ class Window(tk.Frame):
         super().__init__(root)
         self.pack()
 
-        # 初期値設定
+        # 初期設定
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
-        self.text = {}
-        self.strategies = {}
-        self.move = None
-
-        # イベント生成
-        self.event = threading.Event()
-
-        # 石情報
-        factory = StoneFactory()
-        self.black = factory.create('black')
-        self.white = factory.create('white')
 
         # ウィンドウ設定
         root.title(WINDOW_TITLE)                   # タイトル
@@ -106,23 +95,39 @@ class Window(tk.Frame):
         """
         ゲーム画面の初期化
         """
-        # 全オブジェクト削除
+        self.canvas.delete('all')                         # 全オブジェクト削除
+        self.board = ScreenBoard(self.size, self.canvas)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player)  # 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas)             # スタートテキスト配置
+
+    def set_state(self, state):
+        """
+        ウィンドウを有効化/無効化
+        """
+        self.start.set_state(state)
+        self.menu.set_state(state)
+
+
+class ScreenBoard:
+    """
+    盤面表示
+    """
+    def __init__(self, size, canvas):
+        self.size = size
+        self.canvas = canvas
         self._squares = []
         self._xlines = []
         self._ylines = []
-        self.canvas.delete('all')
+        self.move = None
 
-        # ボードを配置
-        self._init_board_on_canvas()
+        # イベント生成
+        self.event = threading.Event()
 
-        # テキストを配置
-        self.info = Info(self.canvas, self.player)  # 情報表示テキスト配置
-        self.start = Start(self.canvas)             # スタートテキスト配置
+        # 石情報
+        factory = StoneFactory()
+        self.black = factory.create('black')
+        self.white = factory.create('white')
 
-    def _init_board_on_canvas(self):
-        """
-        盤面の表示の初期化
-        """
         self._calc_size()        # 変更後の石やマス目のサイズを計算
         self._draw_squares()     # マス目の描画
         self._put_init_stones()  # 初期位置に石を置く
@@ -348,20 +353,6 @@ class Window(tk.Frame):
             self.put_white(x, y)
         time.sleep(TURN_STONE_WAIT)
 
-    def disable_window(self):
-        """
-        ウィンドウを無効化
-        """
-        self.start.set_state('disable')
-        self.menu.set_state('disable')
-
-    def enable_window(self):
-        """
-        ウィンドウを有効化
-        """
-        self.start.set_state('normal')
-        self.menu.set_state('normal')
-
     def enable_moves(self, moves):
         """
         打てる場所をハイライトする
@@ -445,7 +436,7 @@ class Window(tk.Frame):
         return _press
 
 
-class Info:
+class ScreenInfo:
     """
     情報表示テキスト
     """
@@ -479,7 +470,7 @@ class Info:
         self.canvas.itemconfigure(text_id, text=text)
 
 
-class Start:
+class ScreenStart:
     """
     スタートテキスト
     """
@@ -520,7 +511,6 @@ class Start:
         スタートテキストを押した場合
         """
         if not self.event.is_set():
-            self.set_state('disable')  # スタートテキストを無効化
             self.event.set()           # スタートイベントを通知
 
     def set_state(self, state):
@@ -619,104 +609,103 @@ if __name__ == '__main__':
             if state == 'INIT':
                 demo = False
                 window.init_screen()
-                window.enable_window()
+                window.set_state('normal')
                 state = 'DEMO'
 
             if state == 'DEMO':
                 demo = True
                 resize_flag = False
-                center = window.size // 2
+                center = window.board.size // 2
 
                 for x, y in [(center, center-1), (center-1, center)]:
                     if resize_board(window):
                         resize_flag = True
                         break
 
-                    center = window.size // 2
+                    center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_stone('black', x, y)
-                    window.put_turnblack(x, y)
+                    window.board.remove_stone('black', x, y)
+                    window.board.put_turnblack(x, y)
 
                     if resize_board(window):
                         resize_flag = True
                         break
 
-                    center = window.size // 2
+                    center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_stone('turnblack', x, y)
-                    window.put_white(x, y)
+                    window.board.remove_stone('turnblack', x, y)
+                    window.board.put_white(x, y)
 
                     if resize_board(window):
                         resize_flag = True
                         break
 
-                    center = window.size // 2
+                    center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_stone('white', x, y)
-                    window.put_turnwhite(x, y)
+                    window.board.remove_stone('white', x, y)
+                    window.board.put_turnwhite(x, y)
 
                     if resize_board(window):
                         resize_flag = True
                         break
 
-                    center = window.size // 2
+                    center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_stone('turnwhite', x, y)
-                    window.put_black(x, y)
+                    window.board.remove_stone('turnwhite', x, y)
+                    window.board.put_black(x, y)
 
                 if not resize_flag:
-                    center = window.size // 2
+                    center = window.board.size // 2
 
                     for x, y in [(center-1, center-1), (center, center)]:
                         if resize_board(window):
                             break
 
-                        center = window.size // 2
+                        center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_stone('white', x, y)
-                        window.put_turnwhite(x, y)
+                        window.board.remove_stone('white', x, y)
+                        window.board.put_turnwhite(x, y)
 
                         if resize_board(window):
                             break
 
-                        center = window.size // 2
+                        center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_stone('turnwhite', x, y)
-                        window.put_black(x, y)
+                        window.board.remove_stone('turnwhite', x, y)
+                        window.board.put_black(x, y)
 
                         if resize_board(window):
                             break
 
-                        center = window.size // 2
+                        center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_stone('black', x, y)
-                        window.put_turnblack(x, y)
+                        window.board.remove_stone('black', x, y)
+                        window.board.put_turnblack(x, y)
 
                         if resize_board(window):
                             break
 
-                        center = window.size // 2
+                        center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_stone('turnblack', x, y)
-                        window.put_white(x, y)
+                        window.board.remove_stone('turnblack', x, y)
+                        window.board.put_white(x, y)
 
                 if window.start.event.is_set():
-                    window.menu.set_state('disable')  # メニューを無効化
+                    window.set_state('disable')  # メニューを無効化
                     window.start.event.clear()
                     state = 'START'
 
             if state == 'START':
                 if not demo:
                     window.init_screen()
-                    window.start.set_state('disable')
-                    window.menu.set_state('disable')
+                    window.set_state('disable')
 
                 demo = False
-                print("start", window.size, window.player['black'], window.player['white'])
+                print("start", window.board.size, window.info.player['black'], window.info.player['white'])
 
-                board = Board(window.size)
-                black_player = Player(board.black, window.player['black'], game_strategies[window.player['black']])
-                white_player = Player(board.white, window.player['white'], game_strategies[window.player['white']])
+                board = Board(window.board.size)
+                black_player = Player(board.black, window.info.player['black'], game_strategies[window.info.player['black']])
+                white_player = Player(board.white, window.info.player['white'], game_strategies[window.info.player['white']])
 
                 while True:
                     playable = 0
@@ -724,53 +713,53 @@ if __name__ == '__main__':
                     moves = list(board.get_possibles(board.black).keys())
 
                     if moves:
-                        window.enable_moves(moves)
-                        window.selectable_moves(moves)
+                        window.board.enable_moves(moves)
+                        window.board.selectable_moves(moves)
 
                         time.sleep(0.3)
                         black_player.put_stone(board)
 
-                        window.disable_moves(moves)
-                        window.enable_move(*black_player.move)
+                        window.board.disable_moves(moves)
+                        window.board.enable_move(*black_player.move)
 
-                        window.put_stone(board.black, *black_player.move)
+                        window.board.put_stone(board.black, *black_player.move)
 
                         time.sleep(0.3)
-                        window.turn_stone(board.black, black_player.captures)
+                        window.board.turn_stone(board.black, black_player.captures)
 
-                        window.disable_move(*black_player.move)
+                        window.board.disable_move(*black_player.move)
 
                         playable += 1
 
                     moves = list(board.get_possibles(board.white).keys())
 
                     if moves:
-                        window.enable_moves(moves)
+                        window.board.enable_moves(moves)
 
                         time.sleep(0.3)
                         white_player.put_stone(board)
 
-                        window.disable_moves(moves)
-                        window.enable_move(*white_player.move)
+                        window.board.disable_moves(moves)
+                        window.board.enable_move(*white_player.move)
 
-                        window.put_stone(board.white, *white_player.move)
+                        window.board.put_stone(board.white, *white_player.move)
 
                         time.sleep(0.3)
-                        window.turn_stone(board.white, white_player.captures)
-                        window.disable_move(*white_player.move)
+                        window.board.turn_stone(board.white, white_player.captures)
+                        window.board.disable_move(*white_player.move)
 
                         playable += 1
 
                     if not playable:
                         state = 'END'
-                        window.enable_window()
+                        window.set_state('normal')
                         break
 
             if state == 'END':
                 demo = False
 
                 if window.start.event.is_set():
-                    window.menu.set_state('disable')  # メニューを無効化
+                    window.set_state('disable')
                     window.start.event.clear()
                     state = 'START'
 

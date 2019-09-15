@@ -59,14 +59,14 @@ class Othello:
         画面初期化(初回、設定変更時)
         """
         self.window.init_screen()
-        self.window.enable_window()
+        self.window.set_state('normal')
         self.state = Othello.DEMO
 
     def __demo(self):
         """
         デモ画面
         """
-        center = self.window.size // 2
+        center = self.window.board.size // 2
         ptn = [
             ('black', center, center-1),
             ('black', center-1, center),
@@ -76,7 +76,7 @@ class Othello:
 
         while True:
             if self.window.start.event.is_set():
-                self.window.menu.set_state('disable')
+                self.window.set_state('disable')
                 self.window.start.event.clear()
                 self.state = Othello.PLAY
                 break
@@ -90,32 +90,32 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('black', x, y)
-                    self.window.put_turnblack(x, y)
+                    self.window.board.remove_stone('black', x, y)
+                    self.window.board.put_turnblack(x, y)
 
                     if self._setting_changed():
                         resize_flag = True
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('turnblack', x, y)
-                    self.window.put_white(x, y)
+                    self.window.board.remove_stone('turnblack', x, y)
+                    self.window.board.put_white(x, y)
 
                     if self._setting_changed():
                         resize_flag = True
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('white', x, y)
-                    self.window.put_turnwhite(x, y)
+                    self.window.board.remove_stone('white', x, y)
+                    self.window.board.put_turnwhite(x, y)
 
                     if self._setting_changed():
                         resize_flag = True
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('turnwhite', x, y)
-                    self.window.put_black(x, y)
+                    self.window.board.remove_stone('turnwhite', x, y)
+                    self.window.board.put_black(x, y)
 
                 else:
                     if self._setting_changed():
@@ -123,32 +123,32 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('white', x, y)
-                    self.window.put_turnwhite(x, y)
+                    self.window.board.remove_stone('white', x, y)
+                    self.window.board.put_turnwhite(x, y)
 
                     if self._setting_changed():
                         resize_flag = True
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('turnwhite', x, y)
-                    self.window.put_black(x, y)
+                    self.window.board.remove_stone('turnwhite', x, y)
+                    self.window.board.put_black(x, y)
 
                     if self._setting_changed():
                         resize_flag = True
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('black', x, y)
-                    self.window.put_turnblack(x, y)
+                    self.window.board.remove_stone('black', x, y)
+                    self.window.board.put_turnblack(x, y)
 
                     if self._setting_changed():
                         resize_flag = True
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_stone('turnblack', x, y)
-                    self.window.put_white(x, y)
+                    self.window.board.remove_stone('turnblack', x, y)
+                    self.window.board.put_white(x, y)
 
             if resize_flag:
                 resize_flag = True
@@ -160,7 +160,7 @@ class Othello:
         ゲーム画面
         """
         # ボード準備
-        board = Board(self.window.size)
+        board = Board(self.window.board.size)
 
         # プレイヤー準備
         black_name = self.window.player['black']
@@ -180,7 +180,7 @@ class Othello:
         """
         終了画面
         """
-        self.window.enable_window()
+        self.window.set_state('normal')
 
         while True:
             time.sleep(0.01)
@@ -200,8 +200,7 @@ class Othello:
         再初期化(ゲーム終了後再スタート時)
         """
         self.window.init_screen()
-        self.window.start.set_state('disable')
-        self.window.menu.set_state('disable')
+        self.window.set_state('disable')
         self.state = Othello.PLAY
 
     def _setting_changed(self):
