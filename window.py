@@ -118,72 +118,6 @@ class Window(tk.Frame):
         # テキストを配置
         self._create_text_on_canvas()
 
-    def _create_text_on_canvas(self):
-        """
-        キャンバス上にテキストを配置
-        """
-        for name in TEXT_OFFSET_Y.keys():
-            for color in TEXT_OFFSET_X.keys():
-                self._create_text(color, name)  # 表示テキスト
-
-        self._create_start()  # スタートテキスト
-
-    def _create_text(self, color, name):
-        """
-        表示テキスト作成
-        """
-        self.text[color + "_" + name] = self.canvas.create_text(
-            TEXT_OFFSET_X[color],
-            TEXT_OFFSET_Y[name],
-            text=DEFAULT_TEXT[name][color](self),
-            font=('', TEXT_FONT_SIZE[name]),
-            fill=TEXT_COLOR[name][color]
-        )
-
-    def set_text(self, color, name, text):
-        """
-        表示テキストの文字列を設定
-        """
-        text_id = self.text[color + "_" + name]
-        self.canvas.itemconfigure(text_id, text=text)
-
-    def _create_start(self):
-        """
-        スタートテキストの作成
-        """
-        self.start = self.canvas.create_text(
-            OFFSET_START_X,
-            OFFSET_START_Y,
-            text=START_TEXT,
-            font=('', TEXT_FONT_SIZE['start']),
-            fill=COLOR_YELLOW
-        )
-
-        self.canvas.tag_bind(self.start, '<Enter>', self._enter_start)
-        self.canvas.tag_bind(self.start, '<Leave>', self._leave_start)
-        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self._on_start)
-
-    def _enter_start(self, event):
-        """
-        スタートテキストにカーソルが合った時
-        """
-        self.canvas.itemconfigure(self.start, fill=COLOR_RED)
-
-    def _leave_start(self, event):
-        """
-        スタートテキストからカーソルが離れた時
-        """
-        self.canvas.itemconfigure(self.start, fill=COLOR_YELLOW)
-
-    def _on_start(self, event):
-        """
-        スタートテキストを押した場合
-        """
-        if not self.event.is_set():
-            self.disable_start()            # スタートテキストを無効化
-            self.menu.set_state('disable')  # メニューを無効化
-            self.event.set()                # スタートイベントを通知
-
     def _init_board_on_canvas(self):
         """
         盤面の表示の初期化
@@ -330,37 +264,19 @@ class Window(tk.Frame):
         x2 = x + self.oval_w2
         white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_WHITE, outline=COLOR_WHITE)
 
-    def remove_black(self, index_x, index_y):
+    def remove_stone(self, color, index_x, index_y):
         """
-        黒を消す
+        石を消す
         """
-        label = self._get_label("black", index_x, index_y)
-        self.canvas.delete(label)
+        ptns = []
+        if color == 'black' or color == 'white':
+            ptns = [color]
+        else:
+            ptns = [color + str(i) for i in range(1, 3)]
 
-    def remove_white(self, index_x, index_y):
-        """
-        白を消す
-        """
-        label = self._get_label("white", index_x, index_y)
-        self.canvas.delete(label)
-
-    def remove_turnblack(self, index_x, index_y):
-        """
-        黒ひっくり返し途中を消す
-        """
-        label1 = self._get_label("turnblack1", index_x, index_y)
-        label2 = self._get_label("turnblack2", index_x, index_y)
-        self.canvas.delete(label1)
-        self.canvas.delete(label2)
-
-    def remove_turnwhite(self, index_x, index_y):
-        """
-        白ひっくり返し途中を消す
-        """
-        label1 = self._get_label("turnwhite1", index_x, index_y)
-        label2 = self._get_label("turnwhite2", index_x, index_y)
-        self.canvas.delete(label1)
-        self.canvas.delete(label2)
+        for ptn in ptns:
+            label = self._get_label(ptn, index_x, index_y)
+            self.canvas.delete(label)
 
     def _get_coordinate(self, index_x, index_y):
         """
@@ -393,7 +309,7 @@ class Window(tk.Frame):
         """
         # captures座標の白の石を消す
         for x, y in captures:
-            self.remove_white(x, y)
+            self.remove_stone('white', x, y)
 
         # captures座標に白をひっくり返す途中の石を置く
         for x, y in captures:
@@ -402,7 +318,7 @@ class Window(tk.Frame):
 
         # captures座標の白をひっくり返す途中の石を消す
         for x, y in captures:
-            self.remove_turnwhite(x, y)
+            self.remove_stone('turnwhite', x, y)
 
         # capturesの石を黒にする
         for x, y in captures:
@@ -415,7 +331,7 @@ class Window(tk.Frame):
         """
         # captures座標の黒の石を消す
         for x, y in captures:
-            self.remove_black(x, y)
+            self.remove_stone('black', x, y)
 
         # captures座標に黒をひっくり返す途中の石を置く
         for x, y in captures:
@@ -424,12 +340,78 @@ class Window(tk.Frame):
 
         # captures座標の黒をひっくり返す途中の石を消す
         for x, y in captures:
-            self.remove_turnblack(x, y)
+            self.remove_stone('turnblack', x, y)
 
         # capturesの石を白にする
         for x, y in captures:
             self.put_white(x, y)
         time.sleep(TURN_STONE_WAIT)
+
+    def _create_text_on_canvas(self):
+        """
+        キャンバス上にテキストを配置
+        """
+        for name in TEXT_OFFSET_Y.keys():
+            for color in TEXT_OFFSET_X.keys():
+                self._create_text(color, name)  # 表示テキスト
+
+        self._create_start()  # スタートテキスト
+
+    def _create_text(self, color, name):
+        """
+        表示テキスト作成
+        """
+        self.text[color + "_" + name] = self.canvas.create_text(
+            TEXT_OFFSET_X[color],
+            TEXT_OFFSET_Y[name],
+            text=DEFAULT_TEXT[name][color](self),
+            font=('', TEXT_FONT_SIZE[name]),
+            fill=TEXT_COLOR[name][color]
+        )
+
+    def set_text(self, color, name, text):
+        """
+        表示テキストの文字列を設定
+        """
+        text_id = self.text[color + "_" + name]
+        self.canvas.itemconfigure(text_id, text=text)
+
+    def _create_start(self):
+        """
+        スタートテキストの作成
+        """
+        self.start = self.canvas.create_text(
+            OFFSET_START_X,
+            OFFSET_START_Y,
+            text=START_TEXT,
+            font=('', TEXT_FONT_SIZE['start']),
+            fill=COLOR_YELLOW
+        )
+
+        self.canvas.tag_bind(self.start, '<Enter>', self._enter_start)
+        self.canvas.tag_bind(self.start, '<Leave>', self._leave_start)
+        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self._on_start)
+
+    def _enter_start(self, event):
+        """
+        スタートテキストにカーソルが合った時
+        """
+        self.canvas.itemconfigure(self.start, fill=COLOR_RED)
+
+    def _leave_start(self, event):
+        """
+        スタートテキストからカーソルが離れた時
+        """
+        self.canvas.itemconfigure(self.start, fill=COLOR_YELLOW)
+
+    def _on_start(self, event):
+        """
+        スタートテキストを押した場合
+        """
+        if not self.event.is_set():
+            self.disable_start()            # スタートテキストを無効化
+            self.menu.set_state('disable')  # メニューを無効化
+            self.event.set()                # スタートイベントを通知
 
     def disable_window(self):
         """
@@ -657,7 +639,7 @@ if __name__ == '__main__':
 
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_black(x, y)
+                    window.remove_stone('black', x, y)
                     window.put_turnblack(x, y)
 
                     if resize_board(window):
@@ -666,7 +648,7 @@ if __name__ == '__main__':
 
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_turnblack(x, y)
+                    window.remove_stone('turnblack', x, y)
                     window.put_white(x, y)
 
                     if resize_board(window):
@@ -675,7 +657,7 @@ if __name__ == '__main__':
 
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_white(x, y)
+                    window.remove_stone('white', x, y)
                     window.put_turnwhite(x, y)
 
                     if resize_board(window):
@@ -684,7 +666,7 @@ if __name__ == '__main__':
 
                     center = window.size // 2
                     time.sleep(TURN_STONE_WAIT)
-                    window.remove_turnwhite(x, y)
+                    window.remove_stone('turnwhite', x, y)
                     window.put_black(x, y)
 
                 if not resize_flag:
@@ -696,7 +678,7 @@ if __name__ == '__main__':
 
                         center = window.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_white(x, y)
+                        window.remove_stone('white', x, y)
                         window.put_turnwhite(x, y)
 
                         if resize_board(window):
@@ -704,7 +686,7 @@ if __name__ == '__main__':
 
                         center = window.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_turnwhite(x, y)
+                        window.remove_stone('turnwhite', x, y)
                         window.put_black(x, y)
 
                         if resize_board(window):
@@ -712,7 +694,7 @@ if __name__ == '__main__':
 
                         center = window.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_black(x, y)
+                        window.remove_stone('black', x, y)
                         window.put_turnblack(x, y)
 
                         if resize_board(window):
@@ -720,7 +702,7 @@ if __name__ == '__main__':
 
                         center = window.size // 2
                         time.sleep(TURN_STONE_WAIT)
-                        window.remove_turnblack(x, y)
+                        window.remove_stone('turnblack', x, y)
                         window.put_white(x, y)
 
                 if window.event.is_set():

@@ -89,7 +89,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_black(x, y)
+                    self.window.remove_stone('black', x, y)
                     self.window.put_turnblack(x, y)
 
                     if self._setting_changed():
@@ -97,7 +97,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_turnblack(x, y)
+                    self.window.remove_stone('turnblack', x, y)
                     self.window.put_white(x, y)
 
                     if self._setting_changed():
@@ -105,7 +105,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_white(x, y)
+                    self.window.remove_stone('white', x, y)
                     self.window.put_turnwhite(x, y)
 
                     if self._setting_changed():
@@ -113,7 +113,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_turnwhite(x, y)
+                    self.window.remove_stone('turnwhite', x, y)
                     self.window.put_black(x, y)
 
                 else:
@@ -122,7 +122,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_white(x, y)
+                    self.window.remove_stone('white', x, y)
                     self.window.put_turnwhite(x, y)
 
                     if self._setting_changed():
@@ -130,7 +130,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_turnwhite(x, y)
+                    self.window.remove_stone('turnwhite', x, y)
                     self.window.put_black(x, y)
 
                     if self._setting_changed():
@@ -138,7 +138,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_black(x, y)
+                    self.window.remove_stone('black', x, y)
                     self.window.put_turnblack(x, y)
 
                     if self._setting_changed():
@@ -146,7 +146,7 @@ class Othello:
                         break
 
                     time.sleep(TURN_STONE_WAIT)
-                    self.window.remove_turnblack(x, y)
+                    self.window.remove_stone('turnblack', x, y)
                     self.window.put_white(x, y)
 
             if resize_flag:
