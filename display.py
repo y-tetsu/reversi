@@ -146,7 +146,7 @@ class WindowDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        time.sleep(0.5)
+        time.sleep(0.01)
         for color in PLAYER_COLORS:
             self.window.set_text(color, 'turn', '')  # 手番の表示を消す
 
