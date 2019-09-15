@@ -76,13 +76,14 @@ class Window(tk.Frame):
         self.pack()
 
         # 初期値設定
-        self.select_event = threading.Event()
-        self.start_pressed = False
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.text = {}
         self.strategies = {}
         self.move = None
+
+        # イベント生成
+        self.event = threading.Event()
 
         # 石情報
         factory = StoneFactory()
@@ -178,10 +179,10 @@ class Window(tk.Frame):
         """
         スタートテキストを押した場合
         """
-        self.disable_start()
-        self.menu.set_state('disable')
-
-        self.start_pressed = True
+        if not self.event.is_set():
+            self.disable_start()            # スタートテキストを無効化
+            self.menu.set_state('disable')  # メニューを無効化
+            self.event.set()                # スタートイベントを通知
 
     def _init_board_on_canvas(self):
         """
@@ -546,9 +547,9 @@ class Window(tk.Frame):
         打てる場所をクリックしたとき
         """
         def _press(event):
-            if not self.select_event.is_set():
+            if not self.event.is_set():
                 self.move = (x, y)
-                self.select_event.set()  # ウィンドウへ手の選択を通知
+                self.event.set()  # ウィンドウへ手の選択を通知
 
         return _press
 
@@ -722,8 +723,8 @@ if __name__ == '__main__':
                         window.remove_turnblack(x, y)
                         window.put_white(x, y)
 
-                if window.start_pressed:
-                    window.start_pressed = False
+                if window.event.is_set():
+                    window.event.clear()
                     state = 'START'
 
             if state == 'START':
@@ -748,7 +749,7 @@ if __name__ == '__main__':
                         window.enable_moves(moves)
                         window.selectable_moves(moves)
 
-                        time.sleep(0.2)
+                        time.sleep(0.3)
                         black_player.put_stone(board)
 
                         window.disable_moves(moves)
@@ -756,7 +757,7 @@ if __name__ == '__main__':
 
                         window.put_stone(board.black, *black_player.move)
 
-                        time.sleep(1.2)
+                        time.sleep(0.3)
                         window.turn_stone(board.black, black_player.captures)
 
                         window.disable_move(*black_player.move)
@@ -768,7 +769,7 @@ if __name__ == '__main__':
                     if moves:
                         window.enable_moves(moves)
 
-                        time.sleep(0.2)
+                        time.sleep(0.3)
                         white_player.put_stone(board)
 
                         window.disable_moves(moves)
@@ -776,7 +777,7 @@ if __name__ == '__main__':
 
                         window.put_stone(board.white, *white_player.move)
 
-                        time.sleep(1.2)
+                        time.sleep(0.3)
                         window.turn_stone(board.white, white_player.captures)
                         window.disable_move(*white_player.move)
 
@@ -790,8 +791,8 @@ if __name__ == '__main__':
             if state == 'END':
                 demo = False
 
-                if window.start_pressed:
-                    window.start_pressed = False
+                if window.event.is_set():
+                    window.event.clear()
                     state = 'START'
 
     root = tk.Tk()

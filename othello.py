@@ -75,8 +75,8 @@ class Othello:
         ]
 
         while True:
-            if self.window.start_pressed:
-                self.window.start_pressed = False
+            if self.window.event.is_set():
+                self.window.event.clear()
                 self.state = Othello.PLAY
                 break
 
@@ -184,8 +184,8 @@ class Othello:
         while True:
             time.sleep(0.01)
 
-            if self.window.start_pressed:
-                self.window.start_pressed = False
+            if self.window.event.is_set():
+                self.window.event.clear()
                 self.state = Othello.REINIT
                 break
 

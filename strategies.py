@@ -62,9 +62,9 @@ class WindowUserInput(AbstractStrategy):
         self.window.selectable_moves(moves)
 
         while True:
-            if self.window.select_event.is_set():
+            if self.window.event.is_set():
                 move = self.window.move
-                self.window.select_event.clear()
+                self.window.event.clear()
 
                 if move in moves:
                     self.window.unselectable_moves(moves)
