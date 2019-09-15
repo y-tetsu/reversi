@@ -6,6 +6,7 @@
 import abc
 import re
 import random
+import time
 
 
 class AbstractStrategy(metaclass=abc.ABCMeta):
@@ -58,15 +59,18 @@ class WindowUserInput(AbstractStrategy):
         次の一手
         """
         moves = list(board.get_possibles(stone).keys())
+        self.window.selectable_moves(moves)
 
         while True:
-            self.window.selectable_moves(moves)
-            self.window.wait_input = True
-            move = self.window.queue.get()
+            if self.window.select_event.is_set():
+                move = self.window.move
+                self.window.select_event.clear()
 
-            if move in moves:
-                self.window.unselectable_moves(moves)
-                break
+                if move in moves:
+                    self.window.unselectable_moves(moves)
+                    break
+
+            time.sleep(0.01)
 
         return move
 

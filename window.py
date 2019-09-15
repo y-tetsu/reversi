@@ -5,6 +5,7 @@ GUIウィンドウ
 
 import time
 import tkinter as tk
+import threading
 
 from stone import StoneFactory
 import board
@@ -70,18 +71,18 @@ class Window(tk.Frame):
     """
     ウィンドウ
     """
-    def __init__(self, root=None, event=None, queue=None, black_players=None, white_players=None):
+    def __init__(self, root=None, black_players=None, white_players=None):
         super().__init__(root)
         self.pack()
 
         # 初期値設定
-        self.queue = queue  # ウィンドウからのデータ受け渡し
+        self.select_event = threading.Event()
         self.start_pressed = False
-        self.wait_input = False
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.text = {}
         self.strategies = {}
+        self.move = None
 
         # 石情報
         factory = StoneFactory()
@@ -93,7 +94,7 @@ class Window(tk.Frame):
         root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
         # メニューを配置
-        self.menu = Menu(root, event, black_players, white_players)
+        self.menu = Menu(root, black_players, white_players)
         root.configure(menu=self.menu)
 
         # キャンバスを配置
@@ -545,9 +546,9 @@ class Window(tk.Frame):
         打てる場所をクリックしたとき
         """
         def _press(event):
-            if self.wait_input:
-                self.wait_input = False
-                self.queue.put((x, y))
+            if not self.select_event.is_set():
+                self.move = (x, y)
+                self.select_event.set()  # ウィンドウへ手の選択を通知
 
         return _press
 
@@ -556,15 +557,17 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, root, event, black_players, white_players):
+    def __init__(self, root, black_players, white_players):
         super().__init__(root)
 
-        self.event = event
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = black_players[0]
         self.white_player = white_players[0]
 
-        # メニューの生成
+        # イベントの生成
+        self.event = threading.Event()
+
+        # メニューアイテムの生成
         menu_items = {
             'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
             'black': black_players,
@@ -607,26 +610,21 @@ class Menu(tk.Menu):
 
 if __name__ == '__main__':
     import time
-    import threading
-    import queue
     from player import Player
-
-    event = threading.Event()
-    q = queue.Queue()
 
     state = 'INIT'
 
     def resize_board(window):
         global state
 
-        if event.is_set():
+        if window.menu.event.is_set():
             # メニューからの通知を取得
             window.size = window.menu.size
             window.player['black'] = window.menu.black_player
             window.player['white'] = window.menu.white_player
 
             state = 'INIT'  # ウィンドウ初期化
-            event.clear()   # イベントをクリア
+            window.menu.event.clear()   # イベントをクリア
 
             return True
 
@@ -802,7 +800,7 @@ if __name__ == '__main__':
     b = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
     w = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
 
-    window = Window(root=root, event=event, queue=q, black_players=b, white_players=w)
+    window = Window(root=root, black_players=b, white_players=w)
 
     game_strategies = {
         'ユーザ': strategies.WindowUserInput(window),

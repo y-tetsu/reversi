@@ -60,7 +60,6 @@ class Othello:
         """
         self.window.init_screen()
         self.window.enable_window()
-
         self.state = Othello.DEMO
 
     def __demo(self):
@@ -220,11 +219,7 @@ class Othello:
 
 if __name__ == '__main__':
     import threading
-    import queue
     import tkinter as tk
-
-    event = threading.Event()
-    q = queue.Queue()
 
     # ウィンドウ作成
     root = tk.Tk()
@@ -233,7 +228,7 @@ if __name__ == '__main__':
     b = ['User1', 'Unselfish', 'Random', 'Greedy']
     w = ['User2', 'Unselfish', 'Random', 'Greedy']
 
-    w = Window(root=root, event=event, queue=q, black_players=b, white_players=w)
+    w = Window(root=root, black_players=b, white_players=w)
 
     # ゲーム戦略
     s = {
