@@ -502,13 +502,13 @@ class Start:
         """
         カーソルが合った時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_RED)
+        self.canvas.itemconfigure(self.text, fill=COLOR_RED)  # 赤色にする
 
     def _leave_start(self, event):
         """
         カーソルが離れた時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_YELLOW)
+        self.canvas.itemconfigure(self.text, fill=COLOR_YELLOW)  # 黄色にする
 
     def _on_start(self, event):
         """
