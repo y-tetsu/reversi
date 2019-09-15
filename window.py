@@ -351,31 +351,11 @@ class Window(tk.Frame):
         """
         キャンバス上にテキストを配置
         """
-        for name in TEXT_OFFSET_Y.keys():
-            for color in TEXT_OFFSET_X.keys():
-                self._create_text(color, name)  # 表示テキスト
+        # 情報表示テキスト配置
+        self.info = Info(self.canvas, self.player)
 
         # スタートテキスト配置
         self.start = Start(self.canvas)
-
-    def _create_text(self, color, name):
-        """
-        表示テキスト作成
-        """
-        self.text[color + "_" + name] = self.canvas.create_text(
-            TEXT_OFFSET_X[color],
-            TEXT_OFFSET_Y[name],
-            text=DEFAULT_TEXT[name][color](self),
-            font=('', TEXT_FONT_SIZE[name]),
-            fill=TEXT_COLOR[name][color]
-        )
-
-    def set_text(self, color, name, text):
-        """
-        表示テキストの文字列を設定
-        """
-        text_id = self.text[color + "_" + name]
-        self.canvas.itemconfigure(text_id, text=text)
 
     def disable_window(self):
         """
@@ -472,6 +452,40 @@ class Window(tk.Frame):
                 self.event.set()  # ウィンドウへ手の選択を通知
 
         return _press
+
+
+class Info:
+    """
+    情報表示テキスト
+    """
+    def __init__(self, canvas, player):
+        self.canvas = canvas
+        self.player = player
+        self.text = {}
+
+        # テキスト作成
+        for name in TEXT_OFFSET_Y.keys():
+            for color in TEXT_OFFSET_X.keys():
+                self._create_text(color, name)  # 表示テキスト
+
+    def _create_text(self, color, name):
+        """
+        表示テキスト作成
+        """
+        self.text[color + "_" + name] = self.canvas.create_text(
+            TEXT_OFFSET_X[color],
+            TEXT_OFFSET_Y[name],
+            text=DEFAULT_TEXT[name][color](self),
+            font=('', TEXT_FONT_SIZE[name]),
+            fill=TEXT_COLOR[name][color]
+        )
+
+    def set_text(self, color, name, text):
+        """
+        表示テキストの文字列を設定
+        """
+        text_id = self.text[color + "_" + name]
+        self.canvas.itemconfigure(text_id, text=text)
 
 
 class Start:

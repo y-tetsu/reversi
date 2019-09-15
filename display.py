@@ -125,17 +125,17 @@ class WindowDisplay(AbstractDisplay):
         ゲームの進行の表示(スコア)
         """
         for color, stone in zip(PLAYER_COLORS, (black.stone, white.stone)):
-            self.window.set_text(color, 'score', str(board.score[stone]))
+            self.window.info.set_text(color, 'score', str(board.score[stone]))
 
     def turn(self, player, possibles):
         """
         手番の表示
         """
         for color in PLAYER_COLORS:
-            self.window.set_text(color, 'move', '')  # 打った手の表示を消す
+            self.window.info.set_text(color, 'move', '')  # 打った手の表示を消す
 
         color = 'black' if player.stone == self.window.black else 'white'
-        self.window.set_text(color, 'turn', '手番です')  # 手番の表示
+        self.window.info.set_text(color, 'turn', '手番です')  # 手番の表示
         self.window.enable_moves(possibles)  # 打てる候補を表示
         time.sleep(0.3)
 
@@ -147,14 +147,14 @@ class WindowDisplay(AbstractDisplay):
         y = str(player.move[1] + 1)
 
         for color in PLAYER_COLORS:
-            self.window.set_text(color, 'turn', '')  # 手番の表示を消す
+            self.window.info.set_text(color, 'turn', '')  # 手番の表示を消す
 
         self.window.disable_moves(possibles)  # 打てる候補のハイライトをなくす
         self.window.enable_move(*player.move)  # 打った手をハイライト
         self.window.put_stone(player.stone, *player.move)  # 石を置く
         time.sleep(0.3)
         color = 'black' if player.stone == self.window.black else 'white'
-        self.window.set_text(color, 'move', f'({x}, {y}) に置きました')  # 打った手を表示
+        self.window.info.set_text(color, 'move', f'({x}, {y}) に置きました')  # 打った手を表示
         self.window.turn_stone(player.stone, player.captures)  # 石をひっくり返すアニメーション
         self.window.disable_move(*player.move)
 
@@ -163,22 +163,22 @@ class WindowDisplay(AbstractDisplay):
         反則プレイヤーの表示
         """
         color = 'black' if player.stone == self.window.black else 'white'
-        self.window.set_text(color, 'winlose', '反則')
+        self.window.info.set_text(color, 'winlose', '反則')
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
         winner, loser = ('black', 'white') if player.stone == self.window.black else ('white', 'black')
-        self.window.set_text(winner, 'winlose', '勝ち')
-        self.window.set_text(loser,  'winlose', '負け')
+        self.window.info.set_text(winner, 'winlose', '勝ち')
+        self.window.info.set_text(loser,  'winlose', '負け')
 
     def draw(self):
         """
         引き分けの表示
         """
         for color in PLAYER_COLORS:
-            self.window.set_text(color, 'winlose', '引き分け')
+            self.window.info.set_text(color, 'winlose', '引き分け')
 
 
 if __name__ == '__main__':
