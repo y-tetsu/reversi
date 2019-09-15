@@ -116,7 +116,8 @@ class Window(tk.Frame):
         self._init_board_on_canvas()
 
         # テキストを配置
-        self._create_text_on_canvas()
+        self.info = Info(self.canvas, self.player)  # 情報表示テキスト配置
+        self.start = Start(self.canvas)             # スタートテキスト配置
 
     def _init_board_on_canvas(self):
         """
@@ -346,16 +347,6 @@ class Window(tk.Frame):
         for x, y in captures:
             self.put_white(x, y)
         time.sleep(TURN_STONE_WAIT)
-
-    def _create_text_on_canvas(self):
-        """
-        キャンバス上にテキストを配置
-        """
-        # 情報表示テキスト配置
-        self.info = Info(self.canvas, self.player)
-
-        # スタートテキスト配置
-        self.start = Start(self.canvas)
 
     def disable_window(self):
         """
