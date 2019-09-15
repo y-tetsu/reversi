@@ -355,7 +355,8 @@ class Window(tk.Frame):
             for color in TEXT_OFFSET_X.keys():
                 self._create_text(color, name)  # 表示テキスト
 
-        self._create_start()  # スタートテキスト
+        # スタートテキスト配置
+        self.start = Start(self.canvas)
 
     def _create_text(self, color, name):
         """
@@ -376,82 +377,19 @@ class Window(tk.Frame):
         text_id = self.text[color + "_" + name]
         self.canvas.itemconfigure(text_id, text=text)
 
-    def _create_start(self):
-        """
-        スタートテキストの作成
-        """
-        self.start = self.canvas.create_text(
-            OFFSET_START_X,
-            OFFSET_START_Y,
-            text=START_TEXT,
-            font=('', TEXT_FONT_SIZE['start']),
-            fill=COLOR_YELLOW
-        )
-
-        self.canvas.tag_bind(self.start, '<Enter>', self._enter_start)
-        self.canvas.tag_bind(self.start, '<Leave>', self._leave_start)
-        self.canvas.tag_bind(self.start, '<ButtonPress-1>', self._on_start)
-
-    def _enter_start(self, event):
-        """
-        スタートテキストにカーソルが合った時
-        """
-        self.canvas.itemconfigure(self.start, fill=COLOR_RED)
-
-    def _leave_start(self, event):
-        """
-        スタートテキストからカーソルが離れた時
-        """
-        self.canvas.itemconfigure(self.start, fill=COLOR_YELLOW)
-
-    def _on_start(self, event):
-        """
-        スタートテキストを押した場合
-        """
-        if not self.event.is_set():
-            self.disable_start()            # スタートテキストを無効化
-            self.menu.set_state('disable')  # メニューを無効化
-            self.event.set()                # スタートイベントを通知
-
     def disable_window(self):
         """
         ウィンドウを無効化
         """
-        self.disable_start()
-        self.disable_canvas()
+        self.start.set_state('disable')
         self.menu.set_state('disable')
 
     def enable_window(self):
         """
         ウィンドウを有効化
         """
+        self.start.set_state('normal')
         self.menu.set_state('normal')
-        self.enable_canvas()
-        self.enable_start()
-
-    def disable_start(self):
-        """
-        スタートを無効化
-        """
-        self.canvas.itemconfigure(self.start, text='', state='disable')
-
-    def enable_start(self):
-        """
-        スタートを有効化
-        """
-        self.canvas.itemconfigure(self.start, text=START_TEXT, state='normal')
-
-    def disable_canvas(self):
-        """
-        キャンバスを無効化
-        """
-        self.canvas.config(state='disable')
-
-    def enable_canvas(self):
-        """
-        キャンバスを有効化
-        """
-        self.canvas.config(state='normal')
 
     def enable_moves(self, moves):
         """
@@ -534,6 +472,58 @@ class Window(tk.Frame):
                 self.event.set()  # ウィンドウへ手の選択を通知
 
         return _press
+
+
+class Start:
+    """
+    スタートテキスト
+    """
+    def __init__(self, canvas):
+        self.canvas = canvas
+
+        # テキスト作成
+        self.text = canvas.create_text(
+            OFFSET_START_X,
+            OFFSET_START_Y,
+            text=START_TEXT,
+            font=('', TEXT_FONT_SIZE['start']),
+            fill=COLOR_YELLOW
+        )
+
+        # イベント生成
+        self.event = threading.Event()
+
+        # マウスアクション登録
+        canvas.tag_bind(self.text, '<Enter>', self._enter_start)
+        canvas.tag_bind(self.text, '<Leave>', self._leave_start)
+        canvas.tag_bind(self.text, '<ButtonPress-1>', self._on_start)
+
+    def _enter_start(self, event):
+        """
+        カーソルが合った時
+        """
+        self.canvas.itemconfigure(self.text, fill=COLOR_RED)
+
+    def _leave_start(self, event):
+        """
+        カーソルが離れた時
+        """
+        self.canvas.itemconfigure(self.text, fill=COLOR_YELLOW)
+
+    def _on_start(self, event):
+        """
+        スタートテキストを押した場合
+        """
+        if not self.event.is_set():
+            self.set_state('disable')  # スタートテキストを無効化
+            self.event.set()           # スタートイベントを通知
+
+    def set_state(self, state):
+        """
+        スタートを有効化/無効化
+        """
+        text = START_TEXT if state == 'normal' else ''
+        self.canvas.itemconfigure(self.text, text=text, state=state)
 
 
 class Menu(tk.Menu):
@@ -705,14 +695,15 @@ if __name__ == '__main__':
                         window.remove_stone('turnblack', x, y)
                         window.put_white(x, y)
 
-                if window.event.is_set():
-                    window.event.clear()
+                if window.start.event.is_set():
+                    window.menu.set_state('disable')  # メニューを無効化
+                    window.start.event.clear()
                     state = 'START'
 
             if state == 'START':
                 if not demo:
                     window.init_screen()
-                    window.disable_start()
+                    window.start.set_state('disable')
                     window.menu.set_state('disable')
 
                 demo = False
@@ -773,8 +764,9 @@ if __name__ == '__main__':
             if state == 'END':
                 demo = False
 
-                if window.event.is_set():
-                    window.event.clear()
+                if window.start.event.is_set():
+                    window.menu.set_state('disable')  # メニューを無効化
+                    window.start.event.clear()
                     state = 'START'
 
     root = tk.Tk()

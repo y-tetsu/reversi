@@ -75,8 +75,9 @@ class Othello:
         ]
 
         while True:
-            if self.window.event.is_set():
-                self.window.event.clear()
+            if self.window.start.event.is_set():
+                self.window.menu.set_state('disable')
+                self.window.start.event.clear()
                 self.state = Othello.PLAY
                 break
 
@@ -184,8 +185,9 @@ class Othello:
         while True:
             time.sleep(0.01)
 
-            if self.window.event.is_set():
-                self.window.event.clear()
+            if self.window.start.event.is_set():
+                self.window.menu.set_state('disable')
+                self.window.start.event.clear()
                 self.state = Othello.REINIT
                 break
 
@@ -198,7 +200,7 @@ class Othello:
         再初期化(ゲーム終了後再スタート時)
         """
         self.window.init_screen()
-        self.window.disable_start()
+        self.window.start.set_state('disable')
         self.window.menu.set_state('disable')
         self.state = Othello.PLAY
 
