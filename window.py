@@ -124,9 +124,11 @@ class ScreenBoard:
         self.event = threading.Event()
 
         # 石情報
+        self.stone ={}
         factory = StoneFactory()
-        self.black = factory.create('black')
-        self.white = factory.create('white')
+
+        for color in ('black', 'white'):
+            self.stone[color] = factory.create(color)
 
         self._calc_size()        # 変更後の石やマス目のサイズを計算
         self._draw_squares()     # マス目の描画
@@ -186,25 +188,25 @@ class ScreenBoard:
         石を初期位置に置く
         """
         center = self.size // 2
-        self.put_stone(self.black, center, center-1)
-        self.put_stone(self.black, center-1, center)
-        self.put_stone(self.white, center-1, center-1)
-        self.put_stone(self.white, center, center)
+        self.put_stone('black', center, center-1)
+        self.put_stone('black', center-1, center)
+        self.put_stone('white', center-1, center-1)
+        self.put_stone('white', center, center)
 
-    def put_stone(self, stone, index_x, index_y):
+    def put_stone(self, color, index_x, index_y):
         """
         石を置く
         """
-        if stone == self.black:
+        if color == 'black':
             self.put_black(index_x, index_y)
-        elif stone == self.white:
+        elif color == 'white':
             self.put_white(index_x, index_y)
 
     def put_black(self, index_x, index_y):
         """
         黒を置く
         """
-        label = self._get_label("black", index_x, index_y)
+        label = self._get_label('black', index_x, index_y)
 
         x, y = self._get_coordinate(index_x, index_y)
 
@@ -219,7 +221,7 @@ class ScreenBoard:
         """
         白を置く
         """
-        label = self._get_label("white", index_x, index_y)
+        label = self._get_label('white', index_x, index_y)
 
         x, y = self._get_coordinate(index_x, index_y)
 
@@ -234,8 +236,8 @@ class ScreenBoard:
         """
         黒をひっくり返す途中
         """
-        label1 = self._get_label("turnblack1", index_x, index_y)
-        label2 = self._get_label("turnblack2", index_x, index_y)
+        label1 = self._get_label('turnblack1', index_x, index_y)
+        label2 = self._get_label('turnblack2', index_x, index_y)
 
         x, y = self._get_coordinate(index_x, index_y)
 
@@ -254,8 +256,8 @@ class ScreenBoard:
         """
         白をひっくり返す途中
         """
-        label1 = self._get_label("turnwhite1", index_x, index_y)
-        label2 = self._get_label("turnwhite2", index_x, index_y)
+        label1 = self._get_label('turnwhite1', index_x, index_y)
+        label2 = self._get_label('turnwhite2', index_x, index_y)
 
         x, y = self._get_coordinate(index_x, index_y)
 
@@ -300,13 +302,13 @@ class ScreenBoard:
         """
         return name + "_" + chr(x + 97) + str(y + 1)
 
-    def turn_stone(self, stone, captures):
+    def turn_stone(self, color, captures):
         """
         石をひっくり返す
         """
-        if stone == self.black:
+        if color == 'black':
             self.turn_black_stone(captures)
-        elif stone == self.white:
+        elif color == 'white':
             self.turn_white_stone(captures)
 
     def turn_black_stone(self, captures):
@@ -704,13 +706,13 @@ if __name__ == '__main__':
                 print("start", window.board.size, window.info.player['black'], window.info.player['white'])
 
                 board = Board(window.board.size)
-                black_player = Player(board.black, window.info.player['black'], game_strategies[window.info.player['black']])
-                white_player = Player(board.white, window.info.player['white'], game_strategies[window.info.player['white']])
+                black_player = Player('black', window.info.player['black'], game_strategies[window.info.player['black']])
+                white_player = Player('white', window.info.player['white'], game_strategies[window.info.player['white']])
 
                 while True:
                     playable = 0
 
-                    moves = list(board.get_possibles(board.black).keys())
+                    moves = list(board.get_possibles('black').keys())
 
                     if moves:
                         window.board.enable_moves(moves)
@@ -722,16 +724,16 @@ if __name__ == '__main__':
                         window.board.disable_moves(moves)
                         window.board.enable_move(*black_player.move)
 
-                        window.board.put_stone(board.black, *black_player.move)
+                        window.board.put_stone('black', *black_player.move)
 
                         time.sleep(0.3)
-                        window.board.turn_stone(board.black, black_player.captures)
+                        window.board.turn_stone('black', black_player.captures)
 
                         window.board.disable_move(*black_player.move)
 
                         playable += 1
 
-                    moves = list(board.get_possibles(board.white).keys())
+                    moves = list(board.get_possibles('white').keys())
 
                     if moves:
                         window.board.enable_moves(moves)
@@ -742,10 +744,10 @@ if __name__ == '__main__':
                         window.board.disable_moves(moves)
                         window.board.enable_move(*white_player.move)
 
-                        window.board.put_stone(board.white, *white_player.move)
+                        window.board.put_stone('white', *white_player.move)
 
                         time.sleep(0.3)
-                        window.board.turn_stone(board.white, white_player.captures)
+                        window.board.turn_stone('white', white_player.captures)
                         window.board.disable_move(*white_player.move)
 
                         playable += 1
