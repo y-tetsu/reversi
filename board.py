@@ -133,7 +133,7 @@ class Board:
 
         return False
 
-    def put(self, color, x, y):
+    def put_stone(self, color, x, y):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
@@ -244,20 +244,20 @@ if __name__ == '__main__':
     assert board26._board == board26_ini
 
     # 石を置く
-    assert board4.put('black', 0, 0) == []
-    assert board4.put('black', 3, 5) == []
-    assert board4.put('black', 1, 0) == [(1, 1)]
-    assert board4.put('white', 0, 0) == [(1, 1)]
-    assert board4.put('black', 0, 1) == [(1, 1)]
-    assert board4.put('white', 2, 0) == [(2, 1), (1, 0)]
-    assert board4.put('black', 3, 0) == [(2, 1)]
-    assert board4.put('white', 1, 3) == [(1, 2), (1, 1)]
-    assert board4.put('black', 0, 3) == [(1, 2)]
-    assert board4.put('white', 0, 2) == [(1, 2), (0, 1)]
-    assert board4.put('black', 2, 3) == [(1, 3), (2, 2)]
-    assert board4.put('white', 3, 2) == [(2, 2), (2, 1)]
-    assert board4.put('black', 3, 1) == [(2, 2)]
-    assert board4.put('white', 3, 3) == [(2, 2)]
+    assert board4.put_stone('black', 0, 0) == []
+    assert board4.put_stone('black', 3, 5) == []
+    assert board4.put_stone('black', 1, 0) == [(1, 1)]
+    assert board4.put_stone('white', 0, 0) == [(1, 1)]
+    assert board4.put_stone('black', 0, 1) == [(1, 1)]
+    assert board4.put_stone('white', 2, 0) == [(2, 1), (1, 0)]
+    assert board4.put_stone('black', 3, 0) == [(2, 1)]
+    assert board4.put_stone('white', 1, 3) == [(1, 2), (1, 1)]
+    assert board4.put_stone('black', 0, 3) == [(1, 2)]
+    assert board4.put_stone('white', 0, 2) == [(1, 2), (0, 1)]
+    assert board4.put_stone('black', 2, 3) == [(1, 3), (2, 2)]
+    assert board4.put_stone('white', 3, 2) == [(2, 2), (2, 1)]
+    assert board4.put_stone('black', 3, 1) == [(2, 2)]
+    assert board4.put_stone('white', 3, 3) == [(2, 2)]
 
     # プレイ結果
     print(board4)
