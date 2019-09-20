@@ -6,8 +6,8 @@
 from stone import StoneFactory
 
 
-MIN_BOARD_SIZE = 4
-MAX_BOARD_SIZE = 26
+MIN_BOARD_SIZE = 4   # 最小ボードサイズ
+MAX_BOARD_SIZE = 26  # 最大ボードサイズ
 
 
 class BoardSizeError(Exception):
@@ -22,27 +22,36 @@ class Board:
     ボードを管理する
     """
     def __init__(self, size=8):
+        # ボードサイズの値チェック
         if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
             raise BoardSizeError(str(size) + " is invalid size!")
 
+        # ボードサイズの初期設定
         self.size = size
 
+        # 石とスコアの初期設定
+        self.stone = {}
+        self.score = {}
         factory = StoneFactory()
-        self.black = factory.create('black')
-        self.white = factory.create('white')
-        self.blank = factory.create('blank')
 
-        self.score = {self.black: 2, self.white: 2}
+        for color in ('black', 'white', 'blank'):
+            self.stone[color] = factory.create(color)
+            if color != 'blank':
+                self.score[color] = 2
 
+        # 盤面の初期設定
         center = size // 2
-        self._board = [[self.blank for _ in range(size)] for _ in range(size)]
-        self._board[center][center-1] = self.black
-        self._board[center-1][center] = self.black
-        self._board[center-1][center-1] = self.white
-        self._board[center][center] = self.white
+        self._board = [[self.stone['blank'] for _ in range(size)] for _ in range(size)]
+        self._board[center][center-1] = self.stone['black']
+        self._board[center-1][center] = self.stone['black']
+        self._board[center-1][center-1] = self.stone['white']
+        self._board[center][center] = self.stone['white']
 
     def __str__(self):
+        # 列の見出し
         header = "   " + " ".join([chr(97 + i) for i in range(self.size)]) + "\n"
+
+        # 行の見出し+盤面
         body = ""
 
         for num, row in enumerate(self._board, 1):
@@ -50,7 +59,7 @@ class Board:
 
         return header + body
 
-    def get_possibles(self, stone):
+    def get_possibles(self, color):
         """
         石が置ける場所をすべて返す
         """
@@ -58,14 +67,14 @@ class Board:
 
         for y in range(self.size):
             for x in range(self.size):
-                reversibles = self._get_reversibles(stone, x, y)
+                reversibles = self._get_reversibles(color, x, y)
 
                 if reversibles:
                     ret[(x, y)] = reversibles
 
         return ret
 
-    def _get_reversibles(self, stone, x, y):
+    def _get_reversibles(self, color, x, y):
         """
         指定座標のひっくり返せる石の場所をすべて返す
         """
@@ -75,16 +84,18 @@ class Board:
         ]
         ret = []
 
-        if self._in_range(x, y) and self._board[y][x] == self.blank:
+        # 指定座標が範囲内 かつ 石が置いていない
+        if self._in_range(x, y) and self._board[y][x] == self.stone['blank']:
+            # 8方向をチェック
             for direction in directions:
-                tmp = self._get_reversibles_in_direction(stone, x, y, direction)
+                tmp = self._get_reversibles_in_direction(color, x, y, direction)
 
                 if tmp:
                     ret += tmp
 
         return ret
 
-    def _get_reversibles_in_direction(self, stone, x, y, direction):
+    def _get_reversibles_in_direction(self, color, x, y, direction):
         """
         指定座標から指定方向に向けてひっくり返せる石の場所を返す
         """
@@ -95,11 +106,14 @@ class Board:
         while True:
             next_x, next_y = next_x + dx, next_y + dy
 
+            # 座標が範囲内
             if self._in_range(next_x, next_y):
                 next_value = self._board[next_y][next_x]
 
-                if next_value != self.blank:
-                    if next_value == stone:
+                # 石が置いていない
+                if next_value != self.stone['blank']:
+                    # 置いた石と同じ色が見つかった場合
+                    if next_value == self.stone[color]:
                         return ret
 
                     ret += [(next_x, next_y)]
@@ -119,18 +133,19 @@ class Board:
 
         return False
 
-    def put(self, stone, x, y):
+    def put(self, color, x, y):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        possibles = self.get_possibles(stone)
+        possibles = self.get_possibles(color)
 
         if (x, y) in possibles:
-            self._board[y][x] = stone
+            self._board[y][x] = self.stone[color]  # 指定座標に指定した色の石を置く
             reversibles = possibles[(x, y)]
 
+            # ひっくり返せる場所に指定した色の石を変更する
             for tmp_x, tmp_y, in reversibles:
-                self._board[tmp_y][tmp_x] = stone
+                self._board[tmp_y][tmp_x] = self.stone[color]
 
             self._update_stone_num()
 
@@ -142,8 +157,8 @@ class Board:
         """
         石の数を更新する
         """
-        for stone in (self.black, self.white):
-            self.score[stone] = sum([row.count(stone) for row in self._board])
+        for color in ('black', 'white'):
+            self.score[color] = sum([row.count(self.stone[color]) for row in self._board])
 
     def get_board_info(self):
         """
@@ -189,80 +204,80 @@ if __name__ == '__main__':
     board26 = Board(26)
 
     print(board4)
-    board4_ini = [[board4.blank for _ in range(4)] for _ in range(4)]
-    board4_ini[2][1] = board4.black
-    board4_ini[1][2] = board4.black
-    board4_ini[1][1] = board4.white
-    board4_ini[2][2] = board4.white
+    board4_ini = [[board4.stone['blank'] for _ in range(4)] for _ in range(4)]
+    board4_ini[2][1] = board4.stone['black']
+    board4_ini[1][2] = board4.stone['black']
+    board4_ini[1][1] = board4.stone['white']
+    board4_ini[2][2] = board4.stone['white']
     assert board4._board == board4_ini
 
     print(board6)
-    board6_ini = [[board6.blank for _ in range(6)] for _ in range(6)]
-    board6_ini[3][2] = board6.black
-    board6_ini[2][3] = board6.black
-    board6_ini[2][2] = board6.white
-    board6_ini[3][3] = board6.white
+    board6_ini = [[board6.stone['blank'] for _ in range(6)] for _ in range(6)]
+    board6_ini[3][2] = board6.stone['black']
+    board6_ini[2][3] = board6.stone['black']
+    board6_ini[2][2] = board6.stone['white']
+    board6_ini[3][3] = board6.stone['white']
     assert board6._board == board6_ini
 
     print(board8)
-    board8_ini = [[board8.blank for _ in range(8)] for _ in range(8)]
-    board8_ini[4][3] = board8.black
-    board8_ini[3][4] = board8.black
-    board8_ini[3][3] = board8.white
-    board8_ini[4][4] = board8.white
+    board8_ini = [[board8.stone['blank'] for _ in range(8)] for _ in range(8)]
+    board8_ini[4][3] = board8.stone['black']
+    board8_ini[3][4] = board8.stone['black']
+    board8_ini[3][3] = board8.stone['white']
+    board8_ini[4][4] = board8.stone['white']
     assert board8._board == board8_ini
 
     print(board10)
-    board10_ini = [[board10.blank for _ in range(10)] for _ in range(10)]
-    board10_ini[5][4] = board10.black
-    board10_ini[4][5] = board10.black
-    board10_ini[4][4] = board10.white
-    board10_ini[5][5] = board10.white
+    board10_ini = [[board10.stone['blank'] for _ in range(10)] for _ in range(10)]
+    board10_ini[5][4] = board10.stone['black']
+    board10_ini[4][5] = board10.stone['black']
+    board10_ini[4][4] = board10.stone['white']
+    board10_ini[5][5] = board10.stone['white']
     assert board10._board == board10_ini
 
     print(board26)
-    board26_ini = [[board26.blank for _ in range(26)] for _ in range(26)]
-    board26_ini[13][12] = board26.black
-    board26_ini[12][13] = board26.black
-    board26_ini[12][12] = board26.white
-    board26_ini[13][13] = board26.white
+    board26_ini = [[board26.stone['blank'] for _ in range(26)] for _ in range(26)]
+    board26_ini[13][12] = board26.stone['black']
+    board26_ini[12][13] = board26.stone['black']
+    board26_ini[12][12] = board26.stone['white']
+    board26_ini[13][13] = board26.stone['white']
     assert board26._board == board26_ini
 
     # 石を置く
-    assert board4.put(board4.black, 0, 0) == []
-    assert board4.put(board4.black, 3, 5) == []
-    assert board4.put(board4.black, 1, 0) == [(1, 1)]
-    assert board4.put(board4.white, 0, 0) == [(1, 1)]
-    assert board4.put(board4.black, 0, 1) == [(1, 1)]
-    assert board4.put(board4.white, 2, 0) == [(2, 1), (1, 0)]
-    assert board4.put(board4.black, 3, 0) == [(2, 1)]
-    assert board4.put(board4.white, 1, 3) == [(1, 2), (1, 1)]
-    assert board4.put(board4.black, 0, 3) == [(1, 2)]
-    assert board4.put(board4.white, 0, 2) == [(1, 2), (0, 1)]
-    assert board4.put(board4.black, 2, 3) == [(1, 3), (2, 2)]
-    assert board4.put(board4.white, 3, 2) == [(2, 2), (2, 1)]
-    assert board4.put(board4.black, 3, 1) == [(2, 2)]
-    assert board4.put(board4.white, 3, 3) == [(2, 2)]
+    assert board4.put('black', 0, 0) == []
+    assert board4.put('black', 3, 5) == []
+    assert board4.put('black', 1, 0) == [(1, 1)]
+    assert board4.put('white', 0, 0) == [(1, 1)]
+    assert board4.put('black', 0, 1) == [(1, 1)]
+    assert board4.put('white', 2, 0) == [(2, 1), (1, 0)]
+    assert board4.put('black', 3, 0) == [(2, 1)]
+    assert board4.put('white', 1, 3) == [(1, 2), (1, 1)]
+    assert board4.put('black', 0, 3) == [(1, 2)]
+    assert board4.put('white', 0, 2) == [(1, 2), (0, 1)]
+    assert board4.put('black', 2, 3) == [(1, 3), (2, 2)]
+    assert board4.put('white', 3, 2) == [(2, 2), (2, 1)]
+    assert board4.put('black', 3, 1) == [(2, 2)]
+    assert board4.put('white', 3, 3) == [(2, 2)]
 
     # プレイ結果
     print(board4)
-    board4_ret = [[board4.blank for _ in range(4)] for _ in range(4)]
-    board4_ret[0][0] = board4.white
-    board4_ret[0][1] = board4.white
-    board4_ret[0][2] = board4.white
-    board4_ret[0][3] = board4.black
-    board4_ret[1][0] = board4.white
-    board4_ret[1][1] = board4.white
-    board4_ret[1][2] = board4.white
-    board4_ret[1][3] = board4.black
-    board4_ret[2][0] = board4.white
-    board4_ret[2][1] = board4.white
-    board4_ret[2][2] = board4.white
-    board4_ret[2][3] = board4.white
-    board4_ret[3][0] = board4.black
-    board4_ret[3][1] = board4.black
-    board4_ret[3][2] = board4.black
-    board4_ret[3][3] = board4.white
+    board4_ret = [[board4.stone['blank'] for _ in range(4)] for _ in range(4)]
+    board4_ret[0][0] = board4.stone['white']
+    board4_ret[0][1] = board4.stone['white']
+    board4_ret[0][2] = board4.stone['white']
+    board4_ret[0][3] = board4.stone['black']
+    board4_ret[1][0] = board4.stone['white']
+    board4_ret[1][1] = board4.stone['white']
+    board4_ret[1][2] = board4.stone['white']
+    board4_ret[1][3] = board4.stone['black']
+    board4_ret[2][0] = board4.stone['white']
+    board4_ret[2][1] = board4.stone['white']
+    board4_ret[2][2] = board4.stone['white']
+    board4_ret[2][3] = board4.stone['white']
+    board4_ret[3][0] = board4.stone['black']
+    board4_ret[3][1] = board4.stone['black']
+    board4_ret[3][2] = board4.stone['black']
+    board4_ret[3][3] = board4.stone['white']
     assert board4._board == board4_ret
-    assert board4.score[board4.black] == 5
-    assert board4.score[board4.white] == 11
+    assert board4.score['black'] == 5
+    assert board4.score['white'] == 11
