@@ -163,13 +163,14 @@ class Othello:
         board = Board(self.window.board.size)
 
         # プレイヤー準備
-        black_name = self.window.player['black']
-        white_name = self.window.player['white']
-        black_player = Player(board.black, black_name, self.strategies[black_name])
-        white_player = Player(board.white, white_name, self.strategies[white_name])
+        players = {}
+
+        for color in ('black', 'white'):
+            name = self.window.player[color]
+            players[color] = Player(color, name, self.strategies[name])
 
         # ゲーム開始
-        game = Game(board, black_player, white_player, WindowDisplay(self.window))
+        game = Game(board, players['black'], players['white'], WindowDisplay(self.window))
         game.play()
 
         # 少し待って終了状態へ

@@ -132,11 +132,7 @@ class WindowDisplay(AbstractDisplay):
         """
         手番の表示
         """
-        for color in PLAYER_COLORS:
-            self.info.set_text(color, 'move', '')  # 打った手の表示を消す
-
-        color = 'black' if player.stone == self.board.stone['black'] else 'white'
-        self.info.set_text(color, 'turn', '手番です')  # 手番の表示
+        self.info.set_text(player.color, 'turn', '手番です')  # 手番の表示
         self.board.enable_moves(possibles)  # 打てる候補を表示
         time.sleep(0.3)
 
@@ -149,28 +145,28 @@ class WindowDisplay(AbstractDisplay):
 
         for color in PLAYER_COLORS:
             self.info.set_text(color, 'turn', '')  # 手番の表示を消す
+            self.info.set_text(color, 'move', '')  # 打った手の表示を消す
 
         self.board.disable_moves(possibles)  # 打てる候補のハイライトをなくす
         self.board.enable_move(*player.move)  # 打った手をハイライト
-        self.board.put_stone(player.stone, *player.move)  # 石を置く
+        self.board.put_stone(player.color, *player.move)  # 石を置く
         time.sleep(0.3)
         color = 'black' if player.stone == self.board.stone['black'] else 'white'
         self.info.set_text(color, 'move', f'({x}, {y}) に置きました')  # 打った手を表示
-        self.board.turn_stone(player.stone, player.captures)  # 石をひっくり返すアニメーション
+        self.board.turn_stone(player.color, player.captures)  # 石をひっくり返すアニメーション
         self.board.disable_move(*player.move)
 
     def foul(self, player):
         """
         反則プレイヤーの表示
         """
-        color = 'black' if player.stone == self.board.stone['black'] else 'white'
-        self.info.set_text(color, 'winlose', '反則')
+        self.info.set_text(palyer.color, 'winlose', '反則')
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
-        winner, loser = ('black', 'white') if player.stone == self.board.stone['black'] else ('white', 'black')
+        winner, loser = ('black', 'white') if player.color == 'black' else ('white', 'black')
         self.info.set_text(winner, 'winlose', '勝ち')
         self.info.set_text(loser,  'winlose', '負け')
 
