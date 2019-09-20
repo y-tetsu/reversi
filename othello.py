@@ -66,14 +66,6 @@ class Othello:
         """
         デモ画面
         """
-        center = self.window.board.size // 2
-        ptn = [
-            ('black', center, center-1),
-            ('black', center-1, center),
-            ('white', center-1, center-1),
-            ('white', center, center),
-        ]
-
         while True:
             if self.window.start.event.is_set():
                 self.window.set_state('disable')
@@ -81,79 +73,48 @@ class Othello:
                 self.state = Othello.PLAY
                 break
 
-            resize_flag = False
-
-            for color, x, y in ptn:
-                if color == 'black':
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('black', x, y)
-                    self.window.board.put_turnblack(x, y)
-
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('turnblack', x, y)
-                    self.window.board.put_white(x, y)
-
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('white', x, y)
-                    self.window.board.put_turnwhite(x, y)
-
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('turnwhite', x, y)
-                    self.window.board.put_black(x, y)
-
-                else:
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('white', x, y)
-                    self.window.board.put_turnwhite(x, y)
-
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('turnwhite', x, y)
-                    self.window.board.put_black(x, y)
-
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('black', x, y)
-                    self.window.board.put_turnblack(x, y)
-
-                    if self._setting_changed():
-                        resize_flag = True
-                        break
-
-                    time.sleep(TURN_STONE_WAIT)
-                    self.window.board.remove_stone('turnblack', x, y)
-                    self.window.board.put_white(x, y)
-
-            if resize_flag:
-                resize_flag = True
+            if not self._demo_animation():
                 self.state = Othello.INIT
                 break
+
+    def _demo_animation(self):
+        """
+        デモアニメーション継続中
+        """
+        center = self.window.board.size // 2
+        target = [
+            ('black', center, center-1),
+            ('black', center-1, center),
+            ('white', center-1, center-1),
+            ('white', center, center),
+        ]
+        ptn = {
+            'black': [
+                ('black', self.window.board.put_turnblack),
+                ('turnblack', self.window.board.put_white),
+                ('white', self.window.board.put_turnwhite),
+                ('turnwhite', self.window.board.put_black),
+            ],
+            'white': [
+                ('white', self.window.board.put_turnwhite),
+                ('turnwhite', self.window.board.put_black),
+                ('black', self.window.board.put_turnblack),
+                ('turnblack', self.window.board.put_white),
+            ],
+        }
+
+        for color, x, y in target:
+            for remove_color, put_stone in ptn[color]:
+                # メニュー設定変更時
+                if self._setting_changed():
+                    return False
+
+                # アニメーション処理
+                time.sleep(TURN_STONE_WAIT)
+                self.window.board.remove_stone(remove_color, x, y)
+                put_stone(x, y)
+
+        return True
 
     def __play(self):
         """
