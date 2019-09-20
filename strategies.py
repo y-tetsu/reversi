@@ -11,7 +11,7 @@ import time
 
 class AbstractStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def next_move(self, stone, board):
+    def next_move(self, color, board):
         pass
 
 
@@ -22,11 +22,11 @@ class ConsoleUserInput(AbstractStrategy):
     def __init__(self):
         self.digit = re.compile(r'^[0-9]+$')
 
-    def next_move(self, stone, board):
+    def next_move(self, color, board):
         """
         次の一手
         """
-        possibles = list(board.get_possibles(stone).keys())
+        possibles = list(board.get_possibles(color).keys())
         select = None
 
         while True:
@@ -54,11 +54,11 @@ class WindowUserInput(AbstractStrategy):
     def __init__(self, window):
         self.window = window
 
-    def next_move(self, stone, board):
+    def next_move(self, color, board):
         """
         次の一手
         """
-        moves = list(board.get_possibles(stone).keys())
+        moves = list(board.get_possibles(color).keys())
         self.window.board.selectable_moves(moves)
 
         while True:
@@ -79,11 +79,11 @@ class Random(AbstractStrategy):
     """
     ランダム
     """
-    def next_move(self, stone, board):
+    def next_move(self, color, board):
         """
         次の一手
         """
-        moves = list(board.get_possibles(stone).keys())
+        moves = list(board.get_possibles(color).keys())
 
         return random.choice(moves)
 
@@ -92,11 +92,11 @@ class Greedy(AbstractStrategy):
     """
     なるべく多くとり、複数ある場合はランダム
     """
-    def next_move(self, stone, board):
+    def next_move(self, color, board):
         """
         次の一手
         """
-        possibles = board.get_possibles(stone)
+        possibles = board.get_possibles(color)
         max_count = max([len(value) for value in possibles.values()])
         moves = [key for key, value in possibles.items() if len(value) == max_count]
 
@@ -107,11 +107,11 @@ class Unselfish(AbstractStrategy):
     """
     Greedyの逆
     """
-    def next_move(self, stone, board):
+    def next_move(self, color, board):
         """
         次の一手
         """
-        possibles = board.get_possibles(stone)
+        possibles = board.get_possibles(color)
         min_count = min([len(value) for value in possibles.values()])
         moves = [key for key, value in possibles.items() if len(value) == min_count]
 
@@ -129,16 +129,16 @@ if __name__ == '__main__':
     print(board)
     console_user_input = ConsoleUserInput()
 
-    possibles = board.get_possibles(board.black)
+    possibles = board.get_possibles('black')
 
     for index, value in enumerate(possibles, 1):
         coordinate = (chr(value[0] + 97), str(value[1] + 1))
         print(f'{index:2d}:', coordinate)
 
-    print("User", console_user_input.next_move(board.black, board))
+    print("User", console_user_input.next_move('black', board))
 
     random_player = Random()
-    print("Random", random_player.next_move(board.black, board))
+    print("Random", random_player.next_move('black', board))
 
     from board import Board
     from player import Player
@@ -146,14 +146,14 @@ if __name__ == '__main__':
     board4x4 = Board(4)
     print(board4x4)
 
-    p1 = Player(board4x4.black, "Random", Random())
-    p2 = Player(board4x4.white, "Greedy", Greedy())
+    p1 = Player('black', "Random", Random())
+    p2 = Player('white', "Greedy", Greedy())
 
     while True:
         cnt = 0
 
         for player in [p1, p2]:
-            if board4x4.get_possibles(player.stone):
+            if board4x4.get_possibles(player.color):
                 print(player, "の番です")
                 player.put_stone(board4x4)
                 move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
