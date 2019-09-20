@@ -13,9 +13,9 @@ class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self, blacks, whites, matches, board_size=8):
-        self.blacks = blacks
-        self.whites = whites
+    def __init__(self, black_players, white_players, matches, board_size=8):
+        self.black_players = black_players
+        self.white_players = white_players
         self.matches = matches
         self.board_size = board_size
         self.game_results = []
@@ -56,12 +56,12 @@ class Simulator:
         """
         シミュレーションを開始する
         """
-        for black, white in itertools.product(self.blacks, self.whites):
-            if black.name == white.name:
+        for black_player, white_player in itertools.product(self.black_players, self.white_players):
+            if black_player.name == white_player.name:
                 continue
 
             for _ in range(self.matches):
-                game = Game(Board(self.board_size), black, white, NoneDisplay())
+                game = Game(Board(self.board_size), black_player, white_player, NoneDisplay())
                 game.play()
                 self.game_results.append(game.result)
 
@@ -110,7 +110,6 @@ class Simulator:
 
 if __name__ == '__main__':
     import timeit
-    from stone import StoneFactory
     from player import Player
     import strategies
 
@@ -120,14 +119,10 @@ if __name__ == '__main__':
         ("Unselfish", strategies.Unselfish()),
     ]
 
-    factory = StoneFactory()
-    black = factory.create('black')
-    white = factory.create('white')
+    black_players = [Player('black', *character) for character in characters]
+    white_players = [Player('white', *character) for character in characters]
 
-    blacks = [Player(black, *character) for character in characters]
-    whites = [Player(white, *character) for character in characters]
-
-    simulator = Simulator(blacks, whites, 250)
+    simulator = Simulator(black_players, white_players, 250)
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, "(s)")
