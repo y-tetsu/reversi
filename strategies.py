@@ -30,7 +30,7 @@ class ConsoleUserInput(AbstractStrategy):
         select = None
 
         while True:
-            user_in = input(">> ")
+            user_in = input('>> ')
 
             if self._is_digit(user_in):
                 select = int(user_in) - 1
@@ -120,8 +120,8 @@ class Unselfish(AbstractStrategy):
 
 if __name__ == '__main__':
     def input(string):
-        print(string + "1")
-        return "1"
+        print(string + '1')
+        return '1'
 
     from board import Board
 
@@ -135,10 +135,10 @@ if __name__ == '__main__':
         coordinate = (chr(value[0] + 97), str(value[1] + 1))
         print(f'{index:2d}:', coordinate)
 
-    print("User", console_user_input.next_move('black', board))
+    print('User', console_user_input.next_move('black', board))
 
     random_player = Random()
-    print("Random", random_player.next_move('black', board))
+    print('Random', random_player.next_move('black', board))
 
     from board import Board
     from player import Player
@@ -146,21 +146,21 @@ if __name__ == '__main__':
     board4x4 = Board(4)
     print(board4x4)
 
-    p1 = Player('black', "Random", Random())
-    p2 = Player('white', "Greedy", Greedy())
+    p1 = Player('black', 'Random', Random())
+    p2 = Player('white', 'Greedy', Greedy())
 
     while True:
         cnt = 0
 
         for player in [p1, p2]:
             if board4x4.get_possibles(player.color):
-                print(player, "の番です")
+                print(player, 'の番です')
                 player.put_stone(board4x4)
-                move = "(" + chr(player.move[0] + 97) + ", " + str(player.move[1] + 1) + ")"
-                print(move + "に置きました\n")
+                move = '(' + chr(player.move[0] + 97) + ', ' + str(player.move[1] + 1) + ')'
+                print(move + 'に置きました\n')
                 print(board4x4)
                 cnt += 1
 
         if not cnt:
-            print("\n終了")
+            print('\n終了')
             break

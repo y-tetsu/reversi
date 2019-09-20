@@ -24,7 +24,7 @@ class Board:
     def __init__(self, size=8):
         # ボードサイズの値チェック
         if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
-            raise BoardSizeError(str(size) + " is invalid size!")
+            raise BoardSizeError(str(size) + ' is invalid size!')
 
         # ボードサイズの初期設定
         self.size = size
@@ -49,13 +49,13 @@ class Board:
 
     def __str__(self):
         # 列の見出し
-        header = "   " + " ".join([chr(97 + i) for i in range(self.size)]) + "\n"
+        header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
 
         # 行の見出し+盤面
-        body = ""
+        body = ''
 
         for num, row in enumerate(self._board, 1):
-            body += f'{num:2d}' + "".join([value for value in row]) + "\n"
+            body += f'{num:2d}' + ''.join([value for value in row]) + '\n'
 
         return header + body
 

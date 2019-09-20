@@ -4,7 +4,7 @@
 """
 
 
-BLACK, WHITE, BLANK = (("BLACK", "〇"), ("WHITE", "●"), ("BLANK", "□"))
+BLACK, WHITE, BLANK = (('BLACK', '〇'), ('WHITE', '●'), ('BLANK', '□'))
 ALL_STONES = (BLACK, WHITE, BLANK)
 
 
@@ -23,7 +23,7 @@ class StoneFactory:
         # 黒、白、空クラス生成
         for color, mark in ALL_STONES:
             new = (lambda m: lambda Class: Stone.__new__(Class, m))(mark)
-            new.__name__ = "__new__"  # クラスに使うので名前を<lambda>から__new__へ変更
+            new.__name__ = '__new__'  # クラスに使うので名前を<lambda>から__new__へ変更
             Class = type(color.title(), (Stone,), dict(__slots__=(), __new__=new))
             globals()[color.title()] = Class
 
@@ -40,9 +40,9 @@ if __name__ == '__main__':
     factory = StoneFactory()
 
     CheckStone = namedtuple('CheckStone', 'color cls mark')
-    black = CheckStone('black', Black, "〇")
-    white = CheckStone('white', White, "●")
-    blank = CheckStone('blank', Blank, "□")
+    black = CheckStone('black', Black, '〇')
+    white = CheckStone('white', White, '●')
+    blank = CheckStone('blank', Blank, '□')
 
     for check in (black, white, blank):
         obj = factory.create(check.color)

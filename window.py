@@ -55,8 +55,8 @@ STONE_MARK = '●'
 TURN_STONE_WAIT = 0.1
 
 DEFAULT_BOARD_SIZE = 8
-DEFAULT_BLACK_NUM = "2"
-DEFAULT_WHITE_NUM = "2"
+DEFAULT_BLACK_NUM = '2'
+DEFAULT_WHITE_NUM = '2'
 
 DEFAULT_TEXT = {
     'name':    {'black': lambda s: STONE_MARK + s.player['black'], 'white': lambda s: STONE_MARK + s.player['white']},
@@ -300,7 +300,7 @@ class ScreenBoard:
         """
         表示ラベルを返す
         """
-        return name + "_" + chr(x + 97) + str(y + 1)
+        return name + '_' + chr(x + 97) + str(y + 1)
 
     def turn_stone(self, color, captures):
         """
@@ -456,7 +456,7 @@ class ScreenInfo:
         """
         表示テキスト作成
         """
-        self.text[color + "_" + name] = self.canvas.create_text(
+        self.text[color + '_' + name] = self.canvas.create_text(
             TEXT_OFFSET_X[color],
             TEXT_OFFSET_Y[name],
             text=DEFAULT_TEXT[name][color](self),
@@ -468,7 +468,7 @@ class ScreenInfo:
         """
         表示テキストの文字列を設定
         """
-        text_id = self.text[color + "_" + name]
+        text_id = self.text[color + '_' + name]
         self.canvas.itemconfigure(text_id, text=text)
 
 
@@ -703,7 +703,7 @@ if __name__ == '__main__':
                     window.set_state('disable')
 
                 demo = False
-                print("start", window.board.size, window.info.player['black'], window.info.player['white'])
+                print('start', window.board.size, window.info.player['black'], window.info.player['white'])
 
                 board = Board(window.board.size)
                 black_player = Player('black', window.info.player['black'], game_strategies[window.info.player['black']])

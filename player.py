@@ -37,14 +37,14 @@ if __name__ == '__main__':
     board4 = Board(4)
     print(board4)
 
-    p1 = Player('black', "ユーザ1", ConsoleUserInput())
-    p2 = Player('white', "ユーザ2", ConsoleUserInput())
+    p1 = Player('black', 'ユーザ1', ConsoleUserInput())
+    p2 = Player('white', 'ユーザ2', ConsoleUserInput())
 
     for player in [p1, p2]:
         possibles = board4.get_possibles(player.color)
 
         if possibles:
-            print(player, "の番です")
+            print(player, 'の番です')
 
             for index, value in enumerate(possibles, 1):
                 coordinate = (chr(value[0] + 97), str(value[1] + 1))

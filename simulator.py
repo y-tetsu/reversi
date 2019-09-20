@@ -22,18 +22,18 @@ class Simulator:
         self.total = []
 
     def __str__(self):
-        board_size = "\nSize : " + str(self.board_size) + "\n"
-        header = "                | " + " ".join([f'{key:15s}' for key in self.total]) + " | Total  | Win   Lose  Draw  Match\n"
-        hr = "----------------------------------------------------------------------------------------------------\n"
+        board_size = '\nSize : ' + str(self.board_size) + '\n'
+        header = '                | ' + ' '.join([f'{key:15s}' for key in self.total]) + ' | Total  | Win   Lose  Draw  Match\n'
+        hr = '----------------------------------------------------------------------------------------------------\n'
 
-        body = ""
+        body = ''
         for key1 in self.total:
             row = f'{key1:15s} | '
             wins, draws, matches = 0, 0, 0
 
             for key2 in self.total:
                 if key1 == key2:
-                    row += "------          "
+                    row += '------          '
                     continue
 
                 wins += self.total[key1][key2]['wins']
@@ -43,7 +43,7 @@ class Simulator:
                 ratio = f'{ratio:3.1f}%'
                 row += f'{ratio:>6s}          '
 
-            row += "| "
+            row += '| '
             ratio = wins / matches * 100
             ratio = f'{ratio:3.1f}%'
             loses = matches - wins - draws
@@ -114,9 +114,9 @@ if __name__ == '__main__':
     import strategies
 
     characters = [
-        ("Random", strategies.Random()),
-        ("Greedy", strategies.Greedy()),
-        ("Unselfish", strategies.Unselfish()),
+        ('Random', strategies.Random()),
+        ('Greedy', strategies.Greedy()),
+        ('Unselfish', strategies.Unselfish()),
     ]
 
     black_players = [Player('black', *character) for character in characters]
@@ -125,4 +125,4 @@ if __name__ == '__main__':
     simulator = Simulator(black_players, white_players, 250)
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
-    print(simulator, elapsed_time, "(s)")
+    print(simulator, elapsed_time, '(s)')

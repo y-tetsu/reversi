@@ -44,8 +44,8 @@ class ConsoleDisplay(AbstractDisplay):
         """
         ゲームの進行の表示(スコア、ボード状態)
         """
-        score_b = str(black_player) + ":" + str(board.score['black'])
-        score_w = str(white_player) + ":" + str(board.score['white'])
+        score_b = str(black_player) + ':' + str(board.score['black'])
+        score_w = str(white_player) + ':' + str(board.score['white'])
 
         print(score_b, score_w)
         print(board)
@@ -55,7 +55,7 @@ class ConsoleDisplay(AbstractDisplay):
         手番の表示
         """
         time.sleep(1)
-        print(player, "の番です")
+        print(player, 'の番です')
 
         for index, value in enumerate(possibles, 1):
             coordinate = (chr(value[0] + 97), str(value[1] + 1))
@@ -68,26 +68,26 @@ class ConsoleDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print((x, y), "に置きました\n")
+        print((x, y), 'に置きました\n')
         time.sleep(1)
 
     def foul(self, player):
         """
         反則プレイヤーの表示
         """
-        print(player, "の反則")
+        print(player, 'の反則')
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
-        print(player, "の勝ちです")
+        print(player, 'の勝ちです')
 
     def draw(self):
         """
         引き分けの表示
         """
-        print("引き分けです")
+        print('引き分けです')
 
 
 class NoneDisplay(AbstractDisplay):
@@ -184,8 +184,8 @@ if __name__ == '__main__':
     import strategies
 
     board8x8 = Board()
-    black_player = Player('black', "Random", strategies.Random())
-    white_player = Player('white', "User", strategies.ConsoleUserInput())
+    black_player = Player('black', 'Random', strategies.Random())
+    white_player = Player('white', 'User', strategies.ConsoleUserInput())
 
     display = ConsoleDisplay()
     display.progress(board8x8, black_player, white_player)

@@ -123,8 +123,8 @@ if __name__ == '__main__':
             return (1, 1)
 
     board4x4 = Board(4)
-    black_player = Player('black', "Random", strategies.Random())
-    white_player = Player('white', "Foul", Foul())
+    black_player = Player('black', 'Random', strategies.Random())
+    white_player = Player('white', 'Foul', Foul())
 
     game = Game(board4x4, black_player, white_player, ConsoleDisplay())
     game.play()
@@ -136,8 +136,8 @@ if __name__ == '__main__':
     print()
 
     board4x4 = Board(4)
-    black_player = Player('black', "Random", strategies.Random())
-    white_player = Player('white', "Unselfish", strategies.Unselfish())
+    black_player = Player('black', 'Random', strategies.Random())
+    white_player = Player('white', 'Unselfish', strategies.Unselfish())
 
     game = Game(board4x4, black_player, white_player, ConsoleDisplay())
     game.play()
