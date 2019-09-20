@@ -14,19 +14,21 @@ from game import Game
 import strategies
 
 
-BLACK_PLAYERS = {
+BLACK_STRATEGIES = {
     'User1': strategies.ConsoleUserInput(),
     'Unselfish': strategies.Unselfish(),
     'Random': strategies.Random(),
     'Greedy': strategies.Greedy(),
 }
 
-WHITE_PLAYERS = {
+WHITE_STRATEGIES = {
     'User2': strategies.ConsoleUserInput(),
     'Unselfish': strategies.Unselfish(),
     'Random': strategies.Random(),
     'Greedy': strategies.Greedy(),
 }
+
+STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}
 
 DEFAULT_BLACK_PLAYER = 'User1'
 DEFAULT_WHITE_PLAYER = 'Random'
@@ -41,8 +43,7 @@ class Othelloc:
 
     def __init__(self):
         self.board_size = DEFAULT_BOARD_SIZE
-        self.black = DEFAULT_BLACK_PLAYER
-        self.white = DEFAULT_WHITE_PLAYER
+        self.player_names = {'black': DEFAULT_BLACK_PLAYER, 'white': DEFAULT_WHITE_PLAYER}
         self.state = Othelloc.START
 
     @property
@@ -73,8 +74,8 @@ class Othelloc:
         """
         print('\n=============================')
         print('BoardSize   =', self.board_size)
-        print('BlackPlayer =', self.black)
-        print('WhitePlayer =', self.white)
+        print('BlackPlayer =', self.player_names['black'])
+        print('WhitePlayer =', self.player_names['white'])
         print('=============================\n')
         self.state = Othelloc.MENU
 
@@ -102,11 +103,11 @@ class Othelloc:
                 self.state = Othelloc.START
                 break
             elif user_in == 'b':
-                self.black = self._get_player(BLACK_PLAYERS)
+                self.player_names['black'] = self._get_player(BLACK_STRATEGIES)
                 self.state = Othelloc.START
                 break
             elif user_in == 'w':
-                self.white = self._get_player(WHITE_PLAYERS)
+                self.player_names['white'] = self._get_player(WHITE_STRATEGIES)
                 self.state = Othelloc.START
                 break
             elif user_in == 'q':
@@ -151,11 +152,14 @@ class Othelloc:
         board = Board(self.board_size)
 
         # プレイヤー準備
-        black = Player(board.black, self.black, BLACK_PLAYERS[self.black])
-        white = Player(board.white, self.white, WHITE_PLAYERS[self.white])
+        selected_players = {}
+
+        for color in ('black', 'white'):
+            name = self.player_names[color]
+            selected_players[color] = Player(color, name, STRATEGIES[color][name])
 
         # ゲーム開始
-        game = Game(board, black, white, ConsoleDisplay())
+        game = Game(board, selected_players['black'], selected_players['white'], ConsoleDisplay())
         game.play()
 
         # 少し待ってスタートに戻る
