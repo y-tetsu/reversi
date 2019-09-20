@@ -10,10 +10,10 @@ class Game:
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
-    def __init__(self, board, black, white, display):
+    def __init__(self, board, black_player, white_player, display):
         self.board = board
-        self.black = black
-        self.white = white
+        self.black_player = black_player
+        self.white_player = white_player
         self.display = display
         self.result = []
 
@@ -22,13 +22,13 @@ class Game:
         ゲームを開始する
         """
         if not self.result:
-            self.display.progress(self.board, self.black, self.white)
+            self.display.progress(self.board, self.black_player, self.white_player)
 
             while True:
                 playable, foul_player = 0, None
 
-                for player in [self.black, self.white]:
-                    possibles = list(self.board.get_possibles(player.stone).keys())
+                for player in [self.black_player, self.white_player]:
+                    possibles = list(self.board.get_possibles(player.color).keys())
 
                     if not possibles:
                         continue
@@ -38,7 +38,7 @@ class Game:
                     player.put_stone(self.board)
 
                     self.display.move(player, possibles)
-                    self.display.progress(self.board, self.black, self.white)
+                    self.display.progress(self.board, self.black_player, self.white_player)
 
                     if not player.captures:
                         foul_player = player
@@ -59,19 +59,19 @@ class Game:
         反則負け
         """
         self.display.foul(player)
-        winner = self.white if player.stone == self.black.stone else self.black
+        winner = self.white_player if player.color == self.black_player.color else self.black_player
         self._win(winner)
 
     def _judge(self):
         """
         結果判定
         """
-        black_num, white_num = self.board.score[self.black.stone], self.board.score[self.white.stone]
+        black_num, white_num = self.board.score['black'], self.board.score['white']
 
         if black_num == white_num:
             self._draw()
         else:
-            winner = self.black if black_num > white_num else self.white
+            winner = self.black_player if black_num > white_num else self.white_player
             self._win(winner)
 
     def _win(self, player):
@@ -79,7 +79,7 @@ class Game:
         勝ち
         """
         self.display.win(player)
-        winlose = Game.BLACK_WIN if player.stone == self.black.stone else Game.WHITE_WIN
+        winlose = Game.BLACK_WIN if player.color == self.black_player.color else Game.WHITE_WIN
         self._store_result(winlose)
 
     def _draw(self):
@@ -95,8 +95,8 @@ class Game:
         """
         self.result = GameResult(
             winlose,
-            self.black.name, self.white.name,
-            self.board.score[self.black.stone], self.board.score[self.white.stone],
+            self.black_player.name, self.white_player.name,
+            self.board.score['black'], self.board.score['white'],
         )
 
 
@@ -123,10 +123,10 @@ if __name__ == '__main__':
             return (1, 1)
 
     board4x4 = Board(4)
-    black = Player(board4x4.black, "Random", strategies.Random())
-    white = Player(board4x4.white, "Foul", Foul())
+    black_player = Player('black', "Random", strategies.Random())
+    white_player = Player('white', "Foul", Foul())
 
-    game = Game(board4x4, black, white, ConsoleDisplay())
+    game = Game(board4x4, black_player, white_player, ConsoleDisplay())
     game.play()
 
     print()
@@ -136,10 +136,10 @@ if __name__ == '__main__':
     print()
 
     board4x4 = Board(4)
-    black = Player(board4x4.black, "Random", strategies.Random())
-    white = Player(board4x4.white, "Unselfish", strategies.Unselfish())
+    black_player = Player('black', "Random", strategies.Random())
+    white_player = Player('white', "Unselfish", strategies.Unselfish())
 
-    game = Game(board4x4, black, white, ConsoleDisplay())
+    game = Game(board4x4, black_player, white_player, ConsoleDisplay())
     game.play()
 
     print()
