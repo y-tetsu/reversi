@@ -5,6 +5,7 @@
 
 
 BLACK, WHITE, BLANK = (("BLACK", "〇"), ("WHITE", "●"), ("BLANK", "□"))
+ALL_STONES = (BLACK, WHITE, BLANK)
 
 
 class Stone(str):
@@ -20,7 +21,7 @@ class StoneFactory:
     """
     def __init__(self):
         # 黒、白、空クラス生成
-        for color, mark in (BLACK, WHITE, BLANK):
+        for color, mark in ALL_STONES:
             new = (lambda m: lambda Class: Stone.__new__(Class, m))(mark)
             new.__name__ = "__new__"  # クラスに使うので名前を<lambda>から__new__へ変更
             Class = type(color.title(), (Stone,), dict(__slots__=(), __new__=new))
