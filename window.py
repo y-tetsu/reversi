@@ -13,52 +13,63 @@ from board import Board
 import strategies
 
 
-WINDOW_TITLE = 'othello'
-WINDOW_WIDTH = 1360
-WINDOW_HEIGHT = 680
+WINDOW_TITLE = 'othello'  # ウィンドウのタイトル
+WINDOW_WIDTH = 1360       # ウィンドウ幅
+WINDOW_HEIGHT = 680       # ウィンドウ高さ
 
-TEXT_OFFSET_X = {'black': 200, 'white': 1150}
-TEXT_OFFSET_Y = {'name': 80, 'score': 250, 'winlose': 400, 'turn': 500, 'move': 600}
+COLOR_GREEN = 'green'    # 緑
+COLOR_BLACK = 'black'    # 黒
+COLOR_WHITE = 'white'    # 白
+COLOR_ORANGE = 'orange'  # オレンジ
+COLOR_YELLOW = 'yellow'  # 黄
+COLOR_RED = 'red'        # 赤
 
-OFFSET_START_X = 680
-OFFSET_START_Y = 620
-
-OFFSET_SQUARE_Y = 40
-OFFSET_SQUARE_HEADER = 15
-
-COLOR_GREEN = 'green'
-COLOR_BLACK = 'black'
-COLOR_WHITE = 'white'
-COLOR_ORANGE = 'orange'
-COLOR_YELLOW = 'yellow'
-COLOR_RED = 'red'
-
-TEXT_COLOR = {
+INFO_OFFSET_X = {  # 表示テキストのXオフセット
+    'black':  200,
+    'white': 1150,
+}
+INFO_OFFSET_Y = {  # 表示テキストのYオフセット
+    'name':     80,
+    'score':   250,
+    'winlose': 400,
+    'turn':    500,
+    'move':    600,
+}
+INFO_COLOR = {  # 表示テキストの色
     'name':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
     'score':   {'black': COLOR_BLACK,  'white': COLOR_WHITE},
     'winlose': {'black': COLOR_BLACK,  'white': COLOR_WHITE},
     'turn':    {'black': COLOR_ORANGE, 'white': COLOR_ORANGE},
     'move':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
 }
-TEXT_FONT_SIZE = {'name': 32, 'score': 140, 'winlose': 32, 'turn': 32, 'move': 32, 'start': 32}
-SQUARE_HEADER_FONT_SIZE = 20
+INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
+    'name':     32,
+    'score':   140,
+    'winlose':  32,
+    'turn':     32,
+    'move':     32,
+}
 
-SQUARE_BOTTOM_MARGIN = 120
-OVAL_SIZE_RATIO = 0.8
-TURNOVAL_SIZE_DIVISOR = 10
+START_OFFSET_X = 680              # スタートのXオフセット
+START_OFFSET_Y = 620              # スタートのYオフセット
+START_FONT_SIZE = 32              # スタートのフォントサイズ
+START_TEXT = 'クリックでスタート' # スタートのテキスト
 
-MENU_NAME = {'size': 'Size', 'black': 'Black', 'white': 'White'}
+SQUAREHEADER_OFFSET_Y = 15   # マス目の列見出しのYオフセット
+SQUAREHEADER_FONT_SIZE = 20  # マス目の列見出しのフォントサイズ
 
-START_TEXT = 'クリックでスタート'
-STONE_MARK = '●'
+SQUARE_OFFSET_Y = 40        # マス目のYオフセット
+SQUARE_BOTTOM_MARGIN = 120  # マス目の底部のマージン
+OVAL_SIZE_RATIO = 0.8       # マス目に対する石の円のサイズの割合
+TURNOVAL_SIZE_DIVISOR = 10  # 石をひっくり返す途中のサイズ(マス目の何分の1か)
 
-TURN_STONE_WAIT = 0.1
+TURN_STONE_WAIT = 0.1  # 石をひっくり返す待ち時間(s)
+STONE_MARK = '●'      # 石のマーク
 
-DEFAULT_BOARD_SIZE = 8
-DEFAULT_BLACK_NUM = '2'
-DEFAULT_WHITE_NUM = '2'
-
-DEFAULT_TEXT = {
+DEFAULT_BOARD_SIZE = 8   # ボードサイズの初期値
+DEFAULT_BLACK_NUM = '2'  # 黒の石の数初期値
+DEFAULT_WHITE_NUM = '2'  # 白の石の数初期値
+DEFAULT_INFO_TEXT = {    # 表示テキストのテキスト初期値
     'name':    {'black': lambda s: STONE_MARK + s.player['black'], 'white': lambda s: STONE_MARK + s.player['white']},
     'score':   {'black': lambda s: '2',                            'white': lambda s: '2'                           },
     'winlose': {'black': lambda s: '',                             'white': lambda s: ''                            },
@@ -118,29 +129,28 @@ class Menu(tk.Menu):
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = black_players[0]
         self.white_player = white_players[0]
+        self.menu_items = {}
 
         # イベントの生成
         self.event = threading.Event()
 
         # メニューアイテムの生成
-        menu_items = {
-            'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
-            'black': black_players,
-            'white': white_players,
-        }
-        self._create_menu_items(menu_items)
+        self.menu_items['size'] = range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2)
+        self.menu_items['black'] = black_players
+        self.menu_items['white'] = white_players
+        self._create_menu_items()
 
-    def _create_menu_items(self, menu_items):
+    def _create_menu_items(self):
         """
         メニューの追加
         """
-        for name, items in menu_items.items():
+        for name, items in self.menu_items.items():
             menu = tk.Menu(self, tearoff=False)
 
             for item in items:
                 menu.add_command(label=str(item), command=self._command(name, item))
 
-            self.add_cascade(menu=menu, label=MENU_NAME[name])
+            self.add_cascade(menu=menu, label=name.title())
 
     def _command(self, name, item):
         """
@@ -159,8 +169,8 @@ class Menu(tk.Menu):
         """
         メニューのステータス設定(有効化/無効化)
         """
-        for name in MENU_NAME.values():
-            self.entryconfigure(name, state=state)
+        for name in self.menu_items.keys():
+            self.entryconfigure(name.title(), state=state)
 
 
 class ScreenBoard:
@@ -193,7 +203,7 @@ class ScreenBoard:
         """
         サイズ計算
         """
-        self.square_y_ini = OFFSET_SQUARE_Y
+        self.square_y_ini = SQUARE_OFFSET_Y
         self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // self.size
         self.square_x_ini = WINDOW_WIDTH // 2 - (self.square_w * self.size) // 2
 
@@ -211,7 +221,7 @@ class ScreenBoard:
         for num in range(self.size):
             xlabel = chr(num + 97)
             x2 = x1 + self.square_w
-            self.canvas.create_text((x1+x2)//2, y1-OFFSET_SQUARE_HEADER, fill=COLOR_WHITE, text=xlabel, font=('', SQUARE_HEADER_FONT_SIZE))
+            self.canvas.create_text((x1+x2)//2, y1-SQUAREHEADER_OFFSET_Y, fill=COLOR_WHITE, text=xlabel, font=('', SQUAREHEADER_FONT_SIZE))
             x1 = x2
 
         # 縦線
@@ -227,7 +237,7 @@ class ScreenBoard:
         for num in range(self.size):
             ylabel = str(num + 1)
             y2 = y1 + self.square_w
-            self.canvas.create_text(x1-OFFSET_SQUARE_HEADER, (y1+y2)//2, fill=COLOR_WHITE, text=ylabel, font=('', SQUARE_HEADER_FONT_SIZE))
+            self.canvas.create_text(x1-SQUAREHEADER_OFFSET_Y, (y1+y2)//2, fill=COLOR_WHITE, text=ylabel, font=('', SQUAREHEADER_FONT_SIZE))
             y1 = y2
 
         # 横線
@@ -503,8 +513,8 @@ class ScreenInfo:
         self.text = {}
 
         # テキスト作成
-        for name in TEXT_OFFSET_Y.keys():
-            for color in TEXT_OFFSET_X.keys():
+        for name in INFO_OFFSET_Y.keys():
+            for color in INFO_OFFSET_X.keys():
                 self._create_text(color, name)  # 表示テキスト
 
     def _create_text(self, color, name):
@@ -512,11 +522,11 @@ class ScreenInfo:
         表示テキスト作成
         """
         self.text[color + '_' + name] = self.canvas.create_text(
-            TEXT_OFFSET_X[color],
-            TEXT_OFFSET_Y[name],
-            text=DEFAULT_TEXT[name][color](self),
-            font=('', TEXT_FONT_SIZE[name]),
-            fill=TEXT_COLOR[name][color]
+            INFO_OFFSET_X[color],
+            INFO_OFFSET_Y[name],
+            text=DEFAULT_INFO_TEXT[name][color](self),
+            font=('', INFO_FONT_SIZE[name]),
+            fill=INFO_COLOR[name][color]
         )
 
     def set_text(self, color, name, text):
@@ -536,10 +546,10 @@ class ScreenStart:
 
         # テキスト作成
         self.text = canvas.create_text(
-            OFFSET_START_X,
-            OFFSET_START_Y,
+            START_OFFSET_X,
+            START_OFFSET_Y,
             text=START_TEXT,
-            font=('', TEXT_FONT_SIZE['start']),
+            font=('', START_FONT_SIZE),
             fill=COLOR_YELLOW
         )
 
