@@ -546,6 +546,44 @@ if __name__ == '__main__':
 
         return False
 
+    def demo_animation(window):
+        center = window.board.size // 2
+
+        target = [
+            ('black', center, center-1),
+            ('black', center-1, center),
+            ('white', center-1, center-1),
+            ('white', center, center),
+        ]
+
+        ptn = {
+            'black': [
+                ('black', 'turnblack'),
+                ('turnblack', 'white'),
+                ('white', 'turnwhite'),
+                ('turnwhite', 'black'),
+            ],
+            'white': [
+                ('white', 'turnwhite'),
+                ('turnwhite', 'black'),
+                ('black', 'turnblack'),
+                ('turnblack', 'white'),
+            ],
+        }
+
+        for color, x, y in target:
+            for remove_color, put_color in ptn[color]:
+                # メニュー設定変更時
+                if resize_board(window):
+                    return False
+
+                # アニメーション処理
+                time.sleep(TURN_STONE_WAIT)
+                window.board.remove_stone(remove_color, x, y)
+                window.board.put_stone(put_color, x, y)
+
+        return True
+
     def test_play(window, game_strategies):
         global state
 
@@ -562,86 +600,13 @@ if __name__ == '__main__':
 
             if state == 'DEMO':
                 demo = True
-                resize_flag = False
-                center = window.board.size // 2
-
-                for x, y in [(center, center-1), (center-1, center)]:
-                    if resize_board(window):
-                        resize_flag = True
-                        break
-
-                    center = window.board.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.board.remove_stone('black', x, y)
-                    window.board.put_stone('turnblack', x, y)
-
-                    if resize_board(window):
-                        resize_flag = True
-                        break
-
-                    center = window.board.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.board.remove_stone('turnblack', x, y)
-                    window.board.put_stone('white', x, y)
-
-                    if resize_board(window):
-                        resize_flag = True
-                        break
-
-                    center = window.board.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.board.remove_stone('white', x, y)
-                    window.board.put_stone('turnwhite', x, y)
-
-                    if resize_board(window):
-                        resize_flag = True
-                        break
-
-                    center = window.board.size // 2
-                    time.sleep(TURN_STONE_WAIT)
-                    window.board.remove_stone('turnwhite', x, y)
-                    window.board.put_stone('black', x, y)
-
-                if not resize_flag:
-                    center = window.board.size // 2
-
-                    for x, y in [(center-1, center-1), (center, center)]:
-                        if resize_board(window):
-                            break
-
-                        center = window.board.size // 2
-                        time.sleep(TURN_STONE_WAIT)
-                        window.board.remove_stone('white', x, y)
-                        window.board.put_stone('turnwhite', x, y)
-
-                        if resize_board(window):
-                            break
-
-                        center = window.board.size // 2
-                        time.sleep(TURN_STONE_WAIT)
-                        window.board.remove_stone('turnwhite', x, y)
-                        window.board.put_stone('black', x, y)
-
-                        if resize_board(window):
-                            break
-
-                        center = window.board.size // 2
-                        time.sleep(TURN_STONE_WAIT)
-                        window.board.remove_stone('black', x, y)
-                        window.board.put_stone('turnblack', x, y)
-
-                        if resize_board(window):
-                            break
-
-                        center = window.board.size // 2
-                        time.sleep(TURN_STONE_WAIT)
-                        window.board.remove_stone('turnblack', x, y)
-                        window.board.put_stone('white', x, y)
 
                 if window.start.event.is_set():
                     window.set_state('disable')  # メニューを無効化
                     window.start.event.clear()
                     state = 'START'
+
+                demo_animation(window)
 
             if state == 'START':
                 if not demo:
