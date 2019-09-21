@@ -62,7 +62,10 @@ SQUARE_BOTTOM_MARGIN = 120  # マス目の底部のマージン
 OVAL_SIZE_RATIO = 0.8       # マス目に対する石の円のサイズの割合
 TURNOVAL_SIZE_DIVISOR = 10  # 石をひっくり返す途中のサイズ(マス目の何分の1か)
 
-TURN_STONE_WAIT = 0.1  # 石をひっくり返す待ち時間(s)
+TURN_BLACK_PATTERN = [('white', 'turnwhite'), ('turnwhite', 'black')]  # 黒の石をひっくり返すパターン
+TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の石をひっくり返すパターン
+TURN_STONE_WAIT = 0.1                                                  # 石をひっくり返す待ち時間(s)
+
 STONE_MARK = '●'      # 石のマーク
 
 DEFAULT_BOARD_SIZE = 8   # ボードサイズの初期値
@@ -307,54 +310,14 @@ class ScreenBoard:
         """
         石をひっくり返す
         """
-        if color == 'black':
-            self.turn_black_stone(captures)
-        elif color == 'white':
-            self.turn_white_stone(captures)
+        ptn = TURN_BLACK_PATTERN if color == 'black' else TURN_WHITE_PATTERN
 
-    def turn_black_stone(self, captures):
-        """
-        白の石を黒の石にひっくり返す
-        """
-        # captures座標の白の石を消す
-        for x, y in captures:
-            self.remove_stone('white', x, y)
-
-        # captures座標に白をひっくり返す途中の石を置く
-        for x, y in captures:
-            self.put_stone('turnwhite', x, y)
-        time.sleep(TURN_STONE_WAIT)
-
-        # captures座標の白をひっくり返す途中の石を消す
-        for x, y in captures:
-            self.remove_stone('turnwhite', x, y)
-
-        # capturesの石を黒にする
-        for x, y in captures:
-            self.put_stone('black', x, y)
-        time.sleep(TURN_STONE_WAIT)
-
-    def turn_white_stone(self, captures):
-        """
-        黒の石を白の石にひっくり返す
-        """
-        # captures座標の黒の石を消す
-        for x, y in captures:
-            self.remove_stone('black', x, y)
-
-        # captures座標に黒をひっくり返す途中の石を置く
-        for x, y in captures:
-            self.put_stone('turnblack', x, y)
-        time.sleep(TURN_STONE_WAIT)
-
-        # captures座標の黒をひっくり返す途中の石を消す
-        for x, y in captures:
-            self.remove_stone('turnblack', x, y)
-
-        # capturesの石を白にする
-        for x, y in captures:
-            self.put_stone('white', x, y)
-        time.sleep(TURN_STONE_WAIT)
+        for remove_color, put_color in ptn:
+            for x, y in captures:
+                self.remove_stone(remove_color, x, y)
+            for x, y in captures:
+                self.put_stone(put_color, x, y)
+            time.sleep(TURN_STONE_WAIT)
 
     def enable_moves(self, moves):
         """
