@@ -7,7 +7,6 @@ import time
 import tkinter as tk
 import threading
 
-from stone import StoneFactory
 import board
 from board import Board
 import strategies
@@ -187,13 +186,6 @@ class ScreenBoard:
 
         # イベント生成
         self.event = threading.Event()
-
-        # 石生成
-        self.stone ={}
-        factory = StoneFactory()
-
-        for color in ('black', 'white'):
-            self.stone[color] = factory.create(color)
 
         # ボードの描画
         self._draw_squares()
