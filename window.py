@@ -108,6 +108,61 @@ class Window(tk.Frame):
         self.menu.set_state(state)
 
 
+class Menu(tk.Menu):
+    """
+    メニュー
+    """
+    def __init__(self, root, black_players, white_players):
+        super().__init__(root)
+
+        self.size = DEFAULT_BOARD_SIZE
+        self.black_player = black_players[0]
+        self.white_player = white_players[0]
+
+        # イベントの生成
+        self.event = threading.Event()
+
+        # メニューアイテムの生成
+        menu_items = {
+            'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
+            'black': black_players,
+            'white': white_players,
+        }
+        self._create_menu_items(menu_items)
+
+    def _create_menu_items(self, menu_items):
+        """
+        メニューの追加
+        """
+        for name, items in menu_items.items():
+            menu = tk.Menu(self, tearoff=False)
+
+            for item in items:
+                menu.add_command(label=str(item), command=self._command(name, item))
+
+            self.add_cascade(menu=menu, label=MENU_NAME[name])
+
+    def _command(self, name, item):
+        """
+        メニュー設定変更時
+        """
+        def change_menu_selection():
+            if not self.event.is_set():
+                self.size = item if name == 'size' else self.size
+                self.black_player = item if name == 'black' else self.black_player
+                self.white_player= item if name == 'white' else self.white_player
+                self.event.set()  # ウィンドウへメニューの設定変更を通知
+
+        return change_menu_selection
+
+    def set_state(self, state):
+        """
+        メニューのステータス設定(有効化/無効化)
+        """
+        for name in MENU_NAME.values():
+            self.entryconfigure(name, state=state)
+
+
 class ScreenBoard:
     """
     盤面表示
@@ -521,61 +576,6 @@ class ScreenStart:
         """
         text = START_TEXT if state == 'normal' else ''
         self.canvas.itemconfigure(self.text, text=text, state=state)
-
-
-class Menu(tk.Menu):
-    """
-    メニュー
-    """
-    def __init__(self, root, black_players, white_players):
-        super().__init__(root)
-
-        self.size = DEFAULT_BOARD_SIZE
-        self.black_player = black_players[0]
-        self.white_player = white_players[0]
-
-        # イベントの生成
-        self.event = threading.Event()
-
-        # メニューアイテムの生成
-        menu_items = {
-            'size': range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2),
-            'black': black_players,
-            'white': white_players,
-        }
-        self._create_menu_items(menu_items)
-
-    def _create_menu_items(self, menu_items):
-        """
-        メニューの追加
-        """
-        for name, items in menu_items.items():
-            menu = tk.Menu(self, tearoff=False)
-
-            for item in items:
-                menu.add_command(label=str(item), command=self._command(name, item))
-
-            self.add_cascade(menu=menu, label=MENU_NAME[name])
-
-    def _command(self, name, item):
-        """
-        メニュー設定変更時
-        """
-        def change_menu_selection():
-            if not self.event.is_set():
-                self.size = item if name == 'size' else self.size
-                self.black_player = item if name == 'black' else self.black_player
-                self.white_player= item if name == 'white' else self.white_player
-                self.event.set()  # ウィンドウへメニューの設定変更を通知
-
-        return change_menu_selection
-
-    def set_state(self, state):
-        """
-        メニューのステータス設定(有効化/無効化)
-        """
-        for name in MENU_NAME.values():
-            self.entryconfigure(name, state=state)
 
 
 if __name__ == '__main__':
