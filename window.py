@@ -55,7 +55,7 @@ START_OFFSET_Y = 620              # スタートのYオフセット
 START_FONT_SIZE = 32              # スタートのフォントサイズ
 START_TEXT = 'クリックでスタート' # スタートのテキスト
 
-SQUAREHEADER_OFFSET_Y = 15   # マス目の列見出しのYオフセット
+SQUAREHEADER_OFFSET_XY = 15  # マス目の列見出しのXYオフセット
 SQUAREHEADER_FONT_SIZE = 20  # マス目の列見出しのフォントサイズ
 
 SQUARE_OFFSET_Y = 40        # マス目のYオフセット
@@ -175,7 +175,7 @@ class Menu(tk.Menu):
 
 class ScreenBoard:
     """
-    盤面表示
+    ボードの表示
     """
     def __init__(self, canvas, size):
         self.size = size
@@ -188,71 +188,66 @@ class ScreenBoard:
         # イベント生成
         self.event = threading.Event()
 
-        # 石情報
+        # 石生成
         self.stone ={}
         factory = StoneFactory()
 
         for color in ('black', 'white'):
             self.stone[color] = factory.create(color)
 
-        self._calc_size()        # 変更後の石やマス目のサイズを計算
-        self._draw_squares()     # マス目の描画
-        self._put_init_stones()  # 初期位置に石を置く
-
-    def _calc_size(self):
-        """
-        サイズ計算
-        """
-        self.square_y_ini = SQUARE_OFFSET_Y
-        self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // self.size
-        self.square_x_ini = WINDOW_WIDTH // 2 - (self.square_w * self.size) // 2
-
-        self.oval_w1 = int(self.square_w * OVAL_SIZE_RATIO)
-        self.oval_w2 = int(self.square_w // TURNOVAL_SIZE_DIVISOR)
+        # ボードの描画
+        self._draw_squares()
 
     def _draw_squares(self):
         """
         マス目を描画
         """
-        self._squares = [[None for _ in range(self.size)] for _ in range(self.size)]
+        size = self.size
+        self._squares = [[None for _ in range(size)] for _ in range(size)]
 
-        # 縦の番地
-        x1, y1 = self.square_x_ini, self.square_y_ini
-        for num in range(self.size):
-            xlabel = chr(num + 97)
-            x2 = x1 + self.square_w
-            self.canvas.create_text((x1+x2)//2, y1-SQUAREHEADER_OFFSET_Y, fill=COLOR_WHITE, text=xlabel, font=('', SQUAREHEADER_FONT_SIZE))
-            x1 = x2
+        # マス目や石のサイズを計算
+        self.square_y_ini = SQUARE_OFFSET_Y
+        self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // size
+        w = self.square_w
+        self.square_x_ini = WINDOW_WIDTH // 2 - (w * size) // 2
+        self.oval_w1 = int(w * OVAL_SIZE_RATIO)
+        self.oval_w2 = int(w // TURNOVAL_SIZE_DIVISOR)
 
-        # 縦線
-        y1 = self.square_y_ini
-        y2 = y1 + self.square_w * self.size
-        for num in range(self.size + 1):
-            x1 = self.square_x_ini + self.square_w * num
-            xline = self.canvas.create_line(x1, y1, x1, y2, fill=COLOR_WHITE)
-            self._xlines.append(xline)
+        # マス目や見出しの位置を初期化
+        min_x, min_y = self.square_x_ini, self.square_y_ini
+        max_x, max_y = min_x + w * size, min_y + w * size
+        row_x, col_y = min_x - SQUAREHEADER_OFFSET_XY, min_y - SQUAREHEADER_OFFSET_XY
+        label = None
+        text_x, text_y = None, None
+        square_x1, square_y1, square_x2, square_y2 = None, None, None, None
+        line_append, xappend, yappend = None, self._xlines.append, self._ylines.append
 
-        # 横の番地
-        x1, y1 = self.square_x_ini, self.square_y_ini
-        for num in range(self.size):
-            ylabel = str(num + 1)
-            y2 = y1 + self.square_w
-            self.canvas.create_text(x1-SQUAREHEADER_OFFSET_Y, (y1+y2)//2, fill=COLOR_WHITE, text=ylabel, font=('', SQUAREHEADER_FONT_SIZE))
-            y1 = y2
+        # マス目の描画
+        for num in range(size + 1):
+            for rc in ('row', 'col'):
+                if rc == 'row':
+                    label = str(num + 1)
+                    text_x, text_y = row_x, (min_y + w * num) + w // 2
+                    square_x1, square_y1 = min_x + w * num, min_y
+                    square_x2, square_y2 = square_x1, max_y
+                    line_append = yappend
+                else:
+                    label = chr(num + 97)
+                    text_x, text_y = (min_x + w * num) + w // 2, col_y
+                    square_x1, square_y1 = min_x, min_y + w * num
+                    square_x2, square_y2 = max_x, square_y1
+                    line_append = xappend
 
-        # 横線
-        x1 = self.square_x_ini
-        x2 = x1 + self.square_w * self.size
-        for num in range(self.size + 1):
-            y1 = self.square_y_ini + self.square_w * num
-            yline = self.canvas.create_line(x1, y1, x2, y1, fill=COLOR_WHITE)
-            self._ylines.append(yline)
+                # 番地
+                if num < size:
+                    self.canvas.create_text(text_x, text_y, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
 
-    def _put_init_stones(self):
-        """
-        石を初期位置に置く
-        """
-        center = self.size // 2
+                # マス目の線
+                line = self.canvas.create_line(square_x1, square_y1, square_x2, square_y2, fill=COLOR_WHITE)
+                line_append(line)
+
+        # 初期位置に石を置く
+        center = size // 2
         self.put_stone('black', center, center-1)
         self.put_stone('black', center-1, center)
         self.put_stone('white', center-1, center-1)
