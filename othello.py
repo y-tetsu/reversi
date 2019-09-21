@@ -82,29 +82,31 @@ class Othello:
         デモアニメーション継続中
         """
         center = self.window.board.size // 2
+
         target = [
             ('black', center, center-1),
             ('black', center-1, center),
             ('white', center-1, center-1),
             ('white', center, center),
         ]
+
         ptn = {
             'black': [
-                ('black', self.window.board.put_turnblack),
-                ('turnblack', self.window.board.put_white),
-                ('white', self.window.board.put_turnwhite),
-                ('turnwhite', self.window.board.put_black),
+                ('black', 'turnblack'),
+                ('turnblack', 'white'),
+                ('white', 'turnwhite'),
+                ('turnwhite', 'black'),
             ],
             'white': [
-                ('white', self.window.board.put_turnwhite),
-                ('turnwhite', self.window.board.put_black),
-                ('black', self.window.board.put_turnblack),
-                ('turnblack', self.window.board.put_white),
+                ('white', 'turnwhite'),
+                ('turnwhite', 'black'),
+                ('black', 'turnblack'),
+                ('turnblack', 'white'),
             ],
         }
 
         for color, x, y in target:
-            for remove_color, put_stone in ptn[color]:
+            for remove_color, put_color in ptn[color]:
                 # メニュー設定変更時
                 if self._setting_changed():
                     return False
@@ -112,7 +114,7 @@ class Othello:
                 # アニメーション処理
                 time.sleep(TURN_STONE_WAIT)
                 self.window.board.remove_stone(remove_color, x, y)
-                put_stone(x, y)
+                self.window.board.put_stone(put_color, x, y)
 
         return True
 

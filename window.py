@@ -249,80 +249,29 @@ class ScreenBoard:
         """
         石を置く
         """
-        if color == 'black':
-            self.put_black(index_x, index_y)
-        elif color == 'white':
-            self.put_white(index_x, index_y)
-
-    def put_black(self, index_x, index_y):
-        """
-        黒を置く
-        """
-        label = self._get_label('black', index_x, index_y)
-
         x, y = self._get_coordinate(index_x, index_y)
 
-        x1 = x - self.oval_w1/2
-        y1 = y - self.oval_w1/2
-        x2 = x + self.oval_w1/2
-        y2 = y + self.oval_w1/2
+        # 黒か白の石をおく
+        if color == 'black' or color == 'white':
+            w = self.oval_w1
+            x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
+            label = self._get_label(color, index_x, index_y)
 
-        black_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=COLOR_BLACK, outline=COLOR_BLACK)
+            self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=color, outline=color)
 
-    def put_white(self, index_x, index_y):
-        """
-        白を置く
-        """
-        label = self._get_label('white', index_x, index_y)
+        # ひっくり返す途中
+        else:
+            w1, w2 = self.oval_w1, self.oval_w2
+            label1 = self._get_label(color + '1', index_x, index_y)
+            label2 = self._get_label(color + '2', index_x, index_y)
+            color1 = 'white' if color == 'turnblack' else 'black'
+            color2 = 'black' if color == 'turnblack' else 'white'
 
-        x, y = self._get_coordinate(index_x, index_y)
+            x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
+            self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
 
-        x1 = x - self.oval_w1/2
-        y1 = y - self.oval_w1/2
-        x2 = x + self.oval_w1/2
-        y2 = y + self.oval_w1/2
-
-        white_id = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=COLOR_WHITE, outline=COLOR_WHITE)
-
-    def put_turnblack(self, index_x, index_y):
-        """
-        黒をひっくり返す途中
-        """
-        label1 = self._get_label('turnblack1', index_x, index_y)
-        label2 = self._get_label('turnblack2', index_x, index_y)
-
-        x, y = self._get_coordinate(index_x, index_y)
-
-        x1 = x - self.oval_w2
-        y1 = y - self.oval_w1/2
-        x2 = x
-        y2 = y + self.oval_w1/2
-
-        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=COLOR_WHITE, outline=COLOR_WHITE)
-
-        x1 = x
-        x2 = x + self.oval_w2
-        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_BLACK, outline=COLOR_BLACK)
-
-    def put_turnwhite(self, index_x, index_y):
-        """
-        白をひっくり返す途中
-        """
-        label1 = self._get_label('turnwhite1', index_x, index_y)
-        label2 = self._get_label('turnwhite2', index_x, index_y)
-
-        x, y = self._get_coordinate(index_x, index_y)
-
-        x1 = x - self.oval_w2
-        y1 = y - self.oval_w1/2
-        x2 = x
-        y2 = y + self.oval_w1/2
-
-        black_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=COLOR_BLACK, outline=COLOR_BLACK)
-
-        x1 = x
-        x2 = x + self.oval_w2
-        white_id = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label2, fill=COLOR_WHITE, outline=COLOR_WHITE)
+            x3, x4 = x, x + w2
+            self.canvas.create_rectangle(x3, y1, x4, y2, tag=label2, fill=color2, outline=color2)
 
     def remove_stone(self, color, index_x, index_y):
         """
@@ -373,7 +322,7 @@ class ScreenBoard:
 
         # captures座標に白をひっくり返す途中の石を置く
         for x, y in captures:
-            self.put_turnwhite(x, y)
+            self.put_stone('turnwhite', x, y)
         time.sleep(TURN_STONE_WAIT)
 
         # captures座標の白をひっくり返す途中の石を消す
@@ -382,7 +331,7 @@ class ScreenBoard:
 
         # capturesの石を黒にする
         for x, y in captures:
-            self.put_black(x, y)
+            self.put_stone('black', x, y)
         time.sleep(TURN_STONE_WAIT)
 
     def turn_white_stone(self, captures):
@@ -395,7 +344,7 @@ class ScreenBoard:
 
         # captures座標に黒をひっくり返す途中の石を置く
         for x, y in captures:
-            self.put_turnblack(x, y)
+            self.put_stone('turnblack', x, y)
         time.sleep(TURN_STONE_WAIT)
 
         # captures座標の黒をひっくり返す途中の石を消す
@@ -404,7 +353,7 @@ class ScreenBoard:
 
         # capturesの石を白にする
         for x, y in captures:
-            self.put_white(x, y)
+            self.put_stone('white', x, y)
         time.sleep(TURN_STONE_WAIT)
 
     def enable_moves(self, moves):
@@ -624,7 +573,7 @@ if __name__ == '__main__':
                     center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.board.remove_stone('black', x, y)
-                    window.board.put_turnblack(x, y)
+                    window.board.put_stone('turnblack', x, y)
 
                     if resize_board(window):
                         resize_flag = True
@@ -633,7 +582,7 @@ if __name__ == '__main__':
                     center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.board.remove_stone('turnblack', x, y)
-                    window.board.put_white(x, y)
+                    window.board.put_stone('white', x, y)
 
                     if resize_board(window):
                         resize_flag = True
@@ -642,7 +591,7 @@ if __name__ == '__main__':
                     center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.board.remove_stone('white', x, y)
-                    window.board.put_turnwhite(x, y)
+                    window.board.put_stone('turnwhite', x, y)
 
                     if resize_board(window):
                         resize_flag = True
@@ -651,7 +600,7 @@ if __name__ == '__main__':
                     center = window.board.size // 2
                     time.sleep(TURN_STONE_WAIT)
                     window.board.remove_stone('turnwhite', x, y)
-                    window.board.put_black(x, y)
+                    window.board.put_stone('black', x, y)
 
                 if not resize_flag:
                     center = window.board.size // 2
@@ -663,7 +612,7 @@ if __name__ == '__main__':
                         center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
                         window.board.remove_stone('white', x, y)
-                        window.board.put_turnwhite(x, y)
+                        window.board.put_stone('turnwhite', x, y)
 
                         if resize_board(window):
                             break
@@ -671,7 +620,7 @@ if __name__ == '__main__':
                         center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
                         window.board.remove_stone('turnwhite', x, y)
-                        window.board.put_black(x, y)
+                        window.board.put_stone('black', x, y)
 
                         if resize_board(window):
                             break
@@ -679,7 +628,7 @@ if __name__ == '__main__':
                         center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
                         window.board.remove_stone('black', x, y)
-                        window.board.put_turnblack(x, y)
+                        window.board.put_stone('turnblack', x, y)
 
                         if resize_board(window):
                             break
@@ -687,7 +636,7 @@ if __name__ == '__main__':
                         center = window.board.size // 2
                         time.sleep(TURN_STONE_WAIT)
                         window.board.remove_stone('turnblack', x, y)
-                        window.board.put_white(x, y)
+                        window.board.put_stone('white', x, y)
 
                 if window.start.event.is_set():
                     window.set_state('disable')  # メニューを無効化
