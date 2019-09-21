@@ -96,7 +96,7 @@ class Window(tk.Frame):
         ゲーム画面の初期化
         """
         self.canvas.delete('all')                         # 全オブジェクト削除
-        self.board = ScreenBoard(self.size, self.canvas)  # ボード配置
+        self.board = ScreenBoard(self.canvas, self.size)  # ボード配置
         self.info = ScreenInfo(self.canvas, self.player)  # 情報表示テキスト配置
         self.start = ScreenStart(self.canvas)             # スタートテキスト配置
 
@@ -112,7 +112,7 @@ class ScreenBoard:
     """
     盤面表示
     """
-    def __init__(self, size, canvas):
+    def __init__(self, canvas, size):
         self.size = size
         self.canvas = canvas
         self._squares = []
