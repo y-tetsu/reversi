@@ -568,8 +568,8 @@ if __name__ == '__main__':
                     window.set_state('disable')  # メニューを無効化
                     window.start.event.clear()
                     state = 'START'
-
-                demo_animation(window)
+                else:
+                    demo_animation(window)
 
             if state == 'START':
                 if not demo:
