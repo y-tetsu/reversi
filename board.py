@@ -164,7 +164,22 @@ class Board:
         """
         ボードの情報を返す
         """
-        return self._board
+        board_info = []
+
+        for row in self._board:
+            tmp = []
+
+            for col in row:
+                if col == self.stone['black']:
+                    tmp.append(1)
+                elif col == self.stone['white']:
+                    tmp.append(-1)
+                elif col == self.stone['blank']:
+                    tmp.append(0)
+
+            board_info.append(tmp)
+
+        return board_info
 
 
 if __name__ == '__main__':
@@ -281,3 +296,5 @@ if __name__ == '__main__':
     assert board4._board == board4_ret
     assert board4.score['black'] == 5
     assert board4.score['white'] == 11
+
+    print(board4.get_board_info())
