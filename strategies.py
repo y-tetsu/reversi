@@ -130,9 +130,11 @@ class Sample10(AbstractStrategy):
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        if blanks/squares >= 0.1:
+        # 序盤以降
+        if (squares-blanks)/squares >= 0.1:
             return self.greedy.next_move(color, board)
 
+        # 序盤
         return self.unselfish.next_move(color, board)
 
 
@@ -148,9 +150,11 @@ class Sample30(AbstractStrategy):
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        if blanks/squares >= 0.3:
+        # 序盤以降
+        if (squares-blanks)/squares >= 0.3:
             return self.greedy.next_move(color, board)
 
+        # 序盤
         return self.unselfish.next_move(color, board)
 
 
@@ -167,9 +171,11 @@ class Sample50(AbstractStrategy):
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        if blanks/squares >= 0.5:
+        # 序盤以降
+        if (squares-blanks)/squares >= 0.5:
             return self.greedy.next_move(color, board)
 
+        # 序盤
         return self.unselfish.next_move(color, board)
 
 
@@ -185,9 +191,11 @@ class Sample70(AbstractStrategy):
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        if blanks/squares >= 0.7:
+        # 序盤以降
+        if (squares-blanks)/squares >= 0.7:
             return self.greedy.next_move(color, board)
 
+        # 序盤
         return self.unselfish.next_move(color, board)
 
 
@@ -203,9 +211,11 @@ class Sample90(AbstractStrategy):
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        if blanks/squares >= 0.9:
+        # 序盤以降
+        if (squares-blanks)/squares >= 0.9:
             return self.greedy.next_move(color, board)
 
+        # 序盤
         return self.unselfish.next_move(color, board)
 
 
