@@ -138,6 +138,26 @@ class Sample10(AbstractStrategy):
         return self.unselfish.next_move(color, board)
 
 
+class Sample20(AbstractStrategy):
+    """
+    20%未満:Unselfish、20%以上:Greedy
+    """
+    def __init__(self):
+        self.unselfish = Unselfish()
+        self.greedy = Greedy()
+
+    def next_move(self, color, board):
+        squares = board.size**2
+        blanks = sum([row.count(0) for row in board.get_board_info()])
+
+        # 序盤以降
+        if (squares-blanks)/squares >= 0.2:
+            return self.greedy.next_move(color, board)
+
+        # 序盤
+        return self.unselfish.next_move(color, board)
+
+
 class Sample30(AbstractStrategy):
     """
     30%未満:Unselfish、30%以上:Greedy
