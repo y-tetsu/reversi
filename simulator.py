@@ -114,15 +114,15 @@ if __name__ == '__main__':
     import strategies
 
     characters = [
-        ('Random', strategies.Random()),
+        #('Random', strategies.Random()),
         ('Greedy', strategies.Greedy()),
-        ('Unselfish', strategies.Unselfish()),
+        ('SlowStartar', strategies.SlowStartar()),
     ]
 
     black_players = [Player('black', *character) for character in characters]
     white_players = [Player('white', *character) for character in characters]
 
-    simulator = Simulator(black_players, white_players, 250)
+    simulator = Simulator(black_players, white_players, 5000, 8)
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')

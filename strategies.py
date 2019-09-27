@@ -118,180 +118,23 @@ class Unselfish(AbstractStrategy):
         return random.choice(moves)
 
 
-class Sample05(AbstractStrategy):
+class SlowStartar(AbstractStrategy):
     """
-    5%未満:Unselfish、5%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.05:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample10(AbstractStrategy):
-    """
-    10%未満:Unselfish、10%以上:Greedy
+    15%未満:Unselfish、15%以上:Greedy
     """
     def __init__(self):
         self.unselfish = Unselfish()
         self.greedy = Greedy()
 
     def next_move(self, color, board):
+        """
+        次の一手
+        """
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
         # 序盤以降
-        if (squares-blanks)/squares >= 0.1:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample20(AbstractStrategy):
-    """
-    20%未満:Unselfish、20%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.2:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample30(AbstractStrategy):
-    """
-    30%未満:Unselfish、30%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.3:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample40(AbstractStrategy):
-    """
-    40%未満:Unselfish、40%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.4:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample50(AbstractStrategy):
-    """
-    50%未満:Unselfish、50%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.5:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample60(AbstractStrategy):
-    """
-    60%未満:Unselfish、60%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.6:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample70(AbstractStrategy):
-    """
-    70%未満:Unselfish、70%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.7:
-            return self.greedy.next_move(color, board)
-
-        # 序盤
-        return self.unselfish.next_move(color, board)
-
-
-class Sample90(AbstractStrategy):
-    """
-    90%未満:Unselfish、90%以上:Greedy
-    """
-    def __init__(self):
-        self.unselfish = Unselfish()
-        self.greedy = Greedy()
-
-    def next_move(self, color, board):
-        squares = board.size**2
-        blanks = sum([row.count(0) for row in board.get_board_info()])
-
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.9:
+        if (squares-blanks)/squares >= 0.15:
             return self.greedy.next_move(color, board)
 
         # 序盤
@@ -327,7 +170,7 @@ if __name__ == '__main__':
     print(board4x4)
 
     p1 = Player('black', 'Random', Random())
-    p2 = Player('white', 'Sample50', Sample50())
+    p2 = Player('white', 'SlowStartar', SlowStartar())
 
     while True:
         cnt = 0
