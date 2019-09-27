@@ -118,7 +118,7 @@ class Unselfish(AbstractStrategy):
         return random.choice(moves)
 
 
-class SlowStartar(AbstractStrategy):
+class SlowStarter(AbstractStrategy):
     """
     15%未満:Unselfish、15%以上:Greedy
     """
@@ -170,7 +170,7 @@ if __name__ == '__main__':
     print(board4x4)
 
     p1 = Player('black', 'Random', Random())
-    p2 = Player('white', 'SlowStartar', SlowStartar())
+    p2 = Player('white', 'SlowStarter', SlowStarter())
 
     while True:
         cnt = 0
