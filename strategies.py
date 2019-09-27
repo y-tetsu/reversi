@@ -7,6 +7,7 @@ import abc
 import re
 import random
 import time
+import itertools
 
 
 class AbstractStrategy(metaclass=abc.ABCMeta):
@@ -145,67 +146,45 @@ class Table(AbstractStrategy):
     """
     評価関数で手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
     """
+    CORNER, C, A, B, X, O = 50, -20, 0, -1, -25, -5
+
     def __init__(self, board_size):
-        self.table = [[-1 for _ in range(board_size)] for _ in range(board_size)]
+        self.table = [[Table.B for _ in range(board_size)] for _ in range(board_size)]
 
         # 中
         for num in range(0, board_size//2, 2):
             if num != board_size//2 - 1:
-                self.table[num][num] = 0
-                self.table[num][board_size-num-1] = 0
-                self.table[board_size-num-1][board_size-num-1] = 0
-                self.table[board_size-num-1][num] = 0
+                for y, x in itertools.product((num, board_size-num-1), repeat=2):
+                    self.table[y][x] = Table.A
 
         for y in range(1, board_size//2-1, 2):
             for x in range(1, board_size//2-1, 2):
                 if x == y:
-                    self.table[y][x] = -25
-                    self.table[y][board_size-x-1] = -25
-                    self.table[board_size-y-1][board_size-x-1] = -25
-                    self.table[board_size-y-1][x] = -25
+                    for tmp_y, tmp_x in itertools.product((y, board_size-y-1), (x, board_size-x-1)):
+                        self.table[tmp_y][tmp_x] = Table.X
 
         for y in range(1, board_size//2-2, 2):
             for x in range(y+1, board_size-y-1):
-                self.table[y][x] = -3
-                self.table[x][y] = -3
-                self.table[board_size-y-1][x] = -3
-                self.table[x][board_size-y-1] = -3
+                for tmp_y, tmp_x in ((y, x), (board_size-y-1, x)):
+                    self.table[tmp_y][tmp_x] = Table.O
+                    self.table[tmp_x][tmp_y] = Table.O
 
         # 端
-        x_min, y_min = 0, 0
-        x_max, y_max = board_size - 1, board_size - 1
+        x_min, y_min, x_max, y_max = 0, 0, board_size - 1, board_size - 1
 
         if board_size >= 6:
             for y in range(board_size):
                 for x in range(board_size):
-                    if x == x_min or y == y_min or x == x_max or y == y_max:
-                        if x == x_min and y == y_min:
-                            self.table[y][x] = 50
-                            self.table[y][x+1] = -12
-                            self.table[y][x+2] = 0
-                            self.table[y+1][x] = -12
-                            self.table[y+2][x] = 0
+                    if (x == x_min or x == x_max) and (y == y_min or y == y_max):
+                        self.table[y][x] = Table.CORNER
 
-                        if x == x_min and y == y_max:
-                            self.table[y][x] = 50
-                            self.table[y][x+1] = -12
-                            self.table[y][x+2] = 0
-                            self.table[y-1][x] = -12
-                            self.table[y-2][x] = 0
+                        x_sign = 1 if x == x_min else -1
+                        y_sign = 1 if y == y_min else -1
 
-                        if x == x_max and y == y_min:
-                            self.table[y][x] = 50
-                            self.table[y][x-1] = -12
-                            self.table[y][x-2] = 0
-                            self.table[y+1][x] = -12
-                            self.table[y+2][x] = 0
-
-                        if x == x_max and y == y_max:
-                            self.table[y][x] = 50
-                            self.table[y][x-1] = -12
-                            self.table[y][x-2] = 0
-                            self.table[y-1][x] = -12
-                            self.table[y-2][x] = 0
+                        self.table[y][x+(1*x_sign)] = Table.C
+                        self.table[y][x+(2*x_sign)] = Table.B
+                        self.table[y+(1*y_sign)][x] = Table.C
+                        self.table[y+(2*y_sign)][x] = Table.B
 
         for row in self.table:
             print(row)
