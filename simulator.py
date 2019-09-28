@@ -113,15 +113,18 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
+    board_size = 8
+
     characters = [
         ('Greedy', strategies.Greedy()),
         ('SlowStarter', strategies.SlowStarter()),
+        ('Table', strategies.Table(board_size)),
     ]
 
     black_players = [Player('black', *character) for character in characters]
     white_players = [Player('white', *character) for character in characters]
 
-    simulator = Simulator(black_players, white_players, 5000, 8)
+    simulator = Simulator(black_players, white_players, 5000, board_size)
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
