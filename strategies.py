@@ -222,9 +222,6 @@ class Table(AbstractStrategy):
 
             board.undo()
 
-        #print('moves', moves)
-        #print('max_score', max_score)
-
         return random.choice(moves[max_score])
 
 
