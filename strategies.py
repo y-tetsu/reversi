@@ -148,7 +148,13 @@ class Table(AbstractStrategy):
     """
     CORNER, C, A, B, X, O = 50, -20, 0, -1, -25, -5
 
-    def __init__(self, size):
+    def __init__(self, size=8):
+        self.set_table(size)
+
+    def set_table(self, size):
+        """
+        評価テーブル設定
+        """
         self.size = size
         self.table = [[Table.B for _ in range(size)] for _ in range(size)]
 
@@ -187,6 +193,7 @@ class Table(AbstractStrategy):
                         self.table[y+(1*y_sign)][x] = Table.C
                         self.table[y+(2*y_sign)][x] = Table.B
 
+
     def get_score(self, color, board):
         """
         評価値を取得する
@@ -205,6 +212,9 @@ class Table(AbstractStrategy):
         """
         次の一手
         """
+        if self.size != board.size:
+            self.set_table(board.size)
+
         possibles = board.get_possibles(color)
         max_score = None
         moves = {}
@@ -333,3 +343,8 @@ if __name__ == '__main__':
     print('next white', table8.next_move('white', board8))
     assert table8.next_move('black', board8) == (5, 2)
     assert table8.next_move('white', board8) == (2, 5)
+
+    print("pre", table8.table)
+    table8.next_move('black', Board(4))
+    print("aft", table8.table)
+    assert table8.table == table4_ret
