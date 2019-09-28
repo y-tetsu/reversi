@@ -148,33 +148,34 @@ class Table(AbstractStrategy):
     """
     CORNER, C, A, B, X, O = 50, -20, 0, -1, -25, -5
 
-    def __init__(self, board_size):
-        self.table = [[Table.B for _ in range(board_size)] for _ in range(board_size)]
+    def __init__(self, size):
+        self.size = size
+        self.table = [[Table.B for _ in range(size)] for _ in range(size)]
 
         # 中
-        for num in range(0, board_size//2, 2):
-            if num != board_size//2 - 1:
-                for y, x in itertools.product((num, board_size-num-1), repeat=2):
+        for num in range(0, size//2, 2):
+            if num != size//2 - 1:
+                for y, x in itertools.product((num, size-num-1), repeat=2):
                     self.table[y][x] = Table.A
 
-        for y in range(1, board_size//2-1, 2):
-            for x in range(1, board_size//2-1, 2):
+        for y in range(1, size//2-1, 2):
+            for x in range(1, size//2-1, 2):
                 if x == y:
-                    for tmp_y, tmp_x in itertools.product((y, board_size-y-1), (x, board_size-x-1)):
+                    for tmp_y, tmp_x in itertools.product((y, size-y-1), (x, size-x-1)):
                         self.table[tmp_y][tmp_x] = Table.X
 
-        for y in range(1, board_size//2-2, 2):
-            for x in range(y+1, board_size-y-1):
-                for tmp_y, tmp_x in ((y, x), (board_size-y-1, x)):
+        for y in range(1, size//2-2, 2):
+            for x in range(y+1, size-y-1):
+                for tmp_y, tmp_x in ((y, x), (size-y-1, x)):
                     self.table[tmp_y][tmp_x] = Table.O
                     self.table[tmp_x][tmp_y] = Table.O
 
         # 端
-        x_min, y_min, x_max, y_max = 0, 0, board_size - 1, board_size - 1
+        x_min, y_min, x_max, y_max = 0, 0, size - 1, size - 1
 
-        if board_size >= 6:
-            for y in range(board_size):
-                for x in range(board_size):
+        if size >= 6:
+            for y in range(size):
+                for x in range(size):
                     if (x == x_min or x == x_max) and (y == y_min or y == y_max):
                         self.table[y][x] = Table.CORNER
 
@@ -186,14 +187,54 @@ class Table(AbstractStrategy):
                         self.table[y+(1*y_sign)][x] = Table.C
                         self.table[y+(2*y_sign)][x] = Table.B
 
-        for row in self.table:
-            print(row)
+    def get_score(self, color, board):
+        """
+        評価値を取得する
+        """
+        sign = 1 if color == 'black' else -1
+        board_info = [row for row in board.get_board_info()]
+        score = 0
+
+        for y in range(self.size):
+            for x in range(self.size):
+                score += self.table[y][x] * board_info[y][x] * sign
+
+        #print()
+        #for row in board_info:
+        #    print(row)
+        #print()
+
+        return score
 
     def next_move(self, color, board):
         """
         次の一手
         """
-        return (0, 0)
+        possibles = board.get_possibles(color)
+        #print('possibles', possibles)
+
+        max_score = None
+        moves = {}
+        for move in possibles.keys():
+            board.put_stone(color, *move)
+            score = self.get_score(color, board)
+
+            #print("m", move)
+            #print("score", score)
+
+            if max_score == None or max_score < score:
+                max_score = score
+
+            if score not in moves:
+                moves[score] = []
+            moves[score].append(move)
+
+            board.undo()
+
+        #print('moves', moves)
+        #print('max_score', max_score)
+
+        return random.choice(moves[max_score])
 
 
 if __name__ == '__main__':
@@ -243,19 +284,45 @@ if __name__ == '__main__':
             print('\n終了')
             break
 
-    test4 = Player('white', 'Table', Table(4))
-    print()
-    test6 = Player('white', 'Table', Table(6))
-    print()
-    test8 = Player('white', 'Table', Table(8))
-    print()
-    test10 = Player('white', 'Table', Table(10))
-    print()
-    test12 = Player('white', 'Table', Table(12))
-    print()
-    test14 = Player('white', 'Table', Table(14))
-    print()
-    test16 = Player('white', 'Table', Table(16))
-    print()
-    test26 = Player('white', 'Table', Table(26))
-    print()
+    table4 = Table(4)
+    table4_ret = [
+        [0, -1, -1, 0],
+        [-1, -1, -1, -1],
+        [-1, -1, -1, -1],
+        [0, -1, -1, 0],
+    ]
+    assert table4.table == table4_ret
+
+    table8 = Table(8)
+    table8_ret = [
+        [50, -20, -1, -1, -1, -1, -20, 50],
+        [-20, -25, -5, -5, -5, -5, -25, -20],
+        [-1, -5, 0, -1, -1, 0, -5, -1],
+        [-1, -5, -1, -1, -1, -1, -5, -1],
+        [-1, -5, -1, -1, -1, -1, -5, -1],
+        [-1, -5, 0, -1, -1, 0, -5, -1],
+        [-20, -25, -5, -5, -5, -5, -25, -20],
+        [50, -20, -1, -1, -1, -1, -20, 50],
+    ]
+    assert table8.table == table8_ret
+
+    table16 = Table(16)
+    table16_ret = [
+        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
+        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
+        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
+        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
+        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
+        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
+        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
+        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
+        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
+    ]
+    assert table16.table == table16_ret
