@@ -39,6 +39,9 @@ class Board:
             if color != 'blank':
                 self.score[color] = 2
 
+        # 前回の手
+        self.prev = {}
+
         # 盤面の初期設定
         center = size // 2
         self._board = [[self.stone['blank'] for _ in range(size)] for _ in range(size)]
@@ -149,6 +152,9 @@ class Board:
 
             self._update_stone_num()
 
+            # 打った手の記録
+            self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles}
+
             return reversibles
 
         return []
@@ -181,6 +187,20 @@ class Board:
 
         return board_info
 
+    def undo(self):
+        """
+        やり直し
+        """
+        if self.prev:
+            color = self.prev['color']
+            prev_color = 'white' if color == 'black' else 'black'
+            x = self.prev['x']
+            y = self.prev['y']
+            reversibles = self.prev['reversibles']
+            self._board[y][x] = self.stone['blank']
+
+            for prev_x, prev_y in reversibles:
+                self._board[prev_y][prev_x] = self.stone[prev_color]
 
 if __name__ == '__main__':
     # サイズ異常
@@ -298,3 +318,14 @@ if __name__ == '__main__':
     assert board4.score['white'] == 11
 
     print(board4.get_board_info())
+
+    # やり直し
+    board4 = Board(4)
+    board4.put_stone('black', 0, 1)
+    print(board4)
+    board4.undo()
+    print(board4)
+    board4.put_stone('white', 0, 2)
+    print(board4)
+    board4.undo()
+    print(board4)
