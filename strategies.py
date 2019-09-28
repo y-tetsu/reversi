@@ -199,11 +199,6 @@ class Table(AbstractStrategy):
             for x in range(self.size):
                 score += self.table[y][x] * board_info[y][x] * sign
 
-        #print()
-        #for row in board_info:
-        #    print(row)
-        #print()
-
         return score
 
     def next_move(self, color, board):
@@ -211,16 +206,12 @@ class Table(AbstractStrategy):
         次の一手
         """
         possibles = board.get_possibles(color)
-        #print('possibles', possibles)
-
         max_score = None
         moves = {}
+
         for move in possibles.keys():
             board.put_stone(color, *move)
             score = self.get_score(color, board)
-
-            #print("m", move)
-            #print("score", score)
 
             if max_score == None or max_score < score:
                 max_score = score
@@ -286,43 +277,62 @@ if __name__ == '__main__':
 
     table4 = Table(4)
     table4_ret = [
-        [0, -1, -1, 0],
-        [-1, -1, -1, -1],
-        [-1, -1, -1, -1],
-        [0, -1, -1, 0],
+        [Table.A, Table.B, Table.B, Table.A],
+        [Table.B, Table.B, Table.B, Table.B],
+        [Table.B, Table.B, Table.B, Table.B],
+        [Table.A, Table.B, Table.B, Table.A],
     ]
     assert table4.table == table4_ret
 
     table8 = Table(8)
     table8_ret = [
-        [50, -20, -1, -1, -1, -1, -20, 50],
-        [-20, -25, -5, -5, -5, -5, -25, -20],
-        [-1, -5, 0, -1, -1, 0, -5, -1],
-        [-1, -5, -1, -1, -1, -1, -5, -1],
-        [-1, -5, -1, -1, -1, -1, -5, -1],
-        [-1, -5, 0, -1, -1, 0, -5, -1],
-        [-20, -25, -5, -5, -5, -5, -25, -20],
-        [50, -20, -1, -1, -1, -1, -20, 50],
+        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
+        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
+        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B],
+        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
+        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
     ]
     assert table8.table == table8_ret
 
     table16 = Table(16)
     table16_ret = [
-        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
-        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
-        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
-        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
-        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
-        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
-        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
-        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
-        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
+        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
+        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
+        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B],
+        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B],
+        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
+        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
     ]
     assert table16.table == table16_ret
+
+    board8 = Board(8)
+    board8.put_stone('black', 3, 2)
+    board8.put_stone('white', 2, 2)
+    board8.put_stone('black', 2, 3)
+    board8.put_stone('white', 4, 2)
+    board8.put_stone('black', 1, 1)
+    board8.put_stone('white', 0, 0)
+    print(board8)
+    for row in table8.table:
+        print(row)
+    print('black score', table8.get_score('black', board8))
+    print('white score', table8.get_score('white', board8))
+    assert table8.get_score('black', board8) == -22
+    assert table8.get_score('white', board8) == 22
+    print('next black', table8.next_move('black', board8))
+    print('next white', table8.next_move('white', board8))
+    assert table8.next_move('black', board8) == (5, 2)
+    assert table8.next_move('white', board8) == (2, 5)
