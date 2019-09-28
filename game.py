@@ -135,11 +135,11 @@ if __name__ == '__main__':
     print(game.result.white_name, game.result.white_num)
     print()
 
-    board4x4 = Board(4)
+    board8x8 = Board(8)
     black_player = Player('black', 'Random', strategies.Random())
-    white_player = Player('white', 'Unselfish', strategies.Unselfish())
+    white_player = Player('white', 'Table', strategies.Table(8))
 
-    game = Game(board4x4, black_player, white_player, ConsoleDisplay())
+    game = Game(board8x8, black_player, white_player, ConsoleDisplay())
     game.play()
 
     print()
