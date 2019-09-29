@@ -144,7 +144,7 @@ class SlowStarter(AbstractStrategy):
 
 class Table(AbstractStrategy):
     """
-    評価関数で手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
+    評価テーブルで手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
     """
     CORNER, C, A, B, X, O = 50, -20, 0, -1, -25, -5
 
