@@ -228,8 +228,8 @@ class Table(AbstractStrategy):
 
             if score not in moves:
                 moves[score] = []
-            moves[score].append(move)
 
+            moves[score].append(move)
             board.undo()
 
         return random.choice(moves[max_score])
