@@ -113,13 +113,12 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
-    board_size = 26
-    matches = 1
+    board_size = 8
+    matches = 1000
 
     characters = [
         ('Greedy', strategies.Greedy()),
         ('SlowStarter', strategies.SlowStarter()),
-        ('Table', strategies.Table(board_size)),
     ]
 
     black_players = [Player('black', *character) for character in characters]

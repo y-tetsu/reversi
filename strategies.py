@@ -134,12 +134,12 @@ class SlowStarter(AbstractStrategy):
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        # 序盤以降
-        if (squares-blanks)/squares >= 0.15:
-            return self.greedy.next_move(color, board)
-
         # 序盤
-        return self.unselfish.next_move(color, board)
+        if (squares-blanks)/squares < 0.15:
+            return self.unselfish.next_move(color, board)
+
+        # 序盤以降
+        return self.greedy.next_move(color, board)
 
 
 class Table(AbstractStrategy):
