@@ -54,6 +54,10 @@ START_OFFSET_Y = 620              # スタートのYオフセット
 START_FONT_SIZE = 32              # スタートのフォントサイズ
 START_TEXT = 'クリックでスタート' # スタートのテキスト
 
+ASSIST_OFFSET_X = 50   # アシストのXオフセット
+ASSIST_OFFSET_Y = 20   # アシストのYオフセット
+ASSIST_FONT_SIZE = 12  # アシストのフォントサイズ
+
 SQUAREHEADER_OFFSET_XY = 15  # マス目の列見出しのXYオフセット
 SQUAREHEADER_FONT_SIZE = 20  # マス目の列見出しのフォントサイズ
 
@@ -65,6 +69,8 @@ TURNOVAL_SIZE_DIVISOR = 10  # 石をひっくり返す途中のサイズ(マス�
 TURN_BLACK_PATTERN = [('white', 'turnwhite'), ('turnwhite', 'black')]  # 黒の石をひっくり返すパターン
 TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の石をひっくり返すパターン
 TURN_STONE_WAIT = 0.1                                                  # 石をひっくり返す待ち時間(s)
+
+ASSIST_MENU = ['ON', 'OFF']  # 打てる場所のハイライト表示の有無
 
 STONE_MARK = '●'      # 石のマーク
 
@@ -91,6 +97,7 @@ class Window(tk.Frame):
         # 初期設定
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
+        self.assist = ASSIST_MENU[0]
 
         # ウィンドウ設定
         root.title(WINDOW_TITLE)                   # タイトル
@@ -108,10 +115,10 @@ class Window(tk.Frame):
         """
         ゲーム画面の初期化
         """
-        self.canvas.delete('all')                         # 全オブジェクト削除
-        self.board = ScreenBoard(self.canvas, self.size)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player)  # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas)             # スタートテキスト配置
+        self.canvas.delete('all')                                      # 全オブジェクト削除
+        self.board = ScreenBoard(self.canvas, self.size, self.assist)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player)               # 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas)                          # スタートテキスト配置
 
     def set_state(self, state):
         """
@@ -131,6 +138,7 @@ class Menu(tk.Menu):
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = black_players[0]
         self.white_player = white_players[0]
+        self.assist = ASSIST_MENU[0]
         self.menu_items = {}
 
         # イベントの生成
@@ -140,6 +148,7 @@ class Menu(tk.Menu):
         self.menu_items['size'] = range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2)
         self.menu_items['black'] = black_players
         self.menu_items['white'] = white_players
+        self.menu_items['assist'] = ASSIST_MENU
         self._create_menu_items()
 
     def _create_menu_items(self):
@@ -163,6 +172,7 @@ class Menu(tk.Menu):
                 self.size = item if name == 'size' else self.size
                 self.black_player = item if name == 'black' else self.black_player
                 self.white_player= item if name == 'white' else self.white_player
+                self.assist= item if name == 'assist' else self.assist
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
 
         return change_menu_selection
@@ -179,8 +189,9 @@ class ScreenBoard:
     """
     ボードの表示
     """
-    def __init__(self, canvas, size):
+    def __init__(self, canvas, size, assist):
         self.size = size
+        self.assist = assist
         self.canvas = canvas
         self._squares = []
         self._xlines = []
@@ -189,6 +200,16 @@ class ScreenBoard:
 
         # イベント生成
         self.event = threading.Event()
+
+        # アシスト表示
+        assist_text = 'Assist Off' if self.assist == 'OFF' else ''
+        self.text = canvas.create_text(
+            ASSIST_OFFSET_X,
+            ASSIST_OFFSET_Y,
+            text=assist_text,
+            font=('', ASSIST_FONT_SIZE),
+            fill=COLOR_WHITE
+        )
 
         # ボードの描画
         self._draw_squares()
@@ -328,7 +349,10 @@ class ScreenBoard:
             x2 = x1 + self.square_w
             y1 = self.square_y_ini + self.square_w * y
             y2 = y1 + self.square_w
-            self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_YELLOW, outline=COLOR_WHITE, tag='moves')
+            if self.assist == 'ON':
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_YELLOW, outline=COLOR_WHITE, tag='moves')
+            else:
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='moves')
 
     def disable_moves(self, moves):
         """
@@ -377,7 +401,8 @@ class ScreenBoard:
         打てる場所にカーソルが合ったとき
         """
         def _enter(event):
-            self.canvas.itemconfigure(square, fill=COLOR_RED)
+            if self.assist == 'ON':
+                self.canvas.itemconfigure(square, fill=COLOR_RED)
 
         return _enter
 
@@ -386,7 +411,8 @@ class ScreenBoard:
         打てる場所からカーソルが離れた
         """
         def _leave(event):
-            self.canvas.itemconfigure(square, fill=COLOR_YELLOW)
+            if self.assist == 'ON':
+                self.canvas.itemconfigure(square, fill=COLOR_YELLOW)
 
         return _leave
 
@@ -501,6 +527,7 @@ if __name__ == '__main__':
             window.size = window.menu.size
             window.player['black'] = window.menu.black_player
             window.player['white'] = window.menu.white_player
+            window.assist = window.menu.assist
 
             state = 'INIT'  # ウィンドウ初期化
             window.menu.event.clear()   # イベントをクリア

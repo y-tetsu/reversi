@@ -175,6 +175,7 @@ class Othello:
             self.window.size = self.window.menu.size
             self.window.player['black'] = self.window.menu.black_player
             self.window.player['white'] = self.window.menu.white_player
+            self.window.assist = self.window.menu.assist
             self.window.menu.event.clear()
 
             return True
