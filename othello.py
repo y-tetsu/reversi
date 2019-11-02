@@ -68,7 +68,6 @@ class Othello:
         """
         while True:
             if self.window.start.event.is_set():
-                self.window.set_state('disable')
                 self.window.start.event.clear()
                 self.state = Othello.PLAY
                 break
@@ -122,22 +121,19 @@ class Othello:
         """
         ゲーム画面
         """
-        # ボード準備
-        board = Board(self.window.board.size)
+        self.window.set_state('disable')
 
-        # プレイヤー準備
+        board = Board(self.window.board.size)
         players = {}
 
         for color in ('black', 'white'):
             name = self.window.player[color]
             players[color] = Player(color, name, self.strategies[name])
 
-        # ゲーム開始
         game = Game(board, players['black'], players['white'], WindowDisplay(self.window))
         game.play()
 
-        # 少し待って終了状態へ
-        time.sleep(1.5)
+        time.sleep(1.5)  # 少し待って終了状態へ
         self.state = Othello.END
 
     def __end(self):
@@ -150,7 +146,6 @@ class Othello:
             time.sleep(0.01)
 
             if self.window.start.event.is_set():
-                self.window.menu.set_state('disable')
                 self.window.start.event.clear()
                 self.state = Othello.REINIT
                 break
@@ -164,7 +159,6 @@ class Othello:
         再初期化(ゲーム終了後再スタート時)
         """
         self.window.init_screen()
-        self.window.set_state('disable')
         self.state = Othello.PLAY
 
     def _setting_changed(self):
