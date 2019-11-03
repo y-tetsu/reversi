@@ -270,6 +270,14 @@ class BitBoard(AbstractBoard):
         self._white_bitboard = int(''.join(white_bitboard_list), 2)
         self._max_bitboard = int(''.join(max_bitboard_list), 2)
 
+        self._bitboard_size = size * size
+        check = 16
+
+        while self._bitboard_size > check:
+            check *= 2
+
+        self._bitboard_size = check
+
     def __str__(self):
         pass
 
@@ -278,6 +286,25 @@ class BitBoard(AbstractBoard):
         石が置けるか
         """
         return not (~(self._black_bitboard | self._white_bitboard) & self._max_bitboard)
+
+    def _num_of_stones(self, stones):
+        """
+        石の数を数える
+        """
+        mask = int(''.join(['5'] * (self._bitboard_size // 4)), 16)
+        stones = stones - (stones >> 1 & mask)
+
+        mask = int(''.join(['3'] * (self._bitboard_size // 4)), 16)
+        stones = (stones & mask) + (stones >> 2 & mask)
+
+        check = 4
+        while check <= self._bitboard_size // 2:
+            mask = int(''.join((['0'] * (check // 4) + ['F'] * (check // 4)) * (self._bitboard_size // 2 // check)), 16)
+            stones = (stones & mask) + (stones >> check & mask)
+            print(f'mask 0x{mask:x}')
+            check *= 2
+
+        return stones
 
     def get_possibles(self, color):
         """
@@ -435,6 +462,9 @@ if __name__ == '__main__':
     # ビットボード
     bitboard4 = BitBoard(4)
     bitboard8 = BitBoard(8)
+    bitboard10 = BitBoard(10)
+    bitboard20 = BitBoard(20)
+    bitboard26 = BitBoard(26)
 
     print(f'0x{bitboard4._black_bitboard:x}')
     assert bitboard4._black_bitboard == 0x240
@@ -468,3 +498,13 @@ if __name__ == '__main__':
     bitboard4._white_bitboard = 0xFFFF
     assert bitboard4._is_board_full()
 
+    assert bitboard4._bitboard_size == 16
+    assert bitboard8._bitboard_size == 64
+    assert bitboard10._bitboard_size == 128
+    assert bitboard20._bitboard_size == 512
+    assert bitboard26._bitboard_size == 1024
+
+    print(bitboard4._num_of_stones(bitboard4._white_bitboard))
+
+    bitboard8._black_bitboard = 0x5555555555555555
+    print(bitboard8._num_of_stones(bitboard8._black_bitboard))
