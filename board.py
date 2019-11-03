@@ -3,11 +3,31 @@
 オセロのボード
 """
 
+import abc
+
 from stone import StoneFactory
 
 
 MIN_BOARD_SIZE = 4   # 最小ボードサイズ
 MAX_BOARD_SIZE = 26  # 最大ボードサイズ
+
+
+class AbstractBoard(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def get_possibles(self, color):
+        pass
+
+    @abc.abstractmethod
+    def put_stone(self, color, x, y):
+        pass
+
+    @abc.abstractmethod
+    def get_board_info(self):
+        pass
+
+    @abc.abstractmethod
+    def undo(self):
+        pass
 
 
 class BoardSizeError(Exception):
@@ -17,7 +37,7 @@ class BoardSizeError(Exception):
     pass
 
 
-class Board:
+class Board(AbstractBoard):
     """
     ボードを管理する
     """
@@ -202,6 +222,88 @@ class Board:
             for prev_x, prev_y in reversibles:
                 self._board[prev_y][prev_x] = self.stone[prev_color]
 
+
+class BitBoard(AbstractBoard):
+    """
+    ボードを管理する(ビットボードによる実装)
+    """
+    def __init__(self, size=8):
+        # ボードサイズの値チェック
+        if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
+            raise BoardSizeError(str(size) + ' is invalid size!')
+
+        # ボードサイズの初期設定
+        self.size = size
+
+        # 石とスコアの初期設定
+        self.stone = {}
+        self.score = {}
+        factory = StoneFactory()
+
+        for color in ('black', 'white', 'blank'):
+            self.stone[color] = factory.create(color)
+            if color != 'blank':
+                self.score[color] = 2
+
+        # 前回の手
+        self.prev = {}
+
+        # 盤面の初期設定
+        center = size // 2
+        self._board = [[self.stone['blank'] for _ in range(size)] for _ in range(size)]
+        self._board[center][center-1] = self.stone['black']
+        self._board[center-1][center] = self.stone['black']
+        self._board[center-1][center-1] = self.stone['white']
+        self._board[center][center] = self.stone['white']
+
+        # ビットボードの情報
+        black_bitboard_list = (['0'] * size) * size
+        white_bitboard_list = (['0'] * size) * size
+        max_bitboard_list = (['1'] * size) * size
+
+        black_bitboard_list[size*(center-1)+center] = '1'
+        black_bitboard_list[size*center+(center-1)] = '1'
+        white_bitboard_list[size*(center-1)+(center-1)] = '1'
+        white_bitboard_list[size*center+center] = '1'
+
+        self._black_bitboard = int(''.join(black_bitboard_list), 2)
+        self._white_bitboard = int(''.join(white_bitboard_list), 2)
+        self._max_bitboard = int(''.join(max_bitboard_list), 2)
+
+    def __str__(self):
+        pass
+
+    def _is_board_full(self):
+        """
+        石が置けるか
+        """
+        return not (~(self._black_bitboard | self._white_bitboard) & self._max_bitboard)
+
+    def get_possibles(self, color):
+        """
+        石が置ける場所をすべて返す
+        """
+        pass
+
+    def put_stone(self, color, x, y):
+        """
+        指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
+        """
+        pass
+
+    def get_board_info(self):
+        """
+        ボードの情報を返す
+        """
+        pass
+
+    def undo(self):
+        """
+        やり直し
+        """
+        pass
+
+
 if __name__ == '__main__':
     # サイズ異常
     invalid2 = False
@@ -329,3 +431,40 @@ if __name__ == '__main__':
     print(board4)
     board4.undo()
     print(board4)
+
+    # ビットボード
+    bitboard4 = BitBoard(4)
+    bitboard8 = BitBoard(8)
+
+    print(f'0x{bitboard4._black_bitboard:x}')
+    assert bitboard4._black_bitboard == 0x240
+
+    print(f'0x{bitboard4._white_bitboard:x}')
+    assert bitboard4._white_bitboard == 0x420
+
+    print(f'0x{bitboard8._black_bitboard:x}')
+    assert bitboard8._black_bitboard == 0x810000000
+
+    print(f'0x{bitboard8._white_bitboard:x}')
+    assert bitboard8._white_bitboard == 0x1008000000
+
+    bitboard4._black_bitboard = 0x5555
+    bitboard4._white_bitboard = 0xAAAA
+    assert bitboard4._is_board_full()
+
+    bitboard4._black_bitboard = 0x0
+    bitboard4._white_bitboard = 0xF
+    assert not bitboard4._is_board_full()
+
+    bitboard4._black_bitboard = 0x00
+    bitboard4._white_bitboard = 0xFF
+    assert not bitboard4._is_board_full()
+
+    bitboard4._black_bitboard = 0x000
+    bitboard4._white_bitboard = 0xFFF
+    assert not bitboard4._is_board_full()
+
+    bitboard4._black_bitboard = 0x0000
+    bitboard4._white_bitboard = 0xFFFF
+    assert bitboard4._is_board_full()
+
