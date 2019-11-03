@@ -5,7 +5,7 @@
 
 import itertools
 from game import Game
-from board import Board
+from board import BitBoard
 from display import NoneDisplay
 
 
@@ -61,7 +61,7 @@ class Simulator:
                 continue
 
             for _ in range(self.matches):
-                game = Game(Board(self.board_size), black_player, white_player, NoneDisplay())
+                game = Game(BitBoard(self.board_size), black_player, white_player, NoneDisplay())
                 game.play()
                 self.game_results.append(game.result)
 

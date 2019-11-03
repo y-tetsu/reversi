@@ -7,7 +7,7 @@ import sys
 import time
 
 import board
-from board import Board
+from board import BitBoard
 from player import Player
 from display import ConsoleDisplay
 from game import Game
@@ -149,7 +149,7 @@ class Othelloc:
         ゲームプレイ
         """
         # ボード準備
-        board = Board(self.board_size)
+        board = BitBoard(self.board_size)
 
         # プレイヤー準備
         selected_players = {}

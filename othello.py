@@ -6,7 +6,7 @@
 import sys
 import time
 
-from board import Board
+from board import BitBoard
 from player import Player
 from display import WindowDisplay
 from game import Game
@@ -123,7 +123,7 @@ class Othello:
         """
         self.window.set_state('disable')
 
-        board = Board(self.window.board.size)
+        board = BitBoard(self.window.board.size)
         players = {}
 
         for color in ('black', 'white'):
