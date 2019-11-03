@@ -471,7 +471,21 @@ class BitBoard(AbstractBoard):
         """
         やり直し
         """
-        pass
+        if self.prev:
+            size = self.size
+            prev = self.prev
+            reversibles = self.prev['reversibles']
+
+            put_list = (['0'] * size) * size
+            put_list[prev['y'] * size + prev['x']] = '1'
+            put = int(''.join(put_list), 2)
+
+            if prev['color'] == 'black':
+                self._black_bitboard ^= put | reversibles
+                self._white_bitboard ^= reversibles
+            else:
+                self._white_bitboard ^= put | reversibles
+                self._black_bitboard ^= reversibles
 
 
 if __name__ == '__main__':
@@ -728,5 +742,12 @@ if __name__ == '__main__':
     assert bitboard4.put_stone('black', 2, 3) == 1
     assert bitboard4.put_stone('white', 1, 3) == 4
     assert bitboard4.put_stone('black', 0, 3) == 1
+    print(bitboard4)
     assert bitboard4.put_stone('white', 0, 2) == 2
+    print(bitboard4)
+
+    # undo
+    bitboard4.undo()
+    assert bitboard4._black_bitboard == 0x0A48
+    assert bitboard4._white_bitboard == 0xF537
     print(bitboard4)
