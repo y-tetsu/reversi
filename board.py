@@ -373,7 +373,8 @@ class BitBoard(AbstractBoard):
         """
         指定座標のひっくり返せる石の場所をすべて返す
         """
-        ret = 0
+        ret = []
+        reversibles = 0
 
         # 石を置く場所
         size = self.size
@@ -393,7 +394,16 @@ class BitBoard(AbstractBoard):
 
             # 自分の石で囲まれている場合は結果を格納する
             if mask & player:
-                ret |= tmp
+                reversibles |= tmp
+
+        # 配列に変換
+        size = self.size
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            for x in range(size):
+                if reversibles & mask:
+                    ret += [(x, y)]
+                mask >>= 1
 
         return ret
 
@@ -445,13 +455,20 @@ class BitBoard(AbstractBoard):
         possibles = self.get_possibles(color)
 
         if (x, y) in possibles:
+            # 配置位置を整数に変換
             size = self.size
             put_list = (['0'] * size) * size
             put_list[y * size + x] = '1'
             put = int(''.join(put_list), 2)
 
-            reversibles = possibles[(x, y)]
+            # 反転位置を整数に変換
+            reversibles_list = possibles[(x, y)]
+            tmp = ['0'] * size * size
+            for tmp_x, tmp_y in reversibles_list:
+                tmp[tmp_y * size + tmp_x] = '1'
+            reversibles = int(''.join(tmp), 2)
 
+            # 自分の石を置いて相手の石をひっくり返す
             if color == 'black':
                 self._black_bitboard ^= put | reversibles
                 self._white_bitboard ^= reversibles
@@ -464,7 +481,7 @@ class BitBoard(AbstractBoard):
             # 打った手の記録
             self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles}
 
-            return self._get_stone_num(reversibles)
+            return reversibles_list
 
         return []
 
@@ -733,30 +750,30 @@ if __name__ == '__main__':
     bitboard4._black_bitboard = 0x640
     bitboard4._white_bitboard = 0x020
     possibles = bitboard4.get_possibles('black')
-    assert possibles == {(3, 2): 32, (2, 3): 32, (3, 3): 32}
+    assert possibles == {(3, 2): [(2, 2)], (2, 3): [(2, 2)], (3, 3): [(2, 2)]}
     possibles = bitboard4.get_possibles('white')
-    assert possibles == {(0, 0): 1024, (2, 0): 512, (0, 2): 64}
+    assert possibles == {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (0, 2): [(1, 2)]}
 
     bitboard4._black_bitboard = 0x040
     bitboard4._white_bitboard = 0x620
     possibles = bitboard4.get_possibles('black')
-    assert possibles == {(1, 0): 1024, (3, 0): 512, (3, 2): 32}
+    assert possibles == {(1, 0): [(1, 1)], (3, 0): [(2, 1)], (3, 2): [(2, 2)]}
     possibles = bitboard4.get_possibles('white')
-    assert possibles == {(0, 2): 64, (0, 3): 64, (1, 3): 64}
+    assert possibles == {(0, 2): [(1, 2)], (0, 3): [(1, 2)], (1, 3): [(1, 2)]}
 
     bitboard4._black_bitboard = 0x260
     bitboard4._white_bitboard = 0x400
     possibles = bitboard4.get_possibles('black')
-    assert possibles == {(0, 0): 1024, (1, 0): 1024, (0, 1): 1024}
+    assert possibles == {(0, 0): [(1, 1)], (1, 0): [(1, 1)], (0, 1): [(1, 1)]}
     possibles = bitboard4.get_possibles('white')
-    assert possibles == {(3, 1): 512, (1, 3): 64, (3, 3): 32}
+    assert possibles == {(3, 1): [(2, 1)], (1, 3): [(1, 2)], (3, 3): [(2, 2)]}
 
     bitboard4._black_bitboard = 0x200
     bitboard4._white_bitboard = 0x460
     possibles = bitboard4.get_possibles('black')
-    assert possibles == {(0, 1): 1024, (0, 3): 64, (2, 3): 32}
+    assert possibles == {(0, 1): [(1, 1)], (0, 3): [(1, 2)], (2, 3): [(2, 2)]}
     possibles = bitboard4.get_possibles('white')
-    assert possibles == {(2, 0): 512, (3, 0): 512, (3, 1): 512}
+    assert possibles == {(2, 0): [(2, 1)], (3, 0): [(2, 1)], (3, 1): [(2, 1)]}
 
     # put_stone
     bitboard4._black_bitboard = 0x240
@@ -764,21 +781,21 @@ if __name__ == '__main__':
 
     print('BitBoard')
     print(bitboard4)
-    assert bitboard4.put_stone('black', 1, 0) == 1
+    assert len(bitboard4.put_stone('black', 1, 0)) == 1
     assert bitboard4.prev == {'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024}
-    assert bitboard4.put_stone('white', 0, 0) == 1
+    assert len(bitboard4.put_stone('white', 0, 0)) == 1
     assert bitboard4.prev == {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024}
-    assert bitboard4.put_stone('black', 0, 1) == 1
-    assert bitboard4.put_stone('white', 2, 0) == 2
-    assert bitboard4.put_stone('black', 3, 2) == 1
-    assert bitboard4.put_stone('white', 3, 3) == 2
-    assert bitboard4.put_stone('black', 3, 1) == 2
-    assert bitboard4.put_stone('white', 3, 0) == 2
-    assert bitboard4.put_stone('black', 2, 3) == 1
-    assert bitboard4.put_stone('white', 1, 3) == 4
-    assert bitboard4.put_stone('black', 0, 3) == 1
+    assert len(bitboard4.put_stone('black', 0, 1)) == 1
+    assert len(bitboard4.put_stone('white', 2, 0)) == 2
+    assert len(bitboard4.put_stone('black', 3, 2)) == 1
+    assert len(bitboard4.put_stone('white', 3, 3)) == 2
+    assert len(bitboard4.put_stone('black', 3, 1)) == 2
+    assert len(bitboard4.put_stone('white', 3, 0)) == 2
+    assert len(bitboard4.put_stone('black', 2, 3)) == 1
+    assert len(bitboard4.put_stone('white', 1, 3)) == 4
+    assert len(bitboard4.put_stone('black', 0, 3)) == 1
     print(bitboard4)
-    assert bitboard4.put_stone('white', 0, 2) == 2
+    assert len(bitboard4.put_stone('white', 0, 2)) == 2
     print(bitboard4)
 
     # score
