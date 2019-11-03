@@ -222,6 +222,8 @@ class Board(AbstractBoard):
             for prev_x, prev_y in reversibles:
                 self._board[prev_y][prev_x] = self.stone[prev_color]
 
+            self._update_stone_num()
+
 
 class BitBoard(AbstractBoard):
     """
@@ -457,12 +459,21 @@ class BitBoard(AbstractBoard):
                 self._white_bitboard ^= put | reversibles
                 self._black_bitboard ^= reversibles
 
+            self._update_stone_num()
+
             # 打った手の記録
             self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles}
 
             return self._get_stone_num(reversibles)
 
         return []
+
+    def _update_stone_num(self):
+        """
+        石の数を更新する
+        """
+        self.score['black'] = self._get_stone_num(self._black_bitboard)
+        self.score['white'] = self._get_stone_num(self._white_bitboard)
 
     def get_board_info(self):
         """
@@ -504,6 +515,8 @@ class BitBoard(AbstractBoard):
             else:
                 self._white_bitboard ^= put | reversibles
                 self._black_bitboard ^= reversibles
+
+            self._update_stone_num()
 
 
 if __name__ == '__main__':
@@ -630,8 +643,12 @@ if __name__ == '__main__':
     board4 = Board(4)
     board4.put_stone('black', 0, 1)
     print(board4)
+    assert board4.score['black'] == 4
+    assert board4.score['white'] == 1
     board4.undo()
     print(board4)
+    assert board4.score['black'] == 2
+    assert board4.score['white'] == 2
     board4.put_stone('white', 0, 2)
     print(board4)
     board4.undo()
@@ -764,6 +781,10 @@ if __name__ == '__main__':
     assert bitboard4.put_stone('white', 0, 2) == 2
     print(bitboard4)
 
+    # score
+    assert bitboard4.score['black'] == 2
+    assert bitboard4.score['white'] == 14
+
     # undo
     bitboard4.undo()
     assert bitboard4._black_bitboard == 0x0A48
@@ -772,3 +793,7 @@ if __name__ == '__main__':
 
     # get_board_info
     assert bitboard4.get_board_info() == [[-1, -1, -1, -1], [1, -1, 1, -1], [0, 1, -1, -1], [1, -1, -1, -1]]
+
+    # score
+    assert bitboard4.score['black'] == 4
+    assert bitboard4.score['white'] == 11
