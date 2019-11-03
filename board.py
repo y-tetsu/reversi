@@ -314,7 +314,7 @@ class BitBoard(AbstractBoard):
         """
         return not (~(self._black_bitboard | self._white_bitboard) & self._max_bitboard)
 
-    def _num_of_stones(self, stones):
+    def _get_stone_num(self, stones):
         """
         分割統治法で石の数を数える
         """
@@ -460,7 +460,7 @@ class BitBoard(AbstractBoard):
             # 打った手の記録
             self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles}
 
-            return self._num_of_stones(reversibles)
+            return self._get_stone_num(reversibles)
 
         return []
 
@@ -680,12 +680,12 @@ if __name__ == '__main__':
     assert bitboard20._bitboard_size == 512
     assert bitboard26._bitboard_size == 1024
 
-    # _num_of_stones
-    assert bitboard4._num_of_stones(bitboard4._white_bitboard) == 16
+    # _get_stone_num
+    assert bitboard4._get_stone_num(bitboard4._white_bitboard) == 16
 
     bitboard8._black_bitboard = 0x5555555555555555
-    assert bitboard8._num_of_stones(bitboard8._black_bitboard) == 32
-    assert bitboard26._num_of_stones(bitboard26._black_bitboard) == 2
+    assert bitboard8._get_stone_num(bitboard8._black_bitboard) == 32
+    assert bitboard26._get_stone_num(bitboard26._black_bitboard) == 2
 
     # mask
     assert bitboard4._h_mask == 0x6666
