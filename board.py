@@ -337,6 +337,7 @@ class BitBoard(AbstractBoard):
         ret = {}
 
         # 前準備
+        size = self.size
         b, w = self._black_bitboard, self._white_bitboard
         player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
         possibles = 0                                              # 石が置ける場所
@@ -346,19 +347,19 @@ class BitBoard(AbstractBoard):
         blank = ~(player | opponent)                               # 空きマス位置
 
         # 置ける場所を探す
-        possibles |= self._get_possibles_lshift(horizontal, player, blank, 1)          # 左方向
-        possibles |= self._get_possibles_rshift(horizontal, player, blank, 1)          # 右方向
-        possibles |= self._get_possibles_lshift(vertical, player, blank, self.size)    # 上方向
-        possibles |= self._get_possibles_rshift(vertical, player, blank, self.size)    # 下方向
-        possibles |= self._get_possibles_lshift(diagonal, player, blank, self.size+1)  # 左斜め上方向
-        possibles |= self._get_possibles_lshift(diagonal, player, blank, self.size-1)  # 右斜め上方向
-        possibles |= self._get_possibles_rshift(diagonal, player, blank, self.size-1)  # 左斜め下方向
-        possibles |= self._get_possibles_rshift(diagonal, player, blank, self.size+1)  # 右斜め下方向
+        possibles |= self._get_possibles_lshift(horizontal, player, blank, 1)     # 左方向
+        possibles |= self._get_possibles_rshift(horizontal, player, blank, 1)     # 右方向
+        possibles |= self._get_possibles_lshift(vertical, player, blank, size)    # 上方向
+        possibles |= self._get_possibles_rshift(vertical, player, blank, size)    # 下方向
+        possibles |= self._get_possibles_lshift(diagonal, player, blank, size+1)  # 左斜め上方向
+        possibles |= self._get_possibles_lshift(diagonal, player, blank, size-1)  # 右斜め上方向
+        possibles |= self._get_possibles_rshift(diagonal, player, blank, size-1)  # 左斜め下方向
+        possibles |= self._get_possibles_rshift(diagonal, player, blank, size+1)  # 右斜め下方向
 
         # 石が置ける場所を格納
-        mask = 1 << (self.size * self.size - 1)
-        for y in range(self.size):
-            for x in range(self.size):
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            for x in range(size):
                 # 石が置ける場合
                 if possibles & mask:
                     ret[(x, y)] = self._get_reversibles(player, opponent, x, y)
@@ -373,8 +374,9 @@ class BitBoard(AbstractBoard):
         ret = 0
 
         # 石を置く場所
-        put_list = (['0'] * self.size) * self.size
-        put_list[y * self.size + x] = '1'
+        size = self.size
+        put_list = (['0'] * size) * size
+        put_list[y * size + x] = '1'
         put = int(''.join(put_list), 2)
 
         # 8方向を順番にチェック
@@ -441,8 +443,9 @@ class BitBoard(AbstractBoard):
         possibles = self.get_possibles(color)
 
         if (x, y) in possibles:
-            put_list = (['0'] * self.size) * self.size
-            put_list[y * self.size + x] = '1'
+            size = self.size
+            put_list = (['0'] * size) * size
+            put_list[y * size + x] = '1'
             put = int(''.join(put_list), 2)
 
             reversibles = possibles[(x, y)]
@@ -465,7 +468,22 @@ class BitBoard(AbstractBoard):
         """
         ボードの情報を返す
         """
-        pass
+        board_info = []
+        size = self.size
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            tmp = []
+            for x in range(size):
+                if self._black_bitboard & mask:
+                    tmp.append(1)
+                elif self._white_bitboard & mask:
+                    tmp.append(-1)
+                else:
+                    tmp.append(0)
+                mask >>= 1
+            board_info.append(tmp)
+
+        return board_info
 
     def undo(self):
         """
@@ -751,3 +769,6 @@ if __name__ == '__main__':
     assert bitboard4._black_bitboard == 0x0A48
     assert bitboard4._white_bitboard == 0xF537
     print(bitboard4)
+
+    # get_board_info
+    assert bitboard4.get_board_info() == [[-1, -1, -1, -1], [1, -1, 1, -1], [0, 1, -1, -1], [1, -1, -1, -1]]
