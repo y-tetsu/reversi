@@ -110,21 +110,40 @@ class Simulator:
 
 if __name__ == '__main__':
     import timeit
+    import os
+    import json
     from player import Player
     import strategies
 
-    board_size = 8
-    matches = 1000
+    setting_file = './setting.json'
+    setting = {
+        "board_size": 8,
+        "matches": 10,
+        "characters": [
+            "Unselfish",
+            "Random",
+            "Greedy",
+            "SlowStarter",
+            "Table"
+        ]
+    }
 
-    characters = [
-        ('Greedy', strategies.Greedy()),
-        ('SlowStarter', strategies.SlowStarter()),
-    ]
+    strategy_list = {
+        'Unselfish': strategies.Unselfish(),
+        'Random': strategies.Random(),
+        'Greedy': strategies.Greedy(),
+        'SlowStarter': strategies.SlowStarter(),
+        'Table': strategies.Table(),
+    }
 
-    black_players = [Player('black', *character) for character in characters]
-    white_players = [Player('white', *character) for character in characters]
+    if os.path.isfile(setting_file):
+        with open(setting_file) as f:
+            setting = json.load(f)
 
-    simulator = Simulator(black_players, white_players, matches, board_size)
+    black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
+    white_players = [Player('white', c, strategy_list[c]) for c in setting['characters']]
+
+    simulator = Simulator(black_players, white_players, setting['matches'], setting['board_size'])
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
