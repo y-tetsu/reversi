@@ -5,7 +5,7 @@
 
 import itertools
 from game import Game
-from board import BitBoard
+from board import Board, BitBoard
 from display import NoneDisplay
 
 
@@ -13,11 +13,12 @@ class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self, black_players, white_players, matches, board_size=8):
+    def __init__(self, black_players, white_players, matches, board_size=8, board_type='bitboard'):
         self.black_players = black_players
         self.white_players = white_players
         self.matches = matches
         self.board_size = board_size
+        self.board_type = board_type
         self.game_results = []
         self.total = []
 
@@ -61,7 +62,9 @@ class Simulator:
                 continue
 
             for _ in range(self.matches):
-                game = Game(BitBoard(self.board_size), black_player, white_player, NoneDisplay())
+                board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
+
+                game = Game(board, black_player, white_player, NoneDisplay())
                 game.play()
                 self.game_results.append(game.result)
 
@@ -115,18 +118,24 @@ if __name__ == '__main__':
     from player import Player
     import strategies
 
-    setting_file = './setting.json'
-    setting = {
-        "board_size": 8,
-        "matches": 10,
-        "characters": [
-            "Unselfish",
-            "Random",
-            "Greedy",
-            "SlowStarter",
-            "Table"
-        ]
-    }
+    setting_file, setting = './setting.json', {}
+
+    if os.path.isfile(setting_file):
+        with open(setting_file) as f:
+            setting = json.load(f)
+    else:
+        setting = {
+            "board_size": 8,
+            "board_type": "bitboard",
+            "matches": 10,
+            "characters": [
+                "Unselfish",
+                "Random",
+                "Greedy",
+                "SlowStarter",
+                "Table"
+            ]
+        }
 
     strategy_list = {
         'Unselfish': strategies.Unselfish(),
@@ -136,14 +145,10 @@ if __name__ == '__main__':
         'Table': strategies.Table(),
     }
 
-    if os.path.isfile(setting_file):
-        with open(setting_file) as f:
-            setting = json.load(f)
-
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
     white_players = [Player('white', c, strategy_list[c]) for c in setting['characters']]
 
-    simulator = Simulator(black_players, white_players, setting['matches'], setting['board_size'])
+    simulator = Simulator(black_players, white_players, setting['matches'], setting['board_size'], setting['board_type'])
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
