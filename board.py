@@ -70,6 +70,9 @@ class Board(AbstractBoard):
         self._board[center-1][center-1] = self.stone['white']
         self._board[center][center] = self.stone['white']
 
+        # 置ける場所のキャッシュ
+        self._possibles_cache = {}
+
     def __str__(self):
         # 列の見出し
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
@@ -86,16 +89,23 @@ class Board(AbstractBoard):
         """
         石が置ける場所をすべて返す
         """
-        ret = {}
+        # キャッシュが存在する場合
+        if color in self._possibles_cache:
+            return self._possibles_cache[color]
+
+        self._possibles_cache.clear()
+        possibles = {}
 
         for y in range(self.size):
             for x in range(self.size):
                 reversibles = self._get_reversibles(color, x, y)
 
                 if reversibles:
-                    ret[(x, y)] = reversibles
+                    possibles[(x, y)] = reversibles
 
-        return ret
+        self._possibles_cache[color] = possibles
+
+        return possibles
 
     def _get_reversibles(self, color, x, y):
         """
