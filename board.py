@@ -384,9 +384,7 @@ class BitBoard(AbstractBoard):
 
         # 石を置く場所
         size = self.size
-        put_list = (['0'] * size) * size
-        put_list[y * size + x] = '1'
-        put = int(''.join(put_list), 2)
+        put = 1 << ((size*size-1)-(y*size+x))
 
         # 8方向を順番にチェック
         for direction in ('U', 'UR', 'R', 'BR', 'B', 'BL', 'L', 'UL'):
@@ -463,9 +461,7 @@ class BitBoard(AbstractBoard):
         if (x, y) in possibles:
             # 配置位置を整数に変換
             size = self.size
-            put_list = (['0'] * size) * size
-            put_list[y * size + x] = '1'
-            put = int(''.join(put_list), 2)
+            put = 1 << ((size*size-1)-(y*size+x))
 
             # 反転位置を整数に変換
             reversibles_list = possibles[(x, y)]
@@ -524,13 +520,10 @@ class BitBoard(AbstractBoard):
         やり直し
         """
         if self.prev:
-            size = self.size
-            prev = self.prev
+            size, prev = self.size, self.prev
             reversibles = self.prev['reversibles']
 
-            put_list = (['0'] * size) * size
-            put_list[prev['y'] * size + prev['x']] = '1'
-            put = int(''.join(put_list), 2)
+            put = 1 << ((size*size-1)-(self.prev['y']*size+self.prev['x']))
 
             if prev['color'] == 'black':
                 self._black_bitboard ^= put | reversibles
