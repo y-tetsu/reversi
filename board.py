@@ -261,18 +261,10 @@ class BitBoard(AbstractBoard):
 
         # ビットボードの初期配置
         center = size // 2
-
-        black_bitboard_list = (['0'] * size) * size
-        black_bitboard_list[size*(center-1)+center] = '1'
-        black_bitboard_list[size*center+(center-1)] = '1'
-        self._black_bitboard = int(''.join(black_bitboard_list), 2)
-
-        white_bitboard_list = (['0'] * size) * size
-        white_bitboard_list[size*(center-1)+(center-1)] = '1'
-        white_bitboard_list[size*center+center] = '1'
-        self._white_bitboard = int(''.join(white_bitboard_list), 2)
-
-        self._max_bitboard = int(''.join((['1'] * size) * size), 2)
+        self._black_bitboard = 1 << ((size*size-1)-(size*(center-1)+center))
+        self._black_bitboard |= 1 << ((size*size-1)-(size*center+(center-1)))
+        self._white_bitboard = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
+        self._white_bitboard |= 1 << ((size*size-1)-(size*center+center))
 
         # ビットボードのサイズ(全ビットが収まる最小の2の倍数)
         tmp_board_size = size * size
@@ -322,12 +314,6 @@ class BitBoard(AbstractBoard):
             body += f'{num:2d}' + ''.join([value for value in row]) + '\n'
 
         return header + body
-
-    def _is_board_full(self):
-        """
-        石が置けるか
-        """
-        return not (~(self._black_bitboard | self._white_bitboard) & self._max_bitboard)
 
     def _get_stone_num(self, stones):
         """
@@ -706,28 +692,9 @@ if __name__ == '__main__':
     assert bitboard8._black_bitboard == 0x810000000
     assert bitboard8._white_bitboard == 0x1008000000
 
-    # _is_board_full
-    bitboard4._black_bitboard = 0x5555
-    bitboard4._white_bitboard = 0xAAAA
-    assert bitboard4._is_board_full()
-
-    bitboard4._black_bitboard = 0x0
-    bitboard4._white_bitboard = 0xF
-    assert not bitboard4._is_board_full()
-
-    bitboard4._black_bitboard = 0x00
-    bitboard4._white_bitboard = 0xFF
-    assert not bitboard4._is_board_full()
-
-    bitboard4._black_bitboard = 0x000
-    bitboard4._white_bitboard = 0xFFF
-    assert not bitboard4._is_board_full()
-
+    # _bitboard_size
     bitboard4._black_bitboard = 0x0000
     bitboard4._white_bitboard = 0xFFFF
-    assert bitboard4._is_board_full()
-
-    # _bitboard_size
     assert bitboard4._bitboard_size == 16
     assert bitboard8._bitboard_size == 64
     assert bitboard10._bitboard_size == 128
