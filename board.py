@@ -296,6 +296,9 @@ class BitBoard(AbstractBoard):
         self._l_mask = int(''.join((['1'] * (size-1) + ['0']) * size), 2)                      # 左方向のマスク値
         self._ul_mask = int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)  # 左上方向のマスク値
 
+        # 置ける場所のキャッシュ
+        self._possibles_cache = {}
+
     def __str__(self):
         size = self.size
 
@@ -346,6 +349,11 @@ class BitBoard(AbstractBoard):
         """
         石が置ける場所をすべて返す
         """
+        # キャッシュが存在する場合
+        if color in self._possibles_cache:
+            return self._possibles_cache[color]
+
+        self._possibles_cache.clear()
         ret = {}
 
         # 前準備
@@ -376,6 +384,8 @@ class BitBoard(AbstractBoard):
                 if possibles & mask:
                     ret[(x, y)] = self._get_reversibles(player, opponent, x, y)
                 mask >>= 1
+
+        self._possibles_cache[color] = ret
 
         return ret
 
