@@ -442,10 +442,9 @@ class BitBoard(AbstractBoard):
 
             # 反転位置を整数に変換
             reversibles_list = possibles[(x, y)]
-            tmp = ['0'] * size * size
+            reversibles = 0
             for tmp_x, tmp_y in reversibles_list:
-                tmp[tmp_y * size + tmp_x] = '1'
-            reversibles = int(''.join(tmp), 2)
+                reversibles |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
 
             # 自分の石を置いて相手の石をひっくり返す
             if color == 'black':
