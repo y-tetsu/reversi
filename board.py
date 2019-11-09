@@ -4,8 +4,10 @@
 """
 
 import abc
+from collections import namedtuple
 
 from stone import StoneFactory
+import BitBoardMethods
 
 
 MIN_BOARD_SIZE = 4   # 最小ボードサイズ
@@ -267,19 +269,20 @@ class BitBoard(AbstractBoard):
         self._white_bitboard |= 1 << ((size*size-1)-(size*center+center))
 
         # 置ける場所の検出用
-        self._h_mask = int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2)                                      # 水平方向のマスク値
-        self._v_mask = int(''.join(['0'] * size + ['1'] * size * (size-2) + ['0'] * size), 2)                          # 垂直方向のマスク値
-        self._d_mask = int(''.join(['0'] * size + (['0'] + (['1'] * (size-2)) + ['0']) * (size-2) + ['0'] * size), 2)  # 斜め方向のマスク値
-
-        # ひっくり返せる場所の検出用
-        self._u_mask = int(''.join(['1'] * size * (size-1) + ['0'] * size), 2)                 # 上方向のマスク値
-        self._ur_mask = int(''.join((['0'] + ['1'] * (size-1)) * (size-1) + ['0'] * size), 2)  # 右上方向のマスク値
-        self._r_mask = int(''.join((['0'] + ['1'] * (size-1)) * size), 2)                      # 右方向のマスク値
-        self._br_mask = int(''.join(['0'] * size + (['0'] + ['1'] * (size-1)) * (size-1)), 2)  # 右下方向のマスク値
-        self._b_mask = int(''.join(['0'] * size + ['1'] * size * (size-1)), 2)                 # 下方向のマスク値
-        self._bl_mask = int(''.join(['0'] * size + (['1'] * (size-1) + ['0']) * (size-1)), 2)  # 左下方向のマスク値
-        self._l_mask = int(''.join((['1'] * (size-1) + ['0']) * size), 2)                      # 左方向のマスク値
-        self._ul_mask = int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)  # 左上方向のマスク値
+        BitMask = namedtuple('BitMask', 'h v d u ur r br b bl l ul')
+        self._mask = BitMask(
+            int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2),                                      # 水平方向のマスク値
+            int(''.join(['0'] * size + ['1'] * size * (size-2) + ['0'] * size), 2),                          # 垂直方向のマスク値
+            int(''.join(['0'] * size + (['0'] + (['1'] * (size-2)) + ['0']) * (size-2) + ['0'] * size), 2),  # 斜め方向のマスク値
+            int(''.join(['1'] * size * (size-1) + ['0'] * size), 2),                                         # 上方向のマスク値
+            int(''.join((['0'] + ['1'] * (size-1)) * (size-1) + ['0'] * size), 2),                           # 右上方向のマスク値
+            int(''.join((['0'] + ['1'] * (size-1)) * size), 2),                                              # 右方向のマスク値
+            int(''.join(['0'] * size + (['0'] + ['1'] * (size-1)) * (size-1)), 2),                           # 右下方向のマスク値
+            int(''.join(['0'] * size + ['1'] * size * (size-1)), 2),                                         # 下方向のマスク値
+            int(''.join(['0'] * size + (['1'] * (size-1) + ['0']) * (size-1)), 2),                           # 左下方向のマスク値
+            int(''.join((['1'] * (size-1) + ['0']) * size), 2),                                              # 左方向のマスク値
+            int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
+        )
 
         # 置ける場所のキャッシュ
         self._possibles_cache = {}
@@ -317,117 +320,11 @@ class BitBoard(AbstractBoard):
             return self._possibles_cache[color]
 
         self._possibles_cache.clear()
-        ret = {}
 
-        # 前準備
-        size = self.size
-        b, w = self._black_bitboard, self._white_bitboard
-        player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
-        possibles = 0                                              # 石が置ける場所
-        horizontal = opponent & self._h_mask                       # 水平方向のチェック値
-        vertical = opponent & self._v_mask                         # 垂直方向のチェック値
-        diagonal = opponent & self._d_mask                         # 斜め方向のチェック値
-        blank = ~(player | opponent)                               # 空きマス位置
-
-        # 置ける場所を探す
-        possibles |= self._get_possibles_lshift(horizontal, player, blank, 1)     # 左方向
-        possibles |= self._get_possibles_rshift(horizontal, player, blank, 1)     # 右方向
-        possibles |= self._get_possibles_lshift(vertical, player, blank, size)    # 上方向
-        possibles |= self._get_possibles_rshift(vertical, player, blank, size)    # 下方向
-        possibles |= self._get_possibles_lshift(diagonal, player, blank, size+1)  # 左斜め上方向
-        possibles |= self._get_possibles_lshift(diagonal, player, blank, size-1)  # 右斜め上方向
-        possibles |= self._get_possibles_rshift(diagonal, player, blank, size-1)  # 左斜め下方向
-        possibles |= self._get_possibles_rshift(diagonal, player, blank, size+1)  # 右斜め下方向
-
-        # 石が置ける場所を格納
-        mask = 1 << (size * size - 1)
-        for y in range(size):
-            for x in range(size):
-                # 石が置ける場合
-                if possibles & mask:
-                    ret[(x, y)] = self._get_reversibles(player, opponent, x, y)
-                mask >>= 1
-
+        ret = BitBoardMethods.get_possibles(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
         self._possibles_cache[color] = ret
 
         return ret
-
-    def _get_reversibles(self, player, opponent, x, y):
-        """
-        指定座標のひっくり返せる石の場所をすべて返す
-        """
-        ret = []
-        reversibles = 0
-
-        # 石を置く場所
-        size = self.size
-        put = 1 << ((size*size-1)-(y*size+x))
-
-        # 8方向を順番にチェック
-        for direction in ('U', 'UR', 'R', 'BR', 'B', 'BL', 'L', 'UL'):
-            tmp = 0
-            mask = self._get_next_put(put, direction)
-
-            # 相手の石が存在する限り位置を記憶
-            while mask & opponent:
-                tmp |= mask
-                mask = self._get_next_put(mask, direction)
-
-            # 自分の石で囲まれている場合は結果を格納する
-            if mask & player:
-                reversibles |= tmp
-
-        # 配列に変換
-        size = self.size
-        mask = 1 << (size * size - 1)
-        for y in range(size):
-            for x in range(size):
-                if reversibles & mask:
-                    ret += [(x, y)]
-                mask >>= 1
-
-        return ret
-
-    def _get_next_put(self, put, direction):
-        """
-        指定位置から指定方向に1マス分移動した場所を返す
-        """
-        if direction == 'U':     # 上
-            return (put << self.size) & self._u_mask
-        elif direction == 'UR':  # 右上
-            return (put << (self.size-1)) & self._ur_mask
-        elif direction == 'R':   # 右
-            return (put >> 1) & self._r_mask
-        elif direction == 'BR':  # 右下
-            return (put >> (self.size+1)) & self._br_mask
-        elif direction == 'B':   # 下
-            return (put >> self.size) & self._b_mask
-        elif direction == 'BL':  # 左下
-            return (put >> (self.size-1)) & self._bl_mask
-        elif direction == 'L':   # 左
-            return (put << 1) & self._l_mask
-        elif direction == 'UL':  # 左上
-            return (put << (self.size+1)) & self._ul_mask
-        else:
-            return 0
-
-    def _get_possibles_lshift(self, mask, player, blank, shift_size):
-        """
-        左シフトで石が置ける場所を取得
-        """
-        tmp = mask & (player << shift_size)
-        for _ in range(self.size-3):
-            tmp |= mask & (tmp << shift_size)
-        return blank & (tmp << shift_size)
-
-    def _get_possibles_rshift(self, mask, player, blank, shift_size):
-        """
-        右シフトで石が置ける場所を取得
-        """
-        tmp = mask & (player >> shift_size)
-        for _ in range(self.size-3):
-            tmp |= mask & (tmp >> shift_size)
-        return blank & (tmp >> shift_size)
 
     def put_stone(self, color, x, y):
         """
@@ -659,29 +556,29 @@ if __name__ == '__main__':
     assert bitboard8._white_bitboard == 0x1008000000
 
     # mask
-    assert bitboard4._h_mask == 0x6666
-    assert bitboard4._v_mask == 0x0FF0
-    assert bitboard4._d_mask == 0x0660
-    assert bitboard4._u_mask == 0xFFF0
-    assert bitboard4._ur_mask == 0x7770
-    assert bitboard4._r_mask == 0x7777
-    assert bitboard4._br_mask == 0x0777
-    assert bitboard4._b_mask == 0x0FFF
-    assert bitboard4._bl_mask == 0x0EEE
-    assert bitboard4._l_mask == 0xEEEE
-    assert bitboard4._ul_mask == 0xEEE0
+    assert bitboard4._mask.h == 0x6666
+    assert bitboard4._mask.v == 0x0FF0
+    assert bitboard4._mask.d == 0x0660
+    assert bitboard4._mask.u == 0xFFF0
+    assert bitboard4._mask.ur == 0x7770
+    assert bitboard4._mask.r == 0x7777
+    assert bitboard4._mask.br == 0x0777
+    assert bitboard4._mask.b == 0x0FFF
+    assert bitboard4._mask.bl == 0x0EEE
+    assert bitboard4._mask.l == 0xEEEE
+    assert bitboard4._mask.ul == 0xEEE0
 
-    assert bitboard8._h_mask == 0x7E7E7E7E7E7E7E7E
-    assert bitboard8._v_mask == 0x00FFFFFFFFFFFF00
-    assert bitboard8._d_mask == 0x007E7E7E7E7E7E00
-    assert bitboard8._u_mask == 0xFFFFFFFFFFFFFF00
-    assert bitboard8._ur_mask == 0x7F7F7F7F7F7F7F00
-    assert bitboard8._r_mask == 0x7F7F7F7F7F7F7F7F
-    assert bitboard8._br_mask == 0x007F7F7F7F7F7F7F
-    assert bitboard8._b_mask == 0x00FFFFFFFFFFFFFF
-    assert bitboard8._bl_mask == 0x00FEFEFEFEFEFEFE
-    assert bitboard8._l_mask == 0xFEFEFEFEFEFEFEFE
-    assert bitboard8._ul_mask == 0xFEFEFEFEFEFEFE00
+    assert bitboard8._mask.h == 0x7E7E7E7E7E7E7E7E
+    assert bitboard8._mask.v == 0x00FFFFFFFFFFFF00
+    assert bitboard8._mask.d == 0x007E7E7E7E7E7E00
+    assert bitboard8._mask.u == 0xFFFFFFFFFFFFFF00
+    assert bitboard8._mask.ur == 0x7F7F7F7F7F7F7F00
+    assert bitboard8._mask.r == 0x7F7F7F7F7F7F7F7F
+    assert bitboard8._mask.br == 0x007F7F7F7F7F7F7F
+    assert bitboard8._mask.b == 0x00FFFFFFFFFFFFFF
+    assert bitboard8._mask.bl == 0x00FEFEFEFEFEFEFE
+    assert bitboard8._mask.l == 0xFEFEFEFEFEFEFEFE
+    assert bitboard8._mask.ul == 0xFEFEFEFEFEFEFE00
 
     # get_possibles
     bitboard4._black_bitboard = 0x640
