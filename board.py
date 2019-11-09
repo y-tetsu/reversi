@@ -266,13 +266,6 @@ class BitBoard(AbstractBoard):
         self._white_bitboard = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
         self._white_bitboard |= 1 << ((size*size-1)-(size*center+center))
 
-        # ビットボードのサイズ(全ビットが収まる最小の2の倍数)
-        tmp_board_size = size * size
-        bitboard_size = 16
-        while tmp_board_size > bitboard_size:
-            bitboard_size *= 2
-        self._bitboard_size = bitboard_size
-
         # 置ける場所の検出用
         self._h_mask = int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2)                                      # 水平方向のマスク値
         self._v_mask = int(''.join(['0'] * size + ['1'] * size * (size-2) + ['0'] * size), 2)                          # 垂直方向のマスク値
@@ -314,22 +307,6 @@ class BitBoard(AbstractBoard):
             body += f'{num:2d}' + ''.join([value for value in row]) + '\n'
 
         return header + body
-
-    def _get_stone_num(self, stones):
-        """
-        分割統治法で石の数を数える
-        """
-        bit_digit = self._bitboard_size // 2
-        mask_size = 1
-
-        # 2bit毎、4bit毎…とビットサイズ分倍々で足していく
-        while mask_size <= bit_digit:
-            bit_ptn = (['0'] * mask_size + ['1'] * mask_size) * (bit_digit // mask_size)  # ビットパターンの配列
-            mask = int(''.join(bit_ptn), 2)                                               # ビットパターンを数値に変換
-            stones = (stones & mask) + ((stones >> mask_size) & mask)                     # マスクパターンの合計値
-            mask_size *= 2                                                                # 次のマスクサイズ
-
-        return stones
 
     def get_possibles(self, color):
         """
@@ -474,25 +451,20 @@ class BitBoard(AbstractBoard):
             if color == 'black':
                 self._black_bitboard ^= put | reversibles
                 self._white_bitboard ^= reversibles
+                self.score['black'] += 1 + len(reversibles_list)
+                self.score['white'] -= len(reversibles_list)
             else:
                 self._white_bitboard ^= put | reversibles
                 self._black_bitboard ^= reversibles
-
-            self._update_stone_num()
+                self.score['black'] -= len(reversibles_list)
+                self.score['white'] += 1 + len(reversibles_list)
 
             # 打った手の記録
-            self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles}
+            self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles, 'stone_num': len(reversibles_list)}
 
             return reversibles_list
 
         return []
-
-    def _update_stone_num(self):
-        """
-        石の数を更新する
-        """
-        self.score['black'] = self._get_stone_num(self._black_bitboard)
-        self.score['white'] = self._get_stone_num(self._white_bitboard)
 
     def get_board_info(self):
         """
@@ -521,18 +493,20 @@ class BitBoard(AbstractBoard):
         """
         if self.prev:
             size, prev = self.size, self.prev
-            reversibles = self.prev['reversibles']
+            reversibles, stone_num = self.prev['reversibles'], self.prev['stone_num']
 
             put = 1 << ((size*size-1)-(self.prev['y']*size+self.prev['x']))
 
             if prev['color'] == 'black':
                 self._black_bitboard ^= put | reversibles
                 self._white_bitboard ^= reversibles
+                self.score['black'] -= 1 + stone_num
+                self.score['white'] += stone_num
             else:
                 self._white_bitboard ^= put | reversibles
                 self._black_bitboard ^= reversibles
-
-            self._update_stone_num()
+                self.score['black'] += stone_num
+                self.score['white'] -= 1 + stone_num
 
 
 if __name__ == '__main__':
@@ -685,22 +659,6 @@ if __name__ == '__main__':
     assert bitboard8._black_bitboard == 0x810000000
     assert bitboard8._white_bitboard == 0x1008000000
 
-    # _bitboard_size
-    bitboard4._black_bitboard = 0x0000
-    bitboard4._white_bitboard = 0xFFFF
-    assert bitboard4._bitboard_size == 16
-    assert bitboard8._bitboard_size == 64
-    assert bitboard10._bitboard_size == 128
-    assert bitboard20._bitboard_size == 512
-    assert bitboard26._bitboard_size == 1024
-
-    # _get_stone_num
-    assert bitboard4._get_stone_num(bitboard4._white_bitboard) == 16
-
-    bitboard8._black_bitboard = 0x5555555555555555
-    assert bitboard8._get_stone_num(bitboard8._black_bitboard) == 32
-    assert bitboard26._get_stone_num(bitboard26._black_bitboard) == 2
-
     # mask
     assert bitboard4._h_mask == 0x6666
     assert bitboard4._v_mask == 0x0FF0
@@ -762,9 +720,9 @@ if __name__ == '__main__':
     print('BitBoard')
     print(bitboard4)
     assert len(bitboard4.put_stone('black', 1, 0)) == 1
-    assert bitboard4.prev == {'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024}
+    assert bitboard4.prev == {'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'stone_num': 1}
     assert len(bitboard4.put_stone('white', 0, 0)) == 1
-    assert bitboard4.prev == {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024}
+    assert bitboard4.prev == {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024, 'stone_num': 1}
     assert len(bitboard4.put_stone('black', 0, 1)) == 1
     assert len(bitboard4.put_stone('white', 2, 0)) == 2
     assert len(bitboard4.put_stone('black', 3, 2)) == 1
