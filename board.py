@@ -368,8 +368,8 @@ class BitBoard(AbstractBoard):
             tmp = 0
             mask = self._get_next_put(put, direction)
 
-            # ボードの範囲内 かつ 相手の石が存在する 限り位置を記憶
-            while mask and mask & opponent:
+            # 相手の石が存在する限り位置を記憶
+            while mask & opponent:
                 tmp |= mask
                 mask = self._get_next_put(mask, direction)
 
