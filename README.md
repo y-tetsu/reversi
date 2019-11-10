@@ -13,6 +13,9 @@ $ python othelloc.py
 ```
 ![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 
-## 実行環境
+## 動作確認環境
+Windows10<br>
 Python 3.7.0<br>
 pyinstaller 3.4<br>
+cython 0.28.5<br>
+Microsoft Visual C++ 2019<br>
