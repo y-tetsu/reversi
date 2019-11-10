@@ -1,2 +1,5 @@
 #!/usr/bin/env python
-from BitBoardMethods.GetPossibles import get_possibles
+try:
+    from BitBoardMethods.GetPossiblesFast import get_possibles
+except ImportError:
+    from BitBoardMethods.GetPossibles import get_possibles
