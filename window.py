@@ -14,7 +14,7 @@ import strategies
 
 WINDOW_TITLE = 'othello'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
-WINDOW_HEIGHT = 680       # ウィンドウ高さ
+WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
 COLOR_GREEN = 'green'    # 緑
 COLOR_BLACK = 'black'    # 黒
@@ -50,7 +50,7 @@ INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
 }
 
 START_OFFSET_X = WINDOW_WIDTH//2  # スタートのXオフセット
-START_OFFSET_Y = 620              # スタートのYオフセット
+START_OFFSET_Y = 610              # スタートのYオフセット
 START_FONT_SIZE = 32              # スタートのフォントサイズ
 START_TEXT = 'クリックでスタート' # スタートのテキスト
 
