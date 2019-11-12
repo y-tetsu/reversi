@@ -16,6 +16,7 @@ $ python othelloc.py
 ## 動作確認環境
 Windows10<br>
 Python 3.7.0<br>
+numpy 1.15.1<br>
 pyinstaller 3.4<br>
 cython 0.28.5<br>
 Microsoft Visual C++ 2019<br>
