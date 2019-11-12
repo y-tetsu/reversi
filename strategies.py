@@ -197,7 +197,6 @@ class Table(AbstractStrategy):
 
         self.table = np.array(table)
 
-
     def get_score(self, color, board):
         """
         評価値を取得する
