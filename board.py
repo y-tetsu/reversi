@@ -366,22 +366,8 @@ class BitBoard(AbstractBoard):
         """
         ボードの情報を返す
         """
-        board_info = []
-        size = self.size
-        mask = 1 << (size * size - 1)
-        for y in range(size):
-            tmp = []
-            for x in range(size):
-                if self._black_bitboard & mask:
-                    tmp.append(1)
-                elif self._white_bitboard & mask:
-                    tmp.append(-1)
-                else:
-                    tmp.append(0)
-                mask >>= 1
-            board_info.append(tmp)
 
-        return board_info
+        return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
 
     def undo(self):
         """
