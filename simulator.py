@@ -4,6 +4,9 @@
 """
 
 import itertools
+from functools import partial
+from multiprocessing import Pool
+
 from game import Game
 from board import Board, BitBoard
 from display import NoneDisplay
@@ -13,12 +16,13 @@ class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self, black_players, white_players, matches, board_size=8, board_type='bitboard'):
+    def __init__(self, black_players, white_players, matches, board_size=8, board_type='bitboard', processes=1):
         self.black_players = black_players
         self.white_players = white_players
         self.matches = matches
         self.board_size = board_size
         self.board_type = board_type
+        self.processes = processes
         self.game_results = []
         self.total = []
 
@@ -57,16 +61,23 @@ class Simulator:
         """
         シミュレーションを開始する
         """
-        for black_player, white_player in itertools.product(self.black_players, self.white_players):
-            if black_player.name == white_player.name:
-                continue
+        if self.processes > 1:
+            print('processes', self.processes)
+            with Pool(processes=self.processes) as pool:
+                func = partial(game_play_multi, self.matches, self.board_type, self.board_size)
+                ret = pool.map(func, itertools.product(self.black_players, self.white_players))
+                self.game_results = list(itertools.chain.from_iterable(ret))  # 1次元配列に展開する
+        else:
+            for black_player, white_player in itertools.product(self.black_players, self.white_players):
+                if black_player.name == white_player.name:
+                    continue
 
-            for _ in range(self.matches):
-                board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
+                for _ in range(self.matches):
+                    board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
 
-                game = Game(board, black_player, white_player, NoneDisplay())
-                game.play()
-                self.game_results.append(game.result)
+                    game = Game(board, black_player, white_player, NoneDisplay())
+                    game.play()
+                    self.game_results.append(game.result)
 
         self._totalize_results()
 
@@ -78,37 +89,62 @@ class Simulator:
         total = {}
 
         for result in self.game_results:
-            winlose = result.winlose
-            black_name = result.black_name
-            white_name = result.white_name
+            if result:
+                winlose = result.winlose
+                black_name = result.black_name
+                white_name = result.white_name
 
-            if black_name not in total:
-                total[black_name] = {}
+                if black_name not in total:
+                    total[black_name] = {}
 
-            if white_name not in total[black_name]:
-                total[black_name][white_name] = {'matches': 0, 'wins': 0, 'draws': 0}
+                if white_name not in total[black_name]:
+                    total[black_name][white_name] = {'matches': 0, 'wins': 0, 'draws': 0}
 
-            if winlose == Game.BLACK_WIN:
-                total[black_name][white_name]['wins'] += 1
-            elif winlose == Game.DRAW:
-                total[black_name][white_name]['draws'] += 1
+                if winlose == Game.BLACK_WIN:
+                    total[black_name][white_name]['wins'] += 1
+                elif winlose == Game.DRAW:
+                    total[black_name][white_name]['draws'] += 1
 
-            total[black_name][white_name]['matches'] += 1
+                total[black_name][white_name]['matches'] += 1
 
-            if white_name not in total:
-                total[white_name] = {}
+                if white_name not in total:
+                    total[white_name] = {}
 
-            if black_name not in total[white_name]:
-                total[white_name][black_name] = {'matches': 0, 'wins': 0, 'draws': 0}
+                if black_name not in total[white_name]:
+                    total[white_name][black_name] = {'matches': 0, 'wins': 0, 'draws': 0}
 
-            if winlose == Game.WHITE_WIN:
-                total[white_name][black_name]['wins'] += 1
-            elif winlose == Game.DRAW:
-                total[white_name][black_name]['draws'] += 1
+                if winlose == Game.WHITE_WIN:
+                    total[white_name][black_name]['wins'] += 1
+                elif winlose == Game.DRAW:
+                    total[white_name][black_name]['draws'] += 1
 
-            total[white_name][black_name]['matches'] += 1
+                total[white_name][black_name]['matches'] += 1
 
         self.total = total
+
+
+def game_play_multi(matches, board_type, board_size, players):
+    """
+    並列処理でゲームを実行
+    """
+    black, white = players
+
+    if black.name == white.name:
+        return []
+
+    print(black.name, white.name)
+
+    ret = []
+
+    for _ in range(matches):
+        board = BitBoard(board_size) if board_type == 'bitboard' else Board(board_size)
+
+        game = Game(board, black, white, NoneDisplay())
+        game.play()
+
+        ret.append(game.result)
+
+    return ret
 
 
 if __name__ == '__main__':
@@ -128,6 +164,7 @@ if __name__ == '__main__':
             "board_size": 8,
             "board_type": "bitboard",
             "matches": 10,
+            "processes": 1,
             "characters": [
                 "Unselfish",
                 "Random",
@@ -148,7 +185,7 @@ if __name__ == '__main__':
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
     white_players = [Player('white', c, strategy_list[c]) for c in setting['characters']]
 
-    simulator = Simulator(black_players, white_players, setting['matches'], setting['board_size'], setting['board_type'])
+    simulator = Simulator(black_players, white_players, setting['matches'], setting['board_size'], setting['board_type'], setting['processes'])
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
