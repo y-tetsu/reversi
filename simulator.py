@@ -27,10 +27,10 @@ class Simulator:
 
     def __str__(self):
         board_size = '\nSize : ' + str(self.board_size) + '\n'
-        header = '                | ' + ' '.join([f'{key:15s}' for key in self.total]) + ' | Total  | Win   Lose  Draw  Match\n'
-        hr = '----------------------------------------------------------------------------------------------------\n'
+        header1 = '                | ' + ' '.join([f'{key:15s}' for key in self.total]) + '\n'
+        hr1 = '-'*18 + '-'*15*len(self.total) + '-'*(len(self.total)-1) + '\n'
 
-        body = ''
+        body1 = ''
         for key1 in self.total:
             row = f'{key1:15s} | '
             wins, draws, matches = 0, 0, 0
@@ -47,14 +47,33 @@ class Simulator:
                 ratio = f'{ratio:3.1f}%'
                 row += f'{ratio:>6s}          '
 
-            row += '| '
+            body1 += f'{row}\n'
+
+        header2 = '                | Total  | Win   Lose  Draw  Match\n'
+        hr2 = '--------------------------------------------------\n'
+
+        body2 = ''
+        for key1 in self.total:
+            row = f'{key1:15s} | '
+            wins, draws, matches = 0, 0, 0
+
+            for key2 in self.total:
+                if key1 == key2:
+                    continue
+
+                wins += self.total[key1][key2]['wins']
+                draws += self.total[key1][key2]['draws']
+                matches += self.total[key1][key2]['matches']
+                ratio = self.total[key1][key2]['wins'] / self.total[key1][key2]['matches'] * 100
+                ratio = f'{ratio:3.1f}%'
+
             ratio = wins / matches * 100
             ratio = f'{ratio:3.1f}%'
             loses = matches - wins - draws
             row += f'{ratio:>6s} | {wins:>5d} {loses:>5d} {draws:>5d} {matches:>5d}'
-            body += f'{row}\n'
+            body2 += f'{row}\n'
 
-        return board_size + header + hr + body + hr
+        return board_size + header1 + hr1 + body1 + hr1 + '\n' + header2 + hr2 + body2 + hr2
 
     def start(self):
         """
