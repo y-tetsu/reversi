@@ -175,7 +175,14 @@ if __name__ == '__main__':
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
     white_players = [Player('white', c, strategy_list[c]) for c in setting['characters']]
 
-    simulator = Simulator(black_players, white_players, setting['matches'], setting['board_size'], setting['board_type'], setting['processes'])
+    simulator = Simulator(
+        black_players,
+        white_players,
+        setting['matches'],
+        setting['board_size'],
+        setting['board_type'],
+        setting['processes']
+    )
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
