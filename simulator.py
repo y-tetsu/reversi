@@ -4,7 +4,6 @@
 """
 
 import itertools
-from functools import partial
 from multiprocessing import Pool
 
 from game import Game
@@ -61,25 +60,40 @@ class Simulator:
         """
         シミュレーションを開始する
         """
+        print('processes', self.processes)
+
         if self.processes > 1:
-            print('processes', self.processes)
             with Pool(processes=self.processes) as pool:
-                func = partial(game_play_multi, self.matches, self.board_type, self.board_size)
-                ret = pool.map(func, itertools.product(self.black_players, self.white_players))
+                ret = pool.map(self._game_play, itertools.product(self.black_players, self.white_players))
                 self.game_results = list(itertools.chain.from_iterable(ret))  # 1次元配列に展開する
         else:
-            for black_player, white_player in itertools.product(self.black_players, self.white_players):
-                if black_player.name == white_player.name:
-                    continue
-
-                for _ in range(self.matches):
-                    board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
-
-                    game = Game(board, black_player, white_player, NoneDisplay())
-                    game.play()
-                    self.game_results.append(game.result)
+            for players in itertools.product(self.black_players, self.white_players):
+                self.game_results += self._game_play(players)
 
         self._totalize_results()
+
+    def _game_play(self, players):
+        """
+        ゲームを実行
+        """
+        black, white = players
+
+        if black.name == white.name:
+            return []
+
+        print(black.name, white.name)
+
+        ret = []
+
+        for _ in range(self.matches):
+            board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
+
+            game = Game(board, black, white, NoneDisplay())
+            game.play()
+
+            ret.append(game.result)
+
+        return ret
 
     def _totalize_results(self):
         """
@@ -121,30 +135,6 @@ class Simulator:
                 total[white_name][black_name]['matches'] += 1
 
         self.total = total
-
-
-def game_play_multi(matches, board_type, board_size, players):
-    """
-    並列処理でゲームを実行
-    """
-    black, white = players
-
-    if black.name == white.name:
-        return []
-
-    print(black.name, white.name)
-
-    ret = []
-
-    for _ in range(matches):
-        board = BitBoard(board_size) if board_type == 'bitboard' else Board(board_size)
-
-        game = Game(board, black, white, NoneDisplay())
-        game.play()
-
-        ret.append(game.result)
-
-    return ret
 
 
 if __name__ == '__main__':
