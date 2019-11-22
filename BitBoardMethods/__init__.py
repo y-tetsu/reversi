@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import pyximport
+pyximport.install()
+
 try:
     from BitBoardMethods.GetPossiblesFast import get_possibles
 except ImportError:
