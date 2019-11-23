@@ -22,9 +22,9 @@ cdef _get_board_info_size8(b, w):
         unsigned int b0 = (b >> 32)& 0xFFFFFFFF
         unsigned int b1 = b & 0xFFFFFFFF
         unsigned int w0 = (w >> 32) & 0xFFFFFFFF
-        unsigned int w1 = w & 0xFFFFFFFF
+        unsigned int w1 = w & 0x00000000FFFFFFFF
+        unsigned int mask0 = 0x80000000
         unsigned int mask1 = 0x80000000
-        unsigned int mask2 = 0x80000000
 
     board_info = []
 
@@ -34,23 +34,23 @@ cdef _get_board_info_size8(b, w):
         # ビットボード上位32bit
         if y < 4:
             for x in range(8):
-                if b0 & mask1:
+                if b0 & mask0:
                     tmp.append(1)
-                elif w0 & mask1:
+                elif w0 & mask0:
+                    tmp.append(-1)
+                else:
+                    tmp.append(0)
+                mask0 >>= 1
+        # ビットボード下位32bit
+        else:
+            for x in range(8):
+                if b1 & mask1:
+                    tmp.append(1)
+                elif w1 & mask1:
                     tmp.append(-1)
                 else:
                     tmp.append(0)
                 mask1 >>= 1
-        # ビットボード下位32bit
-        else:
-            for x in range(8):
-                if b1 & mask2:
-                    tmp.append(1)
-                elif w1 & mask2:
-                    tmp.append(-1)
-                else:
-                    tmp.append(0)
-                mask2 >>= 1
 
         board_info.append(tmp)
 
