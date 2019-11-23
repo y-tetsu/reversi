@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#cython: language_level=3
 """
 ビットボードの配置可能位置取得処理
 """

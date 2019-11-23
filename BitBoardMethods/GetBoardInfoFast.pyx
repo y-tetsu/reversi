@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#cython: language_level=3
 """
 ビットボードの情報取得処理
 """
