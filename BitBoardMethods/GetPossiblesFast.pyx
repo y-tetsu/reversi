@@ -14,7 +14,7 @@ def get_possibles(color, size, b, w, mask):
     return _get_possibles(color, size, b, w, mask)
 
 
-def _get_possibles_size8(color, b, w, mask):
+cdef _get_possibles_size8(color, b, w, mask):
     """
     石が置ける場所をすべて返す(ボードサイズ8限定)
     """
@@ -51,7 +51,7 @@ def _get_possibles_size8(color, b, w, mask):
 
 
 
-def _get_possibles(color, size, b, w, mask):
+cdef _get_possibles(color, size, b, w, mask):
     """
     石が置ける場所をすべて返す(ボードサイズ8以外)
     """
@@ -87,7 +87,7 @@ def _get_possibles(color, size, b, w, mask):
     return ret
 
 
-def _get_reversibles(size, player, opponent, x, y, mask):
+cdef _get_reversibles(size, player, opponent, x, y, mask):
     """
     指定座標のひっくり返せる石の場所をすべて返す
     """
@@ -122,7 +122,7 @@ def _get_reversibles(size, player, opponent, x, y, mask):
     return ret
 
 
-def _get_next_put(size, put, direction, mask):
+cdef _get_next_put(size, put, direction, mask):
     """
     指定位置から指定方向に1マス分移動した場所を返す
     """
@@ -146,7 +146,7 @@ def _get_next_put(size, put, direction, mask):
         return 0
 
 
-def _get_possibles_lshift(size, mask, player, blank, shift_size):
+cdef _get_possibles_lshift(size, mask, player, blank, shift_size):
     """
     左シフトで石が置ける場所を取得
     """
@@ -156,7 +156,7 @@ def _get_possibles_lshift(size, mask, player, blank, shift_size):
     return blank & (tmp << shift_size)
 
 
-def _get_possibles_rshift(size, mask, player, blank, shift_size):
+cdef _get_possibles_rshift(size, mask, player, blank, shift_size):
     """
     右シフトで石が置ける場所を取得
     """
