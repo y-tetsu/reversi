@@ -87,142 +87,70 @@ cdef _get_possibles_size8(color, b, w, mask):
     possibles1 |= blank1 & (tmp1 >> 1)
 
     # 上方向に石を置ける場所を探す
-    tmp1 = vertical1 & (p1 << 8)         # 下位
+    tmp1 = vertical1 & (p1 << 8)  # 下位のシフト
     tmp1 |= vertical1 & (tmp1 << 8)
     tmp1 |= vertical1 & (tmp1 << 8)
     possibles1 |= blank1 & (tmp1 << 8)
 
-    possibles0 |= blank0 & (tmp1 >> 24)  # 上位直下で置く
-
-    tmp0 = vertical0 & (tmp1 >> 24)      # 下位続き
+    tmp0 = vertical0 & ((p0 << 8) | ((tmp1 | p1) >> 24))  # 上位のシフト+下位続き+上位直下にプレイヤー
     tmp0 |= vertical0 & (tmp0 << 8)
     tmp0 |= vertical0 & (tmp0 << 8)
-    possibles0 |= blank0 & (tmp0 << 8)
-
-    tmp0 = vertical0 & (p1 >> 24)        # 上位直下プレイヤー
-    tmp0 |= vertical0 & (tmp0 << 8)
-    tmp0 |= vertical0 & (tmp0 << 8)
-    possibles0 |= blank0 & (tmp0 << 8)
-
-    tmp0 = vertical0 & (p0 << 8)         # 上位
-    tmp0 |= vertical0 & (tmp0 << 8)
-    tmp0 |= vertical0 & (tmp0 << 8)
-    possibles0 |= blank0 & (tmp0 << 8)
+    possibles0 |= blank0 & ((tmp0 << 8) | (tmp1 >> 24))   # 上位のシフト+下位直上で置く場合
 
     # 下方向に石を置ける場所を探す
-    tmp0 = vertical0 & (p0 >> 8)         # 上位
+    tmp0 = vertical0 & (p0 >> 8)  # 上位のシフト
     tmp0 |= vertical0 & (tmp0 >> 8)
     tmp0 |= vertical0 & (tmp0 >> 8)
     possibles0 |= blank0 & (tmp0 >> 8)
 
-    possibles1 |= blank1 & (tmp0 << 24)  # 下位直上で置く
-
-    tmp1 = vertical1 & (tmp0 << 24)      # 上位続き
+    tmp1 = vertical1 & ((p1 >> 8) | ((tmp0 | p0) << 24))  # 下位のシフト+上位続き+下位直上にプレイヤー
     tmp1 |= vertical1 & (tmp1 >> 8)
     tmp1 |= vertical1 & (tmp1 >> 8)
-    possibles1 |= blank1 & (tmp1 >> 8)
-
-    tmp1 = vertical1 & (p0 << 24)        # 下位直上プレイヤー
-    tmp1 |= vertical1 & (tmp1 >> 8)
-    tmp1 |= vertical1 & (tmp1 >> 8)
-    possibles1 |= blank1 & (tmp1 >> 8)
-
-    tmp1 = vertical1 & (p1 >> 8)         # 下位
-    tmp1 |= vertical1 & (tmp1 >> 8)
-    tmp1 |= vertical1 & (tmp1 >> 8)
-    possibles1 |= blank1 & (tmp1 >> 8)
+    possibles1 |= blank1 & ((tmp1 >> 8) | (tmp0 << 24))   # 下位のシフト+上位直下で置く場合
 
     # 左斜め上方向に石を置ける場所を探す
-    tmp1 = diagonal1 & (p1 << 9)         # 下位
+    tmp1 = diagonal1 & (p1 << 9)  # 下位のシフト
     tmp1 |= diagonal1 & (tmp1 << 9)
     tmp1 |= diagonal1 & (tmp1 << 9)
     possibles1 |= blank1 & (tmp1 << 9)
 
-    possibles0 |= blank0 & (tmp1 >> 23)  # 上位直下で置く
-
-    tmp0 = diagonal0 & (tmp1 >> 23)      # 下位続き
+    tmp0 = diagonal0 & ((p0 << 9) | ((tmp1 | p1) >> 23))  # 上位のシフト+下位続き+上位直下にプレイヤー
     tmp0 |= diagonal0 & (tmp0 << 9)
     tmp0 |= diagonal0 & (tmp0 << 9)
-    possibles0 |= blank0 & (tmp0 << 9)
-
-    tmp0 = diagonal0 & (p1 >> 23)        # 上位直下プレイヤー
-    tmp0 |= diagonal0 & (tmp0 << 9)
-    tmp0 |= diagonal0 & (tmp0 << 9)
-    possibles0 |= blank0 & (tmp0 << 9)
-
-    tmp0 = diagonal0 & (p0 << 9)         # 上位
-    tmp0 |= diagonal0 & (tmp0 << 9)
-    tmp0 |= diagonal0 & (tmp0 << 9)
-    possibles0 |= blank0 & (tmp0 << 9)
+    possibles0 |= blank0 & ((tmp0 << 9) | (tmp1 >> 23))   # 上位のシフト+下位直上で置く場合
 
     # 左斜め下方向に石を置ける場所を探す
-    tmp0 = diagonal0 & (p0 >> 7)         # 上位
+    tmp0 = diagonal0 & (p0 >> 7)  # 上位のシフト
     tmp0 |= diagonal0 & (tmp0 >> 7)
     tmp0 |= diagonal0 & (tmp0 >> 7)
     possibles0 |= blank0 & (tmp0 >> 7)
 
-    possibles1 |= blank1 & (tmp0 << 25)  # 下位直上で置く
-
-    tmp1 = diagonal1 & (tmp0 << 25)      # 上位続き
+    tmp1 = diagonal1 & ((p1 >> 7) | ((tmp0 | p0) << 25))  # 下位のシフト+上位続き+下位直上にプレイヤー
     tmp1 |= diagonal1 & (tmp1 >> 7)
     tmp1 |= diagonal1 & (tmp1 >> 7)
-    possibles1 |= blank1 & (tmp1 >> 7)
-
-    tmp1 = diagonal1 & (p0 << 25)        # 下位直上プレイヤー
-    tmp1 |= diagonal1 & (tmp1 >> 7)
-    tmp1 |= diagonal1 & (tmp1 >> 7)
-    possibles1 |= blank1 & (tmp1 >> 7)
-
-    tmp1 = diagonal1 & (p1 >> 7)         # 下位
-    tmp1 |= diagonal1 & (tmp1 >> 7)
-    tmp1 |= diagonal1 & (tmp1 >> 7)
-    possibles1 |= blank1 & (tmp1 >> 7)
+    possibles1 |= blank1 & ((tmp1 >> 7) | (tmp0 << 25))   # 下位のシフト+上位直下で置く場合
 
     # 右斜め上方向に石を置ける場所を探す
-    tmp1 = diagonal1 & (p1 << 7)         # 下位
+    tmp1 = diagonal1 & (p1 << 7)  # 下位のシフト
     tmp1 |= diagonal1 & (tmp1 << 7)
     tmp1 |= diagonal1 & (tmp1 << 7)
     possibles1 |= blank1 & (tmp1 << 7)
 
-    possibles0 |= blank0 & (tmp1 >> 25)  # 上位直下で置く
-
-    tmp0 = diagonal0 & (tmp1 >> 25)      # 下位続き
+    tmp0 = diagonal0 & ((p0 << 7) | ((tmp1 | p1) >> 25))  # 上位のシフト+下位続き+上位直下にプレイヤー
     tmp0 |= diagonal0 & (tmp0 << 7)
     tmp0 |= diagonal0 & (tmp0 << 7)
-    possibles0 |= blank0 & (tmp0 << 7)
-
-    tmp0 = diagonal0 & (p1 >> 25)        # 上位直下プレイヤー
-    tmp0 |= diagonal0 & (tmp0 << 7)
-    tmp0 |= diagonal0 & (tmp0 << 7)
-    possibles0 |= blank0 & (tmp0 << 7)
-
-    tmp0 = diagonal0 & (p0 << 7)         # 上位
-    tmp0 |= diagonal0 & (tmp0 << 7)
-    tmp0 |= diagonal0 & (tmp0 << 7)
-    possibles0 |= blank0 & (tmp0 << 7)
+    possibles0 |= blank0 & ((tmp0 << 7) | (tmp1 >> 25))   # 上位のシフト+下位直上で置く場合
 
     # 右斜め下方向に石を置ける場所を探す
-    tmp0 = diagonal0 & (p0 >> 9)         # 上位
+    tmp0 = diagonal0 & (p0 >> 9)  # 上位のシフト
     tmp0 |= diagonal0 & (tmp0 >> 9)
     tmp0 |= diagonal0 & (tmp0 >> 9)
     possibles0 |= blank0 & (tmp0 >> 9)
 
-    possibles1 |= blank1 & (tmp0 << 23)  # 下位直上で置く
-
-    tmp1 = diagonal1 & (tmp0 << 23)      # 上位続き
+    tmp1 = diagonal1 & ((p1 >> 9) | ((tmp0 | p0) << 23))  # 下位のシフト+上位続き+下位直上にプレイヤー
     tmp1 |= diagonal1 & (tmp1 >> 9)
     tmp1 |= diagonal1 & (tmp1 >> 9)
-    possibles1 |= blank1 & (tmp1 >> 9)
-
-    tmp1 = diagonal1 & (p0 << 23)        # 下位直上プレイヤー
-    tmp1 |= diagonal1 & (tmp1 >> 9)
-    tmp1 |= diagonal1 & (tmp1 >> 9)
-    possibles1 |= blank1 & (tmp1 >> 9)
-
-    tmp1 = diagonal1 & (p1 >> 9)         # 下位
-    tmp1 |= diagonal1 & (tmp1 >> 9)
-    tmp1 |= diagonal1 & (tmp1 >> 9)
-    possibles1 |= blank1 & (tmp1 >> 9)
+    possibles1 |= blank1 & ((tmp1 >> 9) | (tmp0 << 23))   # 下位のシフト+上位直下で置く場合
 
     # 石が置ける場所を格納
     ret = {}
