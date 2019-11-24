@@ -9,12 +9,12 @@ def get_possibles(color, size, b, w, mask):
     石が置ける場所をすべて返す
     """
     if size == 8:
-        return _get_possibles_size8(color, b, w, mask)
+        return _get_possibles_size8(color, b, w)
 
     return _get_possibles(color, size, b, w, mask)
 
 
-cdef _get_possibles_size8(color, b, w, mask):
+cdef _get_possibles_size8(color, b, w):
     """
     石が置ける場所をすべて返す(ボードサイズ8限定)
     """
@@ -164,16 +164,110 @@ cdef _get_possibles_size8(color, b, w, mask):
         if y < 4:
             for x in range(8):
                 if possibles0 & mask0:
-                    ret[(x, y)] = _get_reversibles(8, player, opponent, x, y, mask)
+                    ret[(x, y)] = _get_reversibles_size8(p0, p1, o0, o1, x, y)
                 mask0 >>= 1
         # ビットボード下位32bit
         else:
             for x in range(8):
                 if possibles1 & mask1:
-                    ret[(x, y)] = _get_reversibles(8, player, opponent, x, y, mask)
+                    ret[(x, y)] = _get_reversibles_size8(p0, p1, o0, o1, x, y)
                 mask1 >>= 1
 
     return ret
+
+
+cdef _get_reversibles_size8(unsigned int p0, unsigned int p1, unsigned int o0, unsigned int o1, unsigned int x, unsigned int y):
+    """
+    指定座標のひっくり返せる石の場所をすべて返す(サイズ8限定)
+    """
+    cdef:
+        unsigned int direction, next0, next1, buff0, buff1
+        unsigned int put0 = 0          # 石を置く場所(上位)
+        unsigned int put1 = 0          # 石を置く場所(下位)
+        unsigned int reversibles0 = 0  # ひっくり返せる場所(上位)
+        unsigned int reversibles1 = 0  # ひっくり返せる場所(下位)
+
+    # 石を置く場所
+    if y < 4:
+        put0 = 1 << (31-(y*8+x))
+    else:
+        put1 = 1 << (31-((y-4)*8+x))
+
+    # 8方向を順番にチェック
+    for direction in range(8):
+        buff0, buff1 = 0, 0
+        next0, next1 = _get_next_put_size8(put0, put1, direction)
+
+        # 相手の石が存在する限り位置を記憶
+        while (next0 & o0) or (next1 & o1):
+            buff0 |= next0
+            buff1 |= next1
+            next0, next1 = _get_next_put_size8(next0, next1, direction)
+
+        # 自分の石で囲まれている場合は結果を格納する
+        if (next0 & p0) or (next1 & p1):
+            reversibles0 |= buff0
+            reversibles1 |= buff1
+
+    # 配列に変換
+    ret = []
+
+    cdef:
+        unsigned int mask0 = 0x80000000
+        unsigned int mask1 = 0x80000000
+
+    for y in range(8):
+        # ビットボード上位32bit
+        if y < 4:
+            for x in range(8):
+                if reversibles0 & mask0:
+                    ret += [(x, y)]
+                mask0 >>= 1
+        # ビットボード下位32bit
+        else:
+            for x in range(8):
+                if reversibles1 & mask1:
+                    ret += [(x, y)]
+                mask1 >>= 1
+
+    return ret
+
+
+cdef _get_next_put_size8(unsigned int put0, unsigned int put1, unsigned int direction):
+    """
+    指定位置から指定方向に1マス分移動した場所を返す(ボードサイズ8限定)
+    """
+    cdef:
+        unsigned int upper, lower
+
+    if direction == 0:     # 上
+        upper = 0xFFFFFFFF & ((put0 << 8) | (put1 >> 24))
+        lower = 0xFFFFFF00 & (put1 << 8)
+    elif direction == 1:  # 右上
+        upper = 0x7F7F7F7F & ((put0 << 7) | (put1 >> 25))
+        lower = 0x7F7F7F00 & (put1 << 7)
+    elif direction == 2:   # 右
+        upper = 0x7F7F7F7F & (put0 >> 1)
+        lower = 0x7F7F7F7F & (put1 >> 1)
+    elif direction == 3:  # 右下
+        upper = 0x007F7F7F & (put0 >> 9)
+        lower = 0x7F7F7F7F & ((put1 >> 9) | (put0 << 23))
+    elif direction == 4:   # 下
+        upper = 0x00FFFFFF & (put0 >> 8)
+        lower = 0xFFFFFFFF & ((put1 >> 8) | (put0 << 24))
+    elif direction == 5:  # 左下
+        upper = 0x00FEFEFE & (put0 >> 7)
+        lower = 0xFEFEFEFE & ((put1 >> 7) | (put0 << 25))
+    elif direction == 6:   # 左
+        upper = 0xFEFEFEFE & (put0 << 1)
+        lower = 0xFEFEFEFE & (put1 << 1)
+    elif direction == 7:  # 左上
+        upper = 0xFEFEFEFE & ((put0 << 9) | (put1 >> 23))
+        lower = 0xFEFEFE00 & (put1 << 9)
+    else:
+        upper, lower = 0, 0
+
+    return upper, lower
 
 
 cdef _get_possibles(color, size, b, w, mask):
@@ -214,7 +308,7 @@ cdef _get_possibles(color, size, b, w, mask):
 
 cdef _get_reversibles(size, player, opponent, x, y, mask):
     """
-    指定座標のひっくり返せる石の場所をすべて返す
+    指定座標のひっくり返せる石の場所をすべて返す(サイズ8以外)
     """
     ret = []
     reversibles = 0
@@ -249,7 +343,7 @@ cdef _get_reversibles(size, player, opponent, x, y, mask):
 
 cdef _get_next_put(size, put, direction, mask):
     """
-    指定位置から指定方向に1マス分移動した場所を返す
+    指定位置から指定方向に1マス分移動した場所を返す(ボードサイズ8以外)
     """
     if direction == 'U':     # 上
         return (put << size) & mask.u
