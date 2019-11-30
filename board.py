@@ -236,6 +236,8 @@ class Board(AbstractBoard):
 
             self._update_stone_num()
 
+        self._possibles_cache.clear()
+
 
 class BitBoard(AbstractBoard):
     """
@@ -389,6 +391,8 @@ class BitBoard(AbstractBoard):
                 self._black_bitboard ^= reversibles
                 self.score['black'] += stone_num
                 self.score['white'] -= 1 + stone_num
+
+        self._possibles_cache.clear()
 
 
 if __name__ == '__main__':
