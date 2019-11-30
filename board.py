@@ -62,7 +62,7 @@ class Board(AbstractBoard):
                 self.score[color] = 2
 
         # 前回の手
-        self.prev = {}
+        self.prev = []
 
         # 盤面の初期設定
         center = size // 2
@@ -185,7 +185,7 @@ class Board(AbstractBoard):
             self._update_stone_num()
 
             # 打った手の記録
-            self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles}
+            self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles})
 
             return reversibles
 
@@ -223,12 +223,14 @@ class Board(AbstractBoard):
         """
         やり直し
         """
-        if self.prev:
-            color = self.prev['color']
+        prev = self.prev.pop()
+
+        if prev:
+            color = prev['color']
             prev_color = 'white' if color == 'black' else 'black'
-            x = self.prev['x']
-            y = self.prev['y']
-            reversibles = self.prev['reversibles']
+            x = prev['x']
+            y = prev['y']
+            reversibles = prev['reversibles']
             self._board[y][x] = self.stone['blank']
 
             for prev_x, prev_y in reversibles:
@@ -261,7 +263,7 @@ class BitBoard(AbstractBoard):
                 self.score[color] = 2
 
         # 前回の手
-        self.prev = {}
+        self.prev = []
 
         # ビットボードの初期配置
         center = size // 2
@@ -358,7 +360,7 @@ class BitBoard(AbstractBoard):
                 self.score['white'] += 1 + len(reversibles_list)
 
             # 打った手の記録
-            self.prev = {'color': color, 'x': x, 'y': y, 'reversibles': reversibles, 'stone_num': len(reversibles_list)}
+            self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles, 'stone_num': len(reversibles_list)})
 
             return reversibles_list
 
@@ -375,11 +377,13 @@ class BitBoard(AbstractBoard):
         """
         やり直し
         """
-        if self.prev:
-            size, prev = self.size, self.prev
-            reversibles, stone_num = self.prev['reversibles'], self.prev['stone_num']
+        prev = self.prev.pop()
 
-            put = 1 << ((size*size-1)-(self.prev['y']*size+self.prev['x']))
+        if prev:
+            size = self.size
+            reversibles, stone_num = prev['reversibles'], prev['stone_num']
+
+            put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
 
             if prev['color'] == 'black':
                 self._black_bitboard ^= put | reversibles
