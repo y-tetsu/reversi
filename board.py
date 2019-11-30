@@ -87,12 +87,12 @@ class Board(AbstractBoard):
 
         return header + body
 
-    def get_possibles(self, color):
+    def get_possibles(self, color, force=False):
         """
         石が置ける場所をすべて返す
         """
         # キャッシュが存在する場合
-        if color in self._possibles_cache:
+        if not force and color in self._possibles_cache:
             return self._possibles_cache[color]
 
         self._possibles_cache.clear()
@@ -311,12 +311,12 @@ class BitBoard(AbstractBoard):
 
         return header + body
 
-    def get_possibles(self, color):
+    def get_possibles(self, color, force=False):
         """
         石が置ける場所をすべて返す
         """
         # キャッシュが存在する場合
-        if color in self._possibles_cache:
+        if not force and color in self._possibles_cache:
             return self._possibles_cache[color]
 
         self._possibles_cache.clear()
