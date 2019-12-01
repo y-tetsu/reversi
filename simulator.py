@@ -179,7 +179,11 @@ if __name__ == '__main__':
                 "Random",
                 "Greedy",
                 "SlowStarter",
-                "Table"
+                "Table",
+                "MinMax1",
+                "MinMax2",
+                "MinMax3",
+                "MinMax4",
             ]
         }
 
@@ -189,6 +193,10 @@ if __name__ == '__main__':
         'Greedy': strategies.Greedy(),
         'SlowStarter': strategies.SlowStarter(),
         'Table': strategies.Table(),
+        'MinMax1': strategies.MinMax1(),
+        'MinMax2': strategies.MinMax2(),
+        'MinMax3': strategies.MinMax3(),
+        'MinMax4': strategies.MinMax4(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
