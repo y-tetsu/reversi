@@ -365,7 +365,7 @@ class MinMax2(AbstractStrategy):
         return self.random.next_move(color, board)
 
 
-class MinMax3(MinMax):
+class MinMax3(AbstractStrategy):
     """
     MinMax法で次の手を決める(3手読み)
     """
@@ -383,7 +383,7 @@ class MinMax3(MinMax):
         return self.random.next_move(color, board)
 
 
-class MinMax4(MinMax):
+class MinMax4(AbstractStrategy):
     """
     MinMax法で次の手を決める(4手読み)
     """
