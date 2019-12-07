@@ -213,3 +213,5 @@ if __name__ == '__main__':
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
+    if strategies.Timer.max_elp and setting['processes'] == 1:
+        print("Timer :", strategies.Timer.max_elp, '(s)')

@@ -36,6 +36,32 @@ class Board8Strategy(AbstractStrategy):
         return self.random.next_move(color, board)
 
 
+class Timer:
+    """
+    タイマー
+    """
+    max_elp = 0
+
+    @classmethod
+    def measure_max_elp(cls, func):
+        """
+        時間計測
+        """
+        def wrapper(*args, **kwargs):
+            time_s = time.time()
+
+            ret = func(*args, **kwargs)
+
+            time_e = time.time()
+            elp = time_e - time_s
+
+            if elp > Timer.max_elp:
+                Timer.max_elp = elp
+
+            return ret
+
+        return wrapper
+
 
 class ConsoleUserInput(AbstractStrategy):
     """
