@@ -180,10 +180,6 @@ if __name__ == '__main__':
                 "Greedy",
                 "SlowStarter",
                 "Table",
-                "NegaMax1",
-                "NegaMax2",
-                "NegaMax3",
-                "NegaMax4",
             ]
         }
 
@@ -193,6 +189,10 @@ if __name__ == '__main__':
         'Greedy': strategies.Greedy(),
         'SlowStarter': strategies.SlowStarter(),
         'Table': strategies.Table(),
+        'MiniMax1': strategies.MiniMax1(),
+        'MiniMax2': strategies.MiniMax2(),
+        'MiniMax3': strategies.MiniMax3(),
+        'MiniMax4': strategies.MiniMax4(),
         'NegaMax1': strategies.NegaMax1(),
         'NegaMax2': strategies.NegaMax2(),
         'NegaMax3': strategies.NegaMax3(),

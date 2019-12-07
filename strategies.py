@@ -18,6 +18,25 @@ class AbstractStrategy(metaclass=abc.ABCMeta):
         pass
 
 
+class Board8Strategy(AbstractStrategy):
+    """
+    ボードサイズ8より大きい場合はRandom
+    """
+    @abc.abstractmethod
+    def __init__(self):
+        pass
+
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        if board.size <= 8:
+            return self.strategy.next_move(color, board)
+
+        return self.random.next_move(color, board)
+
+
+
 class ConsoleUserInput(AbstractStrategy):
     """
     コンソールからのユーザ入力
@@ -232,6 +251,153 @@ class Table(AbstractStrategy):
             board.undo()
 
         return random.choice(moves[max_score])
+
+
+class MiniMax(AbstractStrategy):
+    """
+    MiniMax法で次の手を決める
+    """
+    def __init__(self, depth=3):
+        self.depth = depth
+
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        next_color = 'white' if color == 'black' else 'black'
+        moves, best_score = {}, None
+
+        # 打てる手の中から評価値の最も高い手を選ぶ
+        for move in board.get_possibles(color).keys():
+            board.put_stone(color, *move)  # 一手打つ
+
+            score = self.get_score(next_color, board, self.depth-1)     # 評価値を取得
+
+            if best_score is None:  # 初回は必ず設定
+                best_score = score
+            else:
+                if color == 'black' and best_score < score:    # 黒の場合最大を選択
+                    best_score = score
+                elif color == 'white' and best_score > score:  # 白の場合最小を選択
+                    best_score = score
+
+            # 次の手の候補を記憶
+            if score not in moves:
+                moves[score] = []
+            moves[score].append(move)
+
+            board.undo()  # 打った手を戻す
+
+        return random.choice(moves[best_score])
+
+    def get_score(self, color, board, depth):
+        """
+        評価値の取得
+        """
+        possibles_b = board.get_possibles('black', True)  # 黒の打てる場所
+        possibles_w = board.get_possibles('white', True)  # 白の打てる場所
+        is_game_end =  True if not possibles_b and not possibles_w else False
+
+        # ゲーム終了 or 最大深さに到達
+        if is_game_end or depth <= 0:
+            return self.evaluate(board, possibles_b, possibles_w)
+
+        # パスの場合
+        possibles = possibles_b if color == 'black' else possibles_w
+        next_color = 'white' if color == 'black' else 'black'
+
+        if not possibles:
+            return self.get_score(next_color, board, depth)
+
+        # 評価値を算出
+        best_score = None
+
+        for move in possibles.keys():
+            board.put_stone(color, *move)
+
+            score = self.get_score(next_color, board, depth-1)
+
+            if best_score is None:  # 初回は必ず設定
+                best_score = score
+            else:
+                if color == 'black' and best_score < score:    # 黒の場合最大を選択
+                    best_score = score
+                elif color == 'white' and best_score > score:  # 白の場合最小を選択
+                    best_score = score
+
+            board.undo()
+
+        return best_score
+
+    def evaluate(self, board, possibles_b, possibles_w):
+        """
+        評価値の算出
+        """
+        ret = 0
+
+        # 対局終了時
+        if not possibles_b and not possibles_w:
+            ret = board.score['black'] - board.score['white']
+
+            if ret > 0:    # 黒が勝った
+                ret += 1000
+            elif ret < 0:  # 白が勝った
+                ret -= 1000
+
+            return ret
+
+        # 4隅に重みを掛ける
+        board_info = board.get_board_info()
+        corner = 0
+
+        for x, y in [(0, 0), (0, board.size-1), (board.size-1, 0), (board.size-1, board.size-1)]:
+            corner += board_info[y][x]
+
+        ret += corner * 16
+
+        # 置ける場所の数に重みを掛ける
+        black_num = len(list(possibles_b.keys()))
+        white_num = len(list(possibles_w.keys()))
+
+        ret += (black_num - white_num) * 2
+
+        return ret
+
+
+class MiniMax1(Board8Strategy):
+    """
+    MiniMax法で次の手を決める(1手読み)
+    """
+    def __init__(self):
+        self.strategy = MiniMax(1)
+        self.random = Random()
+
+
+class MiniMax2(Board8Strategy):
+    """
+    MiniMax法で次の手を決める(2手読み)
+    """
+    def __init__(self):
+        self.strategy = MiniMax(2)
+        self.random = Random()
+
+
+class MiniMax3(Board8Strategy):
+    """
+    MiniMax法で次の手を決める(3手読み)
+    """
+    def __init__(self):
+        self.strategy = MiniMax(3)
+        self.random = Random()
+
+
+class MiniMax4(Board8Strategy):
+    """
+    MiniMax法で次の手を決める(4手読み)
+    """
+    def __init__(self):
+        self.strategy = MiniMax(4)
+        self.random = Random()
 
 
 class NegaMax(AbstractStrategy):
@@ -514,6 +680,59 @@ if __name__ == '__main__':
     table8.next_move('black', Board(4))
     print("aft", table8.table)
     assert (table8.table == np.array(table4_ret)).all
+
+    # MiniMax
+    print('--- Test For MiniMax Strategy ---')
+    board8 = Board(8)
+    minimax = MiniMax()
+    assert minimax.depth == 3
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert minimax.evaluate(board8, b, w) == 0
+
+    board8.put_stone('black', 3, 2)
+    board8.put_stone('white', 2, 4)
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert minimax.evaluate(board8, b, w) == 2
+
+    board8.put_stone('black', 1, 5)
+    board8.put_stone('white', 1, 4)
+    board8.put_stone('black', 2, 5)
+    board8.put_stone('white', 1, 6)
+    board8.put_stone('black', 0, 7)
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert minimax.evaluate(board8, b, w) == 22
+
+    board8.put_stone('black', 1, 3)
+    board8.put_stone('black', 2, 3)
+    board8.put_stone('black', 4, 5)
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert minimax.evaluate(board8, b, w) == 1014
+
+    from board import BitBoard
+    print('- bitboard -')
+    bitboard8 = BitBoard(8)
+    bitboard8.put_stone('black', 3, 2)
+    print(bitboard8)
+    assert minimax.get_score('white', bitboard8, 2) == 6
+    assert minimax.get_score('white', bitboard8, 3) == -2
+
+    print(bitboard8)
+    assert minimax.next_move('white', bitboard8) == (2, 4)
+    bitboard8.put_stone('white', 2, 4)
+    bitboard8.put_stone('black', 5, 5)
+    bitboard8.put_stone('white', 4, 2)
+    bitboard8.put_stone('black', 5, 2)
+    bitboard8.put_stone('white', 5, 4)
+    print(bitboard8)
+    assert minimax.next_move('black', bitboard8) == (2, 2)
 
     # NegaMax
     print('--- Test For NegaMax Strategy ---')
