@@ -185,8 +185,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'NegaMax']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'NegaMax']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MiniMax']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MiniMax']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -199,7 +199,7 @@ if __name__ == '__main__':
         'Greedy': strategies.Greedy(),
         'SlowStarter': strategies.SlowStarter(),
         'Table': strategies.Table(),
-        'NegaMax': strategies.NegaMax4(),
+        'MiniMax': strategies.MiniMax2(),
     }
 
     # ゲーム用スレッド
