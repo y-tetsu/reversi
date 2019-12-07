@@ -293,11 +293,11 @@ class MiniMax(AbstractStrategy):
         next_color = 'white' if color == 'black' else 'black'
         moves, best_score = {}, None
 
-        # 打てる手の中から評価値の最も高い手を選ぶ
+        # 打てる手の中から評価値の最も良い手を選ぶ
         for move in board.get_possibles(color).keys():
             board.put_stone(color, *move)  # 一手打つ
 
-            score = self.get_score(next_color, board, self.depth-1)     # 評価値を取得
+            score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
 
             if best_score is None:  # 初回は必ず設定
                 best_score = score
@@ -426,35 +426,32 @@ class MiniMax4(Board8Strategy):
         self.random = Random()
 
 
-class NegaMax(AbstractStrategy):
+class NegaMax(MiniMax):
     """
     NegaMax法で次の手を決める
     """
-    def __init__(self, depth=3):
-        self.depth = depth
-
     def next_move(self, color, board):
         """
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
+        moves, max_score = {}, None
 
-        possibles = board.get_possibles(color)
-        max_score = None
-        moves = {}
+        # 打てる手の中から評価値の最も高い手を選ぶ
+        for move in board.get_possibles(color).keys():
+            board.put_stone(color, *move)  # 一手打つ
 
-        for move in possibles.keys():
-            board.put_stone(color, *move)
-            score = -self.get_score(next_color, board, self.depth-1)
+            score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
 
-            if max_score is None or max_score < score:
+            if max_score is None or max_score < score:  # 最大値を選択
                 max_score = score
 
+            # 次の手の候補を記憶
             if score not in moves:
                 moves[score] = []
-
             moves[score].append(move)
-            board.undo()
+
+            board.undo()  # 打った手を戻す
 
         return random.choice(moves[max_score])
 
@@ -462,135 +459,72 @@ class NegaMax(AbstractStrategy):
         """
         評価値の取得
         """
-        black_possibles = board.get_possibles('black', True)
-        white_possibles = board.get_possibles('white', True)
+        possibles_b = board.get_possibles('black', True)
+        possibles_w = board.get_possibles('white', True)
+        is_game_end =  True if not possibles_b and not possibles_w else False
 
-        if depth <= 0 or (not black_possibles and not white_possibles):
-            return self.evaluate(color, board, black_possibles, white_possibles)
-
-        next_color = 'white' if color == 'black' else 'black'
-        possibles = black_possibles if color == 'black' else white_possibles
-        max_score = None
+        # ゲーム終了 or 最大深さに到達
+        if is_game_end or depth <= 0:
+            sign = 1 if color == 'black' else -1
+            return self.evaluate(board, possibles_b, possibles_w) * sign
 
         # パスの場合
+        possibles = possibles_b if color == 'black' else possibles_w
+        next_color = 'white' if color == 'black' else 'black'
+
         if not possibles:
             return -self.get_score(next_color, board, depth)
 
         # 評価値を算出
+        max_score = None
+
         for move in possibles.keys():
             board.put_stone(color, *move)
+
             score = -self.get_score(next_color, board, depth-1)
 
-            if max_score is None or max_score < score:
+            if max_score is None or max_score < score:  # 最大値を選択
                 max_score = score
 
             board.undo()
 
         return max_score
 
-    def evaluate(self, color, board, black_possibles, white_possibles):
-        """
-        評価値の算出
-        """
-        ret = 0
-        sign = 1 if color == 'black' else -1
 
-        # 対局終了時
-        if not black_possibles and not white_possibles:
-            # 黒が勝った場合
-            if board.score['black'] - board.score['white'] > 0:
-                return 1000 * sign
-
-            # 白が勝った場合
-            return -1000 * sign
-
-        # 4隅数に重みを掛ける
-        board_info = board.get_board_info()
-        corner = 0
-
-        for x, y in [(0, 0), (0, board.size-1), (board.size-1, 0), (board.size-1, board.size-1)]:
-            corner += board_info[y][x]
-
-        ret += corner * 16 * sign
-
-        # 置ける場所の数に重みを掛ける
-        black_num = len(list(black_possibles.keys()))
-        white_num = len(list(white_possibles.keys()))
-        ret += (black_num - white_num) * sign * 2
-
-        return ret
-
-
-class NegaMax1(AbstractStrategy):
+class NegaMax1(Board8Strategy):
     """
     NegaMax法で次の手を決める(1手読み)
     """
     def __init__(self):
-        self.negamax = NegaMax(1)
+        self.strategy = NegaMax(1)
         self.random = Random()
 
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        if board.size <= 8:
-            return self.negamax.next_move(color, board)
 
-        return self.random.next_move(color, board)
-
-
-class NegaMax2(AbstractStrategy):
+class NegaMax2(Board8Strategy):
     """
     NegaMax法で次の手を決める(2手読み)
     """
     def __init__(self):
-        self.negamax = NegaMax(2)
+        self.strategy = NegaMax(2)
         self.random = Random()
 
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        if board.size <= 8:
-            return self.negamax.next_move(color, board)
 
-        return self.random.next_move(color, board)
-
-
-class NegaMax3(AbstractStrategy):
+class NegaMax3(Board8Strategy):
     """
     NegaMax法で次の手を決める(3手読み)
     """
     def __init__(self):
-        self.negamax = NegaMax(3)
+        self.strategy = NegaMax(3)
         self.random = Random()
 
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        if board.size <= 8:
-            return self.negamax.next_move(color, board)
 
-        return self.random.next_move(color, board)
-
-
-class NegaMax4(AbstractStrategy):
+class NegaMax4(Board8Strategy):
     """
     NegaMax法で次の手を決める(4手読み)
     """
     def __init__(self):
-        self.negamax = NegaMax(4)
+        self.strategy = NegaMax(4)
         self.random = Random()
-
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        if board.size <= 8:
-            return self.negamax.next_move(color, board)
-
-        return self.random.next_move(color, board)
 
 
 if __name__ == '__main__':
@@ -768,16 +702,14 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate('black', board8, b, w) == 0
-    assert negamax.evaluate('white', board8, b, w) == 0
+    assert negamax.evaluate(board8, b, w) == 0
 
     board8.put_stone('black', 3, 2)
     board8.put_stone('white', 2, 4)
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate('black', board8, b, w) == 2
-    assert negamax.evaluate('white', board8, b, w) == -2
+    assert negamax.evaluate(board8, b, w) == 2
 
     board8.put_stone('black', 1, 5)
     board8.put_stone('white', 1, 4)
@@ -787,8 +719,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate('black', board8, b, w) == 22
-    assert negamax.evaluate('white', board8, b, w) == -22
+    assert negamax.evaluate(board8, b, w) == 22
 
     board8.put_stone('black', 1, 3)
     board8.put_stone('black', 2, 3)
@@ -796,8 +727,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate('black', board8, b, w) == 1000
-    assert negamax.evaluate('white', board8, b, w) == -1000
+    assert negamax.evaluate(board8, b, w) == 1014
 
     from board import BitBoard
     print('- bitboard -')
