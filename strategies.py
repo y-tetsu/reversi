@@ -40,7 +40,41 @@ class Timer:
     """
     タイマー
     """
+    start_time = 0
+    limit = {}
     max_elp = 0
+
+    @classmethod
+    def set_timer(cls, key, limit):
+        """
+        タイマーセット
+        """
+        Timer.limit[key] = limit
+
+        def _set_timer(func):
+            def wrapper(*args, **kwargs):
+                Timer.start_time = time.time()
+
+                ret = func(*args, **kwargs)
+
+                return ret
+
+            return wrapper
+
+        return _set_timer
+
+    @classmethod
+    def check_timer(cls, key):
+        """
+        タイマー経過チェック
+        """
+        def _check_timer(func):
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs) if time.time() - Timer.start_time < Timer.limit[key] else 0
+
+            return wrapper
+
+        return _check_timer
 
     @classmethod
     def measure_max_elp(cls, func):
@@ -430,6 +464,7 @@ class NegaMax(MiniMax):
     """
     NegaMax法で次の手を決める
     """
+    @Timer.set_timer('negamax', 0.3)
     def next_move(self, color, board):
         """
         次の一手
@@ -455,6 +490,7 @@ class NegaMax(MiniMax):
 
         return random.choice(moves[max_score])
 
+    @Timer.check_timer('negamax')
     def get_score(self, color, board, depth):
         """
         評価値の取得
