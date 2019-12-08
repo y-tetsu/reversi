@@ -40,7 +40,7 @@ class Timer:
     """
     タイマー
     """
-    start_time = 0
+    start_time = {}
     limit = {}
     max_elp = 0
 
@@ -53,7 +53,7 @@ class Timer:
 
         def _set_timer(func):
             def wrapper(*args, **kwargs):
-                Timer.start_time = time.time()
+                Timer.start_time[key] = time.time()
 
                 ret = func(*args, **kwargs)
 
@@ -70,7 +70,7 @@ class Timer:
         """
         def _check_timer(func):
             def wrapper(*args, **kwargs):
-                return func(*args, **kwargs) if time.time() - Timer.start_time < Timer.limit[key] else 0
+                return func(*args, **kwargs) if time.time() - Timer.start_time[key] < Timer.limit[key] else 0
 
             return wrapper
 
@@ -464,6 +464,7 @@ class NegaMax(MiniMax):
     """
     NegaMax法で次の手を決める
     """
+    #@Timer.measure_max_elp
     @Timer.set_timer('negamax', 0.3)
     def next_move(self, color, board):
         """
@@ -769,7 +770,9 @@ if __name__ == '__main__':
     print('- bitboard -')
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
+    Timer.start_time['negamax'] = time.time()
     assert negamax.get_score('white', bitboard8, 2) == -6
+    Timer.start_time['negamax'] = time.time()
     assert negamax.get_score('white', bitboard8, 3) == 2
 
     print(bitboard8)
