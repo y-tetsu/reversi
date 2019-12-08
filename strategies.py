@@ -301,7 +301,7 @@ class Table(AbstractStrategy):
             board.put_stone(color, *move)
             score = self.get_score(color, board)
 
-            if max_score is None or max_score < score:
+            if max_score is None or score > max_score:
                 max_score = score
 
             if score not in moves:
@@ -336,9 +336,9 @@ class MiniMax(AbstractStrategy):
             if best_score is None:  # 初回は必ず設定
                 best_score = score
             else:
-                if color == 'black' and best_score < score:    # 黒の場合最大を選択
+                if color == 'black' and score > best_score:    # 黒の場合最大を選択
                     best_score = score
-                elif color == 'white' and best_score > score:  # 白の場合最小を選択
+                elif color == 'white' and score < best_score:  # 白の場合最小を選択
                     best_score = score
 
             # 次の手の候補を記憶
@@ -380,9 +380,9 @@ class MiniMax(AbstractStrategy):
             if best_score is None:  # 初回は必ず設定
                 best_score = score
             else:
-                if color == 'black' and best_score < score:    # 黒の場合最大を選択
+                if color == 'black' and score > best_score:    # 黒の場合最大を選択
                     best_score = score
-                elif color == 'white' and best_score > score:  # 白の場合最小を選択
+                elif color == 'white' and score < best_score:  # 白の場合最小を選択
                     best_score = score
 
             board.undo()
@@ -479,7 +479,7 @@ class NegaMax(MiniMax):
 
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
 
-            if max_score is None or max_score < score:  # 最大値を選択
+            if max_score is None or score > max_score:  # 最大値を選択
                 max_score = score
 
             # 次の手の候補を記憶
@@ -520,7 +520,7 @@ class NegaMax(MiniMax):
 
             score = -self.get_score(next_color, board, depth-1)
 
-            if max_score is None or max_score < score:  # 最大値を選択
+            if max_score is None or score > max_score:  # 最大値を選択
                 max_score = score
 
             board.undo()
