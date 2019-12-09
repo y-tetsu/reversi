@@ -197,6 +197,10 @@ if __name__ == '__main__':
         'NegaMax2': strategies.NegaMax2(),
         'NegaMax3': strategies.NegaMax3(),
         'NegaMax4': strategies.NegaMax4(),
+        'AlphaBeta1': strategies.AlphaBeta1(),
+        'AlphaBeta2': strategies.AlphaBeta2(),
+        'AlphaBeta3': strategies.AlphaBeta3(),
+        'AlphaBeta4': strategies.AlphaBeta4(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]

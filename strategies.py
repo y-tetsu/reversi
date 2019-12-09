@@ -43,6 +43,7 @@ class Timer:
     start_time = {}
     limit = {}
     max_elp = 0
+    cnt = 0
 
     @classmethod
     def set_timer(cls, key, limit):
@@ -91,6 +92,20 @@ class Timer:
 
             if elp > Timer.max_elp:
                 Timer.max_elp = elp
+
+            return ret
+
+        return wrapper
+
+    @classmethod
+    def count(cls, func):
+        """
+        コール回数の記録
+        """
+        def wrapper(*args, **kwargs):
+            Timer.cnt += 1
+
+            ret = func(*args, **kwargs)
 
             return ret
 
@@ -464,7 +479,6 @@ class NegaMax(MiniMax):
     """
     NegaMax法で次の手を決める
     """
-    #@Timer.measure_max_elp
     @Timer.set_timer('negamax', 0.3)
     def next_move(self, color, board):
         """
@@ -491,6 +505,7 @@ class NegaMax(MiniMax):
 
         return random.choice(moves[max_score])
 
+    @Timer.count
     @Timer.check_timer('negamax')
     def get_score(self, color, board, depth):
         """
@@ -561,6 +576,128 @@ class NegaMax4(Board8Strategy):
     """
     def __init__(self):
         self.strategy = NegaMax(4)
+        self.random = Random()
+
+
+class AlphaBeta(MiniMax):
+    """
+    AlphaBeta法で次の手を決める
+    """
+    MIN = -1000000
+
+    @Timer.measure_max_elp
+    @Timer.set_timer('alphabeta', 0.3)
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        next_color = 'white' if color == 'black' else 'black'
+        moves, alpha, beta = {}, AlphaBeta.MIN, -AlphaBeta.MIN
+
+        # 打てる手の中から評価値の最も高い手を選ぶ
+        for move in board.get_possibles(color).keys():
+            board.put_stone(color, *move)  # 一手打つ
+
+            #---#
+            #print(self.depth, color, move)
+            #print(board)
+            #---#
+
+            score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
+            alpha = max(alpha, score)
+
+            #---#
+            #print('score1', score, self.depth, color, move, 'alpha =', alpha, 'beta =', beta)
+            #---#
+
+            # 次の手の候補を記憶
+            if score not in moves:
+                moves[score] = []
+            moves[score].append(move)
+
+            board.undo()  # 打った手を戻す
+
+        return moves[alpha][0]
+
+    @Timer.count
+    @Timer.check_timer('alphabeta')
+    def get_score(self, color, board, alpha, beta, depth):
+        """
+        評価値の取得
+        """
+        possibles_b = board.get_possibles('black', True)
+        possibles_w = board.get_possibles('white', True)
+        is_game_end =  True if not possibles_b and not possibles_w else False
+
+        # ゲーム終了 or 最大深さに到達
+        if is_game_end or depth <= 0:
+            sign = 1 if color == 'black' else -1
+            return self.evaluate(board, possibles_b, possibles_w) * sign
+
+        # パスの場合
+        possibles = possibles_b if color == 'black' else possibles_w
+        next_color = 'white' if color == 'black' else 'black'
+
+        if not possibles:
+            return -self.get_score(next_color, board, -beta, -alpha, depth)
+
+        # 評価値を算出
+        for move in possibles.keys():
+            board.put_stone(color, *move)
+
+            #---#
+            #print(depth, color, move)
+            #print(board)
+            #---#
+
+            score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
+            alpha = max(alpha, score)
+
+            board.undo()
+
+            #---#
+            #print('score2', score, depth, color, move, 'alpha =', alpha, 'beta =', beta)
+            #---#
+
+            if alpha >= beta:
+                break
+
+        return alpha
+
+
+class AlphaBeta1(Board8Strategy):
+    """
+    AlphaBeta法で次の手を決める(1手読み)
+    """
+    def __init__(self):
+        self.strategy = AlphaBeta(1)
+        self.random = Random()
+
+
+class AlphaBeta2(Board8Strategy):
+    """
+    AlphaBeta法で次の手を決める(2手読み)
+    """
+    def __init__(self):
+        self.strategy = AlphaBeta(2)
+        self.random = Random()
+
+
+class AlphaBeta3(Board8Strategy):
+    """
+    AlphaBeta法で次の手を決める(3手読み)
+    """
+    def __init__(self):
+        self.strategy = AlphaBeta(3)
+        self.random = Random()
+
+
+class AlphaBeta4(Board8Strategy):
+    """
+    AlphaBeta法で次の手を決める(4手読み)
+    """
+    def __init__(self):
+        self.strategy = AlphaBeta(4)
         self.random = Random()
 
 
@@ -770,17 +907,140 @@ if __name__ == '__main__':
     print('- bitboard -')
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
+
+    Timer.cnt = 0
     Timer.start_time['negamax'] = time.time()
     assert negamax.get_score('white', bitboard8, 2) == -6
+    assert Timer.cnt == 18
+
+    Timer.cnt = 0
     Timer.start_time['negamax'] = time.time()
     assert negamax.get_score('white', bitboard8, 3) == 2
+    assert Timer.cnt == 79
+
+    Timer.cnt = 0
+    Timer.start_time['negamax'] = time.time()
+    assert negamax.get_score('white', bitboard8, 4) == -4
+    assert Timer.cnt == 428
+
+    Timer.cnt = 0
+    Timer.limit['negamax'] = 1
+    Timer.start_time['negamax'] = time.time()
+    assert negamax.get_score('white', bitboard8, 5) == 2
+    assert Timer.cnt == 2478
+
+    Timer.cnt = 0
+    Timer.limit['negamax'] = 5
+    Timer.start_time['negamax'] = time.time()
+    assert negamax.get_score('white', bitboard8, 6) == -4
+    assert Timer.cnt == 16251
 
     print(bitboard8)
     assert negamax.next_move('white', bitboard8) == (2, 4)
+
     bitboard8.put_stone('white', 2, 4)
     bitboard8.put_stone('black', 5, 5)
     bitboard8.put_stone('white', 4, 2)
     bitboard8.put_stone('black', 5, 2)
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
+
+    Timer.cnt = 0
+    Timer.start_time['negamax'] = time.time()
     assert negamax.next_move('black', bitboard8) == (2, 2)
+    assert Timer.cnt == 575
+
+    Timer.cnt = 0
+    negamax.depth = 2
+    Timer.start_time['negamax'] = time.time()
+    assert negamax.next_move('black', bitboard8) == (2, 2)
+    assert Timer.cnt == 70
+
+    # AlphaBeta
+    print('--- Test For AlphaBeta Strategy ---')
+    board8 = Board(8)
+    alphabeta = AlphaBeta()
+    assert alphabeta.depth == 3
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert alphabeta.evaluate(board8, b, w) == 0
+
+    board8.put_stone('black', 3, 2)
+    board8.put_stone('white', 2, 4)
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert alphabeta.evaluate(board8, b, w) == 2
+
+    board8.put_stone('black', 1, 5)
+    board8.put_stone('white', 1, 4)
+    board8.put_stone('black', 2, 5)
+    board8.put_stone('white', 1, 6)
+    board8.put_stone('black', 0, 7)
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert alphabeta.evaluate(board8, b, w) == 22
+
+    board8.put_stone('black', 1, 3)
+    board8.put_stone('black', 2, 3)
+    board8.put_stone('black', 4, 5)
+    print(board8)
+    b = board8.get_possibles('black', True)
+    w = board8.get_possibles('white', True)
+    assert alphabeta.evaluate(board8, b, w) == 1014
+
+    from board import BitBoard
+    print('- bitboard -')
+    bitboard8 = BitBoard(8)
+    bitboard8.put_stone('black', 3, 2)
+
+    Timer.cnt = 0
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
+    assert Timer.cnt == 16
+
+    Timer.cnt = 0
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
+    assert Timer.cnt == 58
+
+    Timer.cnt = 0
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
+    assert Timer.cnt == 226
+
+    Timer.cnt = 0
+    Timer.limit['alphabeta'] = 1
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 5) == 2
+    assert Timer.cnt == 617
+
+    Timer.cnt = 0
+    Timer.limit['alphabeta'] = 3
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 6) == -4
+    assert Timer.cnt == 1865
+
+    print(bitboard8)
+    assert alphabeta.next_move('white', bitboard8) == (2, 4)
+
+    print('* black check')
+    bitboard8.put_stone('white', 2, 4)
+    bitboard8.put_stone('black', 5, 5)
+    bitboard8.put_stone('white', 4, 2)
+    bitboard8.put_stone('black', 5, 2)
+    bitboard8.put_stone('white', 5, 4)
+    print(bitboard8)
+
+    Timer.cnt = 0
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.next_move('black', bitboard8) == (2, 2)
+    assert Timer.cnt == 170
+
+    Timer.cnt = 0
+    alphabeta.depth = 2
+    Timer.start_time['alphabeta'] = time.time()
+    assert alphabeta.next_move('black', bitboard8) == (2, 2)
+    assert Timer.cnt == 29
