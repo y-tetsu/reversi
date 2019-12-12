@@ -40,21 +40,21 @@ class Timer:
     """
     タイマー
     """
-    start_time = {}
+    deadline = {}
     limit = {}
     max_elp = 0
     cnt = 0
 
     @classmethod
-    def set_timer(cls, key, limit):
+    def start(cls, key, limit):
         """
-        タイマーセット
+        タイマー開始
         """
         Timer.limit[key] = limit
 
         def _set_timer(func):
             def wrapper(*args, **kwargs):
-                Timer.start_time[key] = time.time()
+                Timer.deadline[key] = time.time() + limit
 
                 ret = func(*args, **kwargs)
 
@@ -65,17 +65,17 @@ class Timer:
         return _set_timer
 
     @classmethod
-    def check_timer(cls, key):
+    def timeout(cls, key):
         """
         タイマー経過チェック
         """
-        def _check_timer(func):
+        def _timeout(func):
             def wrapper(*args, **kwargs):
-                return func(*args, **kwargs) if time.time() - Timer.start_time[key] < Timer.limit[key] else 0
+                return func(*args, **kwargs) if time.time() < Timer.deadline[key] else 0
 
             return wrapper
 
-        return _check_timer
+        return _timeout
 
     @classmethod
     def measure_max_elp(cls, func):
@@ -328,9 +328,9 @@ class Table(AbstractStrategy):
         return random.choice(moves[max_score])
 
 
-class MiniMax(AbstractStrategy):
+class MinMax(AbstractStrategy):
     """
-    MiniMax法で次の手を決める
+    MinMax法で次の手を決める
     """
     def __init__(self, depth=3):
         self.depth = depth
@@ -439,47 +439,47 @@ class MiniMax(AbstractStrategy):
         return ret
 
 
-class MiniMax1(Board8Strategy):
+class MinMax1(Board8Strategy):
     """
-    MiniMax法で次の手を決める(1手読み)
+    MinMax法で次の手を決める(1手読み)
     """
     def __init__(self):
-        self.strategy = MiniMax(1)
+        self.strategy = MinMax(1)
         self.random = Random()
 
 
-class MiniMax2(Board8Strategy):
+class MinMax2(Board8Strategy):
     """
-    MiniMax法で次の手を決める(2手読み)
+    MinMax法で次の手を決める(2手読み)
     """
     def __init__(self):
-        self.strategy = MiniMax(2)
+        self.strategy = MinMax(2)
         self.random = Random()
 
 
-class MiniMax3(Board8Strategy):
+class MinMax3(Board8Strategy):
     """
-    MiniMax法で次の手を決める(3手読み)
+    MinMax法で次の手を決める(3手読み)
     """
     def __init__(self):
-        self.strategy = MiniMax(3)
+        self.strategy = MinMax(3)
         self.random = Random()
 
 
-class MiniMax4(Board8Strategy):
+class MinMax4(Board8Strategy):
     """
-    MiniMax法で次の手を決める(4手読み)
+    MinMax法で次の手を決める(4手読み)
     """
     def __init__(self):
-        self.strategy = MiniMax(4)
+        self.strategy = MinMax(4)
         self.random = Random()
 
 
-class NegaMax(MiniMax):
+class NegaMax(MinMax):
     """
     NegaMax法で次の手を決める
     """
-    @Timer.set_timer('negamax', 0.3)
+    @Timer.start('negamax', 0.5)
     def next_move(self, color, board):
         """
         次の一手
@@ -505,8 +505,7 @@ class NegaMax(MiniMax):
 
         return random.choice(moves[max_score])
 
-    @Timer.count
-    @Timer.check_timer('negamax')
+    @Timer.timeout('negamax')
     def get_score(self, color, board, depth):
         """
         評価値の取得
@@ -579,48 +578,35 @@ class NegaMax4(Board8Strategy):
         self.random = Random()
 
 
-class AlphaBeta(MiniMax):
+class AlphaBeta(MinMax):
     """
     AlphaBeta法で次の手を決める
     """
     MIN = -1000000
 
     @Timer.measure_max_elp
-    @Timer.set_timer('alphabeta', 0.3)
+    @Timer.start('alphabeta', 0.5)
     def next_move(self, color, board):
         """
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        moves, alpha, beta = {}, AlphaBeta.MIN, -AlphaBeta.MIN
+        next_moves, alpha, beta = {}, AlphaBeta.MIN, -AlphaBeta.MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)  # 一手打つ
-
-            #---#
-            #print(self.depth, color, move)
-            #print(board)
-            #---#
-
+            board.put_stone(color, *move)                                            # 一手打つ
             score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
-            alpha = max(alpha, score)
+            board.undo()                                                             # 打った手を戻す
 
-            #---#
-            #print('score1', score, self.depth, color, move, 'alpha =', alpha, 'beta =', beta)
-            #---#
+            # 最善手を更新
+            if score > alpha:
+                alpha = score
+                best_move = move
 
-            # 次の手の候補を記憶
-            if score not in moves:
-                moves[score] = []
-            moves[score].append(move)
+        return best_move
 
-            board.undo()  # 打った手を戻す
-
-        return moves[alpha][0]
-
-    @Timer.count
-    @Timer.check_timer('alphabeta')
+    @Timer.timeout('alphabeta')
     def get_score(self, color, board, alpha, beta, depth):
         """
         評価値の取得
@@ -644,20 +630,10 @@ class AlphaBeta(MiniMax):
         # 評価値を算出
         for move in possibles.keys():
             board.put_stone(color, *move)
-
-            #---#
-            #print(depth, color, move)
-            #print(board)
-            #---#
-
             score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
-            alpha = max(alpha, score)
-
             board.undo()
 
-            #---#
-            #print('score2', score, depth, color, move, 'alpha =', alpha, 'beta =', beta)
-            #---#
+            alpha = max(alpha, score)
 
             if alpha >= beta:
                 break
@@ -815,22 +791,22 @@ if __name__ == '__main__':
     print("aft", table8.table)
     assert (table8.table == np.array(table4_ret)).all
 
-    # MiniMax
-    print('--- Test For MiniMax Strategy ---')
+    # MinMax
+    print('--- Test For MinMax Strategy ---')
     board8 = Board(8)
-    minimax = MiniMax()
-    assert minimax.depth == 3
+    minmax = MinMax()
+    assert minmax.depth == 3
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert minimax.evaluate(board8, b, w) == 0
+    assert minmax.evaluate(board8, b, w) == 0
 
     board8.put_stone('black', 3, 2)
     board8.put_stone('white', 2, 4)
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert minimax.evaluate(board8, b, w) == 2
+    assert minmax.evaluate(board8, b, w) == 2
 
     board8.put_stone('black', 1, 5)
     board8.put_stone('white', 1, 4)
@@ -840,7 +816,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert minimax.evaluate(board8, b, w) == 22
+    assert minmax.evaluate(board8, b, w) == 22
 
     board8.put_stone('black', 1, 3)
     board8.put_stone('black', 2, 3)
@@ -848,25 +824,25 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert minimax.evaluate(board8, b, w) == 1014
+    assert minmax.evaluate(board8, b, w) == 1014
 
     from board import BitBoard
     print('- bitboard -')
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
     print(bitboard8)
-    assert minimax.get_score('white', bitboard8, 2) == 6
-    assert minimax.get_score('white', bitboard8, 3) == -2
+    assert minmax.get_score('white', bitboard8, 2) == 6
+    assert minmax.get_score('white', bitboard8, 3) == -2
 
     print(bitboard8)
-    assert minimax.next_move('white', bitboard8) == (2, 4)
+    assert minmax.next_move('white', bitboard8) == (2, 4)
     bitboard8.put_stone('white', 2, 4)
     bitboard8.put_stone('black', 5, 5)
     bitboard8.put_stone('white', 4, 2)
     bitboard8.put_stone('black', 5, 2)
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
-    assert minimax.next_move('black', bitboard8) == (2, 2)
+    assert minmax.next_move('black', bitboard8) == (2, 2)
 
     # NegaMax
     print('--- Test For NegaMax Strategy ---')
@@ -909,31 +885,31 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 3, 2)
 
     Timer.cnt = 0
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 2) == -6
-    assert Timer.cnt == 18
+    #assert Timer.cnt == 18
 
     Timer.cnt = 0
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 3) == 2
-    assert Timer.cnt == 79
+    #assert Timer.cnt == 79
 
     Timer.cnt = 0
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 4) == -4
-    assert Timer.cnt == 428
+    #assert Timer.cnt == 428
 
     Timer.cnt = 0
     Timer.limit['negamax'] = 1
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 5) == 2
-    assert Timer.cnt == 2478
+    #assert Timer.cnt == 2478
 
     Timer.cnt = 0
     Timer.limit['negamax'] = 5
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 6) == -4
-    assert Timer.cnt == 16251
+    #assert Timer.cnt == 16251
 
     print(bitboard8)
     assert negamax.next_move('white', bitboard8) == (2, 4)
@@ -946,15 +922,15 @@ if __name__ == '__main__':
     print(bitboard8)
 
     Timer.cnt = 0
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Timer.cnt == 575
+    #assert Timer.cnt == 575
 
     Timer.cnt = 0
     negamax.depth = 2
-    Timer.start_time['negamax'] = time.time()
+    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Timer.cnt == 70
+    #assert Timer.cnt == 70
 
     # AlphaBeta
     print('--- Test For AlphaBeta Strategy ---')
@@ -997,31 +973,31 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 3, 2)
 
     Timer.cnt = 0
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
-    assert Timer.cnt == 16
+    #assert Timer.cnt == 16
 
     Timer.cnt = 0
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
-    assert Timer.cnt == 58
+    #assert Timer.cnt == 58
 
     Timer.cnt = 0
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
-    assert Timer.cnt == 226
+    #assert Timer.cnt == 226
 
     Timer.cnt = 0
     Timer.limit['alphabeta'] = 1
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 5) == 2
-    assert Timer.cnt == 617
+    #assert Timer.cnt == 617
 
     Timer.cnt = 0
     Timer.limit['alphabeta'] = 3
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 6) == -4
-    assert Timer.cnt == 1865
+    #assert Timer.cnt == 1865
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -1035,12 +1011,12 @@ if __name__ == '__main__':
     print(bitboard8)
 
     Timer.cnt = 0
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Timer.cnt == 170
+    #assert Timer.cnt == 170
 
     Timer.cnt = 0
     alphabeta.depth = 2
-    Timer.start_time['alphabeta'] = time.time()
+    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Timer.cnt == 29
+    #assert Timer.cnt == 29
