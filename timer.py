@@ -6,6 +6,10 @@
 import time
 
 
+class TimerTimeoutError(Exception):
+    pass
+
+
 class Timer:
     """
     タイマー
@@ -34,6 +38,9 @@ class Timer:
         """
         def wrapper(*args, **kwargs):
             key = args[0].__class__.__name__
-            return func(*args, **kwargs) if time.time() < Timer.deadline[key] else 0
 
+            if time.time() > Timer.deadline[key]:
+                raise TimerTimeoutError("Timer Timeout Occuer!")
+
+            return func(*args, **kwargs)
         return wrapper
