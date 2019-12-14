@@ -392,7 +392,7 @@ class NegaMax(MinMax):
     NegaMax法で次の手を決める
     """
     @Measure.time('negamax')
-    @Timer.start('negamax', 0.5)
+    @Timer.start(0.5)
     def next_move(self, color, board):
         """
         次の一手
@@ -419,7 +419,7 @@ class NegaMax(MinMax):
         return random.choice(moves[max_score])
 
     @Measure.countup
-    @Timer.timeout('negamax')
+    @Timer.timeout
     def get_score(self, color, board, depth):
         """
         評価値の取得
@@ -495,7 +495,7 @@ class AlphaBeta(MinMax):
     MIN = -1000000
 
     @Measure.time('alphabeta')
-    @Timer.start('alphabeta', 0.5)
+    @Timer.start(0.5)
     def next_move(self, color, board):
         """
         次の一手
@@ -517,7 +517,7 @@ class AlphaBeta(MinMax):
         return best_move
 
     @Measure.countup
-    @Timer.timeout('alphabeta')
+    @Timer.timeout
     def get_score(self, color, board, alpha, beta, depth):
         """
         評価値の取得

@@ -11,17 +11,15 @@ class Timer:
     タイマー
     """
     deadline = {}
-    limit = {}
 
     @classmethod
-    def start(cls, key, limit):
+    def start(cls, limit):
         """
         タイマー開始
         """
-        Timer.limit[key] = limit
-
         def _set_timer(func):
             def wrapper(*args, **kwargs):
+                key = args[0].__class__.__name__
                 Timer.deadline[key] = time.time() + limit
 
                 ret = func(*args, **kwargs)
@@ -31,13 +29,12 @@ class Timer:
         return _set_timer
 
     @classmethod
-    def timeout(cls, key):
+    def timeout(cls, func):
         """
         タイマー経過チェック
         """
-        def _timeout(func):
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs) if time.time() < Timer.deadline[key] else 0
+        def wrapper(*args, **kwargs):
+            key = args[0].__class__.__name__
+            return func(*args, **kwargs) if time.time() < Timer.deadline[key] else 0
 
-            return wrapper
-        return _timeout
+        return wrapper
