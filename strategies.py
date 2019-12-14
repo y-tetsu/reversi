@@ -248,7 +248,7 @@ class MinMax(AbstractStrategy):
     """
     MinMax法で次の手を決める
     """
-    MIN, MAX = -1000000, 1000000
+    MIN, MAX = -10000000, 10000000
 
     def __init__(self, depth=3):
         self.depth = depth
@@ -321,9 +321,9 @@ class MinMax(AbstractStrategy):
             ret = board.score['black'] - board.score['white']
 
             if ret > 0:    # 黒が勝った
-                ret += 1000
+                ret += 10000
             elif ret < 0:  # 白が勝った
-                ret -= 1000
+                ret -= 10000
 
             return ret
 
@@ -485,7 +485,7 @@ class AlphaBeta(MinMax):
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        next_moves, alpha, beta = {}, AlphaBeta.MIN, AlphaBeta.MAX
+        best_move, alpha, beta = None, AlphaBeta.MIN, AlphaBeta.MAX
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
@@ -575,6 +575,119 @@ class AlphaBeta5(AlphaBeta):
     """
     def __init__(self):
         self.depth = 5
+
+
+class AlphaBetaT(AlphaBeta):
+    """
+    AlphaBeta法でテーブル評価値を使って次の手を決める
+    """
+    def __init__(self, depth=3):
+        super().__init__(depth)
+        self.table = Table(8)  # Table戦略を利用する
+
+    @Measure.time
+    @Timer.start(0.5)
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        if self.table.size != board.size:  # テーブルサイズの調整
+            print('set_table')
+            self.table.set_table(board.size)
+
+        next_color = 'white' if color == 'black' else 'black'
+        best_move, alpha, beta = None, AlphaBetaT.MIN, AlphaBetaT.MAX
+
+        # 打てる手の中から評価値の最も高い手を選ぶ
+        for move in board.get_possibles(color).keys():
+            board.put_stone(color, *move)                                            # 一手打つ
+            score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
+            board.undo()                                                             # 打った手を戻す
+
+            # 最善手を更新
+            if score > alpha:
+                alpha = score
+                best_move = move
+
+        return best_move
+
+    @Measure.countup
+    @Timer.timeout
+    def get_score(self, color, board, alpha, beta, depth):
+        """
+        評価値の取得
+        """
+        # ゲーム終了 or 最大深さに到達
+        possibles_b = board.get_possibles('black', True)
+        possibles_w = board.get_possibles('white', True)
+        is_game_end =  True if not possibles_b and not possibles_w else False
+
+        if is_game_end or depth <= 0:
+            sign = 1 if color == 'black' else -1
+            score = self.evaluate(board, possibles_b, possibles_w) * sign
+            score += self.table.get_score(color, board) * 0.5
+            return score
+
+        # パスの場合
+        possibles = possibles_b if color == 'black' else possibles_w
+        next_color = 'white' if color == 'black' else 'black'
+
+        if not possibles:
+            return -self.get_score(next_color, board, -beta, -alpha, depth)
+
+        # 評価値を算出
+        for move in possibles.keys():
+            board.put_stone(color, *move)
+            score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
+            board.undo()
+
+            # 最大値を選択
+            alpha = max(alpha, score)
+
+            if alpha >= beta:  # 枝刈り
+                break
+
+        return alpha
+
+
+class AlphaBetaT1(AlphaBetaT):
+    """
+    AlphaBeta法でテーブル評価値を使って次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1):
+        super().__init__(depth)
+
+
+class AlphaBetaT2(AlphaBetaT):
+    """
+    AlphaBeta法でテーブル評価値を使って次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2):
+        super().__init__(depth)
+
+
+class AlphaBetaT3(AlphaBetaT):
+    """
+    AlphaBeta法でテーブル評価値を使って次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3):
+        super().__init__(depth)
+
+
+class AlphaBetaT4(AlphaBetaT):
+    """
+    AlphaBeta法でテーブル評価値を使って次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4):
+        super().__init__(depth)
+
+
+class AlphaBetaT5(AlphaBetaT):
+    """
+    AlphaBeta法でテーブル評価値を使って次の手を決める(5手読み)
+    """
+    def __init__(self, depth=5):
+        super().__init__(depth)
 
 
 if __name__ == '__main__':
@@ -724,7 +837,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert minmax.evaluate(board8, b, w) == 1014
+    assert minmax.evaluate(board8, b, w) == 10014
 
     from board import BitBoard
     print('- bitboard -')
@@ -777,7 +890,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate(board8, b, w) == 1014
+    assert negamax.evaluate(board8, b, w) == 10014
 
     from board import BitBoard
     print('- bitboard -')
@@ -863,7 +976,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate(board8, b, w) == 1014
+    assert alphabeta.evaluate(board8, b, w) == 10014
 
     from board import BitBoard
     print('- bitboard -')
@@ -916,3 +1029,21 @@ if __name__ == '__main__':
     Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['AlphaBeta'] == 29
+
+    # AlphaBetaT
+    print('--- Test For AlphaBetaT Strategy ---')
+    print('- bitboard -')
+    alphabetat = AlphaBetaT()
+    bitboard8 = BitBoard(8)
+    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_stone('white', 2, 4)
+    bitboard8.put_stone('black', 5, 5)
+    bitboard8.put_stone('white', 4, 2)
+    bitboard8.put_stone('black', 5, 2)
+    bitboard8.put_stone('white', 5, 4)
+    print(bitboard8)
+
+    Measure.count['AlphaBetaT'] = 0
+    Timer.deadline['AlphaBetaT'] = time.time() + 3
+    assert alphabetat.next_move('black', bitboard8) == (2, 2)
+    assert Measure.count['AlphaBetaT'] == 148

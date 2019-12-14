@@ -203,6 +203,11 @@ if __name__ == '__main__':
         'AlphaBeta3': strategies.AlphaBeta3(),
         'AlphaBeta4': strategies.AlphaBeta4(),
         'AlphaBeta5': strategies.AlphaBeta5(),
+        'AlphaBetaT1': strategies.AlphaBetaT1(),
+        'AlphaBetaT2': strategies.AlphaBetaT2(),
+        'AlphaBetaT3': strategies.AlphaBetaT3(),
+        'AlphaBetaT4': strategies.AlphaBetaT4(),
+        'AlphaBetaT5': strategies.AlphaBetaT5(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
