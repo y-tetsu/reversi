@@ -201,6 +201,7 @@ if __name__ == '__main__':
         'AlphaBeta2': strategies.AlphaBeta2(),
         'AlphaBeta3': strategies.AlphaBeta3(),
         'AlphaBeta4': strategies.AlphaBeta4(),
+        'AlphaBeta5': strategies.AlphaBeta5(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
@@ -217,5 +218,7 @@ if __name__ == '__main__':
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
-    if strategies.Timer.max_elp and setting['processes'] == 1:
-        print("Timer :", strategies.Timer.max_elp, '(s)')
+    if setting['processes'] == 1:
+        keys = strategies.Measure.max_elp.keys()
+        for key in keys:
+            print(key, strategies.Measure.max_elp[key], '(s)')
