@@ -388,25 +388,23 @@ class NegaMax(MinMax):
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        moves, max_score = {}, None
+        moves, max_score = {}, NegaMax.MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)  # 一手打つ
-
+            board.put_stone(color, *move)                             # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
+            board.undo()                                              # 打った手を戻す
 
-            if max_score is None or score > max_score:  # 最大値を選択
-                max_score = score
+            # 最大値を選択
+            max_score = max(max_score, score)
 
             # 次の手の候補を記憶
             if score not in moves:
                 moves[score] = []
             moves[score].append(move)
 
-            board.undo()  # 打った手を戻す
-
-        return random.choice(moves[max_score])
+        return random.choice(moves[max_score])  # 複数候補がある場合はランダムに選ぶ
 
     @Measure.countup
     @Timer.timeout
@@ -431,17 +429,15 @@ class NegaMax(MinMax):
             return -self.get_score(next_color, board, depth)
 
         # 評価値を算出
-        max_score = None
+        max_score = NegaMax.MIN
 
         for move in possibles.keys():
             board.put_stone(color, *move)
-
             score = -self.get_score(next_color, board, depth-1)
-
-            if max_score is None or score > max_score:  # 最大値を選択
-                max_score = score
-
             board.undo()
+
+            # 最大値を選択
+            max_score = max(max_score, score)
 
         return max_score
 
