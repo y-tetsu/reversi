@@ -17,16 +17,15 @@ class Timer:
         """
         タイマー開始
         """
-        def _set_timer(func):
+        def _start(func):
             def wrapper(*args, **kwargs):
                 key = args[0].__class__.__name__
-                Timer.deadline[key] = time.time() + limit
-
+                Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
                 ret = func(*args, **kwargs)
 
                 return ret
             return wrapper
-        return _set_timer
+        return _start
 
     @classmethod
     def timeout(cls, func):

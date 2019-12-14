@@ -251,6 +251,7 @@ class MinMax(AbstractStrategy):
     def __init__(self, depth=3):
         self.depth = depth
 
+    @Measure.time
     def next_move(self, color, board):
         """
         次の一手
@@ -391,7 +392,7 @@ class NegaMax(MinMax):
     """
     NegaMax法で次の手を決める
     """
-    @Measure.time('negamax')
+    @Measure.time
     @Timer.start(0.5)
     def next_move(self, color, board):
         """
@@ -494,7 +495,7 @@ class AlphaBeta(MinMax):
     """
     MIN = -1000000
 
-    @Measure.time('alphabeta')
+    @Measure.time
     @Timer.start(0.5)
     def next_move(self, color, board):
         """
@@ -799,32 +800,30 @@ if __name__ == '__main__':
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
 
-    Measure.count = 0
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Measure.count['NegaMax'] = 0
+    Timer.deadline['NegaMax'] = time.time() + 0.5
     assert negamax.get_score('white', bitboard8, 2) == -6
-    assert Measure.count == 18
+    assert Measure.count['NegaMax'] == 18
 
-    Measure.count = 0
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Measure.count['NegaMax'] = 0
+    Timer.deadline['NegaMax'] = time.time() + 0.5
     assert negamax.get_score('white', bitboard8, 3) == 2
-    assert Measure.count == 79
+    assert Measure.count['NegaMax'] == 79
 
-    Measure.count = 0
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Measure.count['NegaMax'] = 0
+    Timer.deadline['NegaMax'] = time.time() + 0.5
     assert negamax.get_score('white', bitboard8, 4) == -4
-    assert Measure.count == 428
+    assert Measure.count['NegaMax'] == 428
 
-    Measure.count = 0
-    Timer.limit['negamax'] = 1
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Measure.count['NegaMax'] = 0
+    Timer.deadline['NegaMax'] = time.time() + 1
     assert negamax.get_score('white', bitboard8, 5) == 2
-    assert Measure.count == 2478
+    assert Measure.count['NegaMax'] == 2478
 
-    Measure.count = 0
-    Timer.limit['negamax'] = 5
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Measure.count['NegaMax'] = 0
+    Timer.deadline['NegaMax'] = time.time() + 5
     assert negamax.get_score('white', bitboard8, 6) == -4
-    assert Measure.count == 16251
+    assert Measure.count['NegaMax'] == 16251
 
     print(bitboard8)
     assert negamax.next_move('white', bitboard8) == (2, 4)
@@ -836,16 +835,16 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count = 0
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Measure.count['NegaMax'] = 0
+    Timer.deadline['NegaMax'] = time.time() + 5
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count == 575
+    assert Measure.count['NegaMax'] == 575
 
-    Measure.count = 0
+    Measure.count['NegaMax'] = 0
     negamax.depth = 2
-    Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
+    Timer.deadline['NegaMax'] = time.time() + 2
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count == 70
+    assert Measure.count['NegaMax'] == 70
 
     # AlphaBeta
     print('--- Test For AlphaBeta Strategy ---')
@@ -887,32 +886,30 @@ if __name__ == '__main__':
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
 
-    Measure.count = 0
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Measure.count['AlphaBeta'] = 0
+    Timer.deadline['AlphaBeta'] = time.time() + 0.5
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
-    assert Measure.count == 16
+    assert Measure.count['AlphaBeta'] == 16
 
-    Measure.count = 0
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Measure.count['AlphaBeta'] = 0
+    Timer.deadline['AlphaBeta'] = time.time() + 0.5
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
-    assert Measure.count == 58
+    assert Measure.count['AlphaBeta'] == 58
 
-    Measure.count = 0
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Measure.count['AlphaBeta'] = 0
+    Timer.deadline['AlphaBeta'] = time.time() + 0.5
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
-    assert Measure.count == 226
+    assert Measure.count['AlphaBeta'] == 226
 
-    Measure.count = 0
-    Timer.limit['alphabeta'] = 1
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Measure.count['AlphaBeta'] = 0
+    Timer.deadline['AlphaBeta'] = time.time() + 1
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 5) == 2
-    assert Measure.count == 617
+    assert Measure.count['AlphaBeta'] == 617
 
-    Measure.count = 0
-    Timer.limit['alphabeta'] = 3
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Measure.count['AlphaBeta'] = 0
+    Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 6) == -4
-    assert Measure.count == 1865
+    assert Measure.count['AlphaBeta'] == 1865
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -925,13 +922,13 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count = 0
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Measure.count['AlphaBeta'] = 0
+    Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count == 170
+    assert Measure.count['AlphaBeta'] == 170
 
-    Measure.count = 0
+    Measure.count['AlphaBeta'] = 0
     alphabeta.depth = 2
-    Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
+    Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count == 29
+    assert Measure.count['AlphaBeta'] == 29

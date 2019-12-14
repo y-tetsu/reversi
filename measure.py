@@ -11,46 +11,52 @@ class Measure:
     計測
     """
     elp_time = {}
-    count = 0
+    count = {}
 
     @classmethod
-    def time(cls, key):
+    def time(cls, func):
         """
         時間計測
         """
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        def wrapper(*args, **kwargs):
+            key = args[0].__class__.__name__
 
-        def _time(func):
-            def wrapper(*args, **kwargs):
-                time_s = time.perf_counter()
-                ret = func(*args, **kwargs)
-                time_e = time.perf_counter()
-                elp = time_e - time_s
+            if key not in Measure.elp_time:
+                Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
 
-                if elp > Measure.elp_time[key]['max']:
-                    Measure.elp_time[key]['max'] = elp
-                if elp < Measure.elp_time[key]['min']:
-                    Measure.elp_time[key]['min'] = elp
+            time_s = time.perf_counter()
+            ret = func(*args, **kwargs)
+            time_e = time.perf_counter()
+            elp = time_e - time_s
 
-                pre_cnt = Measure.elp_time[key]['cnt']
-                pre_ave = Measure.elp_time[key]['ave']
+            if elp > Measure.elp_time[key]['max']:
+                Measure.elp_time[key]['max'] = elp
+            if elp < Measure.elp_time[key]['min']:
+                Measure.elp_time[key]['min'] = elp
 
-                Measure.elp_time[key]['ave'] = ((pre_ave * pre_cnt) + elp) / (pre_cnt + 1)
-                Measure.elp_time[key]['cnt'] += 1
+            pre_cnt = Measure.elp_time[key]['cnt']
+            pre_ave = Measure.elp_time[key]['ave']
 
-                return ret
-            return wrapper
-        return _time
+            Measure.elp_time[key]['ave'] = ((pre_ave * pre_cnt) + elp) / (pre_cnt + 1)
+            Measure.elp_time[key]['cnt'] += 1
+
+            return ret
+        return wrapper
 
     @classmethod
     def countup(cls, func):
         """
         コール回数のカウントアップ
         """
-        def _countup(*args, **kwargs):
-            Measure.count += 1
+        def wrapper(*args, **kwargs):
+            key = args[0].__class__.__name__
+
+            if key not in Measure.count:
+                Measure.count[key] = 0
+
+            Measure.count[key] += 1
 
             ret = func(*args, **kwargs)
 
             return ret
-        return _countup
+        return wrapper
