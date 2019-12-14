@@ -412,11 +412,11 @@ class NegaMax(MinMax):
         """
         評価値の取得
         """
+        # ゲーム終了 or 最大深さに到達
         possibles_b = board.get_possibles('black', True)
         possibles_w = board.get_possibles('white', True)
         is_game_end =  True if not possibles_b and not possibles_w else False
 
-        # ゲーム終了 or 最大深さに到達
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
             return self.evaluate(board, possibles_b, possibles_w) * sign
