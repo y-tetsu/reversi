@@ -21,9 +21,9 @@ class AbstractStrategy(metaclass=abc.ABCMeta):
         pass
 
 
-class Board8Strategy(AbstractStrategy):
+class StrategyBase(AbstractStrategy):
     """
-    ボードサイズ8より大きい場合はRandom
+    引数分けする戦略のひな形
     """
     @abc.abstractmethod
     def __init__(self):
@@ -33,10 +33,21 @@ class Board8Strategy(AbstractStrategy):
         """
         次の一手
         """
+        return self.strategy.next_move(color, board)
+
+
+class Board8OrLess(StrategyBase):
+    """
+    ボードサイズ8以下のみ(それ以外はRandom)
+    """
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
         if board.size <= 8:
             return self.strategy.next_move(color, board)
 
-        return self.random.next_move(color, board)
+        return Random().next_move(color, board)
 
 
 class ConsoleUserInput(AbstractStrategy):
@@ -366,40 +377,36 @@ class MinMax(AbstractStrategy):
         return ret
 
 
-class MinMax1(Board8Strategy):
+class MinMax1(Board8OrLess):
     """
     MinMax法で次の手を決める(1手読み)
     """
     def __init__(self):
         self.strategy = MinMax(1)
-        self.random = Random()
 
 
-class MinMax2(Board8Strategy):
+class MinMax2(Board8OrLess):
     """
     MinMax法で次の手を決める(2手読み)
     """
     def __init__(self):
         self.strategy = MinMax(2)
-        self.random = Random()
 
 
-class MinMax3(Board8Strategy):
+class MinMax3(Board8OrLess):
     """
     MinMax法で次の手を決める(3手読み)
     """
     def __init__(self):
         self.strategy = MinMax(3)
-        self.random = Random()
 
 
-class MinMax4(Board8Strategy):
+class MinMax4(Board8OrLess):
     """
     MinMax法で次の手を決める(4手読み)
     """
     def __init__(self):
         self.strategy = MinMax(4)
-        self.random = Random()
 
 
 class NegaMax(MinMax):
@@ -471,40 +478,36 @@ class NegaMax(MinMax):
         return max_score
 
 
-class NegaMax1(Board8Strategy):
+class NegaMax1(StrategyBase):
     """
     NegaMax法で次の手を決める(1手読み)
     """
     def __init__(self):
         self.strategy = NegaMax(1)
-        self.random = Random()
 
 
-class NegaMax2(Board8Strategy):
+class NegaMax2(StrategyBase):
     """
     NegaMax法で次の手を決める(2手読み)
     """
     def __init__(self):
         self.strategy = NegaMax(2)
-        self.random = Random()
 
 
-class NegaMax3(Board8Strategy):
+class NegaMax3(StrategyBase):
     """
     NegaMax法で次の手を決める(3手読み)
     """
     def __init__(self):
         self.strategy = NegaMax(3)
-        self.random = Random()
 
 
-class NegaMax4(Board8Strategy):
+class NegaMax4(StrategyBase):
     """
     NegaMax法で次の手を決める(4手読み)
     """
     def __init__(self):
         self.strategy = NegaMax(4)
-        self.random = Random()
 
 
 class AlphaBeta(MinMax):
@@ -571,49 +574,44 @@ class AlphaBeta(MinMax):
         return alpha
 
 
-class AlphaBeta1(Board8Strategy):
+class AlphaBeta1(StrategyBase):
     """
     AlphaBeta法で次の手を決める(1手読み)
     """
     def __init__(self):
         self.strategy = AlphaBeta(1)
-        self.random = Random()
 
 
-class AlphaBeta2(Board8Strategy):
+class AlphaBeta2(StrategyBase):
     """
     AlphaBeta法で次の手を決める(2手読み)
     """
     def __init__(self):
         self.strategy = AlphaBeta(2)
-        self.random = Random()
 
 
-class AlphaBeta3(Board8Strategy):
+class AlphaBeta3(StrategyBase):
     """
     AlphaBeta法で次の手を決める(3手読み)
     """
     def __init__(self):
         self.strategy = AlphaBeta(3)
-        self.random = Random()
 
 
-class AlphaBeta4(Board8Strategy):
+class AlphaBeta4(StrategyBase):
     """
     AlphaBeta法で次の手を決める(4手読み)
     """
     def __init__(self):
         self.strategy = AlphaBeta(4)
-        self.random = Random()
 
 
-class AlphaBeta5(Board8Strategy):
+class AlphaBeta5(StrategyBase):
     """
     AlphaBeta法で次の手を決める(5手読み)
     """
     def __init__(self):
         self.strategy = AlphaBeta(5)
-        self.random = Random()
 
 
 if __name__ == '__main__':
