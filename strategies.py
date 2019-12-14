@@ -816,7 +816,7 @@ if __name__ == '__main__':
     assert Measure.count['NegaMax'] == 428
 
     Measure.count['NegaMax'] = 0
-    Timer.deadline['NegaMax'] = time.time() + 1
+    Timer.deadline['NegaMax'] = time.time() + 5
     assert negamax.get_score('white', bitboard8, 5) == 2
     assert Measure.count['NegaMax'] == 2478
 
