@@ -15,6 +15,9 @@ from timer import Timer
 from measure import Measure
 
 
+CPU_TIME = 0.5  # CPUの持ち時間(s)
+
+
 class AbstractStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def next_move(self, color, board):
@@ -249,6 +252,7 @@ class MinMax(AbstractStrategy):
     MinMax法で次の手を決める
     """
     MIN, MAX = -10000000, 10000000
+    WEIGHT1, WEIGHT2, WEIGHT3 = 10000, 16, 2
 
     def __init__(self, depth=3):
         self.depth = depth
@@ -321,9 +325,9 @@ class MinMax(AbstractStrategy):
             ret = board.score['black'] - board.score['white']
 
             if ret > 0:    # 黒が勝った
-                ret += 10000
+                ret += MinMax.WEIGHT1
             elif ret < 0:  # 白が勝った
-                ret -= 10000
+                ret -= MinMax.WEIGHT1
 
             return ret
 
@@ -334,13 +338,13 @@ class MinMax(AbstractStrategy):
         for x, y in [(0, 0), (0, board.size-1), (board.size-1, 0), (board.size-1, board.size-1)]:
             corner += board_info[y][x]
 
-        ret += corner * 16
+        ret += corner * MinMax.WEIGHT2
 
         # 置ける場所の数に重みを掛ける
         black_num = len(list(possibles_b.keys()))
         white_num = len(list(possibles_w.keys()))
 
-        ret += (black_num - white_num) * 2
+        ret += (black_num - white_num) * MinMax.WEIGHT3
 
         return ret
 
@@ -349,32 +353,32 @@ class MinMax1(MinMax):
     """
     MinMax法で次の手を決める(1手読み)
     """
-    def __init__(self):
-        self.depth = 1
+    def __init__(self, depth=1):
+        super().__init__(depth)
 
 
 class MinMax2(MinMax):
     """
     MinMax法で次の手を決める(2手読み)
     """
-    def __init__(self):
-        self.depth = 2
+    def __init__(self, depth=2):
+        super().__init__(depth)
 
 
 class MinMax3(MinMax):
     """
     MinMax法で次の手を決める(3手読み)
     """
-    def __init__(self):
-        self.depth = 3
+    def __init__(self, depth=3):
+        super().__init__(depth)
 
 
 class MinMax4(MinMax):
     """
     MinMax法で次の手を決める(4手読み)
     """
-    def __init__(self):
-        self.depth = 4
+    def __init__(self, depth=4):
+        super().__init__(depth)
 
 
 class NegaMax(MinMax):
@@ -382,7 +386,7 @@ class NegaMax(MinMax):
     NegaMax法で次の手を決める
     """
     @Measure.time
-    @Timer.start(0.5)
+    @Timer.start(CPU_TIME)
     def next_move(self, color, board):
         """
         次の一手
@@ -446,32 +450,32 @@ class NegaMax1(NegaMax):
     """
     NegaMax法で次の手を決める(1手読み)
     """
-    def __init__(self):
-        self.depth = 1
+    def __init__(self, depth=1):
+        super().__init__(depth)
 
 
 class NegaMax2(NegaMax):
     """
     NegaMax法で次の手を決める(2手読み)
     """
-    def __init__(self):
-        self.depth = 2
+    def __init__(self, depth=2):
+        super().__init__(depth)
 
 
 class NegaMax3(NegaMax):
     """
     NegaMax法で次の手を決める(3手読み)
     """
-    def __init__(self):
-        self.depth = 3
+    def __init__(self, depth=3):
+        super().__init__(depth)
 
 
 class NegaMax4(NegaMax):
     """
     NegaMax法で次の手を決める(4手読み)
     """
-    def __init__(self):
-        self.depth = 4
+    def __init__(self, depth=4):
+        super().__init__(depth)
 
 
 class AlphaBeta(MinMax):
@@ -479,7 +483,7 @@ class AlphaBeta(MinMax):
     AlphaBeta法で次の手を決める
     """
     @Measure.time
-    @Timer.start(0.5)
+    @Timer.start(CPU_TIME)
     def next_move(self, color, board):
         """
         次の一手
@@ -541,58 +545,59 @@ class AlphaBeta1(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(1手読み)
     """
-    def __init__(self):
-        self.depth = 1
+    def __init__(self, depth=1):
+        super().__init__(depth)
 
 
 class AlphaBeta2(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(2手読み)
     """
-    def __init__(self):
-        self.depth = 2
+    def __init__(self, depth=2):
+        super().__init__(depth)
 
 
 class AlphaBeta3(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(3手読み)
     """
-    def __init__(self):
-        self.depth = 3
+    def __init__(self, depth=3):
+        super().__init__(depth)
 
 
 class AlphaBeta4(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(4手読み)
     """
-    def __init__(self):
-        self.depth = 4
+    def __init__(self, depth=4):
+        super().__init__(depth)
 
 
 class AlphaBeta5(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(5手読み)
     """
-    def __init__(self):
-        self.depth = 5
+    def __init__(self, depth=5):
+        super().__init__(depth)
 
 
 class AlphaBetaT(AlphaBeta):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める
     """
+    WEIGHT4 = 0.5
+
     def __init__(self, depth=3):
         super().__init__(depth)
         self.table = Table(8)  # Table戦略を利用する
 
     @Measure.time
-    @Timer.start(0.5)
+    @Timer.start(CPU_TIME)
     def next_move(self, color, board):
         """
         次の一手
         """
         if self.table.size != board.size:  # テーブルサイズの調整
-            print('set_table')
             self.table.set_table(board.size)
 
         next_color = 'white' if color == 'black' else 'black'
@@ -625,7 +630,7 @@ class AlphaBetaT(AlphaBeta):
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
             score = self.evaluate(board, possibles_b, possibles_w) * sign
-            score += self.table.get_score(color, board) * 0.5
+            score += self.table.get_score(color, board) * AlphaBetaT.WEIGHT4
             return score
 
         # パスの場合
@@ -898,17 +903,17 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 3, 2)
 
     Measure.count['NegaMax'] = 0
-    Timer.deadline['NegaMax'] = time.time() + 0.5
+    Timer.deadline['NegaMax'] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 2) == -6
     assert Measure.count['NegaMax'] == 18
 
     Measure.count['NegaMax'] = 0
-    Timer.deadline['NegaMax'] = time.time() + 0.5
+    Timer.deadline['NegaMax'] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 3) == 2
     assert Measure.count['NegaMax'] == 79
 
     Measure.count['NegaMax'] = 0
-    Timer.deadline['NegaMax'] = time.time() + 0.5
+    Timer.deadline['NegaMax'] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 4) == -4
     assert Measure.count['NegaMax'] == 428
 
@@ -984,17 +989,17 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 3, 2)
 
     Measure.count['AlphaBeta'] = 0
-    Timer.deadline['AlphaBeta'] = time.time() + 0.5
+    Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
     assert Measure.count['AlphaBeta'] == 16
 
     Measure.count['AlphaBeta'] = 0
-    Timer.deadline['AlphaBeta'] = time.time() + 0.5
+    Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
     assert Measure.count['AlphaBeta'] == 58
 
     Measure.count['AlphaBeta'] = 0
-    Timer.deadline['AlphaBeta'] = time.time() + 0.5
+    Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
     assert Measure.count['AlphaBeta'] == 226
 
