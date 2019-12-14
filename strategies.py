@@ -21,33 +21,11 @@ class AbstractStrategy(metaclass=abc.ABCMeta):
         pass
 
 
-class StrategyBase(AbstractStrategy):
-    """
-    引数分けする戦略のひな形
-    """
-    @abc.abstractmethod
-    def __init__(self):
-        pass
-
     def next_move(self, color, board):
         """
         次の一手
         """
         return self.strategy.next_move(color, board)
-
-
-class Board8OrLess(StrategyBase):
-    """
-    ボードサイズ8以下のみ(それ以外はRandom)
-    """
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        if board.size <= 8:
-            return self.strategy.next_move(color, board)
-
-        return Random().next_move(color, board)
 
 
 class ConsoleUserInput(AbstractStrategy):
@@ -377,36 +355,36 @@ class MinMax(AbstractStrategy):
         return ret
 
 
-class MinMax1(Board8OrLess):
+class MinMax1(MinMax):
     """
     MinMax法で次の手を決める(1手読み)
     """
     def __init__(self):
-        self.strategy = MinMax(1)
+        self.depth = 1
 
 
-class MinMax2(Board8OrLess):
+class MinMax2(MinMax):
     """
     MinMax法で次の手を決める(2手読み)
     """
     def __init__(self):
-        self.strategy = MinMax(2)
+        self.depth = 2
 
 
-class MinMax3(Board8OrLess):
+class MinMax3(MinMax):
     """
     MinMax法で次の手を決める(3手読み)
     """
     def __init__(self):
-        self.strategy = MinMax(3)
+        self.depth = 3
 
 
-class MinMax4(Board8OrLess):
+class MinMax4(MinMax):
     """
     MinMax法で次の手を決める(4手読み)
     """
     def __init__(self):
-        self.strategy = MinMax(4)
+        self.depth = 4
 
 
 class NegaMax(MinMax):
@@ -478,36 +456,36 @@ class NegaMax(MinMax):
         return max_score
 
 
-class NegaMax1(StrategyBase):
+class NegaMax1(NegaMax):
     """
     NegaMax法で次の手を決める(1手読み)
     """
     def __init__(self):
-        self.strategy = NegaMax(1)
+        self.depth = 1
 
 
-class NegaMax2(StrategyBase):
+class NegaMax2(NegaMax):
     """
     NegaMax法で次の手を決める(2手読み)
     """
     def __init__(self):
-        self.strategy = NegaMax(2)
+        self.depth = 2
 
 
-class NegaMax3(StrategyBase):
+class NegaMax3(NegaMax):
     """
     NegaMax法で次の手を決める(3手読み)
     """
     def __init__(self):
-        self.strategy = NegaMax(3)
+        self.depth = 3
 
 
-class NegaMax4(StrategyBase):
+class NegaMax4(NegaMax):
     """
     NegaMax法で次の手を決める(4手読み)
     """
     def __init__(self):
-        self.strategy = NegaMax(4)
+        self.depth = 4
 
 
 class AlphaBeta(MinMax):
@@ -574,44 +552,44 @@ class AlphaBeta(MinMax):
         return alpha
 
 
-class AlphaBeta1(StrategyBase):
+class AlphaBeta1(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(1手読み)
     """
     def __init__(self):
-        self.strategy = AlphaBeta(1)
+        self.depth = 1
 
 
-class AlphaBeta2(StrategyBase):
+class AlphaBeta2(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(2手読み)
     """
     def __init__(self):
-        self.strategy = AlphaBeta(2)
+        self.depth = 2
 
 
-class AlphaBeta3(StrategyBase):
+class AlphaBeta3(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(3手読み)
     """
     def __init__(self):
-        self.strategy = AlphaBeta(3)
+        self.depth = 3
 
 
-class AlphaBeta4(StrategyBase):
+class AlphaBeta4(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(4手読み)
     """
     def __init__(self):
-        self.strategy = AlphaBeta(4)
+        self.depth = 4
 
 
-class AlphaBeta5(StrategyBase):
+class AlphaBeta5(AlphaBeta):
     """
     AlphaBeta法で次の手を決める(5手読み)
     """
     def __init__(self):
-        self.strategy = AlphaBeta(5)
+        self.depth = 5
 
 
 if __name__ == '__main__':
