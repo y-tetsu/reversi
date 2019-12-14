@@ -510,8 +510,7 @@ class AlphaBeta(MinMax):
             score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
             board.undo()                                                             # 打った手を戻す
 
-            # 最善手を更新
-            if score > alpha:
+            if score > alpha:  # 最善手を更新
                 alpha = score
                 best_move = move
 
@@ -545,9 +544,9 @@ class AlphaBeta(MinMax):
             score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
-            alpha = max(alpha, score)
+            alpha = max(alpha, score)  # α値更新
 
-            if alpha >= beta:
+            if alpha >= beta:  # 枝刈り
                 break
 
         return alpha
