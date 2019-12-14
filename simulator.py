@@ -218,7 +218,12 @@ if __name__ == '__main__':
 
     elapsed_time = timeit.timeit('simulator.start()', globals=globals(), number=1)
     print(simulator, elapsed_time, '(s)')
+
     if setting['processes'] == 1:
-        keys = strategies.Measure.max_elp.keys()
+        print()
+        keys = strategies.Measure.elp_time.keys()
         for key in keys:
-            print(key, strategies.Measure.max_elp[key], '(s)')
+            print(key)
+            print(' min :', strategies.Measure.elp_time[key]['min'], '(s)')
+            print(' max :', strategies.Measure.elp_time[key]['max'], '(s)')
+            print(' ave :', strategies.Measure.elp_time[key]['ave'], '(s)')

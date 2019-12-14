@@ -77,56 +77,50 @@ class Measure:
     """
     計測
     """
-    max_elp = {}
+    elp_time = {}
     count = 0
 
     @classmethod
-    def measure_max_elp(cls, key):
+    def time(cls, key):
         """
-        最大時間計測
+        時間計測
         """
-        Measure.max_elp[key] = 0
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
 
-        def _get_max_elp(func):
+        def _time(func):
             def wrapper(*args, **kwargs):
-                time_s = time.time()
+                time_s = time.perf_counter()
                 ret = func(*args, **kwargs)
-                time_e = time.time()
+                time_e = time.perf_counter()
                 elp = time_e - time_s
 
-                if elp > Measure.max_elp[key]:
-                    Measure.max_elp[key] = elp
+                if elp > Measure.elp_time[key]['max']:
+                    Measure.elp_time[key]['max'] = elp
+                if elp < Measure.elp_time[key]['min']:
+                    Measure.elp_time[key]['min'] = elp
+
+                pre_cnt = Measure.elp_time[key]['cnt']
+                pre_ave = Measure.elp_time[key]['ave']
+
+                Measure.elp_time[key]['ave'] = ((pre_ave * pre_cnt) + elp) / (pre_cnt + 1)
+                Measure.elp_time[key]['cnt'] += 1
 
                 return ret
             return wrapper
-        return _get_max_elp
+        return _time
 
     @classmethod
-    def countup_call_count(cls, func):
+    def countup(cls, func):
         """
         コール回数のカウントアップ
         """
-        def _countup_call_count(*args, **kwargs):
+        def _countup(*args, **kwargs):
             Measure.count += 1
 
             ret = func(*args, **kwargs)
 
             return ret
-        return _countup_call_count
-
-    @classmethod
-    def get_call_count(cls):
-        """
-        コール回数の取得
-        """
-        return Measure.count
-
-    @classmethod
-    def clear_call_count(cls):
-        """
-        コール回数のクリア
-        """
-        Measure.count = 0
+        return _countup
 
 
 class ConsoleUserInput(AbstractStrategy):
@@ -496,7 +490,7 @@ class NegaMax(MinMax):
     """
     NegaMax法で次の手を決める
     """
-    @Measure.measure_max_elp('negamax')
+    @Measure.time('negamax')
     @Timer.start('negamax', 0.5)
     def next_move(self, color, board):
         """
@@ -523,7 +517,7 @@ class NegaMax(MinMax):
 
         return random.choice(moves[max_score])
 
-    @Measure.countup_call_count
+    @Measure.countup
     @Timer.timeout('negamax')
     def get_score(self, color, board, depth):
         """
@@ -603,7 +597,7 @@ class AlphaBeta(MinMax):
     """
     MIN = -1000000
 
-    @Measure.measure_max_elp('alphabeta')
+    @Measure.time('alphabeta')
     @Timer.start('alphabeta', 0.5)
     def next_move(self, color, board):
         """
@@ -625,7 +619,7 @@ class AlphaBeta(MinMax):
 
         return best_move
 
-    @Measure.countup_call_count
+    @Measure.countup
     @Timer.timeout('alphabeta')
     def get_score(self, color, board, alpha, beta, depth):
         """
@@ -913,32 +907,32 @@ if __name__ == '__main__':
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 2) == -6
-    assert Measure.get_call_count() == 18
+    assert Measure.count == 18
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 3) == 2
-    assert Measure.get_call_count() == 79
+    assert Measure.count == 79
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 4) == -4
-    assert Measure.get_call_count() == 428
+    assert Measure.count == 428
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.limit['negamax'] = 1
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 5) == 2
-    assert Measure.get_call_count() == 2478
+    assert Measure.count == 2478
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.limit['negamax'] = 5
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.get_score('white', bitboard8, 6) == -4
-    assert Measure.get_call_count() == 16251
+    assert Measure.count == 16251
 
     print(bitboard8)
     assert negamax.next_move('white', bitboard8) == (2, 4)
@@ -950,16 +944,16 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Measure.get_call_count() == 575
+    assert Measure.count == 575
 
-    Measure.clear_call_count()
+    Measure.count = 0
     negamax.depth = 2
     Timer.deadline['negamax'] = time.time() + Timer.limit['negamax']
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Measure.get_call_count() == 70
+    assert Measure.count == 70
 
     # AlphaBeta
     print('--- Test For AlphaBeta Strategy ---')
@@ -1001,32 +995,32 @@ if __name__ == '__main__':
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
-    assert Measure.get_call_count() == 16
+    assert Measure.count == 16
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
-    assert Measure.get_call_count() == 58
+    assert Measure.count == 58
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
-    assert Measure.get_call_count() == 226
+    assert Measure.count == 226
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.limit['alphabeta'] = 1
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 5) == 2
-    assert Measure.get_call_count() == 617
+    assert Measure.count == 617
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.limit['alphabeta'] = 3
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 6) == -4
-    assert Measure.get_call_count() == 1865
+    assert Measure.count == 1865
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -1039,13 +1033,13 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.clear_call_count()
+    Measure.count = 0
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.get_call_count() == 170
+    assert Measure.count == 170
 
-    Measure.clear_call_count()
+    Measure.count = 0
     alphabeta.depth = 2
     Timer.deadline['alphabeta'] = time.time() + Timer.limit['alphabeta']
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.get_call_count() == 29
+    assert Measure.count == 29
