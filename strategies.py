@@ -478,8 +478,6 @@ class AlphaBeta(MinMax):
     """
     AlphaBeta法で次の手を決める
     """
-    MIN = -1000000
-
     @Measure.time
     @Timer.start(0.5)
     def next_move(self, color, board):
@@ -487,7 +485,7 @@ class AlphaBeta(MinMax):
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        next_moves, alpha, beta = {}, AlphaBeta.MIN, -AlphaBeta.MIN
+        next_moves, alpha, beta = {}, AlphaBeta.MIN, AlphaBeta.MAX
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
@@ -495,7 +493,8 @@ class AlphaBeta(MinMax):
             score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
             board.undo()                                                             # 打った手を戻す
 
-            if score > alpha:  # 最善手を更新
+            # 最善手を更新
+            if score > alpha:
                 alpha = score
                 best_move = move
 
@@ -529,7 +528,8 @@ class AlphaBeta(MinMax):
             score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
-            alpha = max(alpha, score)  # α値更新
+            # 最大値を選択
+            alpha = max(alpha, score)
 
             if alpha >= beta:  # 枝刈り
                 break
