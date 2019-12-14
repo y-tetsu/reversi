@@ -11,6 +11,9 @@ import itertools
 
 import numpy as np
 
+from timer import Timer
+from measure import Measure
+
 
 class AbstractStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -34,93 +37,6 @@ class Board8Strategy(AbstractStrategy):
             return self.strategy.next_move(color, board)
 
         return self.random.next_move(color, board)
-
-
-class Timer:
-    """
-    タイマー
-    """
-    deadline = {}
-    limit = {}
-
-    @classmethod
-    def start(cls, key, limit):
-        """
-        タイマー開始
-        """
-        Timer.limit[key] = limit
-
-        def _set_timer(func):
-            def wrapper(*args, **kwargs):
-                Timer.deadline[key] = time.time() + limit
-
-                ret = func(*args, **kwargs)
-
-                return ret
-            return wrapper
-        return _set_timer
-
-    @classmethod
-    def timeout(cls, key):
-        """
-        タイマー経過チェック
-        """
-        def _timeout(func):
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs) if time.time() < Timer.deadline[key] else 0
-
-            return wrapper
-        return _timeout
-
-
-class Measure:
-    """
-    計測
-    """
-    elp_time = {}
-    count = 0
-
-    @classmethod
-    def time(cls, key):
-        """
-        時間計測
-        """
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
-
-        def _time(func):
-            def wrapper(*args, **kwargs):
-                time_s = time.perf_counter()
-                ret = func(*args, **kwargs)
-                time_e = time.perf_counter()
-                elp = time_e - time_s
-
-                if elp > Measure.elp_time[key]['max']:
-                    Measure.elp_time[key]['max'] = elp
-                if elp < Measure.elp_time[key]['min']:
-                    Measure.elp_time[key]['min'] = elp
-
-                pre_cnt = Measure.elp_time[key]['cnt']
-                pre_ave = Measure.elp_time[key]['ave']
-
-                Measure.elp_time[key]['ave'] = ((pre_ave * pre_cnt) + elp) / (pre_cnt + 1)
-                Measure.elp_time[key]['cnt'] += 1
-
-                return ret
-            return wrapper
-        return _time
-
-    @classmethod
-    def countup(cls, func):
-        """
-        コール回数のカウントアップ
-        """
-        def _countup(*args, **kwargs):
-            Measure.count += 1
-
-            ret = func(*args, **kwargs)
-
-            return ret
-        return _countup
 
 
 class ConsoleUserInput(AbstractStrategy):
