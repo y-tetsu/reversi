@@ -248,6 +248,8 @@ class MinMax(AbstractStrategy):
     """
     MinMax法で次の手を決める
     """
+    MIN, MAX = -1000000, 1000000
+
     def __init__(self, depth=3):
         self.depth = depth
 
@@ -257,40 +259,34 @@ class MinMax(AbstractStrategy):
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        moves, best_score = {}, None
+        next_moves = {}
+        best_score = MinMax.MIN if color == 'black' else MinMax.MAX
 
         # 打てる手の中から評価値の最も良い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)  # 一手打つ
-
+            board.put_stone(color, *move)                            # 一手打つ
             score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
+            board.undo()                                             # 打った手を戻す
 
-            if best_score is None:  # 初回は必ず設定
-                best_score = score
-            else:
-                if color == 'black' and score > best_score:    # 黒の場合最大を選択
-                    best_score = score
-                elif color == 'white' and score < best_score:  # 白の場合最小を選択
-                    best_score = score
+            # ベストスコア取得
+            best_score = max(best_score, score) if color == 'black' else min(best_score, score)
 
             # 次の手の候補を記憶
-            if score not in moves:
-                moves[score] = []
-            moves[score].append(move)
+            if score not in next_moves:
+                next_moves[score] = []
+            next_moves[score].append(move)
 
-            board.undo()  # 打った手を戻す
-
-        return random.choice(moves[best_score])
+        return random.choice(next_moves[best_score])  # 複数候補がある場合はランダムに選ぶ
 
     def get_score(self, color, board, depth):
         """
         評価値の取得
         """
+        # ゲーム終了 or 最大深さに到達
         possibles_b = board.get_possibles('black', True)  # 黒の打てる場所
         possibles_w = board.get_possibles('white', True)  # 白の打てる場所
         is_game_end =  True if not possibles_b and not possibles_w else False
 
-        # ゲーム終了 or 最大深さに到達
         if is_game_end or depth <= 0:
             return self.evaluate(board, possibles_b, possibles_w)
 
@@ -302,22 +298,15 @@ class MinMax(AbstractStrategy):
             return self.get_score(next_color, board, depth)
 
         # 評価値を算出
-        best_score = None
+        best_score = MinMax.MIN if color == 'black' else MinMax.MAX
 
         for move in possibles.keys():
             board.put_stone(color, *move)
-
             score = self.get_score(next_color, board, depth-1)
-
-            if best_score is None:  # 初回は必ず設定
-                best_score = score
-            else:
-                if color == 'black' and score > best_score:    # 黒の場合最大を選択
-                    best_score = score
-                elif color == 'white' and score < best_score:  # 白の場合最小を選択
-                    best_score = score
-
             board.undo()
+
+            # ベストスコア取得
+            best_score = max(best_score, score) if color == 'black' else min(best_score, score)
 
         return best_score
 
