@@ -707,6 +707,53 @@ class AlphaBetaT5(AlphaBetaT):
         super().__init__(depth)
 
 
+class AlphaBetaTI(AlphaBetaT):
+    """
+    AlphaBetaTに反復深化法を適用して次の手を決める
+    """
+    @Measure.time
+    @Timer.start(CPU_TIME)
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        next_color = 'white' if color == 'black' else 'black'
+        best_move = None
+
+        # 深さ2から始めて徐々に深く読んでいく
+        depth = 2
+
+        while True:
+            alpha, beta = AlphaBeta.MIN, AlphaBeta.MAX
+
+            # 前回の最善手を最初に調べる
+            moves = list(board.get_possibles(color).keys())
+            if best_move is not None:
+                moves.remove(best_move)
+                moves.insert(0, best_move)
+
+            # 打てる手の中から評価値の最も高い手を選ぶ
+            for move in moves:
+                board.put_stone(color, *move)                                       # 一手打つ
+                score = -self.get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
+                board.undo()                                                        # 打った手を戻す
+
+                if Timer.is_timeout(self):
+                    best_move = move if best_move is None else best_move
+                    break
+                else:
+                    if score > alpha:  # 最善手を更新
+                        alpha = score
+                        best_move = move
+
+            if Timer.is_timeout(self):
+                break
+
+            depth += 1
+
+        return best_move
+
+
 if __name__ == '__main__':
     def input(string):
         print(string + '1')
@@ -915,26 +962,31 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 3, 2)
 
     Measure.count['NegaMax'] = 0
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 2) == -6
     assert Measure.count['NegaMax'] == 18
 
     Measure.count['NegaMax'] = 0
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 3) == 2
     assert Measure.count['NegaMax'] == 79
 
     Measure.count['NegaMax'] = 0
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 4) == -4
     assert Measure.count['NegaMax'] == 428
 
     Measure.count['NegaMax'] = 0
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + 5
     assert negamax.get_score('white', bitboard8, 5) == 2
     assert Measure.count['NegaMax'] == 2478
 
     Measure.count['NegaMax'] = 0
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + 5
     assert negamax.get_score('white', bitboard8, 6) == -4
     assert Measure.count['NegaMax'] == 16251
@@ -950,12 +1002,14 @@ if __name__ == '__main__':
     print(bitboard8)
 
     Measure.count['NegaMax'] = 0
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + 5
     assert negamax.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['NegaMax'] == 575
 
     Measure.count['NegaMax'] = 0
     negamax.depth = 2
+    Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + 2
     assert negamax.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['NegaMax'] == 70
@@ -1001,26 +1055,31 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 3, 2)
 
     Measure.count['AlphaBeta'] = 0
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
     assert Measure.count['AlphaBeta'] == 16
 
     Measure.count['AlphaBeta'] = 0
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
     assert Measure.count['AlphaBeta'] == 58
 
     Measure.count['AlphaBeta'] = 0
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
     assert Measure.count['AlphaBeta'] == 226
 
     Measure.count['AlphaBeta'] = 0
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 1
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 5) == 2
     assert Measure.count['AlphaBeta'] == 617
 
     Measure.count['AlphaBeta'] = 0
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 6) == -4
     assert Measure.count['AlphaBeta'] == 1865
@@ -1037,12 +1096,14 @@ if __name__ == '__main__':
     print(bitboard8)
 
     Measure.count['AlphaBeta'] = 0
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['AlphaBeta'] == 170
 
     Measure.count['AlphaBeta'] = 0
     alphabeta.depth = 2
+    Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['AlphaBeta'] == 29
@@ -1061,6 +1122,25 @@ if __name__ == '__main__':
     print(bitboard8)
 
     Measure.count['AlphaBetaT'] = 0
+    Timer.timeout_flag['AlphaBetaT'] = False
     Timer.deadline['AlphaBetaT'] = time.time() + 3
     assert alphabetat.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['AlphaBetaT'] == 148
+
+    # AlphaBetaTI
+    print('--- Test For AlphaBetaTI Strategy ---')
+    print('- bitboard -')
+    alphabetati = AlphaBetaTI()
+    bitboard8 = BitBoard(8)
+    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_stone('white', 2, 4)
+    bitboard8.put_stone('black', 5, 5)
+    bitboard8.put_stone('white', 4, 2)
+    bitboard8.put_stone('black', 5, 2)
+    bitboard8.put_stone('white', 5, 4)
+    print(bitboard8)
+
+    Measure.count['AlphaBetaTI'] = 0
+    Timer.timeout_flag['AlphaBetaTI'] = False
+    assert alphabetati.next_move('black', bitboard8) == (5, 3)
+    assert Measure.count['AlphaBetaTI'] >= 1900
