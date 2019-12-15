@@ -11,7 +11,7 @@ import itertools
 
 import numpy as np
 
-from timer import Timer, TimerTimeoutError
+from timer import Timer
 from measure import Measure
 
 
@@ -396,21 +396,17 @@ class NegaMax(MinMax):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)  # 一手打つ
+            board.put_stone(color, *move)                             # 一手打つ
+            score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
+            board.undo()                                              # 打った手を戻す
 
-            try:
-                score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
-            except TimerTimeoutError:
-                score = 0
+            if Timer.is_timeout(self):      # タイムアウト発生時
+                if max_score not in moves:  # 候補がない場合は現在の手を返す
+                    return move
                 break
-            finally:
-                board.undo()  # 打った手を戻す
-
-                # 最大値を選択
-                max_score = max(max_score, score)
-
-                # 次の手の候補を記憶
-                if score not in moves:
+            else:
+                max_score = max(max_score, score)  # 最大値を選択
+                if score not in moves:             # 次の候補を記憶
                     moves[score] = []
                 moves[score].append(move)
 
@@ -446,8 +442,10 @@ class NegaMax(MinMax):
             score = -self.get_score(next_color, board, depth-1)
             board.undo()
 
-            # 最大値を選択
-            max_score = max(max_score, score)
+            if Timer.is_timeout(self):
+                break
+            else:
+                max_score = max(max_score, score)  # 最大値を選択
 
         return max_score
 
@@ -499,18 +497,15 @@ class AlphaBeta(MinMax):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)  # 一手打つ
+            board.put_stone(color, *move)                                            # 一手打つ
+            score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
+            board.undo()                                                             # 打った手を戻す
 
-            try:
-                score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
-            except TimerTimeoutError:
-                score = 0
+            if Timer.is_timeout(self):
+                best_move = move if best_move is None else best_move
                 break
-            finally:
-                board.undo()  # 打った手を戻す
-
-                # 最善手を更新
-                if score > alpha:
+            else:
+                if score > alpha:  # 最善手を更新
                     alpha = score
                     best_move = move
 
@@ -544,11 +539,12 @@ class AlphaBeta(MinMax):
             score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
-            # 最大値を選択
-            alpha = max(alpha, score)
-
-            if alpha >= beta:  # 枝刈り
+            if Timer.is_timeout(self):
                 break
+            else:
+                alpha = max(alpha, score)  # 最大値を選択
+                if alpha >= beta:  # 枝刈り
+                    break
 
         return alpha
 
@@ -617,18 +613,15 @@ class AlphaBetaT(AlphaBeta):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)  # 一手打つ
+            board.put_stone(color, *move)                                            # 一手打つ
+            score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
+            board.undo()                                                             # 打った手を戻す
 
-            try:
-                score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
-            except TimerTimeoutError:
-                score = 0
+            if Timer.is_timeout(self):
+                best_move = move if best_move is None else best_move
                 break
-            finally:
-                board.undo()  # 打った手を戻す
-
-                # 最善手を更新
-                if score > alpha:
+            else:
+                if score > alpha:  # 最善手を更新
                     alpha = score
                     best_move = move
 
@@ -664,11 +657,12 @@ class AlphaBetaT(AlphaBeta):
             score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
-            # 最大値を選択
-            alpha = max(alpha, score)
-
-            if alpha >= beta:  # 枝刈り
+            if Timer.is_timeout(self):
                 break
+            else:
+                alpha = max(alpha, score)  # 最大値を選択
+                if alpha >= beta:  # 枝刈り
+                    break
 
         return alpha
 

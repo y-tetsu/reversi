@@ -6,15 +6,12 @@
 import time
 
 
-class TimerTimeoutError(Exception):
-    pass
-
-
 class Timer:
     """
     タイマー
     """
     deadline = {}
+    timeout_flag = {}
 
     @classmethod
     def start(cls, limit):
@@ -24,7 +21,10 @@ class Timer:
         def _start(func):
             def wrapper(*args, **kwargs):
                 key = args[0].__class__.__name__
+
                 Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
+                Timer.timeout_flag[key] = False            # タイムアウト未発生
+
                 ret = func(*args, **kwargs)
 
                 return ret
@@ -40,7 +40,16 @@ class Timer:
             key = args[0].__class__.__name__
 
             if time.time() > Timer.deadline[key]:
-                raise TimerTimeoutError("Timer Timeout Occuer!")
+                Timer.timeout_flag[key] = True  # タイムアウト発生
+
+                return 0
 
             return func(*args, **kwargs)
         return wrapper
+
+    @classmethod
+    def is_timeout(cls, obj):
+        """
+        タイムアウト発生有無
+        """
+        return Timer.timeout_flag[obj.__class__.__name__]
