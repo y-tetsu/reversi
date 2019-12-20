@@ -161,9 +161,13 @@ class Table(AbstractStrategy):
     """
     評価テーブルで手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
     """
-    CORNER, C, A, B, X, O = 50, -20, 0, -1, -25, -5
-
-    def __init__(self, size=8):
+    def __init__(self, size=8, corner=50, c=-20, a=0, b=-1, x=-25, o=-5):
+        self._CORNER = corner
+        self._C = c
+        self._A = a
+        self._B = b
+        self._X = x
+        self._O = o
         self.set_table(size)
 
     def set_table(self, size):
@@ -171,25 +175,25 @@ class Table(AbstractStrategy):
         評価テーブル設定
         """
         self.size = size
-        table = [[Table.B for _ in range(size)] for _ in range(size)]
+        table = [[self._B for _ in range(size)] for _ in range(size)]
 
         # 中
         for num in range(0, size//2, 2):
             if num != size//2 - 1:
                 for y, x in itertools.product((num, size-num-1), repeat=2):
-                    table[y][x] = Table.A
+                    table[y][x] = self._A
 
         for y in range(1, size//2-1, 2):
             for x in range(1, size//2-1, 2):
                 if x == y:
                     for tmp_y, tmp_x in itertools.product((y, size-y-1), (x, size-x-1)):
-                        table[tmp_y][tmp_x] = Table.X
+                        table[tmp_y][tmp_x] = self._X
 
         for y in range(1, size//2-2, 2):
             for x in range(y+1, size-y-1):
                 for tmp_y, tmp_x in ((y, x), (size-y-1, x)):
-                    table[tmp_y][tmp_x] = Table.O
-                    table[tmp_x][tmp_y] = Table.O
+                    table[tmp_y][tmp_x] = self._O
+                    table[tmp_x][tmp_y] = self._O
 
         # 端
         x_min, y_min, x_max, y_max = 0, 0, size - 1, size - 1
@@ -198,15 +202,15 @@ class Table(AbstractStrategy):
             for y in range(size):
                 for x in range(size):
                     if (x == x_min or x == x_max) and (y == y_min or y == y_max):
-                        table[y][x] = Table.CORNER
+                        table[y][x] = self._CORNER
 
                         x_sign = 1 if x == x_min else -1
                         y_sign = 1 if y == y_min else -1
 
-                        table[y][x+(1*x_sign)] = Table.C
-                        table[y][x+(2*x_sign)] = Table.B
-                        table[y+(1*y_sign)][x] = Table.C
-                        table[y+(2*y_sign)][x] = Table.B
+                        table[y][x+(1*x_sign)] = self._C
+                        table[y][x+(2*x_sign)] = self._B
+                        table[y+(1*y_sign)][x] = self._C
+                        table[y+(2*y_sign)][x] = self._B
 
         self.table = np.array(table)
 
@@ -803,44 +807,44 @@ if __name__ == '__main__':
 
     table4 = Table(4)
     table4_ret = [
-        [Table.A, Table.B, Table.B, Table.A],
-        [Table.B, Table.B, Table.B, Table.B],
-        [Table.B, Table.B, Table.B, Table.B],
-        [Table.A, Table.B, Table.B, Table.A],
+        [0, -1, -1, 0],
+        [-1, -1, -1, -1],
+        [-1, -1, -1, -1],
+        [0, -1, -1, 0],
     ]
     assert (table4.table == np.array(table4_ret)).all()
 
     table8 = Table(8)
     table8_ret = [
-        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
-        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
-        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B],
-        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
-        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
+        [50, -20, -1, -1, -1, -1, -20, 50],
+        [-20, -25, -5, -5, -5, -5, -25, -20],
+        [-1, -5, 0, -1, -1, 0, -5, -1],
+        [-1, -5, -1, -1, -1, -1, -5, -1],
+        [-1, -5, -1, -1, -1, -1, -5, -1],
+        [-1, -5, 0, -1, -1, 0, -5, -1],
+        [-20, -25, -5, -5, -5, -5, -25, -20],
+        [50, -20, -1, -1, -1, -1, -20, 50],
     ]
     assert (table8.table == np.array(table8_ret)).all()
 
     table16 = Table(16)
     table16_ret = [
-        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
-        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
-        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B, Table.B, Table.B, Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.B, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.B, Table.O, Table.B],
-        [Table.B, Table.O, Table.A, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.A, Table.O, Table.B],
-        [Table.C, Table.X, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.O, Table.X, Table.C],
-        [Table.CORNER, Table.C, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.B, Table.C, Table.CORNER],
+        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
+        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
+        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
+        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
+        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
+        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
+        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
+        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
+        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
+        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
     ]
     assert (table16.table == np.array(table16_ret)).all()
 
