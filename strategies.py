@@ -255,10 +255,12 @@ class MinMax(AbstractStrategy):
     """
     MinMax法で次の手を決める
     """
-    MIN, MAX = -10000000, 10000000
-    WEIGHT1, WEIGHT2, WEIGHT3 = 10000, 16, 2
-
-    def __init__(self, depth=3):
+    def __init__(self, depth=3, w1=10000, w2=16, w3=2, min_value=-10000000, max_value=10000000):
+        self._W1 = w1
+        self._W2 = w2
+        self._W3 = w3
+        self._MIN = min_value
+        self._MAX = max_value
         self.depth = depth
 
     @Measure.time
@@ -268,7 +270,7 @@ class MinMax(AbstractStrategy):
         """
         next_color = 'white' if color == 'black' else 'black'
         next_moves = {}
-        best_score = MinMax.MIN if color == 'black' else MinMax.MAX
+        best_score = self._MIN if color == 'black' else self._MAX
 
         # 打てる手の中から評価値の最も良い手を選ぶ
         for move in board.get_possibles(color).keys():
@@ -306,7 +308,7 @@ class MinMax(AbstractStrategy):
             return self.get_score(next_color, board, depth)
 
         # 評価値を算出
-        best_score = MinMax.MIN if color == 'black' else MinMax.MAX
+        best_score = self._MIN if color == 'black' else self._MAX
 
         for move in possibles.keys():
             board.put_stone(color, *move)
@@ -329,9 +331,9 @@ class MinMax(AbstractStrategy):
             ret = board.score['black'] - board.score['white']
 
             if ret > 0:    # 黒が勝った
-                ret += MinMax.WEIGHT1
+                ret += self._W1
             elif ret < 0:  # 白が勝った
-                ret -= MinMax.WEIGHT1
+                ret -= self._W1
 
             return ret
 
@@ -342,13 +344,13 @@ class MinMax(AbstractStrategy):
         for x, y in [(0, 0), (0, board.size-1), (board.size-1, 0), (board.size-1, board.size-1)]:
             corner += board_info[y][x]
 
-        ret += corner * MinMax.WEIGHT2
+        ret += corner * self._W2
 
         # 置ける場所の数に重みを掛ける
         black_num = len(list(possibles_b.keys()))
         white_num = len(list(possibles_w.keys()))
 
-        ret += (black_num - white_num) * MinMax.WEIGHT3
+        ret += (black_num - white_num) * self._W3
 
         return ret
 
@@ -396,7 +398,7 @@ class NegaMax(MinMax):
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        moves, max_score = {}, NegaMax.MIN
+        moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
@@ -439,7 +441,7 @@ class NegaMax(MinMax):
             return -self.get_score(next_color, board, depth)
 
         # 評価値を算出
-        max_score = NegaMax.MIN
+        max_score = self._MIN
 
         for move in possibles.keys():
             board.put_stone(color, *move)
@@ -497,7 +499,7 @@ class AlphaBeta(MinMax):
         次の一手
         """
         next_color = 'white' if color == 'black' else 'black'
-        best_move, alpha, beta = None, AlphaBeta.MIN, AlphaBeta.MAX
+        best_move, alpha, beta = None, self._MIN, self._MAX
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
@@ -613,7 +615,7 @@ class AlphaBetaT(AlphaBeta):
             self.table.set_table(board.size)
 
         next_color = 'white' if color == 'black' else 'black'
-        best_move, alpha, beta = None, AlphaBetaT.MIN, AlphaBetaT.MAX
+        best_move, alpha, beta = None, self._MIN, self._MAX
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
@@ -728,7 +730,7 @@ class AlphaBetaTI(AlphaBetaT):
         depth = 2
 
         while True:
-            alpha, beta = AlphaBeta.MIN, AlphaBeta.MAX
+            alpha, beta = self._MIN, self._MAX
 
             # 前回の最善手を最初に調べる
             moves = list(board.get_possibles(color).keys())
@@ -1061,31 +1063,31 @@ if __name__ == '__main__':
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 2) == -6
+    assert alphabeta.get_score('white', bitboard8, -10000000, 10000000, 2) == -6
     assert Measure.count['AlphaBeta'] == 16
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 3) == 2
+    assert alphabeta.get_score('white', bitboard8, -10000000, 10000000, 3) == 2
     assert Measure.count['AlphaBeta'] == 58
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 4) == -4
+    assert alphabeta.get_score('white', bitboard8, -10000000, 10000000, 4) == -4
     assert Measure.count['AlphaBeta'] == 226
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 1
-    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 5) == 2
+    assert alphabeta.get_score('white', bitboard8, -10000000, 10000000, 5) == 2
     assert Measure.count['AlphaBeta'] == 617
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 3
-    assert alphabeta.get_score('white', bitboard8, AlphaBeta.MIN, -AlphaBeta.MIN, 6) == -4
+    assert alphabeta.get_score('white', bitboard8, -10000000, 10000000, 6) == -4
     assert Measure.count['AlphaBeta'] == 1865
 
     print(bitboard8)
