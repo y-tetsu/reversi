@@ -599,11 +599,10 @@ class AlphaBetaT(AlphaBeta):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める
     """
-    WEIGHT4 = 0.5
-
-    def __init__(self, depth=3):
-        super().__init__(depth)
-        self.table = Table(8)  # Table戦略を利用する
+    def __init__(self, depth=3, corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1=10000, w2=16, w3=2, w4=0.5, min_value=-10000000, max_value=10000000):
+        super().__init__(depth, w1, w2, w3, min_value, max_value)
+        self.table = Table(8, corner, c, a, b, x, o)  # Table戦略を利用する
+        self._W4 = w4
 
     @Measure.time
     @Timer.start(CPU_TIME)
@@ -647,7 +646,7 @@ class AlphaBetaT(AlphaBeta):
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
             score = self.evaluate(board, possibles_b, possibles_w) * sign
-            score += self.table.get_score(color, board) * AlphaBetaT.WEIGHT4
+            score += self.table.get_score(color, board) * self._W4
             return score
 
         # パスの場合
