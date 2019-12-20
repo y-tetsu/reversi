@@ -716,6 +716,9 @@ class AlphaBetaTI(AlphaBetaT):
     """
     AlphaBetaTに反復深化法を適用して次の手を決める
     """
+    def __init__(self, depth=2, corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1=10000, w2=16, w3=2, w4=0.5, min_value=-10000000, max_value=10000000):
+        super().__init__(depth, corner, c, a, b, x, o, w1, w2, w3, w4, min_value, max_value)
+
     @Measure.time
     @Timer.start(CPU_TIME)
     def next_move(self, color, board):
@@ -724,9 +727,7 @@ class AlphaBetaTI(AlphaBetaT):
         """
         next_color = 'white' if color == 'black' else 'black'
         best_move = None
-
-        # 深さ2から始めて徐々に深く読んでいく
-        depth = 2
+        depth = self.depth
 
         while True:
             alpha, beta = self._MIN, self._MAX
