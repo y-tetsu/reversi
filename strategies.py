@@ -505,11 +505,19 @@ class AlphaBeta(NegaMax):
         """
         次の一手
         """
+        moves = board.get_possibles(color).keys()  # 手の候補
+
+        return self.get_best_move(color, board, moves, self.depth)
+
+    def get_best_move(self, color, board, moves, depth):
+        """
+        最善手を選ぶ
+        """
         best_move, alpha, beta = None, self._MIN, self._MAX
 
         # 打てる手の中から評価値の最も高い手を選ぶ
-        for move in board.get_possibles(color).keys():
-            score = self.get_score(move, color, board, alpha, beta, self.depth)
+        for move in moves:
+            score = self.get_score(move, color, board, alpha, beta, depth)
 
             if Timer.is_timeout(self):
                 best_move = move if best_move is None else best_move
@@ -692,15 +700,12 @@ class AlphaBetaTI(AlphaBetaT):
         """
         次の一手
         """
-        next_color = 'white' if color == 'black' else 'black'
-        best_move = None
-        depth = self.depth
+        depth, best_move = self.depth, None
 
         while True:
-            alpha, beta = self._MIN, self._MAX
+            moves = list(board.get_possibles(color).keys())
 
             # 前回の最善手を優先的に
-            moves = list(board.get_possibles(color).keys())
             if best_move is not None:
                 moves.remove(best_move)
                 moves.insert(0, best_move)
@@ -711,24 +716,12 @@ class AlphaBetaTI(AlphaBetaT):
                     moves.remove(corner)
                     moves.insert(0, corner)
 
-            # 打てる手の中から評価値の最も高い手を選ぶ
-            for move in moves:
-                board.put_stone(color, *move)                                        # 一手打つ
-                score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
-                board.undo()                                                         # 打った手を戻す
+            best_move = super().get_best_move(color, board, moves, depth)  # 最善手
 
-                if Timer.is_timeout(self):
-                    best_move = move if best_move is None else best_move
-                    break
-                else:
-                    if score > alpha:  # 最善手を更新
-                        alpha = score
-                        best_move = move
-
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(self):  # タイムアウト
                 break
 
-            depth += 1
+            depth += 1  # 次の読みの深さ
 
         return best_move
 
