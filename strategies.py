@@ -397,14 +397,11 @@ class NegaMax(MinMax):
         """
         次の一手
         """
-        next_color = 'white' if color == 'black' else 'black'
         moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)                             # 一手打つ
-            score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
-            board.undo()                                              # 打った手を戻す
+            score = self.get_score(color, move, board, self.depth)  # 評価値を取得
 
             if Timer.is_timeout(self):      # タイムアウト発生時
                 if max_score not in moves:  # 候補がない場合は現在の手を返す
@@ -418,11 +415,22 @@ class NegaMax(MinMax):
 
         return random.choice(moves[max_score])  # 複数候補がある場合はランダムに選ぶ
 
+    def get_score(self, color, move, board, depth):
+        """
+        一手打った時のスコア取得
+        """
+        board.put_stone(color, *move)                          # 一手打つ
+        next_color = 'white' if color == 'black' else 'black'  # 次の相手
+        score = -self._get_score(next_color, board, depth-1)   # 評価値を取得
+        board.undo()                                           # 打った手を戻す
+
+        return score
+
     @Measure.countup
     @Timer.timeout
-    def get_score(self, color, board, depth):
+    def _get_score(self, color, board, depth):
         """
-        評価値の取得
+        先読みして評価値取得
         """
         # ゲーム終了 or 最大深さに到達
         possibles_b = board.get_possibles('black', True)
@@ -438,14 +446,14 @@ class NegaMax(MinMax):
         next_color = 'white' if color == 'black' else 'black'
 
         if not possibles:
-            return -self.get_score(next_color, board, depth)
+            return -self._get_score(next_color, board, depth)
 
         # 評価値を算出
         max_score = self._MIN
 
         for move in possibles.keys():
             board.put_stone(color, *move)
-            score = -self.get_score(next_color, board, depth-1)
+            score = -self._get_score(next_color, board, depth-1)
             board.undo()
 
             if Timer.is_timeout(self):
@@ -976,31 +984,31 @@ if __name__ == '__main__':
     Measure.count['NegaMax'] = 0
     Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + CPU_TIME
-    assert negamax.get_score('white', bitboard8, 2) == -6
+    assert negamax._get_score('white', bitboard8, 2) == -6
     assert Measure.count['NegaMax'] == 18
 
     Measure.count['NegaMax'] = 0
     Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + CPU_TIME
-    assert negamax.get_score('white', bitboard8, 3) == 2
+    assert negamax._get_score('white', bitboard8, 3) == 2
     assert Measure.count['NegaMax'] == 79
 
     Measure.count['NegaMax'] = 0
     Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + CPU_TIME
-    assert negamax.get_score('white', bitboard8, 4) == -4
+    assert negamax._get_score('white', bitboard8, 4) == -4
     assert Measure.count['NegaMax'] == 428
 
     Measure.count['NegaMax'] = 0
     Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + 5
-    assert negamax.get_score('white', bitboard8, 5) == 2
+    assert negamax._get_score('white', bitboard8, 5) == 2
     assert Measure.count['NegaMax'] == 2478
 
     Measure.count['NegaMax'] = 0
     Timer.timeout_flag['NegaMax'] = False
     Timer.deadline['NegaMax'] = time.time() + 5
-    assert negamax.get_score('white', bitboard8, 6) == -4
+    assert negamax._get_score('white', bitboard8, 6) == -4
     assert Measure.count['NegaMax'] == 16251
 
     print(bitboard8)
