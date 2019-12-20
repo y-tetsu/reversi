@@ -732,11 +732,17 @@ class AlphaBetaTI(AlphaBetaT):
         while True:
             alpha, beta = self._MIN, self._MAX
 
-            # 前回の最善手を最初に調べる
+            # 前回の最善手を優先的に
             moves = list(board.get_possibles(color).keys())
             if best_move is not None:
                 moves.remove(best_move)
                 moves.insert(0, best_move)
+
+            # 4隅はさらに優先的に調べる
+            for corner in [(0, 0), (0, board.size-1), (board.size-1, 0), (board.size-1, board.size-1)]:
+                if corner in moves:
+                    moves.remove(corner)
+                    moves.insert(0, corner)
 
             # 打てる手の中から評価値の最も高い手を選ぶ
             for move in moves:
