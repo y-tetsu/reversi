@@ -520,16 +520,16 @@ class AlphaBeta(NegaMax):
         """
         board.put_stone(color, *move)                                        # 一手打つ
         next_color = 'white' if color == 'black' else 'black'                # 相手の色
-        score = -self.alphabeta(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
+        score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
         board.undo()                                                         # 打った手を戻す
 
         return score
 
     @Measure.countup
     @Timer.timeout
-    def alphabeta(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth):
         """
-        αβ(Negaα)法で先読みしたときの評価値の取得
+        評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
         possibles_b = board.get_possibles('black', True)
@@ -545,12 +545,12 @@ class AlphaBeta(NegaMax):
         next_color = 'white' if color == 'black' else 'black'
 
         if not possibles:
-            return -self.alphabeta(next_color, board, -beta, -alpha, depth)
+            return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 評価値を算出
         for move in possibles.keys():
             board.put_stone(color, *move)
-            score = -self.alphabeta(next_color, board, -beta, -alpha, depth-1)
+            score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
             if Timer.is_timeout(self):
@@ -642,7 +642,7 @@ class AlphaBetaT(AlphaBeta):
 
     @Measure.countup
     @Timer.timeout
-    def get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth):
         """
         評価値の取得
         """
@@ -1077,31 +1077,31 @@ if __name__ == '__main__':
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta.alphabeta('white', bitboard8, -10000000, 10000000, 2) == -6
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -6
     assert Measure.count['AlphaBeta'] == 16
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta.alphabeta('white', bitboard8, -10000000, 10000000, 3) == 2
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 2
     assert Measure.count['AlphaBeta'] == 58
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta.alphabeta('white', bitboard8, -10000000, 10000000, 4) == -4
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4) == -4
     assert Measure.count['AlphaBeta'] == 226
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 1
-    assert alphabeta.alphabeta('white', bitboard8, -10000000, 10000000, 5) == 2
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5) == 2
     assert Measure.count['AlphaBeta'] == 617
 
     Measure.count['AlphaBeta'] = 0
     Timer.timeout_flag['AlphaBeta'] = False
     Timer.deadline['AlphaBeta'] = time.time() + 3
-    assert alphabeta.alphabeta('white', bitboard8, -10000000, 10000000, 6) == -4
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6) == -4
     assert Measure.count['AlphaBeta'] == 1865
 
     print(bitboard8)
