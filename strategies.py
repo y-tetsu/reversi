@@ -430,8 +430,7 @@ class NegaMax(MinMax):
         is_game_end =  True if not possibles_b and not possibles_w else False
 
         if is_game_end or depth <= 0:
-            sign = 1 if color == 'black' else -1
-            return self.evaluate(board, possibles_b, possibles_w) * sign
+            return self.evaluate(color, board, possibles_b, possibles_w)
 
         # パスの場合
         possibles = possibles_b if color == 'black' else possibles_w
@@ -454,6 +453,14 @@ class NegaMax(MinMax):
                 max_score = max(max_score, score)  # 最大値を選択
 
         return max_score
+
+    def evaluate(self, color, board, possibles_b, possibles_w):
+        """
+        評価値の算出
+        """
+        sign = 1 if color == 'black' else -1
+
+        return super().evaluate(board, possibles_b, possibles_w) * sign
 
 
 class NegaMax1(NegaMax):
@@ -537,8 +544,7 @@ class AlphaBeta(NegaMax):
         is_game_end =  True if not possibles_b and not possibles_w else False
 
         if is_game_end or depth <= 0:
-            sign = 1 if color == 'black' else -1
-            return self.evaluate(board, possibles_b, possibles_w) * sign
+            return self.evaluate(color, board, possibles_b, possibles_w)
 
         # パスの場合
         possibles = possibles_b if color == 'black' else possibles_w
@@ -621,63 +627,16 @@ class AlphaBetaT(AlphaBeta):
         if self.table.size != board.size:  # テーブルサイズの調整
             self.table.set_table(board.size)
 
-        next_color = 'white' if color == 'black' else 'black'
-        best_move, alpha, beta = None, self._MIN, self._MAX
+        return super().next_move(color, board)
 
-        # 打てる手の中から評価値の最も高い手を選ぶ
-        for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)                                            # 一手打つ
-            score = -self.get_score(next_color, board, -beta, -alpha, self.depth-1)  # 評価値を取得
-            board.undo()                                                             # 打った手を戻す
-
-            if Timer.is_timeout(self):
-                best_move = move if best_move is None else best_move
-                break
-            else:
-                if score > alpha:  # 最善手を更新
-                    alpha = score
-                    best_move = move
-
-        return best_move
-
-    @Measure.countup
-    @Timer.timeout
-    def _get_score(self, color, board, alpha, beta, depth):
+    def evaluate(self, color, board, possibles_b, possibles_w):
         """
-        評価値の取得
+        評価値の算出
         """
-        # ゲーム終了 or 最大深さに到達
-        possibles_b = board.get_possibles('black', True)
-        possibles_w = board.get_possibles('white', True)
-        is_game_end =  True if not possibles_b and not possibles_w else False
+        ret = super().evaluate(color, board, possibles_b, possibles_w)  # 元の評価
+        ret += self.table.get_score(color, board) * self._W4            # テーブル評価を追加
 
-        if is_game_end or depth <= 0:
-            sign = 1 if color == 'black' else -1
-            score = self.evaluate(board, possibles_b, possibles_w) * sign
-            score += self.table.get_score(color, board) * self._W4
-            return score
-
-        # パスの場合
-        possibles = possibles_b if color == 'black' else possibles_w
-        next_color = 'white' if color == 'black' else 'black'
-
-        if not possibles:
-            return -self.get_score(next_color, board, -beta, -alpha, depth)
-
-        # 評価値を算出
-        for move in possibles.keys():
-            board.put_stone(color, *move)
-            score = -self.get_score(next_color, board, -beta, -alpha, depth-1)
-            board.undo()
-
-            if Timer.is_timeout(self):
-                break
-            else:
-                alpha = max(alpha, score)  # 最大値を選択
-                if alpha >= beta:  # 枝刈り
-                    break
-
-        return alpha
+        return ret
 
 
 class AlphaBetaT1(AlphaBetaT):
@@ -754,9 +713,9 @@ class AlphaBetaTI(AlphaBetaT):
 
             # 打てる手の中から評価値の最も高い手を選ぶ
             for move in moves:
-                board.put_stone(color, *move)                                       # 一手打つ
-                score = -self.get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
-                board.undo()                                                        # 打った手を戻す
+                board.put_stone(color, *move)                                        # 一手打つ
+                score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
+                board.undo()                                                         # 打った手を戻す
 
                 if Timer.is_timeout(self):
                     best_move = move if best_move is None else best_move
@@ -949,14 +908,14 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate(board8, b, w) == 0
+    assert negamax.evaluate('black', board8, b, w) == 0
 
     board8.put_stone('black', 3, 2)
     board8.put_stone('white', 2, 4)
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate(board8, b, w) == 2
+    assert negamax.evaluate('black', board8, b, w) == 2
 
     board8.put_stone('black', 1, 5)
     board8.put_stone('white', 1, 4)
@@ -966,7 +925,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate(board8, b, w) == 22
+    assert negamax.evaluate('black', board8, b, w) == 22
 
     board8.put_stone('black', 1, 3)
     board8.put_stone('black', 2, 3)
@@ -974,7 +933,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert negamax.evaluate(board8, b, w) == 10014
+    assert negamax.evaluate('black', board8, b, w) == 10014
 
     from board import BitBoard
     print('- bitboard -')
@@ -1042,14 +1001,14 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate(board8, b, w) == 0
+    assert alphabeta.evaluate('black', board8, b, w) == 0
 
     board8.put_stone('black', 3, 2)
     board8.put_stone('white', 2, 4)
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate(board8, b, w) == 2
+    assert alphabeta.evaluate('black', board8, b, w) == 2
 
     board8.put_stone('black', 1, 5)
     board8.put_stone('white', 1, 4)
@@ -1059,7 +1018,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate(board8, b, w) == 22
+    assert alphabeta.evaluate('black', board8, b, w) == 22
 
     board8.put_stone('black', 1, 3)
     board8.put_stone('black', 2, 3)
@@ -1067,7 +1026,7 @@ if __name__ == '__main__':
     print(board8)
     b = board8.get_possibles('black', True)
     w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate(board8, b, w) == 10014
+    assert alphabeta.evaluate('white', board8, b, w) == -10014
 
     from board import BitBoard
     print('- bitboard -')
