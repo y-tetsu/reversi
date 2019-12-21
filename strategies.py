@@ -617,7 +617,7 @@ class AlphaBeta5(AlphaBeta):
         super().__init__(depth)
 
 
-class AlphaBetaT(AlphaBeta):
+class AB_T(AlphaBeta):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める
     """
@@ -647,7 +647,7 @@ class AlphaBetaT(AlphaBeta):
         return ret
 
 
-class AlphaBetaT1(AlphaBetaT):
+class AB_T1(AB_T):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める(1手読み)
     """
@@ -655,7 +655,7 @@ class AlphaBetaT1(AlphaBetaT):
         super().__init__(depth)
 
 
-class AlphaBetaT2(AlphaBetaT):
+class AB_T2(AB_T):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める(2手読み)
     """
@@ -663,7 +663,7 @@ class AlphaBetaT2(AlphaBetaT):
         super().__init__(depth)
 
 
-class AlphaBetaT3(AlphaBetaT):
+class AB_T3(AB_T):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める(3手読み)
     """
@@ -671,7 +671,7 @@ class AlphaBetaT3(AlphaBetaT):
         super().__init__(depth)
 
 
-class AlphaBetaT4(AlphaBetaT):
+class AB_T4(AB_T):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める(4手読み)
     """
@@ -679,7 +679,7 @@ class AlphaBetaT4(AlphaBetaT):
         super().__init__(depth)
 
 
-class AlphaBetaT5(AlphaBetaT):
+class AB_T5(AB_T):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める(5手読み)
     """
@@ -687,9 +687,9 @@ class AlphaBetaT5(AlphaBetaT):
         super().__init__(depth)
 
 
-class AlphaBetaTI(AlphaBetaT):
+class AB_TI(AB_T):
     """
-    AlphaBetaTに反復深化法を適用して次の手を決める
+    AB_Tに反復深化法を適用して次の手を決める
     """
     def __init__(self, depth=2, corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1=10000, w2=16, w3=2, w4=0.5, min_value=-10000000, max_value=10000000):
         super().__init__(depth, corner, c, a, b, x, o, w1, w2, w3, w4, min_value, max_value)
@@ -1080,10 +1080,10 @@ if __name__ == '__main__':
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
     assert Measure.count['AlphaBeta'] == 29
 
-    # AlphaBetaT
-    print('--- Test For AlphaBetaT Strategy ---')
+    # AB_T
+    print('--- Test For AB_T Strategy ---')
     print('- bitboard -')
-    alphabetat = AlphaBetaT()
+    ab_t = AB_T()
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
     bitboard8.put_stone('white', 2, 4)
@@ -1093,16 +1093,16 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count['AlphaBetaT'] = 0
-    Timer.timeout_flag['AlphaBetaT'] = False
-    Timer.deadline['AlphaBetaT'] = time.time() + 3
-    assert alphabetat.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count['AlphaBetaT'] == 148
+    Measure.count['AB_T'] = 0
+    Timer.timeout_flag['AB_T'] = False
+    Timer.deadline['AB_T'] = time.time() + 3
+    assert ab_t.next_move('black', bitboard8) == (2, 2)
+    assert Measure.count['AB_T'] == 148
 
-    # AlphaBetaTI
-    print('--- Test For AlphaBetaTI Strategy ---')
+    # AB_TI
+    print('--- Test For AB_TI Strategy ---')
     print('- bitboard -')
-    alphabetati = AlphaBetaTI()
+    ab_ti = AB_TI()
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
     bitboard8.put_stone('white', 2, 4)
@@ -1112,7 +1112,7 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count['AlphaBetaTI'] = 0
-    Timer.timeout_flag['AlphaBetaTI'] = False
-    assert alphabetati.next_move('black', bitboard8) == (5, 3)
-    assert Measure.count['AlphaBetaTI'] >= 1900
+    Measure.count['AB_TI'] = 0
+    Timer.timeout_flag['AB_TI'] = False
+    assert ab_ti.next_move('black', bitboard8) == (5, 3)
+    assert Measure.count['AB_TI'] >= 1900
