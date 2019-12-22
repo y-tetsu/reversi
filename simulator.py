@@ -9,7 +9,6 @@ from multiprocessing import Pool
 from game import Game
 from board import Board, BitBoard
 from display import NoneDisplay
-from measure import Measure
 
 
 class Simulator:

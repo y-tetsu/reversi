@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """
-オセロの戦略
+オセロの戦略(簡単)
 """
 
-import abc
+import sys
+sys.path.append('../')
+
 import re
 import random
 import time
@@ -11,24 +13,10 @@ import itertools
 
 import numpy as np
 
-from timer import Timer
-from measure import Measure
+from .timer import Timer
+from .measure import Measure
 
-
-CPU_TIME = 0.5  # CPUの持ち時間(s)
-
-
-class AbstractStrategy(metaclass=abc.ABCMeta):
-    @abc.abstractmethod
-    def next_move(self, color, board):
-        pass
-
-
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        return self.strategy.next_move(color, board)
+from .common import AbstractStrategy, CPU_TIME
 
 
 class ConsoleUserInput(AbstractStrategy):
