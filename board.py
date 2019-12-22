@@ -610,9 +610,9 @@ if __name__ == '__main__':
     print('BitBoard')
     print(bitboard4)
     assert len(bitboard4.put_stone('black', 1, 0)) == 1
-    assert bitboard4.prev == {'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'stone_num': 1}
+    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'stone_num': 1}]
     assert len(bitboard4.put_stone('white', 0, 0)) == 1
-    assert bitboard4.prev == {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024, 'stone_num': 1}
+    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'stone_num': 1}, {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024, 'stone_num': 1}]
     assert len(bitboard4.put_stone('black', 0, 1)) == 1
     assert len(bitboard4.put_stone('white', 2, 0)) == 2
     assert len(bitboard4.put_stone('black', 3, 2)) == 1

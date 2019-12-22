@@ -11,10 +11,10 @@ import itertools
 
 import numpy as np
 
-from timer import Timer
-from measure import Measure
+from strategies.timer import Timer
+from strategies.measure import Measure
 
-from common import AbstractStrategy, CPU_TIME
+from strategies.common import AbstractStrategy, CPU_TIME
 
 
 class Random(AbstractStrategy):
