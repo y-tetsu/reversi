@@ -19,6 +19,13 @@ BLACK_STRATEGIES = {
     'Unselfish': strategies.Unselfish(),
     'Random': strategies.Random(),
     'Greedy': strategies.Greedy(),
+    'SlowStarter': strategies.SlowStarter(),
+    'Table': strategies.Table(),
+    'MinMax': strategies.MinMax2(),
+    'NegaMax': strategies.NegaMax3(),
+    'AlphaBeta': strategies.AlphaBeta4(),
+    'AB_T': strategies.AB_T4(),
+    'AB_TI': strategies.AB_TI(),
 }
 
 WHITE_STRATEGIES = {
@@ -26,6 +33,12 @@ WHITE_STRATEGIES = {
     'Unselfish': strategies.Unselfish(),
     'Random': strategies.Random(),
     'Greedy': strategies.Greedy(),
+    'Table': strategies.Table(),
+    'MinMax': strategies.MinMax2(),
+    'NegaMax': strategies.NegaMax3(),
+    'AlphaBeta': strategies.AlphaBeta4(),
+    'AB_T': strategies.AB_T4(),
+    'AB_TI': strategies.AB_TI(),
 }
 
 STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}
