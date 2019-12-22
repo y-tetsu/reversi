@@ -218,6 +218,9 @@ class AB_TI(AB_T):
         """
         次の一手
         """
+        if self.table.size != board.size:  # テーブルサイズの調整
+            self.table.set_table(board.size)
+
         depth, best_move = self.depth, None
 
         while True:
