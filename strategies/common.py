@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-共通処理
+共通
 """
 
 import abc
