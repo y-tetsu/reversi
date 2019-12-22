@@ -226,10 +226,10 @@ if __name__ == '__main__':
     print(simulator, elapsed_time, '(s)')
 
     if setting['processes'] == 1:
-        keys = Measure.elp_time.keys()
+        keys = strategies.Measure.elp_time.keys()
         for key in keys:
             print()
             print(key)
-            print(' min :', Measure.elp_time[key]['min'], '(s)')
-            print(' max :', Measure.elp_time[key]['max'], '(s)')
-            print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+            print(' min :', strategies.Measure.elp_time[key]['min'], '(s)')
+            print(' max :', strategies.Measure.elp_time[key]['max'], '(s)')
+            print(' ave :', strategies.Measure.elp_time[key]['ave'], '(s)')
