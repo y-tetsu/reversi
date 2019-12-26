@@ -10,10 +10,10 @@ from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.easy import Table
-from strategies.negamax import NegaMax
+from strategies.negamax import NegaMax_
 
 
-class AlphaBeta(NegaMax):
+class AlphaBeta(NegaMax_):
     """
     AlphaBeta法で次の手を決める
     """
