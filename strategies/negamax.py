@@ -11,10 +11,10 @@ import random
 from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.minmax import MinMax
+from strategies.minmax import MinMax_
 
 
-class NegaMax(MinMax):
+class NegaMax(MinMax_):
     """
     NegaMax法で次の手を決める
     """

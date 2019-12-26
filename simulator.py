@@ -208,6 +208,10 @@ if __name__ == '__main__':
         'AB_T4': strategies.AB_T4(),
         'AB_T5': strategies.AB_T5(),
         'AB_TI': strategies.AB_TI(),
+        'MinMax1_T': strategies.MinMax1_T(),
+        'MinMax2_T': strategies.MinMax2_T(),
+        'MinMax3_T': strategies.MinMax3_T(),
+        'MinMax4_T': strategies.MinMax4_T(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]

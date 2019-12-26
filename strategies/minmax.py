@@ -10,9 +10,111 @@ import random
 
 from strategies.common import AbstractStrategy
 from strategies.measure import Measure
+from strategies.evaluator import Evaluator_T
 
 
 class MinMax(AbstractStrategy):
+    """
+    MinMax法で次の手を決める
+    """
+    def __init__(self, depth=3, evaluator=None):
+        self._MIN = -10000000
+        self._MAX = 10000000
+
+        self.depth = depth
+        self.evaluator = evaluator
+
+    @Measure.time
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        next_color = 'white' if color == 'black' else 'black'
+        next_moves = {}
+        best_score = self._MIN if color == 'black' else self._MAX
+
+        # 打てる手の中から評価値の最も良い手を選ぶ
+        for move in board.get_possibles(color).keys():
+            board.put_stone(color, *move)                            # 一手打つ
+            score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
+            board.undo()                                             # 打った手を戻す
+
+            # ベストスコア取得
+            best_score = max(best_score, score) if color == 'black' else min(best_score, score)
+
+            # 次の手の候補を記憶
+            if score not in next_moves:
+                next_moves[score] = []
+            next_moves[score].append(move)
+
+        return random.choice(next_moves[best_score])  # 複数候補がある場合はランダムに選ぶ
+
+    def get_score(self, color, board, depth):
+        """
+        評価値の取得
+        """
+        # ゲーム終了 or 最大深さに到達
+        possibles_b = board.get_possibles('black', True)  # 黒の打てる場所
+        possibles_w = board.get_possibles('white', True)  # 白の打てる場所
+        is_game_end =  True if not possibles_b and not possibles_w else False
+
+        if is_game_end or depth <= 0:
+            return self.evaluator.evaluate(color, board, possibles_b, possibles_w)
+
+        # パスの場合
+        possibles = possibles_b if color == 'black' else possibles_w
+        next_color = 'white' if color == 'black' else 'black'
+
+        if not possibles:
+            return self.get_score(next_color, board, depth)
+
+        # 評価値を算出
+        best_score = self._MIN if color == 'black' else self._MAX
+
+        for move in possibles.keys():
+            board.put_stone(color, *move)
+            score = self.get_score(next_color, board, depth-1)
+            board.undo()
+
+            # ベストスコア取得
+            best_score = max(best_score, score) if color == 'black' else min(best_score, score)
+
+        return best_score
+
+
+class MinMax1_T(MinMax):
+    """
+    MinMax法でテーブル評価値により次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_T()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_T(MinMax):
+    """
+    MinMax法でテーブル評価値により次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_T()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax3_T(MinMax):
+    """
+    MinMax法でテーブル評価値により次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_T()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax4_T(MinMax):
+    """
+    MinMax法でテーブル評価値により次の手を決める(3手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_T()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax_(AbstractStrategy):
     """
     MinMax法で次の手を決める
     """
@@ -116,7 +218,7 @@ class MinMax(AbstractStrategy):
         return ret
 
 
-class MinMax1(MinMax):
+class MinMax1(MinMax_):
     """
     MinMax法で次の手を決める(1手読み)
     """
@@ -124,7 +226,7 @@ class MinMax1(MinMax):
         super().__init__(depth)
 
 
-class MinMax2(MinMax):
+class MinMax2(MinMax_):
     """
     MinMax法で次の手を決める(2手読み)
     """
@@ -132,7 +234,7 @@ class MinMax2(MinMax):
         super().__init__(depth)
 
 
-class MinMax3(MinMax):
+class MinMax3(MinMax_):
     """
     MinMax法で次の手を決める(3手読み)
     """
@@ -140,7 +242,7 @@ class MinMax3(MinMax):
         super().__init__(depth)
 
 
-class MinMax4(MinMax):
+class MinMax4(MinMax_):
     """
     MinMax法で次の手を決める(4手読み)
     """
@@ -152,7 +254,7 @@ if __name__ == '__main__':
     from board import Board
     print('--- Test For MinMax Strategy ---')
     board8 = Board(8)
-    minmax = MinMax()
+    minmax = MinMax_()
     assert minmax.depth == 3
     print(board8)
     b = board8.get_possibles('black', True)
