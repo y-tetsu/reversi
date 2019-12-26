@@ -47,6 +47,37 @@ class PossibilityScorer(AbstractScorer):
         return (black_num - white_num) * self._W
 
 
+class OpeningScorer(AbstractScorer):
+    """
+    開放度に基づいて算出
+    """
+    def __init__(self, w=-2):
+        self._W = w
+
+    def get_score(self, board, stones):
+        """
+        評価値の算出
+        """
+        size, board_info, opening = board.size, board.get_board_info(), 0
+
+        directions = [
+            [-1,  1], [ 0,  1], [ 1,  1],
+            [-1,  0],           [ 1,  0],
+            [-1, -1], [ 0, -1], [ 1, -1],
+        ]
+
+        # ひっくり返した石の周りをチェック
+        for stone_x, stone_y in stones:
+            for dx, dy in directions:
+                x, y = stone_x + dx, stone_y + dy
+
+                if 0 <= x < size and 0 <= y < size:
+                    if board_info[y][x] == 0:
+                        opening += 1  # 石が置かれていない場所をカウント
+
+        return opening * self._W
+
+
 class WinLooseScorer(AbstractScorer):
     """
     勝敗に基づいて算出
@@ -81,7 +112,7 @@ if __name__ == '__main__':
     board8.put_stone('black', 2, 3)
     board8.put_stone('white', 4, 2)
     board8.put_stone('black', 1, 1)
-    board8.put_stone('white', 0, 0)
+    stones = board8.put_stone('white', 0, 0)
 
     possibles_b = board8.get_possibles('black', True)
     possibles_w = board8.get_possibles('white', True)
@@ -103,6 +134,13 @@ if __name__ == '__main__':
 
     print('black score', scorer.get_score(possibles_b, possibles_w))
     assert scorer.get_score(possibles_b, possibles_w) == 5
+
+    #------------------------------------------------------
+    # OpeningScorer
+    scorer = OpeningScorer()
+
+    print('black score', scorer.get_score(board8, stones))
+    assert scorer.get_score(board8, stones) == -22
 
     #------------------------------------------------------
     # WinLooseScorer
