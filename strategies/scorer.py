@@ -54,7 +54,7 @@ class OpeningScorer(AbstractScorer):
     def __init__(self, w=-2):
         self._W = w
 
-    def get_score(self, board, stones):
+    def get_score(self, board):
         """
         評価値の算出
         """
@@ -65,6 +65,8 @@ class OpeningScorer(AbstractScorer):
             [-1,  0],           [ 1,  0],
             [-1, -1], [ 0, -1], [ 1, -1],
         ]
+
+        stones = board.prev[-1]['reversibles']  # 最後にひっくり返された石の場所
 
         # ひっくり返した石の周りをチェック
         for stone_x, stone_y in stones:
@@ -139,8 +141,8 @@ if __name__ == '__main__':
     # OpeningScorer
     scorer = OpeningScorer()
 
-    print('black score', scorer.get_score(board8, stones))
-    assert scorer.get_score(board8, stones) == -22
+    print('black score', scorer.get_score(board8))
+    assert scorer.get_score(board8) == -22
 
     #------------------------------------------------------
     # WinLooseScorer
