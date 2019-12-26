@@ -40,7 +40,7 @@ class WinLooseScorer(AbstractScorer):
         """
         評価値の算出
         """
-        ret = None
+        ret = 0
 
         # 対局終了時
         if not possibles_b and not possibles_w:
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     assert scorer.get_score(board8, [], []) == -10006
 
     print('black score', scorer.get_score(board8, possibles_b, possibles_w))
-    assert scorer.get_score(board8, possibles_b, possibles_w) is None
+    assert scorer.get_score(board8, possibles_b, possibles_w) == 0
 
     #------------------------------------------------------
     # PossibilityScorer
