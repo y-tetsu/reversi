@@ -13,3 +13,13 @@ class AbstractStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def next_move(self, color, board):
         pass
+
+class AbstractScorer(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def get_score(self, color, board):
+        pass
+
+class AbstractEvaluator(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def evaluate(self, color, board):
+        pass
