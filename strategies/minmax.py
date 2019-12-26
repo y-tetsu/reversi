@@ -10,7 +10,7 @@ import random
 
 from strategies.common import AbstractStrategy
 from strategies.measure import Measure
-from strategies.evaluator import Evaluator_T, Evaluator_TP, Evaluator_TPO
+from strategies.evaluator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPOW
 
 
 class MinMax(AbstractStrategy):
@@ -178,6 +178,38 @@ class MinMax4_TPO(MinMax):
         super().__init__(depth, evaluator)
 
 
+class MinMax1_TPOW(MinMax):
+    """
+    MinMax法でEvaluator_TPOWにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_TPOW(MinMax):
+    """
+    MinMax法でEvaluator_TPOWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax3_TPOW(MinMax):
+    """
+    MinMax法でEvaluator_TPOWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax4_TPOW(MinMax):
+    """
+    MinMax法でEvaluator_TPOWにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
 class MinMax_(AbstractStrategy):
     """
     MinMax法で次の手を決める
@@ -315,50 +347,23 @@ class MinMax4(MinMax_):
 
 
 if __name__ == '__main__':
-    from board import Board
-    print('--- Test For MinMax Strategy ---')
-    board8 = Board(8)
-    minmax = MinMax_()
-    assert minmax.depth == 3
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert minmax.evaluate(board8, b, w) == 0
-
-    board8.put_stone('black', 3, 2)
-    board8.put_stone('white', 2, 4)
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert minmax.evaluate(board8, b, w) == 2
-
-    board8.put_stone('black', 1, 5)
-    board8.put_stone('white', 1, 4)
-    board8.put_stone('black', 2, 5)
-    board8.put_stone('white', 1, 6)
-    board8.put_stone('black', 0, 7)
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert minmax.evaluate(board8, b, w) == 22
-
-    board8.put_stone('black', 1, 3)
-    board8.put_stone('black', 2, 3)
-    board8.put_stone('black', 4, 5)
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert minmax.evaluate(board8, b, w) == 10014
-
     from board import BitBoard
-    print('- bitboard -')
     bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
     print(bitboard8)
-    assert minmax.get_score('white', bitboard8, 2) == 6
-    assert minmax.get_score('white', bitboard8, 3) == -2
+
+    print('--- Test For MinMax Strategy ---')
+    minmax = MinMax3_TPOW()
+
+    assert minmax.depth == 3
+
+    bitboard8.put_stone('black', 3, 2)
+    print( minmax.get_score('white', bitboard8, 2) )
+    assert minmax.get_score('white', bitboard8, 2) == 12.75
+    print( minmax.get_score('white', bitboard8, 3) )
+    assert minmax.get_score('white', bitboard8, 3) == -2.25
 
     print(bitboard8)
+    print( minmax.next_move('white', bitboard8) )
     assert minmax.next_move('white', bitboard8) == (2, 4)
     bitboard8.put_stone('white', 2, 4)
     bitboard8.put_stone('black', 5, 5)
@@ -366,4 +371,5 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 5, 2)
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
+    print( minmax.next_move('black', bitboard8) )
     assert minmax.next_move('black', bitboard8) == (2, 2)

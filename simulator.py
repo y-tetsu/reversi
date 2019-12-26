@@ -220,6 +220,10 @@ if __name__ == '__main__':
         'MinMax2_TPO': strategies.MinMax2_TPO(),
         'MinMax3_TPO': strategies.MinMax3_TPO(),
         'MinMax4_TPO': strategies.MinMax4_TPO(),
+        'MinMax1_TPOW': strategies.MinMax1_TPOW(),
+        'MinMax2_TPOW': strategies.MinMax2_TPOW(),
+        'MinMax3_TPOW': strategies.MinMax3_TPOW(),
+        'MinMax4_TPOW': strategies.MinMax4_TPOW(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
