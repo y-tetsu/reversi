@@ -9,6 +9,8 @@ sys.path.append('../')
 from strategies.common import AbstractScorer
 from strategies.easy import Table
 
+from board import Board, BitBoard
+
 
 class TableScorer(AbstractScorer):
     """
@@ -51,7 +53,7 @@ class OpeningScorer(AbstractScorer):
     """
     開放度に基づいて算出
     """
-    def __init__(self, w=-2):
+    def __init__(self, w=-0.75):
         self._W = w
 
     def get_score(self, board):
@@ -66,9 +68,22 @@ class OpeningScorer(AbstractScorer):
             [-1, -1], [ 0, -1], [ 1, -1],
         ]
 
-        stones = board.prev[-1]['reversibles']  # 最後にひっくり返された石の場所
+        # 最後にひっくり返された石の場所を取得する
+        if isinstance(board, BitBoard):
+            reversibles = board.prev[-1]['reversibles']
 
-        # ひっくり返した石の周りをチェック
+            stones = []
+            mask = 1 << ((size * size) - 1)
+
+            for y in range(size):
+                for x in range(size):
+                    if mask & reversibles:
+                        stones.append([x, y])
+                    mask >>= 1
+        else:
+            stones = board.prev[-1]['reversibles']
+
+        # ひっくり返した石の周りをチェックする
         for stone_x, stone_y in stones:
             for dx, dy in directions:
                 x, y = stone_x + dx, stone_y + dy
@@ -106,9 +121,9 @@ class WinLooseScorer(AbstractScorer):
 
 
 if __name__ == '__main__':
-    from board import Board
+    from board import BitBoard
 
-    board8 = Board(8)
+    board8 = BitBoard(8)
     board8.put_stone('black', 3, 2)
     board8.put_stone('white', 2, 2)
     board8.put_stone('black', 2, 3)
@@ -142,7 +157,7 @@ if __name__ == '__main__':
     scorer = OpeningScorer()
 
     print('black score', scorer.get_score(board8))
-    assert scorer.get_score(board8) == -22
+    assert scorer.get_score(board8) == -8.25
 
     #------------------------------------------------------
     # WinLooseScorer
