@@ -10,7 +10,7 @@ import random
 
 from strategies.common import AbstractStrategy
 from strategies.measure import Measure
-from strategies.evaluator import Evaluator_T
+from strategies.evaluator import Evaluator_T, Evaluator_TW
 
 
 class MinMax(AbstractStrategy):
@@ -84,7 +84,7 @@ class MinMax(AbstractStrategy):
 
 class MinMax1_T(MinMax):
     """
-    MinMax法でテーブル評価値により次の手を決める(1手読み)
+    MinMax法でEvaluator_Tにより次の手を決める(1手読み)
     """
     def __init__(self, depth=1, evaluator=Evaluator_T()):
         super().__init__(depth, evaluator)
@@ -92,7 +92,7 @@ class MinMax1_T(MinMax):
 
 class MinMax2_T(MinMax):
     """
-    MinMax法でテーブル評価値により次の手を決める(2手読み)
+    MinMax法でEvaluator_Tにより次の手を決める(2手読み)
     """
     def __init__(self, depth=2, evaluator=Evaluator_T()):
         super().__init__(depth, evaluator)
@@ -100,7 +100,7 @@ class MinMax2_T(MinMax):
 
 class MinMax3_T(MinMax):
     """
-    MinMax法でテーブル評価値により次の手を決める(3手読み)
+    MinMax法でEvaluator_Tにより次の手を決める(3手読み)
     """
     def __init__(self, depth=3, evaluator=Evaluator_T()):
         super().__init__(depth, evaluator)
@@ -108,10 +108,43 @@ class MinMax3_T(MinMax):
 
 class MinMax4_T(MinMax):
     """
-    MinMax法でテーブル評価値により次の手を決める(3手読み)
+    MinMax法でEvaluator_Tにより次の手を決める(3手読み)
     """
     def __init__(self, depth=4, evaluator=Evaluator_T()):
         super().__init__(depth, evaluator)
+
+
+class MinMax1_TW(MinMax):
+    """
+    MinMax法でEvaluator_TWにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_TW(MinMax):
+    """
+    MinMax法でEvaluator_TWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax3_TW(MinMax):
+    """
+    MinMax法でEvaluator_TWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax4_TW(MinMax):
+    """
+    MinMax法でEvaluator_TWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TW()):
+        super().__init__(depth, evaluator)
+
 
 
 class MinMax_(AbstractStrategy):
