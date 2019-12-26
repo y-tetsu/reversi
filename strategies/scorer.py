@@ -29,36 +29,11 @@ class TableScorer(AbstractScorer):
         return self.table.get_score(color, board) * sign  # +側黒優勢、-側白優勢に直す
 
 
-class WinLooseScorer(AbstractScorer):
-    """
-    勝敗に基づいて算出
-    """
-    def __init__(self, w=10000):
-        self._W = w
-
-    def get_score(self, board, possibles_b, possibles_w):
-        """
-        評価値の算出
-        """
-        ret = 0
-
-        # 対局終了時
-        if not possibles_b and not possibles_w:
-            ret = board.score['black'] - board.score['white']
-
-            if ret > 0:    # 黒が勝った
-                ret += self._W
-            elif ret < 0:  # 白が勝った
-                ret -= self._W
-
-        return ret
-
-
 class PossibilityScorer(AbstractScorer):
     """
     配置可能数に基づいて算出
     """
-    def __init__(self, w=3):
+    def __init__(self, w=5):
         self._W = w
 
     def get_score(self, possibles_b, possibles_w):
@@ -70,6 +45,31 @@ class PossibilityScorer(AbstractScorer):
         white_num = len(list(possibles_w.keys()))
 
         return (black_num - white_num) * self._W
+
+
+class WinLooseScorer(AbstractScorer):
+    """
+    勝敗に基づいて算出
+    """
+    def __init__(self, w=10000):
+        self._W = w
+
+    def get_score(self, board, possibles_b, possibles_w):
+        """
+        評価値の算出
+        """
+        ret = None
+
+        # 対局終了時
+        if not possibles_b and not possibles_w:
+            ret = board.score['black'] - board.score['white']
+
+            if ret > 0:    # 黒が勝った
+                ret += self._W
+            elif ret < 0:  # 白が勝った
+                ret -= self._W
+
+        return ret
 
 
 if __name__ == '__main__':
@@ -98,6 +98,13 @@ if __name__ == '__main__':
     assert scorer.get_score('white', board8) == -22
 
     #------------------------------------------------------
+    # PossibilityScorer
+    scorer = PossibilityScorer()
+
+    print('black score', scorer.get_score(possibles_b, possibles_w))
+    assert scorer.get_score(possibles_b, possibles_w) == 5
+
+    #------------------------------------------------------
     # WinLooseScorer
     scorer = WinLooseScorer()
 
@@ -107,11 +114,4 @@ if __name__ == '__main__':
     assert scorer.get_score(board8, [], []) == -10006
 
     print('black score', scorer.get_score(board8, possibles_b, possibles_w))
-    assert scorer.get_score(board8, possibles_b, possibles_w) == 0
-
-    #------------------------------------------------------
-    # PossibilityScorer
-    scorer = PossibilityScorer()
-
-    print('black score', scorer.get_score(possibles_b, possibles_w))
-    assert scorer.get_score(possibles_b, possibles_w) == 3
+    assert scorer.get_score(board8, possibles_b, possibles_w) is None
