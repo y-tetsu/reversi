@@ -10,10 +10,126 @@ from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.easy import Table
-from strategies.negamax import NegaMax_
+from strategies.negamax import NegaMax_, NegaMax
+from strategies.evaluator import Evaluator_TPOW
 
 
-class AlphaBeta(NegaMax_):
+class AlphaBeta(NegaMax):
+    """
+    AlphaBeta法で次の手を決める
+    """
+    @Measure.time
+    @Timer.start(CPU_TIME)
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        moves = board.get_possibles(color).keys()  # 手の候補
+
+        return self.get_best_move(color, board, moves, self.depth)
+
+    def get_best_move(self, color, board, moves, depth):
+        """
+        最善手を選ぶ
+        """
+        best_move, alpha, beta = None, self._MIN, self._MAX
+
+        # 打てる手の中から評価値の最も高い手を選ぶ
+        for move in moves:
+            score = self.get_score(move, color, board, alpha, beta, depth)
+
+            if Timer.is_timeout(self):
+                best_move = move if best_move is None else best_move
+                break
+            else:
+                if score > alpha:  # 最善手を更新
+                    alpha = score
+                    best_move = move
+
+        return best_move
+
+    def get_score(self, move, color, board, alpha, beta, depth):
+        """
+        手を打った時の評価値を取得
+        """
+        board.put_stone(color, *move)                                        # 一手打つ
+        next_color = 'white' if color == 'black' else 'black'                # 相手の色
+        score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
+        board.undo()                                                         # 打った手を戻す
+
+        return score
+
+    @Measure.countup
+    @Timer.timeout
+    def _get_score(self, color, board, alpha, beta, depth):
+        """
+        評価値の取得
+        """
+        # ゲーム終了 or 最大深さに到達
+        possibles_b = board.get_possibles('black', True)
+        possibles_w = board.get_possibles('white', True)
+        is_game_end =  True if not possibles_b and not possibles_w else False
+
+        if is_game_end or depth <= 0:
+            sign = 1 if color == 'black' else -1
+            return self.evaluator.evaluate(color, board, possibles_b, possibles_w) * sign
+
+        # パスの場合
+        possibles = possibles_b if color == 'black' else possibles_w
+        next_color = 'white' if color == 'black' else 'black'
+
+        if not possibles:
+            return -self._get_score(next_color, board, -beta, -alpha, depth)
+
+        # 評価値を算出
+        for move in possibles.keys():
+            board.put_stone(color, *move)
+            score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
+            board.undo()
+
+            if Timer.is_timeout(self):
+                break
+            else:
+                alpha = max(alpha, score)  # 最大値を選択
+                if alpha >= beta:  # 枝刈り
+                    break
+
+        return alpha
+
+
+class AlphaBeta1_TPOW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPOWにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta2_TPOW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPOWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta3_TPOW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPOWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta4_TPOW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPOWにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta_(NegaMax_):
     """
     AlphaBeta法で次の手を決める
     """
@@ -95,31 +211,7 @@ class AlphaBeta(NegaMax_):
         return alpha
 
 
-class AlphaBeta1(AlphaBeta):
-    """
-    AlphaBeta法で次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1):
-        super().__init__(depth)
-
-
-class AlphaBeta2(AlphaBeta):
-    """
-    AlphaBeta法で次の手を決める(2手読み)
-    """
-    def __init__(self, depth=2):
-        super().__init__(depth)
-
-
-class AlphaBeta3(AlphaBeta):
-    """
-    AlphaBeta法で次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3):
-        super().__init__(depth)
-
-
-class AlphaBeta4(AlphaBeta):
+class AlphaBeta4(AlphaBeta_):
     """
     AlphaBeta法で次の手を決める(4手読み)
     """
@@ -127,15 +219,7 @@ class AlphaBeta4(AlphaBeta):
         super().__init__(depth)
 
 
-class AlphaBeta5(AlphaBeta):
-    """
-    AlphaBeta法で次の手を決める(5手読み)
-    """
-    def __init__(self, depth=5):
-        super().__init__(depth)
-
-
-class AB_T(AlphaBeta):
+class AB_T(AlphaBeta_):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める
     """
@@ -165,43 +249,11 @@ class AB_T(AlphaBeta):
         return ret
 
 
-class AB_T1(AB_T):
-    """
-    AlphaBeta法でテーブル評価値を使って次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1):
-        super().__init__(depth)
-
-
-class AB_T2(AB_T):
-    """
-    AlphaBeta法でテーブル評価値を使って次の手を決める(2手読み)
-    """
-    def __init__(self, depth=2):
-        super().__init__(depth)
-
-
-class AB_T3(AB_T):
-    """
-    AlphaBeta法でテーブル評価値を使って次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3):
-        super().__init__(depth)
-
-
 class AB_T4(AB_T):
     """
     AlphaBeta法でテーブル評価値を使って次の手を決める(4手読み)
     """
     def __init__(self, depth=4):
-        super().__init__(depth)
-
-
-class AB_T5(AB_T):
-    """
-    AlphaBeta法でテーブル評価値を使って次の手を決める(5手読み)
-    """
-    def __init__(self, depth=5):
         super().__init__(depth)
 
 

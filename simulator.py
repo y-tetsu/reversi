@@ -194,16 +194,8 @@ if __name__ == '__main__':
         'MinMax3': strategies.MinMax3(),
         'MinMax4': strategies.MinMax4(),
         'NegaMax3': strategies.NegaMax3(),
-        'AlphaBeta1': strategies.AlphaBeta1(),
-        'AlphaBeta2': strategies.AlphaBeta2(),
-        'AlphaBeta3': strategies.AlphaBeta3(),
         'AlphaBeta4': strategies.AlphaBeta4(),
-        'AlphaBeta5': strategies.AlphaBeta5(),
-        'AB_T1': strategies.AB_T1(),
-        'AB_T2': strategies.AB_T2(),
-        'AB_T3': strategies.AB_T3(),
         'AB_T4': strategies.AB_T4(),
-        'AB_T5': strategies.AB_T5(),
         'AB_TI': strategies.AB_TI(),
         'MinMax1_T': strategies.MinMax1_T(),
         'MinMax2_T': strategies.MinMax2_T(),
@@ -225,6 +217,10 @@ if __name__ == '__main__':
         'NegaMax2_TPOW': strategies.NegaMax2_TPOW(),
         'NegaMax3_TPOW': strategies.NegaMax3_TPOW(),
         'NegaMax4_TPOW': strategies.NegaMax4_TPOW(),
+        'AlphaBeta1_TPOW': strategies.AlphaBeta1_TPOW(),
+        'AlphaBeta2_TPOW': strategies.AlphaBeta2_TPOW(),
+        'AlphaBeta3_TPOW': strategies.AlphaBeta3_TPOW(),
+        'AlphaBeta4_TPOW': strategies.AlphaBeta4_TPOW(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
