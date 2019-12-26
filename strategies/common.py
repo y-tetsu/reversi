@@ -13,10 +13,3 @@ class AbstractStrategy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def next_move(self, color, board):
         pass
-
-
-    def next_move(self, color, board):
-        """
-        次の一手
-        """
-        return self.strategy.next_move(color, board)
