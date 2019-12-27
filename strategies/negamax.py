@@ -192,11 +192,35 @@ class NegaMax_(MinMax_):
         return super().evaluate(board, possibles_b, possibles_w) * sign
 
 
+class NegaMax1(NegaMax_):
+    """
+    NegaMax法で次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1):
+        super().__init__(depth)
+
+
+class NegaMax2(NegaMax_):
+    """
+    NegaMax法で次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2):
+        super().__init__(depth)
+
+
 class NegaMax3(NegaMax_):
     """
     NegaMax法で次の手を決める(3手読み)
     """
     def __init__(self, depth=3):
+        super().__init__(depth)
+
+
+class NegaMax4(NegaMax_):
+    """
+    NegaMax法で次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4):
         super().__init__(depth)
 
 

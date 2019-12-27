@@ -11,7 +11,7 @@ from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.easy import Table
 from strategies.negamax import NegaMax_, NegaMax
-from strategies.evaluator import Evaluator_TPW, Evaluator_TPOW
+from strategies.evaluator import Evaluator_TPOW
 
 
 class AlphaBeta(NegaMax):
@@ -129,14 +129,6 @@ class AlphaBeta4_TPOW(AlphaBeta):
         super().__init__(depth, evaluator)
 
 
-class AlphaBeta3_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
 class AlphaBeta_(NegaMax_):
     """
     AlphaBeta法で次の手を決める
@@ -219,9 +211,25 @@ class AlphaBeta_(NegaMax_):
         return alpha
 
 
+class AlphaBeta1(AlphaBeta_):
+    """
+    AlphaBeta法で次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1):
+        super().__init__(depth)
+
+
+class AlphaBeta2(AlphaBeta_):
+    """
+    AlphaBeta法で次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2):
+        super().__init__(depth)
+
+
 class AlphaBeta3(AlphaBeta_):
     """
-    AlphaBeta法で次の手を決める(4手読み)
+    AlphaBeta法で次の手を決める(3手読み)
     """
     def __init__(self, depth=3):
         super().__init__(depth)
