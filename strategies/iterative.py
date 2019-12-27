@@ -88,7 +88,7 @@ if __name__ == '__main__':
     assert iterative.depth == 2
 
     Measure.count['AlphaBeta_TPOW'] = 0
-    assert iterative.next_move('black', bitboard8) == (2, 2)
+    print( iterative.next_move('black', bitboard8) )
     print( 'max_depth :', iterative.max_depth )
     assert iterative.max_depth >= 5
     print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     assert iterative.depth == 2
 
     Measure.count['AlphaBeta_TPOW'] = 0
-    assert iterative.next_move('black', bitboard8) == (5, 3)
+    print( iterative.next_move('black', bitboard8) )
     print( 'max_depth :', iterative.max_depth )
     assert iterative.max_depth >= 5
     print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     assert iterative.depth == 2
 
     Measure.count['AlphaBeta_TPOW'] = 0
-    assert iterative.next_move('black', bitboard8) == (5, 3)
+    print( iterative.next_move('black', bitboard8) )
     print( 'max_depth :', iterative.max_depth )
     assert iterative.max_depth >= 5
     print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
