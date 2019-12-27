@@ -25,18 +25,20 @@ class AlphaBeta(NegaMax):
         次の一手
         """
         moves = board.get_possibles(color).keys()  # 手の候補
+        best_move, _ = self.get_best_move(color, board, moves, self.depth)
 
-        return self.get_best_move(color, board, moves, self.depth)
+        return best_move
 
     def get_best_move(self, color, board, moves, depth):
         """
         最善手を選ぶ
         """
-        best_move, alpha, beta = None, self._MIN, self._MAX
+        best_move, alpha, beta, scores = None, self._MIN, self._MAX, {}
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in moves:
             score = self.get_score(move, color, board, alpha, beta, depth)
+            scores[move] = score
 
             if Timer.is_timeout(self):
                 best_move = move if best_move is None else best_move
@@ -46,7 +48,7 @@ class AlphaBeta(NegaMax):
                     alpha = score
                     best_move = move
 
-        return best_move
+        return best_move, scores
 
     def get_score(self, move, color, board, alpha, beta, depth):
         """
@@ -95,6 +97,14 @@ class AlphaBeta(NegaMax):
                     break
 
         return alpha
+
+
+class AlphaBeta_TPOW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPOWにより次の手を決める
+    """
+    def __init__(self, evaluator=Evaluator_TPOW()):
+        super().__init__(evaluator=evaluator)
 
 
 class AlphaBeta1_TPOW(AlphaBeta):
@@ -389,3 +399,8 @@ if __name__ == '__main__':
     Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (4, 5)
     assert Measure.count['AlphaBeta3_TPOW'] == 30
+
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    moves = bitboard8.get_possibles('black').keys()  # 手の候補
+    assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((3, 5), {(2, 2): 5.75, (2, 3): 9.25, (5, 3): 9.25, (1, 5): 9.25, (2, 5): 9.25, (3, 5): 11.25, (4, 5): 11.25, (6, 5): 11.25})
