@@ -13,7 +13,7 @@ class Selector(AbstractSelector):
     """
     ボードの打てる場所を返す
     """
-    def select_moves(self, color, board, best_move, scores):
+    def select_moves(self, color, board, best_move, scores, depth):
         """
         手の候補を決める
         """
@@ -30,6 +30,6 @@ if __name__ == '__main__':
     print('--- Test For Selector ---')
     selector = Selector()
 
-    moves = selector.select_moves('white', bitboard8, None, None)
+    moves = selector.select_moves('white', bitboard8, None, None, None)
     print(moves)
     assert moves == [(2, 2), (4, 2), (2, 4)]
