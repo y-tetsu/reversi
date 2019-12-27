@@ -194,6 +194,7 @@ if __name__ == '__main__':
         'MinMax3': strategies.MinMax3(),
         'MinMax4': strategies.MinMax4(),
         'NegaMax3': strategies.NegaMax3(),
+        'AlphaBeta3': strategies.AlphaBeta3(),
         'AlphaBeta4': strategies.AlphaBeta4(),
         'AB_T4': strategies.AB_T4(),
         'AB_TI': strategies.AB_TI(),

@@ -211,6 +211,14 @@ class AlphaBeta_(NegaMax_):
         return alpha
 
 
+class AlphaBeta3(AlphaBeta_):
+    """
+    AlphaBeta法で次の手を決める(4手読み)
+    """
+    def __init__(self, depth=3):
+        super().__init__(depth)
+
+
 class AlphaBeta4(AlphaBeta_):
     """
     AlphaBeta法で次の手を決める(4手読み)
