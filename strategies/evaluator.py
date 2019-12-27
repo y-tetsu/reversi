@@ -41,6 +41,27 @@ class Evaluator_TP(Evaluator_T):
         return super().evaluate(color, board, possibles_b, possibles_w) + possibility
 
 
+class Evaluator_TPW(Evaluator_TP):
+    """
+    盤面の評価値をTable+配置可能数+勝敗で算出
+    """
+    def __init__(self, size=8, corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1=5, w2=10000):
+        super().__init__(size, corner, c, a, b, x, o, w1)
+        self.winloose = WinLooseScorer(w2)  # 勝敗による評価値算出
+
+    def evaluate(self, color, board, possibles_b, possibles_w):
+        """
+        評価値の算出
+        """
+        winloose = self.winloose.get_score(board, possibles_b, possibles_w)
+
+        # 勝敗が決まっている場合
+        if winloose is not None:
+            return winloose
+
+        return super().evaluate(color, board, possibles_b, possibles_w)
+
+
 class Evaluator_TPO(Evaluator_TP):
     """
     盤面の評価値をTable+配置可能数+開放度で算出
@@ -107,6 +128,16 @@ if __name__ == '__main__':
     #----------------------------------------------------------------
     # Evaluator_TP
     evaluator = Evaluator_TP()
+
+    print('black score', evaluator.evaluate('black', board8, possibles_b, possibles_w))
+    assert evaluator.evaluate('black', board8, possibles_b, possibles_w) == -17
+
+    #----------------------------------------------------------------
+    # Evaluator_TPW
+    evaluator = Evaluator_TPW()
+
+    print('black score', evaluator.evaluate('black', board8, [], []))
+    assert evaluator.evaluate('black', board8, [], []) == -10006
 
     print('black score', evaluator.evaluate('black', board8, possibles_b, possibles_w))
     assert evaluator.evaluate('black', board8, possibles_b, possibles_w) == -17
