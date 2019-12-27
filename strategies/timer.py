@@ -14,6 +14,14 @@ class Timer:
     timeout_flag = {}
 
     @classmethod
+    def set_deadline(cls, key, limit):
+        """
+        期限を設定
+        """
+        Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
+        Timer.timeout_flag[key] = False            # タイムアウト未発生
+
+    @classmethod
     def start(cls, limit):
         """
         タイマー開始
@@ -21,9 +29,7 @@ class Timer:
         def _start(func):
             def wrapper(*args, **kwargs):
                 key = args[0].__class__.__name__
-
-                Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
-                Timer.timeout_flag[key] = False            # タイムアウト未発生
+                cls.set_deadline(key, limit)
 
                 ret = func(*args, **kwargs)
 
