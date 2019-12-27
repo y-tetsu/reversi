@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_TPOW
-from strategies.selector import Selector, Selector_B
+from strategies.selector import Selector, Selector_B, Selector_BC
 
 
 class IterativeDeepning(AbstractStrategy):
@@ -62,6 +62,14 @@ class AbI_B_TPOW(IterativeDeepning):
         super().__init__(depth, selector, search)
 
 
+class AbI_BC_TPOW(IterativeDeepning):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:BC、評価関数:TPOW)
+    """
+    def __init__(self, depth=2, selector=Selector_BC(), search=AlphaBeta_TPOW()):
+        super().__init__(depth, selector, search)
+
+
 if __name__ == '__main__':
     import time
     from board import BitBoard
@@ -88,6 +96,17 @@ if __name__ == '__main__':
 
     print('--- Test For AbI_B_TPOW Strategy ---')
     iterative = AbI_B_TPOW()
+    assert iterative.depth == 2
+
+    Measure.count['AlphaBeta_TPOW'] = 0
+    assert iterative.next_move('black', bitboard8) == (5, 3)
+    print( 'max_depth :', iterative.max_depth )
+    assert iterative.max_depth >= 5
+    print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
+    assert Measure.count['AlphaBeta_TPOW'] >= 1000
+
+    print('--- Test For AbI_BC_TPOW Strategy ---')
+    iterative = AbI_BC_TPOW()
     assert iterative.depth == 2
 
     Measure.count['AlphaBeta_TPOW'] = 0
