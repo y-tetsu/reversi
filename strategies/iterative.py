@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_TPOW
-from strategies.selector import Selector
+from strategies.selector import Selector, Selector_B
 
 
 class IterativeDeepning(AbstractStrategy):
@@ -46,11 +46,19 @@ class IterativeDeepning(AbstractStrategy):
         return best_move
 
 
-class AlphaBetaI_TPOW(IterativeDeepning):
+class AbI_TPOW(IterativeDeepning):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、評価関数:TPOW)
     """
     def __init__(self, depth=2, selector=Selector(), search=AlphaBeta_TPOW()):
+        super().__init__(depth, selector, search)
+
+
+class AbI_B_TPOW(IterativeDeepning):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:B、評価関数:TPOW)
+    """
+    def __init__(self, depth=2, selector=Selector_B(), search=AlphaBeta_TPOW()):
         super().__init__(depth, selector, search)
 
 
@@ -67,12 +75,23 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    print('--- Test For IterativeDeepning Strategy ---')
-    iterative = AlphaBetaI_TPOW()
+    print('--- Test For AbI_TPOW Strategy ---')
+    iterative = AbI_TPOW()
     assert iterative.depth == 2
 
     Measure.count['AlphaBeta_TPOW'] = 0
     assert iterative.next_move('black', bitboard8) == (2, 2)
+    print( 'max_depth :', iterative.max_depth )
+    assert iterative.max_depth >= 5
+    print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
+    assert Measure.count['AlphaBeta_TPOW'] >= 1000
+
+    print('--- Test For AbI_B_TPOW Strategy ---')
+    iterative = AbI_B_TPOW()
+    assert iterative.depth == 2
+
+    Measure.count['AlphaBeta_TPOW'] = 0
+    assert iterative.next_move('black', bitboard8) == (5, 3)
     print( 'max_depth :', iterative.max_depth )
     assert iterative.max_depth >= 5
     print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
