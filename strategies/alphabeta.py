@@ -325,76 +325,46 @@ class AB_TI(AB_T):
 
 if __name__ == '__main__':
     import time
-    from board import Board
+    from board import BitBoard
+
     # AlphaBeta
     print('--- Test For AlphaBeta Strategy ---')
-    board8 = Board(8)
-    alphabeta = AlphaBeta()
+    alphabeta = AlphaBeta3_TPOW()
+
     assert alphabeta.depth == 3
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate('black', board8, b, w) == 0
 
-    board8.put_stone('black', 3, 2)
-    board8.put_stone('white', 2, 4)
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate('black', board8, b, w) == 2
-
-    board8.put_stone('black', 1, 5)
-    board8.put_stone('white', 1, 4)
-    board8.put_stone('black', 2, 5)
-    board8.put_stone('white', 1, 6)
-    board8.put_stone('black', 0, 7)
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate('black', board8, b, w) == 22
-
-    board8.put_stone('black', 1, 3)
-    board8.put_stone('black', 2, 3)
-    board8.put_stone('black', 4, 5)
-    print(board8)
-    b = board8.get_possibles('black', True)
-    w = board8.get_possibles('white', True)
-    assert alphabeta.evaluate('white', board8, b, w) == -10014
-
-    from board import BitBoard
-    print('- bitboard -')
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
 
-    Measure.count['AlphaBeta'] = 0
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -6
-    assert Measure.count['AlphaBeta'] == 16
+    Measure.count['AlphaBeta3_TPOW'] = 0
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + CPU_TIME
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -12.75
+    assert Measure.count['AlphaBeta3_TPOW'] == 16
 
-    Measure.count['AlphaBeta'] = 0
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 2
-    assert Measure.count['AlphaBeta'] == 58
+    Measure.count['AlphaBeta3_TPOW'] = 0
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + CPU_TIME
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 2.25
+    assert Measure.count['AlphaBeta3_TPOW'] == 63
 
-    Measure.count['AlphaBeta'] = 0
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4) == -4
-    assert Measure.count['AlphaBeta'] == 226
+    Measure.count['AlphaBeta3_TPOW'] = 0
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + CPU_TIME
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4) == -8.25
+    assert Measure.count['AlphaBeta3_TPOW'] == 247
 
-    Measure.count['AlphaBeta'] = 0
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + 1
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5) == 2
-    assert Measure.count['AlphaBeta'] == 617
+    Measure.count['AlphaBeta3_TPOW'] = 0
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 1
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5) == 4.0
+    assert Measure.count['AlphaBeta3_TPOW'] == 693
 
-    Measure.count['AlphaBeta'] = 0
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + 3
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6) == -4
-    assert Measure.count['AlphaBeta'] == 1865
+    Measure.count['AlphaBeta3_TPOW'] = 0
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6) == -3.5
+    assert Measure.count['AlphaBeta3_TPOW'] == 2659
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -407,52 +377,15 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count['AlphaBeta'] = 0
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + 3
+    Measure.count['AlphaBeta3_TPOW'] = 0
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count['AlphaBeta'] == 170
+    assert Measure.count['AlphaBeta3_TPOW'] == 148
 
-    Measure.count['AlphaBeta'] = 0
+    Measure.count['AlphaBeta3_TPOW'] = 0
     alphabeta.depth = 2
-    Timer.timeout_flag['AlphaBeta'] = False
-    Timer.deadline['AlphaBeta'] = time.time() + 3
-    assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count['AlphaBeta'] == 29
-
-    # AB_T
-    print('--- Test For AB_T Strategy ---')
-    print('- bitboard -')
-    ab_t = AB_T()
-    bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 5, 5)
-    bitboard8.put_stone('white', 4, 2)
-    bitboard8.put_stone('black', 5, 2)
-    bitboard8.put_stone('white', 5, 4)
-    print(bitboard8)
-
-    Measure.count['AB_T'] = 0
-    Timer.timeout_flag['AB_T'] = False
-    Timer.deadline['AB_T'] = time.time() + 3
-    assert ab_t.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count['AB_T'] == 148
-
-    # AB_TI
-    print('--- Test For AB_TI Strategy ---')
-    print('- bitboard -')
-    ab_ti = AB_TI()
-    bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 5, 5)
-    bitboard8.put_stone('white', 4, 2)
-    bitboard8.put_stone('black', 5, 2)
-    bitboard8.put_stone('white', 5, 4)
-    print(bitboard8)
-
-    Measure.count['AB_TI'] = 0
-    Timer.timeout_flag['AB_TI'] = False
-    assert ab_ti.next_move('black', bitboard8) == (5, 3)
-    assert Measure.count['AB_TI'] >= 1500
+    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
+    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    assert alphabeta.next_move('black', bitboard8) == (4, 5)
+    assert Measure.count['AlphaBeta3_TPOW'] == 30
