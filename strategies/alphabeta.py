@@ -11,7 +11,7 @@ from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.easy import Table
 from strategies.negamax import NegaMax
-from strategies.evaluator import Evaluator_TPOW
+from strategies.evaluator import Evaluator_TPOW, Evaluator_S
 
 
 class AlphaBeta(NegaMax):
@@ -97,6 +97,14 @@ class AlphaBeta(NegaMax):
                     break
 
         return alpha
+
+
+class AlphaBeta_S(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_Sにより次の手を決める
+    """
+    def __init__(self, evaluator=Evaluator_S()):
+        super().__init__(evaluator=evaluator)
 
 
 class AlphaBeta_TPOW(AlphaBeta):
