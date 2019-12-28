@@ -221,6 +221,7 @@ if __name__ == '__main__':
         'AbI_TPOW': strategies.AbI_TPOW(),
         'AbI_B_TPOW': strategies.AbI_B_TPOW(),
         'AbI_BC_TPOW': strategies.AbI_BC_TPOW(),
+        'AbIF_BC_TPOW': strategies.AbIF_BC_TPOW(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
