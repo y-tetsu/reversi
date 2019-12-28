@@ -124,7 +124,7 @@ class StonesScorer(AbstractScorer):
     """
     石数に基づいて算出
     """
-    def get_score(self, board, possibles_b, possibles_w):
+    def get_score(self, board):
         """
         評価値の算出
         """
@@ -184,5 +184,5 @@ if __name__ == '__main__':
     # StonesScorer
     scorer = StonesScorer()
 
-    print('score', scorer.get_score(board8, possibles_b, possibles_w))
-    assert scorer.get_score(board8, possibles_b, possibles_w) == -6
+    print('score', scorer.get_score(board8))
+    assert scorer.get_score(board8) == -6
