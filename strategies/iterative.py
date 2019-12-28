@@ -28,12 +28,12 @@ class IterativeDeepning(AbstractStrategy):
         """
         次の一手
         """
-        depth, best_move, scores, = self.depth, None, {}
+        depth, moves, best_move, scores, = self.depth, None, None, {}
 
         Timer.set_deadline(self.search.__class__.__name__, CPU_TIME)  # 探索クラスのタイムアウトを設定
 
         while True:
-            moves = self.selector.select_moves(color, board, best_move, scores, depth)  # 次の手の候補を選択
+            moves = self.selector.select_moves(color, board, moves, best_move, scores, depth)  # 次の手の候補を選択
             best_move, scores = self.search.get_best_move(color, board, moves, depth)   # 最善手を取得
 
             if Timer.is_timeout(self.search):  # タイムアウト発生時、処理を抜ける

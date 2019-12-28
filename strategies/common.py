@@ -29,5 +29,5 @@ class AbstractEvaluator(metaclass=abc.ABCMeta):
 
 class AbstractSelector(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def select_moves(self, color, board, best_move, scores, depth):
+    def select_moves(self, color, board, moves, best_move, scores, depth):
         pass
