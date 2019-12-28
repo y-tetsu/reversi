@@ -120,6 +120,17 @@ class WinLooseScorer(AbstractScorer):
         return ret
 
 
+class StonesScorer(AbstractScorer):
+    """
+    石数に基づいて算出
+    """
+    def get_score(self, board, possibles_b, possibles_w):
+        """
+        評価値の算出
+        """
+        return board.score['black'] - board.score['white']
+
+
 if __name__ == '__main__':
     from board import BitBoard
 
@@ -149,24 +160,29 @@ if __name__ == '__main__':
     # PossibilityScorer
     scorer = PossibilityScorer()
 
-    print('black score', scorer.get_score(possibles_b, possibles_w))
+    print('score', scorer.get_score(possibles_b, possibles_w))
     assert scorer.get_score(possibles_b, possibles_w) == 5
 
     #------------------------------------------------------
     # OpeningScorer
     scorer = OpeningScorer()
 
-    print('black score', scorer.get_score(board8))
+    print('score', scorer.get_score(board8))
     assert scorer.get_score(board8) == -8.25
 
     #------------------------------------------------------
     # WinLooseScorer
     scorer = WinLooseScorer()
 
-    print('black score', scorer.get_score(board8, [], []))
-    print('white score', scorer.get_score(board8, [], []))
-    assert scorer.get_score(board8, [], []) == -10006
+    print('score', scorer.get_score(board8, [], []))
     assert scorer.get_score(board8, [], []) == -10006
 
-    print('black score', scorer.get_score(board8, possibles_b, possibles_w))
+    print('score', scorer.get_score(board8, possibles_b, possibles_w))
     assert scorer.get_score(board8, possibles_b, possibles_w) is None
+
+    #------------------------------------------------------
+    # StonesScorer
+    scorer = StonesScorer()
+
+    print('score', scorer.get_score(board8, possibles_b, possibles_w))
+    assert scorer.get_score(board8, possibles_b, possibles_w) == -6
