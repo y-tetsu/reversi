@@ -103,8 +103,8 @@ class AlphaBeta_S(AlphaBeta):
     """
     AlphaBeta法でEvaluator_Sにより次の手を決める
     """
-    def __init__(self, evaluator=Evaluator_S()):
-        super().__init__(evaluator=evaluator)
+    def __init__(self, depth, evaluator=Evaluator_S()):
+        super().__init__(depth=depth, evaluator=evaluator)
 
 
 class AlphaBeta_TPOW(AlphaBeta):
