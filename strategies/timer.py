@@ -4,6 +4,7 @@
 """
 
 import time
+import os
 
 
 class Timer:
@@ -14,10 +15,15 @@ class Timer:
     timeout_flag = {}
 
     @classmethod
-    def set_deadline(cls, key, limit):
+    def set_deadline(cls, name, limit):
         """
         期限を設定
         """
+        key = name + str(os.getpid())
+
+        if key not in Timer.deadline:
+            print('    timer   :', key)
+
         Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
         Timer.timeout_flag[key] = False            # タイムアウト未発生
 
@@ -28,8 +34,8 @@ class Timer:
         """
         def _start(func):
             def wrapper(*args, **kwargs):
-                key = args[0].__class__.__name__
-                cls.set_deadline(key, limit)
+                name = args[0].__class__.__name__
+                cls.set_deadline(name, limit)
 
                 ret = func(*args, **kwargs)
 
@@ -43,7 +49,7 @@ class Timer:
         タイマー経過チェック
         """
         def wrapper(*args, **kwargs):
-            key = args[0].__class__.__name__
+            key = args[0].__class__.__name__ + str(os.getpid())
 
             if time.time() > Timer.deadline[key]:
                 Timer.timeout_flag[key] = True  # タイムアウト発生
@@ -58,4 +64,4 @@ class Timer:
         """
         タイムアウト発生有無
         """
-        return Timer.timeout_flag[obj.__class__.__name__]
+        return Timer.timeout_flag[obj.__class__.__name__ + str(os.getpid())]

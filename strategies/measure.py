@@ -4,6 +4,7 @@
 """
 
 import time
+import os
 
 
 class Measure:
@@ -19,9 +20,10 @@ class Measure:
         時間計測
         """
         def wrapper(*args, **kwargs):
-            key = args[0].__class__.__name__
+            key = args[0].__class__.__name__ + str(os.getpid())
 
             if key not in Measure.elp_time:
+                print('    measure :', key)
                 Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
 
             time_s = time.perf_counter()
@@ -49,7 +51,7 @@ class Measure:
         コール回数のカウントアップ
         """
         def wrapper(*args, **kwargs):
-            key = args[0].__class__.__name__
+            key = args[0].__class__.__name__ + str(os.getpid())
 
             if key not in Measure.count:
                 Measure.count[key] = 0
