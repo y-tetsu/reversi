@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import AbstractEvaluator
-from strategies.scorer import TableScorer, PossibilityScorer, OpeningScorer, WinLooseScorer
+from strategies.scorer import TableScorer, PossibilityScorer, OpeningScorer, WinLooseScorer, StonesScorer
 
 
 class Evaluator_T(AbstractEvaluator):
@@ -79,6 +79,20 @@ class Evaluator_TPOW(Evaluator_TPO):
         return super().evaluate(color, board, possibles_b, possibles_w)
 
 
+class Evaluator_S(AbstractEvaluator):
+    """
+    盤面の評価値を石数で算出
+    """
+    def __init__(self):
+        self.stones = StonesScorer()  # 石数による評価値算出
+
+    def evaluate(self, color, board, possibles_b, possibles_w):
+        """
+        評価値の算出
+        """
+        return self.stones.get_score(board)
+
+
 if __name__ == '__main__':
     from board import Board
 
@@ -127,3 +141,10 @@ if __name__ == '__main__':
 
     print('black score', evaluator.evaluate('black', board8, possibles_b, possibles_w))
     assert evaluator.evaluate('black', board8, possibles_b, possibles_w) == -25.25
+
+    #----------------------------------------------------------------
+    # Evaluator_S
+    evaluator = Evaluator_S()
+
+    print('score', evaluator.evaluate('black', board8, [], []))
+    assert evaluator.evaluate('black', board8, [], []) == -6
