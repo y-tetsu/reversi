@@ -79,7 +79,7 @@ class Selector_BCW(Selector_BC):
             worst_score = min([score for score in scores.values()])
             worst_moves = [key for key in scores.keys() if scores[key] == worst_score]
 
-            # 次の手の候補数がリミット以下までは絞る
+            # 次の手の候補数がリミット以上の間は絞る
             if len(moves) - len(worst_moves) >= self.limit:
                 for worst_move in worst_moves:
                     moves.remove(worst_move)  # 最もスコアの低い手を削除
