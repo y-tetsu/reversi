@@ -34,14 +34,11 @@ class MonteCarlo(AbstractStrategy):
         次の一手
         """
         moves = list(board.get_possibles(color).keys())
-        next_color = 'white' if color == 'black' else 'black'
         scores = [0 for _ in range(len(moves))]
 
         for _ in range(self.count):
             for i, move in enumerate(moves):
-                test_board = copy.deepcopy(board)
-                test_board.put_stone(color, *move)
-                scores[i] += self.playout(next_color, test_board)
+                scores[i] += self.playout(color, board, move)  # この手を選んだ時の勝敗を取得
 
                 if Timer.is_timeout(self):
                     break
@@ -55,14 +52,20 @@ class MonteCarlo(AbstractStrategy):
 
     @Measure.countup
     @Timer.timeout
-    def playout(self, color, board):
+    def playout(self, color, board, move):
         """
-        終了までゲームを進める
+        終了までランダムにゲームを進めて勝敗を返す
         """
-        game = Game(board, self.black_player, self.white_player, NoneDisplay(), color)
+        playout_board = copy.deepcopy(board)   # 現在の盤面をコピー
+        playout_board.put_stone(color, *move)  # 調べたい手を打つ
+
+        # 勝敗が決まるまでゲームを進める
+        next_color = 'white' if color == 'black' else 'black'  # 相手の色を調べる
+        game = Game(playout_board, self.black_player, self.white_player, NoneDisplay(), next_color)
         game.play()
 
-        winlose, ret = Game.BLACK_WIN if color == 'white' else Game.WHITE_WIN, 0
+        # 結果を返す
+        winlose, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, 0
 
         if game.result.winlose == winlose:
             ret = 1  # 勝った場合
@@ -112,7 +115,7 @@ if __name__ == '__main__':
     print(bitboard)
 
     Timer.set_deadline(montecarlo.__class__.__name__, 0.5)
-    ret = montecarlo.playout('white', bitboard)
+    ret = montecarlo.playout('white', bitboard, (3, 3))
     print(ret)
 
     # next_move
