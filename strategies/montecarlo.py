@@ -90,7 +90,7 @@ class MonteCarlo100(MonteCarlo):
 
 class MonteCarlo1000(MonteCarlo):
     """
-    MonteCarlo法で次の手を決める(最大一手1009回試行)
+    MonteCarlo法で次の手を決める(最大一手1000回試行)
     """
     def __init__(self, count=1000):
         super().__init__(count)
