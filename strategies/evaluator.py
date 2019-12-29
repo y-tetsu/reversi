@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import AbstractEvaluator
-from strategies.scorer import TableScorer, PossibilityScorer, OpeningScorer, WinLooseScorer, StonesScorer
+from strategies.scorer import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, StonesScorer
 
 
 class Evaluator_T(AbstractEvaluator):
@@ -64,7 +64,7 @@ class Evaluator_TPOW(Evaluator_TPO):
     """
     def __init__(self, size=8, corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1=5, w2=-0.75, w3=10000):
         super().__init__(size, corner, c, a, b, x, o, w1, w2)
-        self.winloose = WinLooseScorer(w3)  # 勝敗による評価値算出
+        self.winloose = WinLoseScorer(w3)  # 勝敗による評価値算出
 
     def evaluate(self, color, board, possibles_b, possibles_w):
         """

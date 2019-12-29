@@ -17,10 +17,10 @@ class FullReading(AbstractStrategy):
     """
     終盤完全読み
     """
-    def __init__(self, remain=None, strategy=None):
+    def __init__(self, remain=None, base=None):
         self.remain = remain
         self.fullreading = AlphaBeta_S(depth=remain)
-        self.strategy = strategy
+        self.base = base
 
     @Measure.time
     def next_move(self, color, board):
@@ -33,7 +33,7 @@ class FullReading(AbstractStrategy):
         if remain <= self.remain:
             return self.fullreading.next_move(color, board)  # 完全読み
 
-        return self.strategy.next_move(color, board)
+        return self.base.next_move(color, board)
 
 
 class AbIF_BC_TPOW(FullReading):
@@ -41,8 +41,8 @@ class AbIF_BC_TPOW(FullReading):
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:BC、評価関数:TPOW, 完全読み開始:残り9手)
     """
-    def __init__(self, remain=9, strategy=AbI_BC_TPOW()):
-        super().__init__(remain, strategy)
+    def __init__(self, remain=9, base=AbI_BC_TPOW()):
+        super().__init__(remain, base)
 
 
 class AbIF_BCW_TPOW(FullReading):
@@ -50,12 +50,13 @@ class AbIF_BCW_TPOW(FullReading):
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:BCW、評価関数:TPOW, 完全読み開始:残り9手)
     """
-    def __init__(self, remain=9, strategy=AbI_BCW_TPOW()):
-        super().__init__(remain, strategy)
+    def __init__(self, remain=9, base=AbI_BCW_TPOW()):
+        super().__init__(remain, base)
 
 
 if __name__ == '__main__':
     import time
+    import os
     from board import BitBoard
 
     bitboard8 = BitBoard()
@@ -110,37 +111,40 @@ if __name__ == '__main__':
     print(bitboard8)
 
     print('--- Test For AbIF_BC_TPOW Strategy ---')
-    full = AbIF_BC_TPOW(remain=11)
-    assert full.remain == 11
+    strategy = AbIF_BC_TPOW(remain=11)
+    assert strategy.remain == 11
+
+    base_key = strategy.base.search.__class__.__name__ + str(os.getpid())
+    fullreading_key = strategy.fullreading.__class__.__name__ + str(os.getpid())
 
     # normal
-    Measure.count['AlphaBeta_TPOW'] = 0
-    move = full.next_move('black', bitboard8)
+    Measure.count[base_key] = 0
+    move = strategy.next_move('black', bitboard8)
     print(move)
     assert move == (3, 6)
-    print( 'count     :', Measure.count['AlphaBeta_TPOW'] )
-    assert Measure.count['AlphaBeta_TPOW'] >= 1000
+    print( 'count     :', Measure.count[base_key] )
+    assert Measure.count[base_key] >= 1000
 
     bitboard8.put_stone('black', 3, 6)
 
     # full(Timeout)
-    Measure.count['AlphaBeta_S'] = 0
-    move = full.next_move('white', bitboard8)
+    Measure.count[fullreading_key] = 0
+    move = strategy.next_move('white', bitboard8)
     print(move)
     assert move == (3, 0)
-    print( 'count     :', Measure.count['AlphaBeta_S'] )
-    print( 'timeout   :', Timer.timeout_flag['AlphaBeta_S'] )
+    print( 'count     :', Measure.count[fullreading_key] )
+    print( 'timeout   :', Timer.timeout_flag[fullreading_key] )
 
     bitboard8.put_stone('white', 3, 5)
     bitboard8.put_stone('black', 1, 3)
     print(bitboard8)
 
     # full
-    full = AbIF_BC_TPOW()
-    assert full.remain == 9
-    Measure.count['AlphaBeta_S'] = 0
-    move = full.next_move('white', bitboard8)
+    strategy = AbIF_BC_TPOW()
+    assert strategy.remain == 9
+    Measure.count[fullreading_key] = 0
+    move = strategy.next_move('white', bitboard8)
     print(move)
     assert move == (7, 0)
-    print( 'count     :', Measure.count['AlphaBeta_S'] )
-    print( 'timeout   :', Timer.timeout_flag['AlphaBeta_S'] )
+    print( 'count     :', Measure.count[fullreading_key] )
+    print( 'timeout   :', Timer.timeout_flag[fullreading_key] )

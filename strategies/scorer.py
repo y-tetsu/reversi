@@ -95,7 +95,7 @@ class OpeningScorer(AbstractScorer):
         return opening * self._W
 
 
-class WinLooseScorer(AbstractScorer):
+class WinLoseScorer(AbstractScorer):
     """
     勝敗に基づいて算出
     """
@@ -171,8 +171,8 @@ if __name__ == '__main__':
     assert scorer.get_score(board8) == -8.25
 
     #------------------------------------------------------
-    # WinLooseScorer
-    scorer = WinLooseScorer()
+    # WinLoseScorer
+    scorer = WinLoseScorer()
 
     print('score', scorer.get_score(board8, [], []))
     assert scorer.get_score(board8, [], []) == -10006
