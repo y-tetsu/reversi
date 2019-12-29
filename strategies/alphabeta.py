@@ -149,6 +149,7 @@ class AlphaBeta4_TPOW(AlphaBeta):
 
 if __name__ == '__main__':
     import time
+    import os
     from board import BitBoard
 
     # AlphaBeta
@@ -160,35 +161,37 @@ if __name__ == '__main__':
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + CPU_TIME
+    key = alphabeta.__class__.__name__ + str(os.getpid())
+
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + CPU_TIME
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -12.75
-    assert Measure.count['AlphaBeta3_TPOW'] == 16
+    assert Measure.count[key] == 16
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + CPU_TIME
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + CPU_TIME
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 2.25
-    assert Measure.count['AlphaBeta3_TPOW'] == 63
+    assert Measure.count[key] == 63
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + CPU_TIME
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + CPU_TIME
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4) == -8.25
-    assert Measure.count['AlphaBeta3_TPOW'] == 247
+    assert Measure.count[key] == 247
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 1
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 1
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5) == 4.0
-    assert Measure.count['AlphaBeta3_TPOW'] == 693
+    assert Measure.count[key] == 693
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 3
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6) == -3.5
-    assert Measure.count['AlphaBeta3_TPOW'] == 2659
+    assert Measure.count[key] == 2659
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -201,20 +204,20 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count['AlphaBeta3_TPOW'] == 148
+    assert Measure.count[key] == 148
 
-    Measure.count['AlphaBeta3_TPOW'] = 0
+    Measure.count[key] = 0
     alphabeta.depth = 2
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (4, 5)
-    assert Measure.count['AlphaBeta3_TPOW'] == 30
+    assert Measure.count[key] == 30
 
-    Timer.timeout_flag['AlphaBeta3_TPOW'] = False
-    Timer.deadline['AlphaBeta3_TPOW'] = time.time() + 3
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 3
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
     assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((3, 5), {(2, 2): 5.75, (2, 3): 9.25, (5, 3): 9.25, (1, 5): 9.25, (2, 5): 9.25, (3, 5): 11.25, (4, 5): 11.25, (6, 5): 11.25})
