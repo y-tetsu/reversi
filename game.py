@@ -10,11 +10,11 @@ class Game:
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
-    def __init__(self, board, black_player, white_player, display, white=False):
+    def __init__(self, board, black_player, white_player, display, color='black'):
         self.board = board
         self.black_player = black_player
         self.white_player = white_player
-        self.players = [self.black_player, self.white_player] if white == False else [self.white_player, self.black_player]
+        self.players = [self.black_player, self.white_player] if color == 'black' else [self.white_player, self.black_player]
         self.display = display
         self.result = []
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     board4x4 = Board(4)
     board4x4.put_stone('black', 1, 0)
     print(board4x4)
-    game = Game(board4x4, black_player, white_player, ConsoleDisplay(), True)
+    game = Game(board4x4, black_player, white_player, ConsoleDisplay(), 'white')
     game.play()
 
     print()
