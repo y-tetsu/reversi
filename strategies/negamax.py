@@ -118,6 +118,7 @@ class NegaMax4_TPOW(NegaMax):
 
 if __name__ == '__main__':
     import time
+    import os
     from board import BitBoard
 
     bitboard8 = BitBoard(8)
@@ -127,35 +128,37 @@ if __name__ == '__main__':
     negamax = NegaMax3_TPOW()
     assert negamax.depth == 3
 
-    Measure.count['NegaMax3_TPOW'] = 0
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + CPU_TIME
+    key = negamax.__class__.__name__ + str(os.getpid())
+
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 2) == -12.75
-    assert Measure.count['NegaMax3_TPOW'] == 18
+    assert Measure.count[key] == 18
 
-    Measure.count['NegaMax3_TPOW'] = 0
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + CPU_TIME
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 3) == 2.25
-    assert Measure.count['NegaMax3_TPOW'] == 79
+    assert Measure.count[key] == 79
 
-    Measure.count['NegaMax3_TPOW'] = 0
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + CPU_TIME
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + CPU_TIME
     assert negamax.get_score('white', bitboard8, 4) == -8.25
-    assert Measure.count['NegaMax3_TPOW'] == 428
+    assert Measure.count[key] == 428
 
-    Measure.count['NegaMax3_TPOW'] = 0
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + 5
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 5
     assert negamax.get_score('white', bitboard8, 5) == 4
-    assert Measure.count['NegaMax3_TPOW'] == 2478
+    assert Measure.count[key] == 2478
 
-    Measure.count['NegaMax3_TPOW'] = 0
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + 5
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 5
     assert negamax.get_score('white', bitboard8, 6) == -3.5
-    assert Measure.count['NegaMax3_TPOW'] == 16251
+    assert Measure.count[key] == 16251
 
     print(bitboard8)
     assert negamax.next_move('white', bitboard8) == (2, 4)
@@ -167,15 +170,15 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 5, 4)
     print(bitboard8)
 
-    Measure.count['NegaMax3_TPOW'] = 0
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + 5
+    Measure.count[key] = 0
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 5
     assert negamax.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count['NegaMax3_TPOW'] == 575
+    assert Measure.count[key] == 575
 
-    Measure.count['NegaMax3_TPOW'] = 0
+    Measure.count[key] = 0
     negamax.depth = 2
-    Timer.timeout_flag['NegaMax3_TPOW'] = False
-    Timer.deadline['NegaMax3_TPOW'] = time.time() + 2
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 2
     assert negamax.next_move('black', bitboard8) == (4, 5)
-    assert Measure.count['NegaMax3_TPOW'] == 70
+    assert Measure.count[key] == 70
