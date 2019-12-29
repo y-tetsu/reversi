@@ -55,7 +55,7 @@ class MonteCarlo(AbstractStrategy):
     @Timer.timeout
     def playout(self, color, board, move):
         """
-        終了までランダムにゲームを進めて勝敗を返す
+        終了までゲームを進めて勝敗を返す
         """
         playout_board = copy.deepcopy(board)   # 現在の盤面をコピー
         playout_board.put_stone(color, *move)  # 調べたい手を打つ
@@ -66,9 +66,9 @@ class MonteCarlo(AbstractStrategy):
         game.play()
 
         # 結果を返す
-        winlose, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, 0
+        win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, 0
 
-        if game.result.winlose == winlose:
+        if game.result.winlose == win:
             ret = 1  # 勝った場合
         elif game.result.winlose == Game.DRAW:
             ret = 0.5  # 引き分けた場合
