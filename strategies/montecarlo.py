@@ -9,9 +9,10 @@ sys.path.append('../')
 import random
 import copy
 
-from display import NoneDisplay
-from player import Player
 from game import Game
+from player import Player
+from display import NoneDisplay
+
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
@@ -33,8 +34,8 @@ class MonteCarlo(AbstractStrategy):
         """
         次の一手
         """
-        moves = list(board.get_possibles(color).keys())
-        scores = [0 for _ in range(len(moves))]
+        moves = list(board.get_possibles(color).keys())  # 手の候補を取得
+        scores = [0 for _ in range(len(moves))]          # スコアの初期化
 
         for _ in range(self.count):
             for i, move in enumerate(moves):
@@ -45,10 +46,10 @@ class MonteCarlo(AbstractStrategy):
             if Timer.is_timeout(self):
                 break
 
-        best_score = max(scores)
-        best_moves = [move for i, move in enumerate(moves) if scores[i] == best_score]
+        best_score = max(scores)  # ベストスコアを取得
+        best_moves = [move for i, move in enumerate(moves) if scores[i] == best_score]  # ベストスコアの手を選ぶ
 
-        return random.choice(best_moves)
+        return random.choice(best_moves)  # 複数ある場合はランダムに選ぶ
 
     @Measure.countup
     @Timer.timeout
