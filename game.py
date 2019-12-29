@@ -10,10 +10,11 @@ class Game:
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
-    def __init__(self, board, black_player, white_player, display):
+    def __init__(self, board, black_player, white_player, display, white=False):
         self.board = board
         self.black_player = black_player
         self.white_player = white_player
+        self.players = [self.black_player, self.white_player] if white == False else [self.white_player, self.black_player]
         self.display = display
         self.result = []
 
@@ -27,7 +28,7 @@ class Game:
             while True:
                 playable, foul_player = 0, None
 
-                for player in [self.black_player, self.white_player]:
+                for player in self.players:
                     possibles = list(self.board.get_possibles(player.color).keys())
 
                     if not possibles:
@@ -135,11 +136,13 @@ if __name__ == '__main__':
     print(game.result.white_name, game.result.white_num)
     print()
 
-    board8x8 = Board(8)
     black_player = Player('black', 'Random', strategies.Random())
-    white_player = Player('white', 'Table', strategies.Table(8))
+    white_player = Player('white', 'Table', strategies.Table(4))
 
-    game = Game(board8x8, black_player, white_player, ConsoleDisplay())
+    board4x4 = Board(4)
+    board4x4.put_stone('black', 1, 0)
+    print(board4x4)
+    game = Game(board4x4, black_player, white_player, ConsoleDisplay(), True)
     game.play()
 
     print()
