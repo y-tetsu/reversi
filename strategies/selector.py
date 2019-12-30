@@ -23,9 +23,9 @@ class Selector(AbstractSelector):
         return moves
 
 
-class Selector_S(Selector):
+class Selector_W(Selector):
     """
-    スコアに基づいて手を絞る
+    ワースト値に基づいて手を絞る
     """
     def __init__(self, depth=3, limit=3):
         self.depth = depth
@@ -74,11 +74,11 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 1, 7)
     print(bitboard8)
 
-    print('--- Test For Selector_S ---')
+    print('--- Test For Selector_W ---')
     print(bitboard8)
 
     strategy = AlphaBeta_TPOW()
-    selector = Selector_S()
+    selector = Selector_W()
 
     assert selector.depth == 3
     assert selector.limit == 3

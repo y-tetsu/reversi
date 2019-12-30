@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_TPOW
-from strategies.selector import Selector, Selector_S
+from strategies.selector import Selector, Selector_W
 from strategies.sorter import Sorter, Sorter_B, Sorter_BC
 
 
@@ -73,11 +73,11 @@ class AbI_BC_TPOW(IterativeDeepning):
         super().__init__(depth, selector, sorter, search)
 
 
-class AbI_S_BC_TPOW(IterativeDeepning):
+class AbI_W_BC_TPOW(IterativeDeepning):
     """
-    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:S、並べ替え:BC、評価関数:TPOW)
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:W、並べ替え:BC、評価関数:TPOW)
     """
-    def __init__(self, depth=2, selector=Selector_S(), sorter=Sorter_BC(), search=AlphaBeta_TPOW()):
+    def __init__(self, depth=2, selector=Selector_W(), sorter=Sorter_BC(), search=AlphaBeta_TPOW()):
         super().__init__(depth, selector, sorter, search)
 
 
@@ -130,8 +130,8 @@ if __name__ == '__main__':
     print( 'count     :', Measure.count[key] )
     assert Measure.count[key] >= 1000
 
-    print('--- Test For AbI_S_BC_TPOW Strategy ---')
-    iterative = AbI_S_BC_TPOW()
+    print('--- Test For AbI_W_BC_TPOW Strategy ---')
+    iterative = AbI_W_BC_TPOW()
     assert iterative.depth == 2
 
     Measure.count[key] = 0
