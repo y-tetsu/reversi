@@ -9,7 +9,6 @@ sys.path.append('../')
 from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.easy import Table
 from strategies.negamax import NegaMax
 from strategies.evaluator import Evaluator_TPOW, Evaluator_S
 
