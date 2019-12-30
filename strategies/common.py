@@ -27,7 +27,13 @@ class AbstractEvaluator(metaclass=abc.ABCMeta):
         pass
 
 
+class AbstractSorter(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def sort_moves(self, board, moves, best_move):
+        pass
+
+
 class AbstractSelector(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def select_moves(self, color, board, moves, best_move, scores, depth):
+    def select_moves(self, color, board, moves, scores, depth):
         pass

@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_S
-from strategies.iterative import AbI_BC_TPOW, AbI_BCW_TPOW
+from strategies.iterative import AbI_BC_TPOW, AbI_S_BC_TPOW
 
 
 class FullReading(AbstractStrategy):
@@ -39,18 +39,18 @@ class FullReading(AbstractStrategy):
 class AbIF_BC_TPOW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:BC、評価関数:TPOW, 完全読み開始:残り9手)
+    (選択的探索:なし、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
     """
-    def __init__(self, remain=9, base=AbI_BC_TPOW()):
+    def __init__(self, remain=7, base=AbI_BC_TPOW()):
         super().__init__(remain, base)
 
 
-class AbIF_BCW_TPOW(FullReading):
+class AbIF_S_BC_TPOW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:BCW、評価関数:TPOW, 完全読み開始:残り9手)
+    (選択的探索:S、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
     """
-    def __init__(self, remain=9, base=AbI_BCW_TPOW()):
+    def __init__(self, remain=7, base=AbI_S_BC_TPOW()):
         super().__init__(remain, base)
 
 
@@ -137,11 +137,13 @@ if __name__ == '__main__':
 
     bitboard8.put_stone('white', 3, 5)
     bitboard8.put_stone('black', 1, 3)
+    bitboard8.put_stone('white', 0, 7)
+    bitboard8.put_stone('black', 1, 7)
     print(bitboard8)
 
     # full
     strategy = AbIF_BC_TPOW()
-    assert strategy.remain == 9
+    assert strategy.remain == 7
     Measure.count[fullreading_key] = 0
     move = strategy.next_move('white', bitboard8)
     print(move)

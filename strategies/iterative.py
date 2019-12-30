@@ -10,16 +10,18 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_TPOW
-from strategies.selector import Selector, Selector_B, Selector_BC, Selector_BCW
+from strategies.selector import Selector, Selector_S
+from strategies.sorter import Sorter, Sorter_B, Sorter_BC
 
 
 class IterativeDeepning(AbstractStrategy):
     """
     反復深化法
     """
-    def __init__(self, depth=None, selector=None, search=None):
+    def __init__(self, depth=None, selector=None, sorter=None, search=None):
         self.depth = depth
         self.selector = selector
+        self.sorter = sorter
         self.search = search
         self.max_depth = depth
 
@@ -33,8 +35,9 @@ class IterativeDeepning(AbstractStrategy):
         Timer.set_deadline(self.search.__class__.__name__, CPU_TIME)  # 探索クラスのタイムアウトを設定
 
         while True:
-            moves = self.selector.select_moves(color, board, moves, best_move, scores, depth)  # 次の手の候補を選択
-            best_move, scores = self.search.get_best_move(color, board, moves, depth)   # 最善手を取得
+            moves = self.selector.select_moves(color, board, moves, scores, depth)     # 次の手の候補を選択
+            moves = self.sorter.sort_moves(board, moves, best_move)                    # 次の手の候補を並び替え
+            best_move, scores = self.search.get_best_move(color, board, moves, depth)  # 最善手を取得
 
             if Timer.is_timeout(self.search):  # タイムアウト発生時、処理を抜ける
                 break
@@ -48,34 +51,34 @@ class IterativeDeepning(AbstractStrategy):
 
 class AbI_TPOW(IterativeDeepning):
     """
-    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、評価関数:TPOW)
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:なし、評価関数:TPOW)
     """
-    def __init__(self, depth=2, selector=Selector(), search=AlphaBeta_TPOW()):
-        super().__init__(depth, selector, search)
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter(), search=AlphaBeta_TPOW()):
+        super().__init__(depth, selector, sorter, search)
 
 
 class AbI_B_TPOW(IterativeDeepning):
     """
-    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:B、評価関数:TPOW)
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPOW)
     """
-    def __init__(self, depth=2, selector=Selector_B(), search=AlphaBeta_TPOW()):
-        super().__init__(depth, selector, search)
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPOW()):
+        super().__init__(depth, selector, sorter, search)
 
 
 class AbI_BC_TPOW(IterativeDeepning):
     """
-    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:BC、評価関数:TPOW)
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並べ替え:BC、評価関数:TPOW)
     """
-    def __init__(self, depth=2, selector=Selector_BC(), search=AlphaBeta_TPOW()):
-        super().__init__(depth, selector, search)
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_BC(), search=AlphaBeta_TPOW()):
+        super().__init__(depth, selector, sorter, search)
 
 
-class AbI_BCW_TPOW(IterativeDeepning):
+class AbI_S_BC_TPOW(IterativeDeepning):
     """
-    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:BCW、評価関数:TPOW)
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:S、並べ替え:BC、評価関数:TPOW)
     """
-    def __init__(self, depth=2, selector=Selector_BCW(), search=AlphaBeta_TPOW()):
-        super().__init__(depth, selector, search)
+    def __init__(self, depth=2, selector=Selector_S(), sorter=Sorter_BC(), search=AlphaBeta_TPOW()):
+        super().__init__(depth, selector, sorter, search)
 
 
 if __name__ == '__main__':
@@ -127,8 +130,8 @@ if __name__ == '__main__':
     print( 'count     :', Measure.count[key] )
     assert Measure.count[key] >= 1000
 
-    print('--- Test For AbI_BCW_TPOW Strategy ---')
-    iterative = AbI_BCW_TPOW()
+    print('--- Test For AbI_S_BC_TPOW Strategy ---')
+    iterative = AbI_S_BC_TPOW()
     assert iterative.depth == 2
 
     Measure.count[key] = 0
