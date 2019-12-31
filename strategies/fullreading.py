@@ -36,7 +36,16 @@ class FullReading(AbstractStrategy):
         return self.base.next_move(color, board)
 
 
-class AbIF_B_TPOW(FullReading):
+class AbIF5_B_TPOW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り5手)
+    """
+    def __init__(self, remain=5, base=AbI_B_TPOW()):
+        super().__init__(remain, base)
+
+
+class AbIF7_B_TPOW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り7手)
@@ -45,7 +54,43 @@ class AbIF_B_TPOW(FullReading):
         super().__init__(remain, base)
 
 
-class AbIF_BC_TPOW(FullReading):
+class AbIF9_B_TPOW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り9手)
+    """
+    def __init__(self, remain=9, base=AbI_B_TPOW()):
+        super().__init__(remain, base)
+
+
+class AbIF11_B_TPOW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り11手)
+    """
+    def __init__(self, remain=11, base=AbI_B_TPOW()):
+        super().__init__(remain, base)
+
+
+class AbIF13_B_TPOW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り13手)
+    """
+    def __init__(self, remain=13, base=AbI_B_TPOW()):
+        super().__init__(remain, base)
+
+
+class AbIF15_B_TPOW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り15手)
+    """
+    def __init__(self, remain=15, base=AbI_B_TPOW()):
+        super().__init__(remain, base)
+
+
+class AbIF7_BC_TPOW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:なし、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
@@ -54,7 +99,7 @@ class AbIF_BC_TPOW(FullReading):
         super().__init__(remain, base)
 
 
-class AbIF_W_BC_TPOW(FullReading):
+class AbIF7_W_BC_TPOW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:W、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
@@ -119,8 +164,8 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 7, 1)
     print(bitboard8)
 
-    print('--- Test For AbIF_BC_TPOW Strategy ---')
-    strategy = AbIF_BC_TPOW(remain=11)
+    print('--- Test For AbIF7_BC_TPOW Strategy ---')
+    strategy = AbIF7_BC_TPOW(remain=11)
     assert strategy.remain == 11
 
     base_key = strategy.base.search.__class__.__name__ + str(os.getpid())
@@ -151,7 +196,7 @@ if __name__ == '__main__':
     print(bitboard8)
 
     # full
-    strategy = AbIF_BC_TPOW()
+    strategy = AbIF7_BC_TPOW()
     assert strategy.remain == 7
     Measure.count[fullreading_key] = 0
     move = strategy.next_move('white', bitboard8)
