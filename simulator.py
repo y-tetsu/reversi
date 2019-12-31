@@ -221,6 +221,7 @@ if __name__ == '__main__':
         'AbI_TPOW': strategies.AbI_TPOW(),
         'AbI_B_TP': strategies.AbI_B_TP(),
         'AbI_B_TPO': strategies.AbI_B_TPO(),
+        'AbI_B_TPW': strategies.AbI_B_TPW(),
         'AbI_B_TPOW': strategies.AbI_B_TPOW(),
         'AbI_BC_TPOW': strategies.AbI_BC_TPOW(),
         'AbI_W_BC_TPOW': strategies.AbI_W_BC_TPOW(),
