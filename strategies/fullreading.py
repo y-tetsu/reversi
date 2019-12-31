@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_S
-from strategies.iterative import AbI_BC_TPOW, AbI_W_BC_TPOW
+from strategies.iterative import AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW
 
 
 class FullReading(AbstractStrategy):
@@ -34,6 +34,15 @@ class FullReading(AbstractStrategy):
             return self.fullreading.next_move(color, board)  # 完全読み
 
         return self.base.next_move(color, board)
+
+
+class AbIF_B_TPOW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り7手)
+    """
+    def __init__(self, remain=7, base=AbI_B_TPOW()):
+        super().__init__(remain, base)
 
 
 class AbIF_BC_TPOW(FullReading):
