@@ -219,6 +219,8 @@ if __name__ == '__main__':
         'AlphaBeta3_TPOW': strategies.AlphaBeta3_TPOW(),
         'AlphaBeta4_TPOW': strategies.AlphaBeta4_TPOW(),
         'AbI_TPOW': strategies.AbI_TPOW(),
+        'AbI_B_TP': strategies.AbI_B_TP(),
+        'AbI_B_TPO': strategies.AbI_B_TPO(),
         'AbI_B_TPOW': strategies.AbI_B_TPOW(),
         'AbI_BC_TPOW': strategies.AbI_BC_TPOW(),
         'AbI_W_BC_TPOW': strategies.AbI_W_BC_TPOW(),
