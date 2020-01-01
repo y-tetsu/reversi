@@ -229,6 +229,7 @@ if __name__ == '__main__':
         'AbIF7_B_TPOW': strategies.AbIF7_B_TPOW(),
         'AbIF9_B_TPOW': strategies.AbIF9_B_TPOW(),
         'AbIF11_B_TPW': strategies.AbIF11_B_TPW(),
+        'AbIF13_B_TPW': strategies.AbIF13_B_TPW(),
         'AbIF11_B_TPOW': strategies.AbIF11_B_TPOW(),
         'AbIF13_B_TPOW': strategies.AbIF13_B_TPOW(),
         'AbIF15_B_TPOW': strategies.AbIF15_B_TPOW(),
