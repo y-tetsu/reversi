@@ -22,6 +22,7 @@ BLACK_STRATEGIES = {
     'SlowStarter': strategies.SlowStarter(),
     'Table': strategies.Table(),
     'MinMax': strategies.MinMax2_TPW(),
+    'MonteCarlo': strategies.MonteCarlo1000(),
     'NegaMax': strategies.NegaMax3_TPW(),
     'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'AB_T': strategies.AB_T4(),
@@ -35,11 +36,13 @@ WHITE_STRATEGIES = {
     'Random': strategies.Random(),
     'Greedy': strategies.Greedy(),
     'Table': strategies.Table(),
-    'MinMax': strategies.MinMax2(),
-    'NegaMax': strategies.NegaMax3(),
-    'AlphaBeta': strategies.AlphaBeta4(),
+    'MinMax': strategies.MinMax2_TPW(),
+    'MonteCarlo': strategies.MonteCarlo1000(),
+    'NegaMax': strategies.NegaMax3_TPW(),
+    'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'AB_T': strategies.AB_T4(),
     'AB_TI': strategies.AB_TI(),
+    'AbIF11_B_TPW': strategies.AbIF11_B_TPW(),
 }
 
 STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}

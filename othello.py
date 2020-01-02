@@ -185,8 +185,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF11_B_TPW']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF11_B_TPW']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF11_B_TPW']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF11_B_TPW']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -200,6 +200,7 @@ if __name__ == '__main__':
         'SlowStarter': strategies.SlowStarter(),
         'Table': strategies.Table(),
         'MinMax': strategies.MinMax2_TPW(),
+        'MonteCarlo': strategies.MonteCarlo1000(),
         'NegaMax': strategies.NegaMax3_TPW(),
         'AlphaBeta': strategies.AlphaBeta4_TPW(),
         'AB_T': strategies.AB_T4(),
