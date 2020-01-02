@@ -12,7 +12,7 @@ from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.minmax import MinMax
-from strategies.evaluator import Evaluator_TPOW
+from strategies.evaluator import Evaluator_TPW, Evaluator_TPOW
 
 
 class NegaMax(MinMax):
@@ -97,6 +97,14 @@ class NegaMax2_TPOW(NegaMax):
     NegaMax法でEvaluator_TPOWにより次の手を決める(2手読み)
     """
     def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaMax3_TPW(NegaMax):
+    """
+    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
         super().__init__(depth, evaluator)
 
 
