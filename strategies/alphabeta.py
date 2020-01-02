@@ -162,6 +162,14 @@ class AlphaBeta3_TPOW(AlphaBeta):
         super().__init__(depth, evaluator)
 
 
+class AlphaBeta4_TPW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
 class AlphaBeta4_TPOW(AlphaBeta):
     """
     AlphaBeta法でEvaluator_TPOWにより次の手を決める(4手読み)
