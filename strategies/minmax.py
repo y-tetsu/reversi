@@ -10,7 +10,7 @@ import random
 
 from strategies.common import AbstractStrategy
 from strategies.measure import Measure
-from strategies.evaluator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPOW
+from strategies.evaluator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW
 
 
 class MinMax(AbstractStrategy):
@@ -159,6 +159,14 @@ class MinMax2_TPO(MinMax):
     MinMax法でEvaluator_TPOにより次の手を決める(2手読み)
     """
     def __init__(self, depth=2, evaluator=Evaluator_TPO()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_TPW(MinMax):
+    """
+    MinMax法でEvaluator_TPWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPW()):
         super().__init__(depth, evaluator)
 
 
