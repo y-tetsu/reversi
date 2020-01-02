@@ -71,19 +71,37 @@ class Sorter_O(Sorter):
         """
         moves = super().sort_moves(color, board, moves, best_move)
 
+        openings = {}
         for move in moves:
-            board.put_stone(color, *move)
+            reversibles = board.put_stone(color, *move)
+            opening = self.get_opening(board, reversibles)
+            openings[move] = opening
             board.undo()
 
-        #size, board_info, opening = board.size, board.get_board_info(), 0
+        return [key for key, _ in sorted(openings.items(), key=lambda x:x[1])]
 
-        #directions = [
-        #    [-1,  1], [ 0,  1], [ 1,  1],
-        #    [-1,  0],           [ 1,  0],
-        #    [-1, -1], [ 0, -1], [ 1, -1],
-        #]
+    def get_opening(self, board, reversibles):
+        """
+        開放度を求める
+        """
+        size, board_info, opening = board.size, board.get_board_info(), 0
 
-        return moves
+        directions = [
+            [-1,  1], [ 0,  1], [ 1,  1],
+            [-1,  0],           [ 1,  0],
+            [-1, -1], [ 0, -1], [ 1, -1],
+        ]
+
+        # ひっくり返した石の周りをチェックする
+        for stone_x, stone_y in reversibles:
+            for dx, dy in directions:
+                x, y = stone_x + dx, stone_y + dy
+
+                if 0 <= x < size and 0 <= y < size:
+                    if board_info[y][x] == 0:
+                        opening += 1  # 石が置かれていない場所をカウント
+
+        return opening
 
 
 if __name__ == '__main__':
@@ -134,5 +152,4 @@ if __name__ == '__main__':
 
     moves = sorter.sort_moves('black', bitboard8, None, None)
     print(moves)
-    assert moves == [(4, 2), (2, 2), (2, 4)]
-
+    assert moves == [(2, 3), (0, 5), (0, 3), (0, 7), (2, 7), (5, 4), (4, 5), (5, 5), (0, 4), (0, 6)]
