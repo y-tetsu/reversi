@@ -10,7 +10,8 @@ from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta
-from strategies.evaluator import Evaluator_TPW, Evaluator_S
+from strategies.evaluator import Evaluator_TPW
+from strategies.sorter import Sorter, Sorter_O
 
 
 class NegaScout(AlphaBeta):
@@ -43,8 +44,10 @@ class NegaScout(AlphaBeta):
         if not possibles:
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
+        # 手の候補を並び替え
+        moves = self.sorter.sort_moves(color, board, None, None)
+
         # 最初の手の評価値を取得する
-        moves = list(possibles.keys())
         move = moves.pop(0)
         board.put_stone(color, *move)
         score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
@@ -83,28 +86,20 @@ class NegaScout(AlphaBeta):
         return alpha
 
 
-class NegaScout_S(NegaScout):
-    """
-    NegaScout法でEvaluator_Sにより次の手を決める
-    """
-    def __init__(self, depth, evaluator=Evaluator_S()):
-        super().__init__(depth=depth, evaluator=evaluator)
-
-
 class NegaScout_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める
     """
-    def __init__(self, evaluator=Evaluator_TPW()):
-        super().__init__(evaluator=evaluator)
+    def __init__(self, evaluator=Evaluator_TPW(), sorter=Sorter()):
+        super().__init__(evaluator=evaluator, sorter=sorter)
 
 
 class NegaScout4_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(4手読み)
     """
-    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
+    def __init__(self, depth=4, evaluator=Evaluator_TPW(), sorter=Sorter()):
+        super().__init__(depth, evaluator, sorter=sorter)
 
 
 if __name__ == '__main__':
