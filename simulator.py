@@ -221,6 +221,7 @@ if __name__ == '__main__':
         'AlphaBeta3_TPOW': strategies.AlphaBeta3_TPOW(),
         'AlphaBeta4_TPOW': strategies.AlphaBeta4_TPOW(),
         'AlphaBeta4_TPW': strategies.AlphaBeta4_TPW(),
+        'NegaScout4_TPW': strategies.NegaScout4_TPW(),
         'AbI_TPOW': strategies.AbI_TPOW(),
         'AbI_B_TP': strategies.AbI_B_TP(),
         'AbI_B_TPO': strategies.AbI_B_TPO(),
@@ -241,6 +242,7 @@ if __name__ == '__main__':
         'MonteCarlo30': strategies.MonteCarlo30(),
         'MonteCarlo100': strategies.MonteCarlo100(),
         'MonteCarlo1000': strategies.MonteCarlo1000(),
+        'NsI_B_TPW': strategies.NsI_B_TPW(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
