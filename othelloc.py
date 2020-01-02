@@ -21,11 +21,12 @@ BLACK_STRATEGIES = {
     'Greedy': strategies.Greedy(),
     'SlowStarter': strategies.SlowStarter(),
     'Table': strategies.Table(),
-    'MinMax': strategies.MinMax2(),
-    'NegaMax': strategies.NegaMax3(),
-    'AlphaBeta': strategies.AlphaBeta4(),
+    'MinMax': strategies.MinMax2_TPW(),
+    'NegaMax': strategies.NegaMax3_TPW(),
+    'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'AB_T': strategies.AB_T4(),
     'AB_TI': strategies.AB_TI(),
+    'AbIF11_B_TPW': strategies.AbIF11_B_TPW(),
 }
 
 WHITE_STRATEGIES = {
