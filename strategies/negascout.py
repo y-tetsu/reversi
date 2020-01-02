@@ -94,6 +94,14 @@ class NegaScout_TPW(NegaScout):
         super().__init__(evaluator=evaluator, sorter=sorter)
 
 
+class NegaScout_TPW_O(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWにより次の手を決める(並べ替え:O)
+    """
+    def __init__(self, evaluator=Evaluator_TPW(), sorter=Sorter_O()):
+        super().__init__(evaluator=evaluator, sorter=sorter)
+
+
 class NegaScout4_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(4手読み)
