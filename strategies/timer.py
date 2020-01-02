@@ -20,10 +20,6 @@ class Timer:
         期限を設定
         """
         key = name + str(os.getpid())
-
-        if key not in Timer.deadline:
-            print('    timer   :', key)
-
         Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
         Timer.timeout_flag[key] = False            # タイムアウト未発生
 
@@ -36,10 +32,7 @@ class Timer:
             def wrapper(*args, **kwargs):
                 name = args[0].__class__.__name__
                 cls.set_deadline(name, limit)
-
-                ret = func(*args, **kwargs)
-
-                return ret
+                return func(*args, **kwargs)
             return wrapper
         return _start
 
@@ -50,12 +43,9 @@ class Timer:
         """
         def wrapper(*args, **kwargs):
             key = args[0].__class__.__name__ + str(os.getpid())
-
             if time.time() > Timer.deadline[key]:
                 Timer.timeout_flag[key] = True  # タイムアウト発生
-
                 return 0
-
             return func(*args, **kwargs)
         return wrapper
 
