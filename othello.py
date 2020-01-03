@@ -185,8 +185,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF11_B_TPW']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF11_B_TPW']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF12_B_TPW']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'AB_T', 'AB_TI', 'AbIF12_B_TPW']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -205,7 +205,7 @@ if __name__ == '__main__':
         'AlphaBeta': strategies.AlphaBeta4_TPW(),
         'AB_T': strategies.AB_T4(),
         'AB_TI': strategies.AB_TI(),
-        'AbIF11_B_TPW' : strategies.AbIF11_B_TPW(),
+        'AbIF12_B_TPW' : strategies.AbIF12_B_TPW(),
     }
 
     # ゲーム用スレッド
