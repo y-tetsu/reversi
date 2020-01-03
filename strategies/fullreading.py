@@ -11,6 +11,7 @@ from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_S
 from strategies.iterative import AbI_B_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_B_TPW_O
+from strategies.multiple import MultiNegaScout
 
 
 class FullReading(AbstractStrategy):
@@ -195,6 +196,22 @@ class NsIF12_B_TPW_O(FullReading):
     (選択的探索:なし、並べ替え:B、評価関数:TPW_O, 完全読み開始:残り12手)
     """
     def __init__(self, remain=12, base=NsI_B_TPW_O()):
+        super().__init__(remain, base)
+
+
+class MultiNsF11(FullReading):
+    """
+    MultiNegaScout+完全読み開始:残り11手
+    """
+    def __init__(self, remain=11, base=MultiNegaScout()):
+        super().__init__(remain, base)
+
+
+class MultiNsF12(FullReading):
+    """
+    MultiNegaScout+完全読み開始:残り12手
+    """
+    def __init__(self, remain=12, base=MultiNegaScout()):
         super().__init__(remain, base)
 
 

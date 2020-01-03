@@ -252,6 +252,9 @@ if __name__ == '__main__':
         'NsIF10_B_TPW_O': strategies.NsIF10_B_TPW_O(),
         'NsIF11_B_TPW_O': strategies.NsIF11_B_TPW_O(),
         'NsIF12_B_TPW_O': strategies.NsIF12_B_TPW_O(),
+        'MultiNegaScout': strategies.MultiNegaScout(),
+        'MultiNsF11': strategies.MultiNsF11(),
+        'MultiNsF12': strategies.MultiNsF12(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
