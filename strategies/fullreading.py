@@ -63,12 +63,30 @@ class AbIF9_B_TPOW(FullReading):
         super().__init__(remain, base)
 
 
+class AbIF10_B_TPW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り10手)
+    """
+    def __init__(self, remain=10, base=AbI_B_TPW()):
+        super().__init__(remain, base)
+
+
 class AbIF11_B_TPW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り11手)
     """
     def __init__(self, remain=11, base=AbI_B_TPW()):
+        super().__init__(remain, base)
+
+
+class AbIF12_B_TPW(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り12手)
+    """
+    def __init__(self, remain=12, base=AbI_B_TPW()):
         super().__init__(remain, base)
 
 
