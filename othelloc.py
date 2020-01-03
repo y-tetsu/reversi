@@ -27,6 +27,7 @@ BLACK_STRATEGIES = {
     'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'AB_T': strategies.AB_T4(),
     'AB_TI': strategies.AB_TI(),
+    'AbIF11_B_TPW': strategies.AbIF11_B_TPW(),
     'AbIF12_B_TPW': strategies.AbIF12_B_TPW(),
 }
 
@@ -35,6 +36,7 @@ WHITE_STRATEGIES = {
     'Unselfish': strategies.Unselfish(),
     'Random': strategies.Random(),
     'Greedy': strategies.Greedy(),
+    'SlowStarter': strategies.SlowStarter(),
     'Table': strategies.Table(),
     'MinMax': strategies.MinMax2_TPW(),
     'MonteCarlo': strategies.MonteCarlo1000(),
@@ -42,6 +44,7 @@ WHITE_STRATEGIES = {
     'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'AB_T': strategies.AB_T4(),
     'AB_TI': strategies.AB_TI(),
+    'AbIF11_B_TPW': strategies.AbIF11_B_TPW(),
     'AbIF12_B_TPW': strategies.AbIF12_B_TPW(),
 }
 
