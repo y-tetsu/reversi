@@ -246,8 +246,12 @@ if __name__ == '__main__':
         'MonteCarlo1000': strategies.MonteCarlo1000(),
         'NsI_B_TPW': strategies.NsI_B_TPW(),
         'NsI_B_TPW_O': strategies.NsI_B_TPW_O(),
+        'NsIF10_B_TPW': strategies.NsIF10_B_TPW(),
         'NsIF11_B_TPW': strategies.NsIF11_B_TPW(),
+        'NsIF12_B_TPW': strategies.NsIF12_B_TPW(),
+        'NsIF10_B_TPW_O': strategies.NsIF10_B_TPW_O(),
         'NsIF11_B_TPW_O': strategies.NsIF11_B_TPW_O(),
+        'NsIF12_B_TPW_O': strategies.NsIF12_B_TPW_O(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
