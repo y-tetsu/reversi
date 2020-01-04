@@ -66,12 +66,12 @@ class MonteCarlo(AbstractStrategy):
         game.play()
 
         # 結果を返す
-        win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, 0
+        win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, -1
 
         if game.result.winlose == win:
             ret = 1  # 勝った場合
         elif game.result.winlose == Game.DRAW:
-            ret = 0.5  # 引き分けた場合
+            ret = 0  # 引き分けた場合
 
         return ret
 
