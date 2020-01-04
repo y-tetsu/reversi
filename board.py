@@ -240,6 +240,24 @@ class Board(AbstractBoard):
 
         self._possibles_cache.clear()
 
+    def get_bitboard_info(self):
+        """
+        ビットボードの情報を返す
+        """
+        size = self.size
+        black_bitboard, white_bitboard = 0, 0
+        put = 1 << size * size - 1
+
+        for y in range(self.size):
+            for x in range(self.size):
+                if self._board[y][x] == self.stone['black']:
+                    black_bitboard |= put
+                if self._board[y][x] == self.stone['white']:
+                    white_bitboard |= put
+                put >>= 1
+
+        return  black_bitboard, white_bitboard
+
 
 class BitBoard(AbstractBoard):
     """
@@ -398,6 +416,12 @@ class BitBoard(AbstractBoard):
 
         self._possibles_cache.clear()
 
+    def get_bitboard_info(self):
+        """
+        ビットボードの情報を返す
+        """
+        return  self._black_bitboard, self._white_bitboard
+
 
 if __name__ == '__main__':
     # ========== #
@@ -493,6 +517,8 @@ if __name__ == '__main__':
     assert board4.put_stone('white', 3, 2) == [(2, 2), (2, 1)]
     assert board4.put_stone('black', 3, 1) == [(2, 2)]
     assert board4.put_stone('white', 3, 3) == [(2, 2)]
+
+    assert board4.get_bitboard_info() == (4366, 61169)
 
     # プレイ結果
     print(board4)
@@ -696,3 +722,6 @@ if __name__ == '__main__':
     bitboard8._white_bitboard = 0x0000001C1C140000
     possibles = bitboard8.get_possibles('black')
     assert possibles == {(3, 2): [(3, 3), (3, 4), (3, 5)], (4, 2): [(4, 3), (4, 4)], (2, 3): [(3, 4)], (6, 3): [(5, 4)], (2, 5): [(3, 5)], (6, 5): [(5, 5)]}
+
+    # get_bitboard_info
+    assert bitboard8.get_bitboard_info() == (0x0000000000081000, 0x0000001C1C140000)
