@@ -10,5 +10,6 @@ from strategies.negascout import NegaScout4_TPW
 from strategies.iterative import AbI_TPOW, AbI_B_TP, AbI_B_TPO, AbI_B_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_B_TPW_O
 from strategies.multiple import MultiNegaScout
 from strategies.fullreading import AbIF5_B_TPOW, AbIF7_B_TPOW, AbIF9_B_TPOW, AbIF10_B_TPW, AbIF11_B_TPW, AbIF12_B_TPW, AbIF13_B_TPW, AbIF11_B_TPOW, AbIF13_B_TPOW, AbIF15_B_TPOW, AbIF7_BC_TPOW, AbIF7_W_BC_TPOW, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, NsIF10_B_TPW_O, NsIF11_B_TPW_O, NsIF12_B_TPW_O, MultiNsF11, MultiNsF12
+from strategies.joseki import AbIF11J_B_TPW
 from strategies.montecarlo import MonteCarlo30, MonteCarlo100, MonteCarlo1000
 from strategies.proto import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI

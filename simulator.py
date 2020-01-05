@@ -255,6 +255,7 @@ if __name__ == '__main__':
         'MultiNegaScout': strategies.MultiNegaScout(),
         'MultiNsF11': strategies.MultiNsF11(),
         'MultiNsF12': strategies.MultiNsF12(),
+        'AbIF11J_B_TPW': strategies.AbIF11J_B_TPW(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
