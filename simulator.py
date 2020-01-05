@@ -234,6 +234,7 @@ if __name__ == '__main__':
         'AbIF9_B_TPOW': strategies.AbIF9_B_TPOW(),
         'AbIF10_B_TPW': strategies.AbIF10_B_TPW(),
         'AbIF11_B_TPW': strategies.AbIF11_B_TPW(),
+        'AbIF11J_B_TPW': strategies.AbIF11J_B_TPW(),
         'AbIF12_B_TPW': strategies.AbIF12_B_TPW(),
         'AbIF13_B_TPW': strategies.AbIF13_B_TPW(),
         'AbIF11_B_TPOW': strategies.AbIF11_B_TPOW(),
@@ -254,8 +255,8 @@ if __name__ == '__main__':
         'NsIF12_B_TPW_O': strategies.NsIF12_B_TPW_O(),
         'MultiNegaScout': strategies.MultiNegaScout(),
         'MultiNsF11': strategies.MultiNsF11(),
+        'MultiNsF11J': strategies.MultiNsF11J(),
         'MultiNsF12': strategies.MultiNsF12(),
-        'AbIF11J_B_TPW': strategies.AbIF11J_B_TPW(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
