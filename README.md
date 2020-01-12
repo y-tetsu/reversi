@@ -20,3 +20,7 @@ numpy 1.15.1<br>
 pyinstaller 3.4<br>
 cython 0.28.5<br>
 Microsoft Visual C++ 2019<br>
+
+## 参考サイト
+- 「オセロ･リバーシの勝ち方、必勝法」https://bassy84.net/
+- 「オセロAI入門」https://qiita.com/na-o-ys/items/10d894635c2a6c07ac70
