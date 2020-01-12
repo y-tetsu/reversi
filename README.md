@@ -22,6 +22,8 @@ $ python othelloc.py
  |Unselfish |なるべく少なく取ろうとする。 | ★ |
  |Random |ランダムに手を選ぶ。 | ★ |
  |Greedy |なるべく多く取ろうとする。 | ★ |
+ |SlowStarter |残り手数が15%未満の場合はUnselfish。15%以上の場合はGreedy。 | ★ |
+ |Table |評価テーブルにより手を決める。なるべく少なく取る、角を狙う、角のそばを避ける。 | ★ |
 
 ## 動作確認環境
 Windows10<br>
