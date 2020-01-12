@@ -13,6 +13,24 @@ $ python othelloc.py
 ```
 ![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 
+## 対戦相手紹介
+選択できる対戦相手の一覧。難易度は8x8サイズの場合の目安。
+### User1,User2
+人が操作
+- 難易度 : ？
+
+### Unselfish
+なるべく少なく取ろうとする。
+- 難易度 : ★
+
+### Random
+ランダムに手を選ぶ。
+- 難易度 : ★
+
+### Greedy
+なるべく多く取ろうとする。
+- 難易度 : ★
+
 ## 動作確認環境
 Windows10<br>
 Python 3.7.0<br>
