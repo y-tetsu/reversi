@@ -14,7 +14,7 @@ $ python othelloc.py
 ![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 
 ## 対戦相手紹介
-選択できる対戦相手の一覧。難易度は8x8サイズの場合の目安。
+選択できる対戦相手の一覧。難易度は8x8サイズの場合の目安。CPUの持ち時間は0.5秒まで。
 
  | 対戦相手 | 説明 | 難易度 |
  |:---|:---|:---:|
@@ -24,6 +24,13 @@ $ python othelloc.py
  |Greedy |なるべく多く取ろうとする。 | ★ |
  |SlowStarter |残り手数が15%未満の場合はUnselfish。15%以上の場合はGreedy。 | ★ |
  |Table |評価テーブルにより手を決める。なるべく少なく取る、角を狙う、角のそばを避ける。 | ★ |
+ |MinMax |ミニマックス法で2手先を読む。 | ★★ |
+ |MonteCarlo |モンテカルロ法で手を決める。| ★★ |
+ |NegaMax |ネガマックス法で3手先を読む。 | ★★ |
+ |AlphaBeta |アルファベータ法で4手先を読む。 | ★★ |
+ |Iterative |反復深化法で手を選ぶ。 | ★★★ |
+ |FullReading |残り11手から石差を読む。 | ★★★ |
+ |Joseki |序盤は定石通りに手を選ぶ。 | ★★★ |
 
 ## 動作確認環境
 Windows10<br>
