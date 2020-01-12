@@ -29,7 +29,7 @@ $ python othelloc.py
  |NegaMax |ネガマックス法で3手先を読む。 | ★★ |
  |AlphaBeta |アルファベータ法で4手先を読む。 | ★★ |
  |Iterative |反復深化法で手を選ぶ。 | ★★★ |
- |FullReading |残り11手から石差を読む。 | ★★★ |
+ |FullReading |終盤残り11手から石差を読む。 | ★★★ |
  |Joseki |序盤は定石通りに手を選ぶ。 | ★★★ |
 
 ## 動作確認環境
