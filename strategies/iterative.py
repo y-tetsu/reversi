@@ -114,6 +114,15 @@ class NsI_B_TPW(IterativeDeepning):
         super().__init__(depth, selector, sorter, search)
 
 
+class NsI_BC_TPW(IterativeDeepning):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:BC、評価関数:TPW)
+    """
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_BC(), search=NegaScout_TPW()):
+        super().__init__(depth, selector, sorter, search)
+
+
+
 class NsI_B_TPW_O(IterativeDeepning):
     """
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW_O)

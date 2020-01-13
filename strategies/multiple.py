@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.iterative import NsI_B_TPW, NsI_B_TPW_O
+from strategies.iterative import NsI_B_TPW, NsI_BC_TPW, NsI_B_TPW_O
 from strategies.negascout import NegaScout_TPW
 from strategies.evaluator import Evaluator_TPW
 
@@ -64,7 +64,7 @@ class MultiNegaScout(Multiple):
             strategies=[
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=70, c=-20, w1=2))),
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=50, c=-20, w1=5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=20, c=-5, w1=5)))
+                NsI_BC_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=40, c=-10, w1=5)))
             ]):
         super().__init__(turns, strategies)
 
