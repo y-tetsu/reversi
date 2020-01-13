@@ -10,6 +10,8 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.iterative import NsI_B_TPW, NsI_B_TPW_O
+from strategies.negascout import NegaScout_TPW
+from strategies.evaluator import Evaluator_TPW
 
 
 class MultipleSizeError(Exception):
@@ -50,9 +52,20 @@ class Multiple(AbstractStrategy):
 
 class MultiNegaScout(Multiple):
     """
-    20手まで:NsI_B_TPW_O, 20手以降:NsI_B_TPW_O
+    パラーメータ切り替え型
     """
-    def __init__(self, turns=[20, 64], strategies=[NsI_B_TPW_O(), NsI_B_TPW()]):
+    def __init__(
+            self,
+            turns=[
+                20,
+                40,
+                64
+            ],
+            strategies=[
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=70, c=-20, w1=2))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=50, c=-20, w1=5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=20, c=-5, w1=5)))
+            ]):
         super().__init__(turns, strategies)
 
 
@@ -63,9 +76,22 @@ if __name__ == '__main__':
 
     print('--- Test For MultiNegaScout Strategy ---')
     multiple = MultiNegaScout()
-    assert multiple.turns == [20, 64]
-    assert multiple.strategies[0].__class__.__name__ == 'NsI_B_TPW_O'
+    assert multiple.turns == [20, 40, 64]
+    assert multiple.strategies[0].__class__.__name__ == 'NsI_B_TPW'
     assert multiple.strategies[1].__class__.__name__ == 'NsI_B_TPW'
+    assert multiple.strategies[2].__class__.__name__ == 'NsI_B_TPW'
+
+    assert multiple.strategies[0].search.evaluator.table.table._CORNER == 70
+    assert multiple.strategies[1].search.evaluator.table.table._CORNER == 50
+    assert multiple.strategies[2].search.evaluator.table.table._CORNER == 20
+
+    assert multiple.strategies[0].search.evaluator.table.table._C == -20
+    assert multiple.strategies[1].search.evaluator.table.table._C == -20
+    assert multiple.strategies[2].search.evaluator.table.table._C == -5
+
+    assert multiple.strategies[0].search.evaluator.possibility._W == 2
+    assert multiple.strategies[1].search.evaluator.possibility._W == 5
+    assert multiple.strategies[2].search.evaluator.possibility._W == 5
 
     bitboard8 = BitBoard()
     bitboard8.put_stone('black', 3, 2)
