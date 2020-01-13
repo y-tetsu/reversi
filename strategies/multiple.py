@@ -64,7 +64,7 @@ class MultiNegaScout(Multiple):
             strategies=[
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=70, c=-20, w1=2))),
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=50, c=-20, w1=5))),
-                NsI_BC_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=40, c=-10, w1=5)))
+                NsI_BC_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=50, c=-10, w1=5)))
             ]):
         super().__init__(turns, strategies)
 
