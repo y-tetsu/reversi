@@ -206,7 +206,7 @@ if __name__ == '__main__':
         'Iterative': strategies.AB_TI(),
         'FullReading' : strategies.AbIF11_B_TPW(),
         'Joseki' : strategies.AbIF11J_B_TPW(),
-        'Switch' : strategies.SwitchNsF11J(),
+        'Switch' : strategies.SwitchNsF12J(),
     }
 
     # ゲーム用スレッド
