@@ -28,7 +28,7 @@ BLACK_STRATEGIES = {
     'Iterative': strategies.AB_TI(),
     'FullReading': strategies.AbIF11_B_TPW(),
     'Joseki': strategies.AbIF11J_B_TPW(),
-    'Multi': strategies.MultiNsF11J(),
+    'Switch': strategies.SwitchNsF11J(),
 }
 
 WHITE_STRATEGIES = {
@@ -45,7 +45,7 @@ WHITE_STRATEGIES = {
     'Iterative': strategies.AB_TI(),
     'FullReading': strategies.AbIF11_B_TPW(),
     'Joseki': strategies.AbIF11J_B_TPW(),
-    'Multi': strategies.MultiNsF11J(),
+    'Switch': strategies.SwitchNsF11J(),
 }
 
 STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}

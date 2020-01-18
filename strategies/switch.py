@@ -14,20 +14,20 @@ from strategies.negascout import NegaScout_TPW
 from strategies.evaluator import Evaluator_TPW
 
 
-class MultipleSizeError(Exception):
+class SwitchSizeError(Exception):
     """
     入力サイズのエラー
     """
     pass
 
 
-class Multiple(AbstractStrategy):
+class Switch(AbstractStrategy):
     """
     複数戦略を切り替える
     """
     def __init__(self, turns=None, strategies=None):
         if len(turns) != len(strategies):
-            raise MultipleSizeError
+            raise SwitchSizeError
 
         self.turns = turns
         self.strategies = strategies
@@ -50,7 +50,7 @@ class Multiple(AbstractStrategy):
         return strategy.next_move(color, board)
 
 
-class MultiNegaScout(Multiple):
+class SwitchNegaScout(Switch):
     """
     パラーメータ切り替え型
     """
@@ -74,24 +74,24 @@ if __name__ == '__main__':
     import os
     from board import BitBoard
 
-    print('--- Test For MultiNegaScout Strategy ---')
-    multiple = MultiNegaScout()
-    assert multiple.turns == [20, 40, 64]
-    assert multiple.strategies[0].__class__.__name__ == 'NsI_B_TPW'
-    assert multiple.strategies[1].__class__.__name__ == 'NsI_B_TPW'
-    assert multiple.strategies[2].__class__.__name__ == 'NsI_B_TPW'
+    print('--- Test For SwitchNegaScout Strategy ---')
+    switch = SwitchNegaScout()
+    assert switch.turns == [20, 40, 64]
+    assert switch.strategies[0].__class__.__name__ == 'NsI_B_TPW'
+    assert switch.strategies[1].__class__.__name__ == 'NsI_B_TPW'
+    assert switch.strategies[2].__class__.__name__ == 'NsI_BC_TPW'
 
-    assert multiple.strategies[0].search.evaluator.table.table._CORNER == 70
-    assert multiple.strategies[1].search.evaluator.table.table._CORNER == 50
-    assert multiple.strategies[2].search.evaluator.table.table._CORNER == 20
+    assert switch.strategies[0].search.evaluator.table.table._CORNER == 70
+    assert switch.strategies[1].search.evaluator.table.table._CORNER == 50
+    assert switch.strategies[2].search.evaluator.table.table._CORNER == 50
 
-    assert multiple.strategies[0].search.evaluator.table.table._C == -20
-    assert multiple.strategies[1].search.evaluator.table.table._C == -20
-    assert multiple.strategies[2].search.evaluator.table.table._C == -5
+    assert switch.strategies[0].search.evaluator.table.table._C == -20
+    assert switch.strategies[1].search.evaluator.table.table._C == -20
+    assert switch.strategies[2].search.evaluator.table.table._C == -10
 
-    assert multiple.strategies[0].search.evaluator.possibility._W == 2
-    assert multiple.strategies[1].search.evaluator.possibility._W == 5
-    assert multiple.strategies[2].search.evaluator.possibility._W == 5
+    assert switch.strategies[0].search.evaluator.possibility._W == 2
+    assert switch.strategies[1].search.evaluator.possibility._W == 5
+    assert switch.strategies[2].search.evaluator.possibility._W == 5
 
     bitboard8 = BitBoard()
     bitboard8.put_stone('black', 3, 2)
@@ -101,9 +101,9 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 5, 2)
     bitboard8.put_stone('white', 5, 4)
 
-    key = multiple.strategies[0].search.__class__.__name__ + str(os.getpid())
+    key = switch.strategies[0].search.__class__.__name__ + str(os.getpid())
     Measure.count[key] = 0
-    move = multiple.next_move('black', bitboard8)
+    move = switch.next_move('black', bitboard8)
     print(move)
     assert move == (5, 3)
     print( 'count     :', Measure.count[key] )
@@ -153,9 +153,9 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 7, 1)
     print(bitboard8)
 
-    key = multiple.strategies[1].search.__class__.__name__ + str(os.getpid())
+    key = switch.strategies[1].search.__class__.__name__ + str(os.getpid())
     Measure.count[key] = 0
-    move = multiple.next_move('black', bitboard8)
+    move = switch.next_move('black', bitboard8)
     print(move)
     assert move == (3, 6)
     print( 'count     :', Measure.count[key] )

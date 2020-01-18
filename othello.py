@@ -185,8 +185,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'Multi']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'Multi']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'Switch']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'Switch']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -206,7 +206,7 @@ if __name__ == '__main__':
         'Iterative': strategies.AB_TI(),
         'FullReading' : strategies.AbIF11_B_TPW(),
         'Joseki' : strategies.AbIF11J_B_TPW(),
-        'Multi' : strategies.MultiNsF11J(),
+        'Switch' : strategies.SwitchNsF11J(),
     }
 
     # ゲーム用スレッド
