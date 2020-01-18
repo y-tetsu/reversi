@@ -39,11 +39,11 @@ class Switch(AbstractStrategy):
         """
         stones = board.score['black'] + board.score['white']
 
-        # 残り手数が閾値以下
+        # 現在の手数が閾値以下
         strategy = self.strategies[-1]
 
         for i, turn in enumerate(self.turns):
-            if stones <= turn:
+            if stones - 4 <= turn:
                 strategy = self.strategies[i]
                 break
 
@@ -59,7 +59,7 @@ class SwitchNegaScout(Switch):
             turns=[
                 20,
                 40,
-                64
+                60
             ],
             strategies=[
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=70, c=-20, w1=2))),
