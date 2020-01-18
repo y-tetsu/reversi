@@ -257,6 +257,9 @@ if __name__ == '__main__':
         'SwitchNsF11': strategies.SwitchNsF11(),
         'SwitchNsF11J': strategies.SwitchNsF11J(),
         'SwitchNsF12J': strategies.SwitchNsF12J(),
+        'AB_TI_Ro': strategies.AB_TI_Ro(),
+        'AbIF11J_B_TPW_Ro': strategies.AbIF11J_B_TPW_Ro(),
+        'SwitchNsF12J_Ro': strategies.SwitchNsF12J_Ro(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]

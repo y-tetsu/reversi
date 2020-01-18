@@ -13,3 +13,4 @@ from strategies.fullreading import AbIF5_B_TPOW, AbIF7_B_TPOW, AbIF9_B_TPOW, AbI
 from strategies.joseki import AbIF11J_B_TPW, SwitchNsF11J, SwitchNsF12J
 from strategies.montecarlo import MonteCarlo30, MonteCarlo100, MonteCarlo1000
 from strategies.proto import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI
+from strategies.randomopening import AB_TI_Ro, AbIF11J_B_TPW_Ro, SwitchNsF12J_Ro
