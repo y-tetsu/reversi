@@ -1,17 +1,28 @@
 # othello
 Pythonで作るオセロゲーム
 
-## GUI版
+## ゲーム紹介
+### GUI版
+![gui](https://github.com/y-tetsu/othello/blob/master/image/gui.gif?raw=true)
+#### 実行方法
+##### スクリプト
 ```
 $ python othello.py
 ```
-![gui](https://github.com/y-tetsu/othello/blob/master/image/gui.gif?raw=true)
 
-## コンソール版
+##### exe
+Windows版は下記よりexeをダウンロード可能です。
+ダブルクリックで実行できます。
+![ダウンロード](https://github.com/y-tetsu/othello/releases)
+
+
+### コンソール版
+#### 実行方法
+##### スクリプト
+![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 ```
 $ python othelloc.py
 ```
-![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 
 ## 対戦相手紹介
 選択可能な対戦相手(CPUの戦略)の一覧です。<br>
@@ -31,7 +42,7 @@ CPUの持ち時間は大体0.5秒までとしています。
  |NegaMax |ネガマックス法で3手先を読んで手を選びます。| ★★ |
  |AlphaBeta |アルファベータ法で4手先を読んで手を選びます。| ★★ |
  |Iterative |反復深化法を適用して手を選びます。 | ★★★ |
- |FullReading |終盤残り11手から石差を読んで手を選びます。 | ★★★ |
+ |FullReading |終盤残り11手からは最終局面の石差を読んで手を選びます。 | ★★★ |
  |Joseki |序盤は定石通りに手を選びます。 | ★★★ |
 
 ## 動作確認環境
