@@ -8,9 +8,6 @@ Pythonで作るリバーシ
 $ python reversi.py
 ```
 
-上記のほか、Windows版は下記よりexe(ダブルクリックで実行可能)をダウンロード可能です。<br>
-[ダウンロード](https://github.com/y-tetsu/reversi/releases)
-
 ## 対戦相手紹介
 選択可能な対戦相手(CPUの戦略)の一覧です。<br>
 難易度は8x8サイズの場合の目安となっております。<br>
