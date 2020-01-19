@@ -9,7 +9,8 @@ Pythonで作るオセロゲーム
 $ python othello.py
 ```
 
-上記のほか、Windows版は下記よりexeをダウンロード可能です。ダブルクリックで実行できます。<br>
+上記のほか、Windows版は下記よりexeをダウンロード可能です。<br>
+ダウンロードしたexeをダブルクリックで実行できます。<br>
 ![ダウンロード](https://github.com/y-tetsu/othello/releases)
 
 
