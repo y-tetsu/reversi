@@ -1,20 +1,20 @@
 # othello
-Pythonで作るオセロゲーム
+Pythonで作るリバーシ
 
 ## ゲーム紹介
 ### GUI版
-![gui](https://github.com/y-tetsu/othello/blob/master/image/gui.gif?raw=true)
+![gui](https://github.com/y-tetsu/reversi/blob/master/image/gui.gif?raw=true)
 #### 実行方法
 ```
 $ python othello.py
 ```
 
 上記のほか、Windows版は下記よりexe(ダブルクリックで実行可能)をダウンロード可能です。<br>
-[ダウンロード](https://github.com/y-tetsu/othello/releases)
+[ダウンロード](https://github.com/y-tetsu/reversi/releases)
 
 
 ### コンソール版
-![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
+![console](https://github.com/y-tetsu/reversi/blob/master/image/console.gif?raw=true)
 #### 実行方法
 ```
 $ python othelloc.py
