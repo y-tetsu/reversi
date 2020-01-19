@@ -1,4 +1,4 @@
-# othello
+# reversi
 Pythonで作るリバーシ
 
 ## ゲーム紹介
@@ -6,7 +6,7 @@ Pythonで作るリバーシ
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/gui.gif?raw=true)
 #### 実行方法
 ```
-$ python othello.py
+$ python reversi.py
 ```
 
 上記のほか、Windows版は下記よりexe(ダブルクリックで実行可能)をダウンロード可能です。<br>
@@ -17,7 +17,7 @@ $ python othello.py
 ![console](https://github.com/y-tetsu/reversi/blob/master/image/console.gif?raw=true)
 #### 実行方法
 ```
-$ python othelloc.py
+$ python reversic.py
 ```
 
 ## 対戦相手紹介
