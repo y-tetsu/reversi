@@ -16,12 +16,12 @@ WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
-COLOR_GREEN = 'seagreen' # 青緑
-COLOR_BLACK = 'black'    # 黒
-COLOR_WHITE = 'white'    # 白
-COLOR_ORANGE = 'orange'  # オレンジ
-COLOR_YELLOW = 'yellow'  # 黄
-COLOR_RED = 'red'        # 赤
+COLOR_GREEN = 'slategray' # スレートグレイ
+COLOR_BLACK = 'black'     # 黒
+COLOR_WHITE = 'white'     # 白
+COLOR_ORANGE = 'orange'   # オレンジ
+COLOR_YELLOW = 'yellow'   # 黄
+COLOR_RED = 'red'         # 赤
 
 INFO_OFFSET_X = {  # 表示テキストのXオフセット
     'black': WINDOW_WIDTH//7,
