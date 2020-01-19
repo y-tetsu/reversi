@@ -16,7 +16,7 @@ WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
-COLOR_GREEN = 'green'    # 緑
+COLOR_GREEN = 'seagreen' # 青緑
 COLOR_BLACK = 'black'    # 黒
 COLOR_WHITE = 'white'    # 白
 COLOR_ORANGE = 'orange'  # オレンジ
