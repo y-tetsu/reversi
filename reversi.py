@@ -17,14 +17,14 @@ import strategies
 TURN_STONE_WAIT = 0.1
 
 
-class Othello:
+class Reversi:
     """
     GUIゲーム
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
     def __init__(self, window=None, strategies=None):
-        self.state = Othello.INIT
+        self.state = Reversi.INIT
         self.window = window
         self.strategies = strategies
 
@@ -36,13 +36,13 @@ class Othello:
     def state(self, state):
         self._state = state
 
-        if state == Othello.INIT:
+        if state == Reversi.INIT:
             self.game = self.__init
-        elif state == Othello.DEMO:
+        elif state == Reversi.DEMO:
             self.game = self.__demo
-        elif state == Othello.PLAY:
+        elif state == Reversi.PLAY:
             self.game = self.__play
-        elif state == Othello.END:
+        elif state == Reversi.END:
             self.game = self.__end
         else:
             self.game = self.__reinit
@@ -60,7 +60,7 @@ class Othello:
         """
         self.window.init_screen()
         self.window.set_state('normal')
-        self.state = Othello.DEMO
+        self.state = Reversi.DEMO
 
     def __demo(self):
         """
@@ -69,11 +69,11 @@ class Othello:
         while True:
             if self.window.start.event.is_set():
                 self.window.start.event.clear()
-                self.state = Othello.PLAY
+                self.state = Reversi.PLAY
                 break
 
             if not self._demo_animation():
-                self.state = Othello.INIT
+                self.state = Reversi.INIT
                 break
 
     def _demo_animation(self):
@@ -134,7 +134,7 @@ class Othello:
         game.play()
 
         time.sleep(1.5)  # 少し待って終了状態へ
-        self.state = Othello.END
+        self.state = Reversi.END
 
     def __end(self):
         """
@@ -147,11 +147,11 @@ class Othello:
 
             if self.window.start.event.is_set():
                 self.window.start.event.clear()
-                self.state = Othello.REINIT
+                self.state = Reversi.REINIT
                 break
 
             if self._setting_changed():
-                self.state = Othello.INIT
+                self.state = Reversi.INIT
                 break
 
     def __reinit(self):
@@ -159,7 +159,7 @@ class Othello:
         再初期化(ゲーム終了後再スタート時)
         """
         self.window.init_screen()
-        self.state = Othello.PLAY
+        self.state = Reversi.PLAY
 
     def _setting_changed(self):
         """
@@ -210,8 +210,8 @@ if __name__ == '__main__':
     }
 
     # ゲーム用スレッド
-    othello = Othello(window=w, strategies=s)
-    game = threading.Thread(target=othello.mainloop)
+    reversi = Reversi(window=w, strategies=s)
+    game = threading.Thread(target=reversi.mainloop)
     game.daemon = True
     game.start()
 

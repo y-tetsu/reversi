@@ -55,7 +55,7 @@ DEFAULT_WHITE_PLAYER = 'Random'
 DEFAULT_BOARD_SIZE = 4
 
 
-class Othelloc:
+class Reversic:
     """
     コンソールゲーム
     """
@@ -64,7 +64,7 @@ class Othelloc:
     def __init__(self):
         self.board_size = DEFAULT_BOARD_SIZE
         self.player_names = {'black': DEFAULT_BLACK_PLAYER, 'white': DEFAULT_WHITE_PLAYER}
-        self.state = Othelloc.START
+        self.state = Reversic.START
 
     @property
     def state(self):
@@ -74,9 +74,9 @@ class Othelloc:
     def state(self, state):
         self._state = state
 
-        if state == Othelloc.START:
+        if state == Reversic.START:
             self.game = self.__start
-        elif state == Othelloc.MENU:
+        elif state == Reversic.MENU:
             self.game = self.__menu
         else:
             self.game = self.__play
@@ -97,7 +97,7 @@ class Othelloc:
         print('BlackPlayer =', self.player_names['black'])
         print('WhitePlayer =', self.player_names['white'])
         print('=============================\n')
-        self.state = Othelloc.MENU
+        self.state = Reversic.MENU
 
     def __menu(self):
         """
@@ -116,19 +116,19 @@ class Othelloc:
             user_in = input('>> ')
 
             if not user_in:
-                self.state = Othelloc.PLAY
+                self.state = Reversic.PLAY
                 break
             elif user_in == 's':
                 self.board_size = self._get_board_size()
-                self.state = Othelloc.START
+                self.state = Reversic.START
                 break
             elif user_in == 'b':
                 self.player_names['black'] = self._get_player(BLACK_STRATEGIES)
-                self.state = Othelloc.START
+                self.state = Reversic.START
                 break
             elif user_in == 'w':
                 self.player_names['white'] = self._get_player(WHITE_STRATEGIES)
-                self.state = Othelloc.START
+                self.state = Reversic.START
                 break
             elif user_in == 'q':
                 print('See you!')
@@ -184,9 +184,9 @@ class Othelloc:
 
         # 少し待ってスタートに戻る
         time.sleep(2)
-        self.state = Othelloc.START
+        self.state = Reversic.START
 
 
 if __name__ == '__main__':
-    othelloc = Othelloc()
-    othelloc.mainloop()
+    reversic = Reversic()
+    reversic.mainloop()
