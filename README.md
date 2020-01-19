@@ -5,20 +5,17 @@ Pythonで作るオセロゲーム
 ### GUI版
 ![gui](https://github.com/y-tetsu/othello/blob/master/image/gui.gif?raw=true)
 #### 実行方法
-##### スクリプト
 ```
 $ python othello.py
 ```
 
-##### exe
-Windows版は下記よりexeをダウンロード可能です。ダブルクリックで実行できます。<br>
+上記のほか、Windows版は下記よりexeをダウンロード可能です。ダブルクリックで実行できます。<br>
 ![ダウンロード](https://github.com/y-tetsu/othello/releases)
 
 
 ### コンソール版
 ![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 #### 実行方法
-##### スクリプト
 ```
 $ python othelloc.py
 ```
