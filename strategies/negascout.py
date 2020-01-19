@@ -47,42 +47,29 @@ class NegaScout(AlphaBeta):
         # 手の候補を並び替え
         moves = self.sorter.sort_moves(color, board, None, None)
 
-        # 最初の手の評価値を取得する
-        move = moves.pop(0)
-        board.put_stone(color, *move)
-        score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
-        board.undo()
+        # NegaScout法
+        tmp, null_window = None, beta
+        for i, move in enumerate(moves):
+            if alpha < beta:
+                board.put_stone(color, *move)
+                tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1)
+                board.undo()
 
-        if Timer.is_timeout(self):
-            return alpha
-        else:
-            if score >= beta:  # 枝刈り
-                return score
-            alpha = max(alpha, score)  # 最大値を選択
+                if alpha < tmp:
+                    if tmp <= null_window and i:
+                        board.put_stone(color, *move)
+                        alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1)
+                        board.undo()
 
-        # Null Window Search
-        for move in moves:
-            board.put_stone(color, *move)
-            score = -self._get_score(next_color, board, -alpha-1, -alpha, depth-1)
-            board.undo()
-
-            if Timer.is_timeout(self):
-                break
-            else:
-                if score >= beta:  # 枝刈り
-                    return score
-                if alpha < score:
-                    alpha = score
-                    board.put_stone(color, *move)
-                    score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
-                    board.undo()
-
-                    if Timer.is_timeout(self):
-                        break
+                        if Timer.is_timeout(self):
+                            return alpha
                     else:
-                        if score >= beta:  # 枝刈り
-                            return score
-                        alpha = max(alpha, score)  # 最大値を選択
+                        alpha = tmp
+
+                null_window = alpha + 1
+            else:
+                break
+
         return alpha
 
 
@@ -154,31 +141,31 @@ if __name__ == '__main__':
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
     assert negascout._get_score('white', bitboard8, -10000000, 10000000, 2) == -15
-    assert Measure.count[key] == 20
+    assert Measure.count[key] == 19
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
     assert negascout._get_score('white', bitboard8, -10000000, 10000000, 3) == 0
-    assert Measure.count[key] == 125
+    assert Measure.count[key] == 114
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
     assert negascout._get_score('white', bitboard8, -10000000, 10000000, 4) == -10
-    assert Measure.count[key] == 486
+    assert Measure.count[key] == 472
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 1
     assert negascout._get_score('white', bitboard8, -10000000, 10000000, 5) == 1
-    assert Measure.count[key] == 630
+    assert Measure.count[key] == 640
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert negascout._get_score('white', bitboard8, -10000000, 10000000, 6) == -5
-    assert Measure.count[key] == 2163
+    assert Measure.count[key] == 2245
 
     print(bitboard8)
     assert negascout.next_move('white', bitboard8) == (2, 4)
@@ -195,16 +182,17 @@ if __name__ == '__main__':
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert negascout.next_move('black', bitboard8) == (5, 3)
-    assert Measure.count[key] == 1041
+    assert Measure.count[key] == 1047
 
     Measure.count[key] = 0
     negascout.depth = 2
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert negascout.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count[key] == 28
+    assert Measure.count[key] == 27
 
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
+    print( negascout.get_best_move('black', bitboard8, moves, 5) )
     assert negascout.get_best_move('black', bitboard8, moves, 5) == ((3, 5), {(2, 2): 8, (2, 3): 10, (5, 3): 10, (1, 5): 10, (2, 5): 10, (3, 5): 12, (4, 5): 12, (6, 5): 12})
