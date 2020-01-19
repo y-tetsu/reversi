@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta
-from strategies.evaluator import Evaluator_TPW
+from strategies.evaluator import Evaluator_TPW, Evaluator_TPOW
 from strategies.sorter import Sorter, Sorter_O
 
 
@@ -102,11 +102,35 @@ class NegaScout_TPW_O(NegaScout):
         super().__init__(evaluator=evaluator, sorter=sorter)
 
 
+class NegaScout3_TPW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPW(), sorter=Sorter()):
+        super().__init__(depth, evaluator, sorter=sorter)
+
+
+class NegaScout3_TPOW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPOWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPOW(), sorter=Sorter()):
+        super().__init__(depth, evaluator, sorter=sorter)
+
+
 class NegaScout4_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(4手読み)
     """
     def __init__(self, depth=4, evaluator=Evaluator_TPW(), sorter=Sorter()):
+        super().__init__(depth, evaluator, sorter=sorter)
+
+
+class NegaScout4_TPOW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPOWにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPOW(), sorter=Sorter()):
         super().__init__(depth, evaluator, sorter=sorter)
 
 

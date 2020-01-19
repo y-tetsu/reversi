@@ -257,9 +257,17 @@ if __name__ == '__main__':
         'SwitchNsF11': strategies.SwitchNsF11(),
         'SwitchNsF11J': strategies.SwitchNsF11J(),
         'SwitchNsF12J': strategies.SwitchNsF12J(),
-        'AB_TI_Ro': strategies.AB_TI_Ro(),
-        'AbIF11J_B_TPW_Ro': strategies.AbIF11J_B_TPW_Ro(),
-        'SwitchNsF12J_Ro': strategies.SwitchNsF12J_Ro(),
+        'MinMax3Ro_TPW': strategies.MinMax3Ro_TPW(),
+        'MinMax3Ro_TPOW': strategies.MinMax3Ro_TPOW(),
+        'NegaMax3Ro_TPW': strategies.NegaMax3Ro_TPW(),
+        'NegaMax3Ro_TPOW': strategies.NegaMax3Ro_TPOW(),
+        'AlphaBeta3Ro_TPW': strategies.AlphaBeta3Ro_TPW(),
+        'AlphaBeta3Ro_TPOW': strategies.AlphaBeta3Ro_TPOW(),
+        'NegaScout3Ro_TPW': strategies.NegaScout3Ro_TPW(),
+        'NegaScout3Ro_TPOW': strategies.NegaScout3Ro_TPOW(),
+        'AB_TIRo': strategies.AB_TIRo(),
+        'AbIF11JRo_B_TPW': strategies.AbIF11JRo_B_TPW(),
+        'SwitchNsF12JRo': strategies.SwitchNsF12JRo(),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]

@@ -10,6 +10,10 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.measure import Measure
 from strategies.easy import Random
 from strategies.proto import AB_TI
+from strategies.minmax import MinMax3_TPW, MinMax3_TPOW
+from strategies.negamax import NegaMax3_TPW, NegaMax3_TPOW
+from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW
+from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW
 from strategies.joseki import AbIF11J_B_TPW, SwitchNsF12J
 
 
@@ -36,7 +40,71 @@ class RandomOpening(AbstractStrategy):
         return self.base.next_move(color, board)
 
 
-class AB_TI_Ro(RandomOpening):
+class MinMax3Ro_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + MinMax3_TPW
+    """
+    def __init__(self, depth=10, base=MinMax3_TPW()):
+        super().__init__(depth, base)
+
+
+class MinMax3Ro_TPOW(RandomOpening):
+    """
+    RandamOpening(10手) + MinMax3_TPOW
+    """
+    def __init__(self, depth=10, base=MinMax3_TPOW()):
+        super().__init__(depth, base)
+
+
+class NegaMax3Ro_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + NegaMax3_TPW
+    """
+    def __init__(self, depth=10, base=NegaMax3_TPW()):
+        super().__init__(depth, base)
+
+
+class NegaMax3Ro_TPOW(RandomOpening):
+    """
+    RandamOpening(10手) + NegaMax3_TPOW
+    """
+    def __init__(self, depth=10, base=NegaMax3_TPOW()):
+        super().__init__(depth, base)
+
+
+class AlphaBeta3Ro_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + AlphaBeta3_TPW
+    """
+    def __init__(self, depth=10, base=AlphaBeta3_TPW()):
+        super().__init__(depth, base)
+
+
+class AlphaBeta3Ro_TPOW(RandomOpening):
+    """
+    RandamOpening(10手) + AlphaBeta3_TPOW
+    """
+    def __init__(self, depth=10, base=AlphaBeta3_TPOW()):
+        super().__init__(depth, base)
+
+
+class NegaScout3Ro_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + NegaScout3_TPW
+    """
+    def __init__(self, depth=10, base=NegaScout3_TPW()):
+        super().__init__(depth, base)
+
+
+class NegaScout3Ro_TPOW(RandomOpening):
+    """
+    RandamOpening(10手) + NegaScout3_TPOW
+    """
+    def __init__(self, depth=10, base=NegaScout3_TPOW()):
+        super().__init__(depth, base)
+
+
+class AB_TIRo(RandomOpening):
     """
     RandamOpening(10手) + AB_TI
     """
@@ -44,7 +112,7 @@ class AB_TI_Ro(RandomOpening):
         super().__init__(depth, base)
 
 
-class AbIF11J_B_TPW_Ro(RandomOpening):
+class AbIF11JRo_B_TPW(RandomOpening):
     """
     RandamOpening(10手) + AbIF11J_B_TPW
     """
@@ -52,7 +120,7 @@ class AbIF11J_B_TPW_Ro(RandomOpening):
         super().__init__(depth, base)
 
 
-class SwitchNsF12J_Ro(RandomOpening):
+class SwitchNsF12JRo(RandomOpening):
     """
     RandamOpening(10手) + SwitchNsF12J
     """
@@ -77,7 +145,7 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 4, 6)
     print(bitboard8)
 
-    randomopening = AbIF11J_B_TPW_Ro()
+    randomopening = AbIF11JRo_B_TPW()
     move = randomopening.next_move('white', bitboard8)
     print(move)
 
