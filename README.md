@@ -11,15 +11,14 @@ $ python othello.py
 ```
 
 ##### exe
-Windows版は下記よりexeをダウンロード可能です。
-ダブルクリックで実行できます。
+Windows版は下記よりexeをダウンロード可能です。ダブルクリックで実行できます。<br>
 ![ダウンロード](https://github.com/y-tetsu/othello/releases)
 
 
 ### コンソール版
+![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 #### 実行方法
 ##### スクリプト
-![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 ```
 $ python othelloc.py
 ```
