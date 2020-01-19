@@ -14,7 +14,7 @@ $ python othelloc.py
 ![console](https://github.com/y-tetsu/othello/blob/master/image/console.gif?raw=true)
 
 ## 対戦相手紹介
-選択可能な対戦相手(CPU)の一覧です。<br>
+選択可能な対戦相手(CPUの戦略)の一覧です。<br>
 難易度は8x8サイズの場合の目安となっております。<br>
 CPUの持ち時間は大体0.5秒までとしています。
 
