@@ -1,1 +1,0 @@
-pyinstaller ..\othelloc.py --onefile

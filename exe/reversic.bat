@@ -1,0 +1,1 @@
+pyinstaller ..\reversic.py --onefile
