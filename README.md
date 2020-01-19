@@ -2,23 +2,14 @@
 Pythonで作るリバーシ
 
 ## ゲーム紹介
-### GUI版
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/gui.gif?raw=true)
-#### 実行方法
+### 実行方法
 ```
 $ python reversi.py
 ```
 
 上記のほか、Windows版は下記よりexe(ダブルクリックで実行可能)をダウンロード可能です。<br>
 [ダウンロード](https://github.com/y-tetsu/reversi/releases)
-
-
-### コンソール版
-![console](https://github.com/y-tetsu/reversi/blob/master/image/console.gif?raw=true)
-#### 実行方法
-```
-$ python reversic.py
-```
 
 ## 対戦相手紹介
 選択可能な対戦相手(CPUの戦略)の一覧です。<br>
