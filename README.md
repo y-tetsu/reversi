@@ -35,7 +35,7 @@ CPUの持ち時間は0.5秒までとしています。
  |Joseki |序盤は定石通りに手を選びます。 | ★★★ |
 
 ## 動作確認環境
-- Windows10<br>
+- Windows10 64bit<br>
 - Python 3.7.0<br>
     - numpy 1.15.1<br>
     - pyinstaller 3.4<br>
