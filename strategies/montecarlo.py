@@ -23,8 +23,9 @@ class MonteCarlo(AbstractStrategy):
     """
     MonteCarlo法で次の手を決める
     """
-    def __init__(self, count=100):
+    def __init__(self, count=100, remain=60):
         self.count = count
+        self.remain = remain
         self.black_player = Player('black', 'Random_B', Random())
         self.white_player = Player('white', 'Random_W', Random())
 
@@ -57,21 +58,26 @@ class MonteCarlo(AbstractStrategy):
         """
         終了までゲームを進めて勝敗を返す
         """
-        playout_board = copy.deepcopy(board)   # 現在の盤面をコピー
-        playout_board.put_stone(color, *move)  # 調べたい手を打つ
+        remain = board.size * board.size - (board.score['black'] + board.score['white'])
 
-        # 勝敗が決まるまでゲームを進める
-        next_color = 'white' if color == 'black' else 'black'  # 相手の色を調べる
-        game = Game(playout_board, self.black_player, self.white_player, NoneDisplay(), next_color)
-        game.play()
+        if remain <= self.remain:
+            playout_board = copy.deepcopy(board)   # 現在の盤面をコピー
+            playout_board.put_stone(color, *move)  # 調べたい手を打つ
 
-        # 結果を返す
-        win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, -1
+            # 勝敗が決まるまでゲームを進める
+            next_color = 'white' if color == 'black' else 'black'  # 相手の色を調べる
+            game = Game(playout_board, self.black_player, self.white_player, NoneDisplay(), next_color)
+            game.play()
 
-        if game.result.winlose == win:
-            ret = 1  # 勝った場合
-        elif game.result.winlose == Game.DRAW:
-            ret = 0  # 引き分けた場合
+            # 結果を返す
+            win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, -1
+
+            if game.result.winlose == win:
+                ret = 1  # 勝った場合
+            elif game.result.winlose == Game.DRAW:
+                ret = 0  # 引き分けた場合
+        else:
+            ret = 0
 
         return ret
 
