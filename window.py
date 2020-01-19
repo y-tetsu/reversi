@@ -12,7 +12,7 @@ from board import Board
 import strategies
 
 
-WINDOW_TITLE = 'othello'  # ウィンドウのタイトル
+WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
