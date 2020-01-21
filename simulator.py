@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロシミュレーター
+対戦シミュレーター
 """
 
 import itertools

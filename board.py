@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロのボード
+ボードの管理
 """
 
 import abc

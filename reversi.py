@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロアプリ(GUI版)
+GUI版リバーシアプリ
 """
 
 import sys
@@ -19,7 +19,7 @@ TURN_STONE_WAIT = 0.1
 
 class Reversi:
     """
-    GUIゲーム
+    リバーシゲーム
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 

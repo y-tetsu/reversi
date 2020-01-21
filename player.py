@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロプレイヤー
+プレイヤーの管理
 """
 
 from stone import StoneFactory

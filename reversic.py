@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロアプリ(コンソール版)
+コンソール版リバーシアプリ
 """
 
 import sys
@@ -57,7 +57,7 @@ DEFAULT_BOARD_SIZE = 4
 
 class Reversic:
     """
-    コンソールゲーム
+    リバーシゲーム
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
