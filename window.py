@@ -16,12 +16,12 @@ WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
-COLOR_GREEN = 'slategray' # スレートグレイ
-COLOR_BLACK = 'black'     # 黒
-COLOR_WHITE = 'white'     # 白
-COLOR_ORANGE = 'orange'   # オレンジ
-COLOR_YELLOW = 'yellow'   # 黄
-COLOR_RED = 'red'         # 赤
+COLOR_SLATEGRAY = 'slategray'  # スレートグレイ
+COLOR_BLACK = 'black'          # 黒
+COLOR_WHITE = 'white'          # 白
+COLOR_LIGHTPINK = 'lightpink'  # ライトピンク
+COLOR_GOLD = 'gold'            # ゴールド
+COLOR_TOMATO = 'tomato'        # トマト
 
 INFO_OFFSET_X = {  # 表示テキストのXオフセット
     'black': WINDOW_WIDTH//7,
@@ -38,7 +38,7 @@ INFO_COLOR = {  # 表示テキストの色
     'name':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
     'score':   {'black': COLOR_BLACK,  'white': COLOR_WHITE},
     'winlose': {'black': COLOR_BLACK,  'white': COLOR_WHITE},
-    'turn':    {'black': COLOR_ORANGE, 'white': COLOR_ORANGE},
+    'turn':    {'black': COLOR_LIGHTPINK, 'white': COLOR_LIGHTPINK},
     'move':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
 }
 INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
@@ -108,7 +108,7 @@ class Window(tk.Frame):
         root.configure(menu=self.menu)
 
         # キャンバスを配置
-        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_GREEN)
+        self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_SLATEGRAY)
         self.canvas.grid(row=0, column=0)
 
     def init_screen(self):
@@ -350,9 +350,9 @@ class ScreenBoard:
             y1 = self.square_y_ini + self.square_w * y
             y2 = y1 + self.square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_YELLOW, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GOLD, outline=COLOR_WHITE, tag='moves')
             else:
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GREEN, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
 
     def disable_moves(self, moves):
         """
@@ -368,7 +368,7 @@ class ScreenBoard:
         x2 = x1 + self.square_w
         y1 = self.square_y_ini + self.square_w * y
         y2 = y1 + self.square_w
-        self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_RED, outline=COLOR_WHITE, tag='move')
+        self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
 
     def disable_move(self, x, y):
         """
@@ -402,7 +402,7 @@ class ScreenBoard:
         """
         def _enter(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_RED)
+                self.canvas.itemconfigure(square, fill=COLOR_TOMATO)
 
         return _enter
 
@@ -412,7 +412,7 @@ class ScreenBoard:
         """
         def _leave(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_YELLOW)
+                self.canvas.itemconfigure(square, fill=COLOR_GOLD)
 
         return _leave
 
@@ -475,7 +475,7 @@ class ScreenStart:
             START_OFFSET_Y,
             text=START_TEXT,
             font=('', START_FONT_SIZE),
-            fill=COLOR_YELLOW
+            fill=COLOR_GOLD
         )
 
         # イベント生成
@@ -490,13 +490,13 @@ class ScreenStart:
         """
         カーソルが合った時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_RED)  # 赤色にする
+        self.canvas.itemconfigure(self.text, fill=COLOR_TOMATO)
 
     def _leave_start(self, event):
         """
         カーソルが離れた時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_YELLOW)  # 黄色にする
+        self.canvas.itemconfigure(self.text, fill=COLOR_GOLD)
 
     def _on_start(self, event):
         """
