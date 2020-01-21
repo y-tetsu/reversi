@@ -2,10 +2,18 @@
 Pythonで作るリバーシ
 
 ## ゲーム紹介
+### GUI版
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/gui4.gif?raw=true)
-### 実行方法
+#### 実行方法
 ```
 $ python reversi.py
+```
+
+### コンソール版
+![gui](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
+#### 実行方法
+```
+$ python reversic.py
 ```
 
 ## 対戦相手紹介
