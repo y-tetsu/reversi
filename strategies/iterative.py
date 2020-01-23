@@ -82,6 +82,14 @@ class AbI_B_TPW(IterativeDeepning):
         super().__init__(depth, selector, sorter, search)
 
 
+class AbI_BC_TPW(IterativeDeepning):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:W、並べ替え:BC、評価関数:TPW)
+    """
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_BC(), search=AlphaBeta_TPW()):
+        super().__init__(depth, selector, sorter, search)
+
+
 class AbI_B_TPOW(IterativeDeepning):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPOW)
@@ -181,6 +189,42 @@ if __name__ == '__main__':
 
     print('--- Test For AbI_W_BC_TPOW Strategy ---')
     iterative = AbI_W_BC_TPOW()
+    assert iterative.depth == 2
+
+    Measure.count[key] = 0
+    print( iterative.next_move('black', bitboard8) )
+    print( 'max_depth :', iterative.max_depth )
+    assert iterative.max_depth >= 5
+    print( 'count     :', Measure.count[key] )
+    assert Measure.count[key] >= 1000
+
+    print('--- Test For AbI_B_TPW Strategy ---')
+    key = 'AlphaBeta_TPW' + str(os.getpid())
+    iterative = AbI_B_TPW()
+    assert iterative.depth == 2
+
+    Measure.count[key] = 0
+    print( iterative.next_move('black', bitboard8) )
+    print( 'max_depth :', iterative.max_depth )
+    assert iterative.max_depth >= 5
+    print( 'count     :', Measure.count[key] )
+    assert Measure.count[key] >= 1000
+
+    print('--- Test For AbI_B_TPOW Strategy ---')
+    key = 'AlphaBeta_TPOW' + str(os.getpid())
+    iterative = AbI_B_TPOW()
+    assert iterative.depth == 2
+
+    Measure.count[key] = 0
+    print( iterative.next_move('black', bitboard8) )
+    print( 'max_depth :', iterative.max_depth )
+    assert iterative.max_depth >= 5
+    print( 'count     :', Measure.count[key] )
+    assert Measure.count[key] >= 1000
+
+    print('--- Test For AbI_BC_TPW Strategy ---')
+    key = 'AlphaBeta_TPW' + str(os.getpid())
+    iterative = AbI_BC_TPW()
     assert iterative.depth == 2
 
     Measure.count[key] = 0
