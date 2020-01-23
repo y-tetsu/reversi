@@ -33,7 +33,7 @@ class IterativeDeepning(AbstractStrategy):
         """
         depth, moves, best_move, scores, = self.depth, None, None, {}
 
-        Timer.set_deadline(self.search.__class__.__name__, CPU_TIME)  # 探索クラスのタイムアウトを設定
+        Timer.set_deadline(self.search.__class__.__name__, CPU_TIME, self.search._MIN)  # 探索クラスのタイムアウトを設定
 
         while True:
             moves = self.selector.select_moves(color, board, moves, scores, depth)     # 次の手の候補を選択

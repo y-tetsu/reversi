@@ -18,7 +18,7 @@ class AlphaBeta(NegaMax):
     AlphaBeta法で次の手を決める
     """
     @Measure.time
-    @Timer.start(CPU_TIME)
+    @Timer.start(CPU_TIME, -10000000)
     def next_move(self, color, board):
         """
         次の一手
