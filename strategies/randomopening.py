@@ -14,7 +14,7 @@ from strategies.minmax import MinMax3_TPW, MinMax3_TPOW
 from strategies.negamax import NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW
-from strategies.joseki import AbIF11J_B_TPW, SwitchNsF12J
+from strategies.joseki import AbIF11J_B_TPW, AbIF11J_BC_TPW, SwitchNsF12J
 
 
 class RandomOpening(AbstractStrategy):
@@ -117,6 +117,14 @@ class AbIF11JRo_B_TPW(RandomOpening):
     RandamOpening(10手) + AbIF11J_B_TPW
     """
     def __init__(self, depth=10, base=AbIF11J_B_TPW()):
+        super().__init__(depth, base)
+
+
+class AbIF11JRo_BC_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + AbIF11J_BC_TPW
+    """
+    def __init__(self, depth=10, base=AbIF11J_BC_TPW()):
         super().__init__(depth, base)
 
 

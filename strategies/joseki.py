@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.fullreading import AbIF11_B_TPW, SwitchNsF11, SwitchNsF12
+from strategies.fullreading import AbIF11_B_TPW, AbIF11_BC_TPW, SwitchNsF11, SwitchNsF12
 
 
 # ===== 定石リスト =====
@@ -867,6 +867,15 @@ class AbIF11J_B_TPW(Joseki):
     (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り11手)
     """
     def __init__(self, base=AbIF11_B_TPW()):
+        super().__init__(base)
+
+
+class AbIF11J_BC_TPW(Joseki):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
+    (選択的探索:なし、並べ替え:BC、評価関数:TPW, 完全読み開始:残り11手)
+    """
+    def __init__(self, base=AbIF11_BC_TPW()):
         super().__init__(base)
 
 
