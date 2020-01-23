@@ -29,8 +29,6 @@ cdef _get_board_info_size8(b, w):
 
     board_info = []
 
-    print(b0, b1)
-
     for y in range(8):
         tmp = []
 
