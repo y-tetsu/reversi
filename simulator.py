@@ -27,7 +27,7 @@ class Simulator:
 
     def __str__(self):
         board_size = '\nSize : ' + str(self.board_size) + '\n'
-        header1 = '                | ' + ' '.join([f'{key:20s}' for key in self.total]) + '\n'
+        header1 = '                     | ' + ' '.join([f'{key:20s}' for key in self.total]) + '\n'
         hr1 = '-'*18 + '-'*20*len(self.total) + '-'*(len(self.total)-1) + '\n'
 
         body1 = ''
