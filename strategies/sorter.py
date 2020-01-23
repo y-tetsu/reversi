@@ -108,40 +108,6 @@ class Sorter_O(Sorter):
                     if board_info[y][x] == 0:
                         opening += 1  # 石が置かれていない場所をカウント
 
-        #old = opening
-
-        #size, opening = board.size, 0
-        #black_bitboard, white_bitboard = board.get_bitboard_info()
-        #stones = black_bitboard | white_bitboard
-
-        #target = 0
-        #for stone_x, stone_y in reversibles:
-        #    target |= (1 << ((size - stone_y) * size) - 1) >> ((size - stone_x) - 1)
-
-        #mask_h = int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2)
-        #mask_v = int(''.join(['0'] * size + ['1'] * size * (size-2) + ['0'] * size), 2)
-        #mask_d = int(''.join(['0'] * size + (['0'] + (['1'] * (size-2)) + ['0']) * (size-2) + ['0'] * size), 2)
-
-        #tmp = 0
-        #tmp |= (target >> 1) & mask_h & stones
-        #tmp |= (target << 1) & mask_h & stones
-        #tmp |= (target >> size) & mask_v & stones
-        #tmp |= (target << size) & mask_v & stones
-        #tmp |= (target << (size+1)) & mask_d & stones
-        #tmp |= (target << (size-1)) & mask_d & stones
-        #tmp |= (target >> (size+1)) & mask_d & stones
-        #tmp |= (target >> (size-1)) & mask_d & stones
-
-        #opening = 0
-        #mask = 1 << (size*size) - 1
-        #for _ in range(size*size):
-        #    if mask & tmp:
-        #        opening += 1
-        #    mask >>= 1
-
-        #print(board)
-        #print(opening, old)
-
         return opening
 
 
