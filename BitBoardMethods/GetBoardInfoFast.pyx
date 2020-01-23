@@ -20,14 +20,16 @@ cdef _get_board_info_size8(b, w):
     """
     cdef:
         unsigned int x, y
-        unsigned int b0 = (b >> 32)& 0xFFFFFFFF
+        unsigned int b0 = ((0x10000000000000000 | b) >> 32) & 0xFFFFFFFF
         unsigned int b1 = b & 0xFFFFFFFF
-        unsigned int w0 = (w >> 32) & 0xFFFFFFFF
+        unsigned int w0 = ((0x10000000000000000 | w) >> 32) & 0xFFFFFFFF
         unsigned int w1 = w & 0x00000000FFFFFFFF
         unsigned int mask0 = 0x80000000
         unsigned int mask1 = 0x80000000
 
     board_info = []
+
+    print(b0, b1)
 
     for y in range(8):
         tmp = []
