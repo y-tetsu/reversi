@@ -27,12 +27,12 @@ class Simulator:
 
     def __str__(self):
         board_size = '\nSize : ' + str(self.board_size) + '\n'
-        header1 = '                | ' + ' '.join([f'{key:15s}' for key in self.total]) + '\n'
-        hr1 = '-'*18 + '-'*15*len(self.total) + '-'*(len(self.total)-1) + '\n'
+        header1 = '                | ' + ' '.join([f'{key:20s}' for key in self.total]) + '\n'
+        hr1 = '-'*18 + '-'*20*len(self.total) + '-'*(len(self.total)-1) + '\n'
 
         body1 = ''
         for key1 in self.total:
-            row = f'{key1:15s} | '
+            row = f'{key1:20s} | '
             wins, draws, matches = 0, 0, 0
 
             for key2 in self.total:
@@ -49,12 +49,12 @@ class Simulator:
 
             body1 += f'{row}\n'
 
-        header2 = '                | Total  | Win   Lose  Draw  Match\n'
-        hr2 = '--------------------------------------------------\n'
+        header2 = '                     | Total  | Win   Lose  Draw  Match\n'
+        hr2 = '-------------------------------------------------------\n'
 
         body2 = ''
         for key1 in self.total:
-            row = f'{key1:15s} | '
+            row = f'{key1:20s} | '
             wins, draws, matches = 0, 0, 0
 
             for key2 in self.total:
