@@ -12,8 +12,8 @@ from strategies.easy import Random
 from strategies.proto import AB_TI
 from strategies.minmax import MinMax3_TPW, MinMax3_TPOW
 from strategies.negamax import NegaMax3_TPW, NegaMax3_TPOW
-from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW
-from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW
+from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW, AlphaBeta4_TPW
+from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW, NegaScout4_TPW_O
 from strategies.joseki import AbIF11J_B_TPW, AbIF11J_BC_TPW, SwitchNsF12J
 
 
@@ -88,6 +88,14 @@ class AlphaBeta3Ro_TPOW(RandomOpening):
         super().__init__(depth, base)
 
 
+class AlphaBeta4Ro_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + AlphaBeta4_TPW
+    """
+    def __init__(self, depth=10, base=AlphaBeta4_TPW()):
+        super().__init__(depth, base)
+
+
 class NegaScout3Ro_TPW(RandomOpening):
     """
     RandamOpening(10手) + NegaScout3_TPW
@@ -101,6 +109,22 @@ class NegaScout3Ro_TPOW(RandomOpening):
     RandamOpening(10手) + NegaScout3_TPOW
     """
     def __init__(self, depth=10, base=NegaScout3_TPOW()):
+        super().__init__(depth, base)
+
+
+class NegaScout4Ro_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + NegaScout4_TPW
+    """
+    def __init__(self, depth=10, base=NegaScout4_TPW()):
+        super().__init__(depth, base)
+
+
+class NegaScout4Ro_TPW_O(RandomOpening):
+    """
+    RandamOpening(10手) + NegaScout4_TPW_O
+    """
+    def __init__(self, depth=10, base=NegaScout4_TPW_O()):
         super().__init__(depth, base)
 
 

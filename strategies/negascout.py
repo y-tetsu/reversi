@@ -113,6 +113,14 @@ class NegaScout4_TPW(NegaScout):
         super().__init__(depth, evaluator, sorter=sorter)
 
 
+class NegaScout4_TPW_O(NegaScout):
+    """
+    NegaScout法でEvaluator_TPW+開放度による並べ替えにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPW(), sorter=Sorter_O()):
+        super().__init__(depth, evaluator, sorter=sorter)
+
+
 class NegaScout4_TPOW(NegaScout):
     """
     NegaScout法でEvaluator_TPOWにより次の手を決める(4手読み)
@@ -193,6 +201,30 @@ if __name__ == '__main__':
 
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
+    Measure.count[key] = 0
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
-    print( negascout.get_best_move('black', bitboard8, moves, 5) )
-    assert negascout.get_best_move('black', bitboard8, moves, 5) == ((3, 5), {(2, 2): 8, (2, 3): 10, (5, 3): 10, (1, 5): 10, (2, 5): 10, (3, 5): 12, (4, 5): 12, (6, 5): 12})
+    best_move = negascout.get_best_move('black', bitboard8, moves, 5)
+    print( best_move )
+    print( Measure.count[key] )
+    assert best_move == ((3, 5), {(2, 2): 8, (2, 3): 10, (5, 3): 10, (1, 5): 10, (2, 5): 10, (3, 5): 12, (4, 5): 12, (6, 5): 12})
+
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 0.5
+    Measure.count[key] = 0
+    moves = bitboard8.get_possibles('black').keys()  # 手の候補
+    best_move = negascout.get_best_move('black', bitboard8, moves, 4)
+    print( best_move )
+    print( Measure.count[key] )
+    assert best_move == ((5, 3), {(2, 2): -2, (2, 3): 0, (5, 3): 2, (1, 5): 2, (2, 5): 2, (3, 5): 2, (4, 5): 2, (6, 5): 2})
+
+    negascout = NegaScout4_TPW_O()
+    key = negascout.__class__.__name__ + str(os.getpid())
+
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 0.5
+    Measure.count[key] = 0
+    moves = bitboard8.get_possibles('black').keys()  # 手の候補
+    best_move = negascout.get_best_move('black', bitboard8, moves, 4)
+    print( best_move )
+    print( Measure.count[key] )
+    assert best_move == ((5, 3), {(2, 2): -2, (2, 3): 0, (5, 3): 2, (1, 5): 2, (2, 5): 2, (3, 5): 2, (4, 5): 2, (6, 5): 2})
