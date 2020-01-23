@@ -268,6 +268,7 @@ if __name__ == '__main__':
         'NegaScout3Ro_TPOW': strategies.NegaScout3Ro_TPOW(),
         'NegaScout4Ro_TPW': strategies.NegaScout4Ro_TPW(),
         'NegaScout4Ro_TPW_O': strategies.NegaScout4Ro_TPW_O(),
+        'NegaScout5Ro_TPW_O': strategies.NegaScout5Ro_TPW_O(),
         'AB_TIRo': strategies.AB_TIRo(),
         'AbIF11JRo_B_TPW': strategies.AbIF11JRo_B_TPW(),
         'AbIF11JRo_BC_TPW': strategies.AbIF11JRo_BC_TPW(),

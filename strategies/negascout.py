@@ -121,6 +121,14 @@ class NegaScout4_TPW_O(NegaScout):
         super().__init__(depth, evaluator, sorter=sorter)
 
 
+class NegaScout5_TPW_O(NegaScout):
+    """
+    NegaScout法でEvaluator_TPW+開放度による並べ替えにより次の手を決める(5手読み)
+    """
+    def __init__(self, depth=5, evaluator=Evaluator_TPW(), sorter=Sorter_O()):
+        super().__init__(depth, evaluator, sorter=sorter)
+
+
 class NegaScout4_TPOW(NegaScout):
     """
     NegaScout法でEvaluator_TPOWにより次の手を決める(4手読み)
@@ -237,8 +245,7 @@ if __name__ == '__main__':
     negascout = NegaScout4_TPW_O()
     key = negascout.__class__.__name__ + str(os.getpid())
 
-    Timer.timeout_flag[key] = False
-    Timer.deadline[key] = time.time() + 0.5
+    Timer.set_deadline(negascout.__class__.__name__, 0.5, -10000000)
     Measure.count[key] = 0
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
     best_move = negascout.get_best_move('black', bitboard8, moves, 4)
