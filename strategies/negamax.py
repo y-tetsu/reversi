@@ -141,13 +141,13 @@ if __name__ == '__main__':
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert negamax.get_score('white', bitboard8, 2) == -12.75
+    assert negamax.get_score('white', bitboard8, 2) == -10.75
     assert Measure.count[key] == 18
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert negamax.get_score('white', bitboard8, 3) == 2.25
+    assert negamax.get_score('white', bitboard8, 3) == 6.25
     assert Measure.count[key] == 79
 
     Measure.count[key] = 0

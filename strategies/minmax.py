@@ -254,9 +254,9 @@ if __name__ == '__main__':
 
     bitboard8.put_stone('black', 3, 2)
     print( minmax.get_score('white', bitboard8, 2) )
-    assert minmax.get_score('white', bitboard8, 2) == 12.75
+    assert minmax.get_score('white', bitboard8, 2) == 10.75
     print( minmax.get_score('white', bitboard8, 3) )
-    assert minmax.get_score('white', bitboard8, 3) == -2.25
+    assert minmax.get_score('white', bitboard8, 3) == -6.25
 
     print(bitboard8)
     print( minmax.next_move('white', bitboard8) )

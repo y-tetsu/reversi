@@ -205,32 +205,32 @@ if __name__ == '__main__':
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -12.75
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -10.75
     assert Measure.count[key] == 16
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 2.25
+    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 6.25
     assert Measure.count[key] == 63
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4) == -8.25
-    assert Measure.count[key] == 247
+    assert Measure.count[key] == 257
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 1
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5) == 4.0
-    assert Measure.count[key] == 693
+    assert Measure.count[key] == 703
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6) == -3.5
-    assert Measure.count[key] == 2659
+    assert Measure.count[key] == 2696
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert alphabeta.next_move('black', bitboard8) == (2, 2)
-    assert Measure.count[key] == 148
+    assert Measure.count[key] == 180
 
     Measure.count[key] = 0
     alphabeta.depth = 2
@@ -259,4 +259,5 @@ if __name__ == '__main__':
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
-    assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((3, 5), {(2, 2): 5.75, (2, 3): 9.25, (5, 3): 9.25, (1, 5): 9.25, (2, 5): 9.25, (3, 5): 11.25, (4, 5): 11.25, (6, 5): 11.25})
+    print( alphabeta.get_best_move('black', bitboard8, moves, 5) )
+    assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((2, 3), {(2, 2): 5.75, (2, 3): 6.25, (5, 3): 6.25, (1, 5): 6.25, (2, 5): 6.25, (3, 5): 6.25, (4, 5): 6.25, (6, 5): 6.25})

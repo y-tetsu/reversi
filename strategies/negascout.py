@@ -148,32 +148,47 @@ if __name__ == '__main__':
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert negascout._get_score('white', bitboard8, -10000000, 10000000, 2) == -15
-    assert Measure.count[key] == 19
+    score = negascout._get_score('white', bitboard8, -10000000, 10000000, 2)
+    print(score)
+    print(Measure.count[key])
+    assert score == -13
+    assert Measure.count[key] == 22
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert negascout._get_score('white', bitboard8, -10000000, 10000000, 3) == 0
+    score = negascout._get_score('white', bitboard8, -10000000, 10000000, 3)
+    print(score)
+    print(Measure.count[key])
+    assert score == 4
     assert Measure.count[key] == 114
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert negascout._get_score('white', bitboard8, -10000000, 10000000, 4) == -10
-    assert Measure.count[key] == 472
+    score = negascout._get_score('white', bitboard8, -10000000, 10000000, 4)
+    print(score)
+    print(Measure.count[key])
+    assert score == -9
+    assert Measure.count[key] == 534
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 1
-    assert negascout._get_score('white', bitboard8, -10000000, 10000000, 5) == 1
-    assert Measure.count[key] == 640
+    score = negascout._get_score('white', bitboard8, -10000000, 10000000, 5)
+    print(score)
+    print(Measure.count[key])
+    assert score == 1
+    assert Measure.count[key] == 641
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
-    assert negascout._get_score('white', bitboard8, -10000000, 10000000, 6) == -5
-    assert Measure.count[key] == 2245
+    score = negascout._get_score('white', bitboard8, -10000000, 10000000, 6)
+    print(score)
+    print(Measure.count[key])
+    assert score == -5
+    assert Measure.count[key] == 2273
 
     print(bitboard8)
     assert negascout.next_move('white', bitboard8) == (2, 4)
@@ -190,13 +205,15 @@ if __name__ == '__main__':
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert negascout.next_move('black', bitboard8) == (5, 3)
-    assert Measure.count[key] == 1047
+    print(Measure.count[key])
+    assert Measure.count[key] == 1043
 
     Measure.count[key] = 0
     negascout.depth = 2
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     assert negascout.next_move('black', bitboard8) == (2, 2)
+    print(Measure.count[key])
     assert Measure.count[key] == 27
 
     Timer.timeout_flag[key] = False
@@ -206,7 +223,7 @@ if __name__ == '__main__':
     best_move = negascout.get_best_move('black', bitboard8, moves, 5)
     print( best_move )
     print( Measure.count[key] )
-    assert best_move == ((3, 5), {(2, 2): 8, (2, 3): 10, (5, 3): 10, (1, 5): 10, (2, 5): 10, (3, 5): 12, (4, 5): 12, (6, 5): 12})
+    assert best_move == ((2, 2), {(2, 2): 8, (2, 3): 8, (5, 3): 8, (1, 5): 8, (2, 5): 8, (3, 5): 8, (4, 5): 8, (6, 5): 8})
 
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 0.5
