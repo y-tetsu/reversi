@@ -45,7 +45,7 @@ class NegaScout(AlphaBeta):
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 手の候補を並び替え
-        moves = self.sorter.sort_moves(color, board, None, None)
+        moves = self.sorter.sort_moves(color=color, board=board, moves=None)
 
         # NegaScout法
         tmp, null_window = None, beta

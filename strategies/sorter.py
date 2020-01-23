@@ -13,10 +13,12 @@ class Sorter(AbstractSorter):
     """
     なにもしない
     """
-    def sort_moves(self, color, board, moves, best_move):
+    def sort_moves(self, *args, **kwargs):
         """
         手の候補を決める
         """
+        color, board, moves = kwargs['color'], kwargs['board'], kwargs['moves']
+
         if moves is None:
             return list(board.get_possibles(color).keys())
 
@@ -27,11 +29,13 @@ class Sorter_B(Sorter):
     """
     前回の最善手を優先的に
     """
-    def sort_moves(self, color, board, moves, best_move):
+    def sort_moves(self, *args, **kwargs):
         """
         手の候補を決める
         """
-        moves = super().sort_moves(color, board, moves, best_move)
+        moves = super().sort_moves(*args, **kwargs)
+
+        best_move = kwargs['best_move']
 
         if best_move is not None:
             moves.remove(best_move)
@@ -40,16 +44,17 @@ class Sorter_B(Sorter):
         return moves
 
 
-class Sorter_BC(Sorter_B):
+class Sorter_C(Sorter):
     """
     4隅を優先的に
     """
-    def sort_moves(self, color, board, moves, best_move):
+    def sort_moves(self, *args, **kwargs):
         """
         手の候補を決める
         """
-        moves = super().sort_moves(color, board, moves, best_move)
+        moves = super().sort_moves(*args, **kwargs)
 
+        board = kwargs['board']
         board_size = board.size
         corners = [(0, 0), (0, board_size-1), (board_size-1, 0), (board_size-1, board_size-1)]
 
@@ -65,13 +70,15 @@ class Sorter_O(Sorter):
     """
     開放度による並び替え
     """
-    def sort_moves(self, color, board, moves, best_move):
+    def sort_moves(self, *args, **kwargs):
         """
         手の候補を決める
         """
-        moves = super().sort_moves(color, board, moves, best_move)
+        moves = super().sort_moves(*args, **kwargs)
 
+        color, board = kwargs['color'], kwargs['board']
         openings = {}
+
         for move in moves:
             reversibles = board.put_stone(color, *move)
             opening = self.get_opening(board, reversibles)
@@ -104,6 +111,42 @@ class Sorter_O(Sorter):
         return opening
 
 
+class Sorter_BC(AbstractSorter):
+    """
+    Sorter_B → Sorter_C
+    """
+    def __init__(self):
+        self.sorter_b = Sorter_B()
+        self.sorter_c = Sorter_C()
+
+    def sort_moves(self, *args, **kwargs):
+        """
+        手の候補を決める
+        """
+        kwargs['moves'] = self.sorter_b.sort_moves(*args, **kwargs)
+        kwargs['moves'] = self.sorter_c.sort_moves(*args, **kwargs)
+
+        return kwargs['moves']
+
+
+class Sorter_CB(AbstractSorter):
+    """
+    Sorter_C → Sorter_B
+    """
+    def __init__(self):
+        self.sorter_b = Sorter_B()
+        self.sorter_c = Sorter_C()
+
+    def sort_moves(self, *args, **kwargs):
+        """
+        手の候補を決める
+        """
+        kwargs['moves'] = self.sorter_c.sort_moves(*args, **kwargs)
+        kwargs['moves'] = self.sorter_b.sort_moves(*args, **kwargs)
+
+        return kwargs['moves']
+
+
 if __name__ == '__main__':
     from board import BitBoard
     from strategies.timer import Timer
@@ -118,18 +161,17 @@ if __name__ == '__main__':
     print('--- Test For Sorter ---')
     sorter = Sorter()
 
-    moves = sorter.sort_moves('white', bitboard8, None, best_move)
+    moves = sorter.sort_moves(color='white', board=bitboard8, moves=None, best_move=best_move)
     print(moves)
     assert moves == [(2, 2), (4, 2), (2, 4)]
 
     print('--- Test For Sorter_B ---')
     sorter = Sorter_B()
 
-    moves = sorter.sort_moves('white', bitboard8, None, best_move)
+    moves = sorter.sort_moves(color='white', board=bitboard8, moves=None, best_move=best_move)
     print(moves)
     assert moves == [(4, 2), (2, 2), (2, 4)]
 
-    print('--- Test For Sorter_BC ---')
     bitboard8.put_stone('white', 2, 4)
     bitboard8.put_stone('black', 1, 5)
     bitboard8.put_stone('white', 1, 4)
@@ -139,17 +181,31 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 1, 7)
     print(bitboard8)
 
+    print('--- Test For Sorter_C ---')
+    sorter = Sorter_C()
+    moves = sorter.sort_moves(color='black', board=bitboard8, moves=None, best_move=best_move)
+    print(moves)
+    assert moves == [(0, 7), (0, 3), (2, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)]
+
+    print('--- Test For Sorter_BC ---')
     sorter = Sorter_BC()
 
     best_move = (2, 3)
-    print(moves)
-    moves = sorter.sort_moves('black', bitboard8, None, best_move)
+    moves = sorter.sort_moves(color='black', board=bitboard8, moves=None, best_move=best_move)
     print(moves)
     assert moves == [(0, 7), (2, 3), (0, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)]
+
+    print('--- Test For Sorter_CB ---')
+    sorter = Sorter_CB()
+
+    best_move = (2, 3)
+    moves = sorter.sort_moves(color='black', board=bitboard8, moves=None, best_move=best_move)
+    print(moves)
+    assert moves == [(2, 3), (0, 7), (0, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)]
 
     print('--- Test For Sorter_O ---')
     sorter = Sorter_O()
 
-    moves = sorter.sort_moves('black', bitboard8, None, None)
+    moves = sorter.sort_moves(color='black', board=bitboard8, moves=None, best_move=None)
     print(moves)
     assert moves == [(2, 3), (0, 5), (0, 3), (0, 7), (2, 7), (5, 4), (4, 5), (5, 5), (0, 4), (0, 6)]

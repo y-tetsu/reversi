@@ -36,9 +36,9 @@ class IterativeDeepning(AbstractStrategy):
         Timer.set_deadline(self.search.__class__.__name__, CPU_TIME, self.search._MIN)  # 探索クラスのタイムアウトを設定
 
         while True:
-            moves = self.selector.select_moves(color, board, moves, scores, depth)     # 次の手の候補を選択
-            moves = self.sorter.sort_moves(color, board, moves, best_move)             # 次の手の候補を並び替え
-            best_move, scores = self.search.get_best_move(color, board, moves, depth)  # 最善手を取得
+            moves = self.selector.select_moves(color, board, moves, scores, depth)                      # 次の手の候補を選択
+            moves = self.sorter.sort_moves(color=color, board=board, moves=moves, best_move=best_move)  # 次の手の候補を並び替え
+            best_move, scores = self.search.get_best_move(color, board, moves, depth)                   # 最善手を取得
 
             if Timer.is_timeout(self.search):  # タイムアウト発生時、処理を抜ける
                 break
