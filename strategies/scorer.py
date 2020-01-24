@@ -120,7 +120,7 @@ class WinLoseScorer(AbstractScorer):
         return ret
 
 
-class StonesScorer(AbstractScorer):
+class NumberScorer(AbstractScorer):
     """
     石数に基づいて算出
     """
@@ -181,8 +181,8 @@ if __name__ == '__main__':
     assert scorer.get_score(board8, possibles_b, possibles_w) is None
 
     #------------------------------------------------------
-    # StonesScorer
-    scorer = StonesScorer()
+    # NumberScorer
+    scorer = NumberScorer()
 
     print('score', scorer.get_score(board8))
     assert scorer.get_score(board8) == -6

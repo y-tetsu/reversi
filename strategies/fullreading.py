@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.alphabeta import AlphaBeta_S
+from strategies.alphabeta import AlphaBeta_N
 from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_B_TPW_O
 from strategies.switch import SwitchNegaScout
 
@@ -20,7 +20,7 @@ class FullReading(AbstractStrategy):
     """
     def __init__(self, remain=None, base=None):
         self.remain = remain
-        self.fullreading = AlphaBeta_S(depth=remain)
+        self.fullreading = AlphaBeta_N(depth=remain)
         self.base = base
 
     @Measure.time

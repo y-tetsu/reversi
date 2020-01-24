@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.negamax import NegaMax
-from strategies.evaluator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_S
+from strategies.evaluator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_N
 
 
 class AlphaBeta(NegaMax):
@@ -98,11 +98,11 @@ class AlphaBeta(NegaMax):
         return alpha
 
 
-class AlphaBeta_S(AlphaBeta):
+class AlphaBeta_N(AlphaBeta):
     """
-    AlphaBeta法でEvaluator_Sにより次の手を決める
+    AlphaBeta法でEvaluator_Nにより次の手を決める
     """
-    def __init__(self, depth, evaluator=Evaluator_S()):
+    def __init__(self, depth, evaluator=Evaluator_N()):
         super().__init__(depth=depth, evaluator=evaluator)
 
 
