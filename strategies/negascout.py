@@ -11,17 +11,12 @@ from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta
 from strategies.evaluator import Evaluator_TPW, Evaluator_TPOW
-from strategies.sorter import Sorter, Sorter_O
 
 
 class NegaScout(AlphaBeta):
     """
     NegaScout法で次の手を決める
     """
-    def __init__(self, depth=3, evaluator=None, sorter=None):
-        super().__init__(depth, evaluator)
-        self.sorter = sorter
-
     @Measure.countup
     @Timer.timeout
     def _get_score(self, color, board, alpha, beta, depth):
@@ -44,8 +39,8 @@ class NegaScout(AlphaBeta):
         if not possibles:
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
-        # 手の候補を並び替え
-        moves = self.sorter.sort_moves(color=color, board=board, moves=None)
+        # 手の候補
+        moves = list(board.get_possibles(color).keys())
 
         # NegaScout法
         tmp, null_window = None, beta
@@ -77,64 +72,40 @@ class NegaScout_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める
     """
-    def __init__(self, evaluator=Evaluator_TPW(), sorter=Sorter()):
-        super().__init__(evaluator=evaluator, sorter=sorter)
-
-
-class NegaScout_TPW_O(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWにより次の手を決める(並べ替え:O)
-    """
-    def __init__(self, evaluator=Evaluator_TPW(), sorter=Sorter_O()):
-        super().__init__(evaluator=evaluator, sorter=sorter)
+    def __init__(self, evaluator=Evaluator_TPW()):
+        super().__init__(evaluator=evaluator)
 
 
 class NegaScout3_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(3手読み)
     """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW(), sorter=Sorter()):
-        super().__init__(depth, evaluator, sorter=sorter)
+    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
 
 
 class NegaScout3_TPOW(NegaScout):
     """
     NegaScout法でEvaluator_TPOWにより次の手を決める(3手読み)
     """
-    def __init__(self, depth=3, evaluator=Evaluator_TPOW(), sorter=Sorter()):
-        super().__init__(depth, evaluator, sorter=sorter)
+    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
 
 
 class NegaScout4_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(4手読み)
     """
-    def __init__(self, depth=4, evaluator=Evaluator_TPW(), sorter=Sorter()):
-        super().__init__(depth, evaluator, sorter=sorter)
-
-
-class NegaScout4_TPW_O(NegaScout):
-    """
-    NegaScout法でEvaluator_TPW+開放度による並べ替えにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPW(), sorter=Sorter_O()):
-        super().__init__(depth, evaluator, sorter=sorter)
-
-
-class NegaScout5_TPW_O(NegaScout):
-    """
-    NegaScout法でEvaluator_TPW+開放度による並べ替えにより次の手を決める(5手読み)
-    """
-    def __init__(self, depth=5, evaluator=Evaluator_TPW(), sorter=Sorter_O()):
-        super().__init__(depth, evaluator, sorter=sorter)
+    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
 
 
 class NegaScout4_TPOW(NegaScout):
     """
     NegaScout法でEvaluator_TPOWにより次の手を決める(4手読み)
     """
-    def __init__(self, depth=4, evaluator=Evaluator_TPOW(), sorter=Sorter()):
-        super().__init__(depth, evaluator, sorter=sorter)
+    def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
 
 
 if __name__ == '__main__':
@@ -235,17 +206,6 @@ if __name__ == '__main__':
 
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 0.5
-    Measure.count[key] = 0
-    moves = bitboard8.get_possibles('black').keys()  # 手の候補
-    best_move = negascout.get_best_move('black', bitboard8, moves, 4)
-    print( best_move )
-    print( Measure.count[key] )
-    assert best_move == ((5, 3), {(2, 2): -2, (2, 3): 0, (5, 3): 2, (1, 5): 2, (2, 5): 2, (3, 5): 2, (4, 5): 2, (6, 5): 2})
-
-    negascout = NegaScout4_TPW_O()
-    key = negascout.__class__.__name__ + str(os.getpid())
-
-    Timer.set_deadline(negascout.__class__.__name__, 0.5, -10000000)
     Measure.count[key] = 0
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
     best_move = negascout.get_best_move('black', bitboard8, moves, 4)

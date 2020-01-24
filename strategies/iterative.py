@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_TP, AlphaBeta_TPO, AlphaBeta_TPW, AlphaBeta_TPOW
-from strategies.negascout import NegaScout_TPW, NegaScout_TPW_O
+from strategies.negascout import NegaScout_TPW
 from strategies.selector import Selector, Selector_W
 from strategies.sorter import Sorter, Sorter_B, Sorter_BC, Sorter_CB
 
@@ -135,14 +135,6 @@ class NsI_CB_TPW(IterativeDeepning):
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:CB、評価関数:TPW)
     """
     def __init__(self, depth=2, selector=Selector(), sorter=Sorter_CB(), search=NegaScout_TPW()):
-        super().__init__(depth, selector, sorter, search)
-
-
-class NsI_B_TPW_O(IterativeDeepning):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW_O)
-    """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPW_O()):
         super().__init__(depth, selector, sorter, search)
 
 

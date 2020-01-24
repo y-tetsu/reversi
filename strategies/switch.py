@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.iterative import NsI_B_TPW, NsI_BC_TPW, NsI_B_TPW_O
+from strategies.iterative import NsI_B_TPW, NsI_BC_TPW
 from strategies.negascout import NegaScout_TPW
 from strategies.evaluator import Evaluator_TPW
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     print('--- Test For SwitchNegaScout Strategy ---')
     switch = SwitchNegaScout()
-    assert switch.turns == [20, 40, 64]
+    assert switch.turns == [20, 40, 60]
     assert switch.strategies[0].__class__.__name__ == 'NsI_B_TPW'
     assert switch.strategies[1].__class__.__name__ == 'NsI_B_TPW'
     assert switch.strategies[2].__class__.__name__ == 'NsI_BC_TPW'
