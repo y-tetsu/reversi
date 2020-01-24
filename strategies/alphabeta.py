@@ -7,18 +7,25 @@ import sys
 sys.path.append('../')
 
 from strategies.common import CPU_TIME
+from strategies.common import AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.negamax import NegaMax
 from strategies.evaluator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_N
 
 
-class AlphaBeta(NegaMax):
+class _AlphaBeta(AbstractStrategy):
     """
     AlphaBeta法で次の手を決める
     """
+    def __init__(self, depth=3, evaluator=None):
+        self._MIN = -10000000
+        self._MAX = 10000000
+
+        self.depth = depth
+        self.evaluator = evaluator
+
     @Measure.time
-    @Timer.start(CPU_TIME, -10000000)
     def next_move(self, color, board):
         """
         次の一手
@@ -61,7 +68,6 @@ class AlphaBeta(NegaMax):
         return score
 
     @Measure.countup
-    @Timer.timeout
     def _get_score(self, color, board, alpha, beta, depth):
         """
         評価値の取得
@@ -96,6 +102,25 @@ class AlphaBeta(NegaMax):
                     break
 
         return alpha
+
+
+class AlphaBeta(_AlphaBeta):
+    """
+    AlphaBeta法で次の手を決める(時間制限付き)
+    """
+    @Timer.start(CPU_TIME, -10000000)
+    def next_move(self, color, board):
+        """
+        次の一手
+        """
+        return super().next_move(color, board)
+
+    @Timer.timeout
+    def _get_score(self, color, board, alpha, beta, depth):
+        """
+        評価値の取得
+        """
+        return super()._get_score(color, board, alpha, beta, depth)
 
 
 class AlphaBeta_N(AlphaBeta):
