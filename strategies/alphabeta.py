@@ -96,10 +96,10 @@ class _AlphaBeta(AbstractStrategy):
 
             if Timer.is_timeout(self):
                 break
-            else:
-                alpha = max(alpha, score)  # 最大値を選択
-                if alpha >= beta:  # 枝刈り
-                    break
+
+            alpha = max(alpha, score)  # 最大値を選択
+            if alpha >= beta:  # 枝刈り
+                break
 
         return alpha
 
@@ -123,7 +123,7 @@ class AlphaBeta(_AlphaBeta):
         return super()._get_score(color, board, alpha, beta, depth)
 
 
-class AlphaBeta_N(AlphaBeta):
+class AlphaBeta_N(_AlphaBeta):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
     """
