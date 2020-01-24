@@ -123,7 +123,7 @@ class AlphaBeta(_AlphaBeta):
         return super()._get_score(color, board, alpha, beta, depth)
 
 
-class AlphaBeta_N(_AlphaBeta):
+class AlphaBeta_N(AlphaBeta):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
     """

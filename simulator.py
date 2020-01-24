@@ -273,6 +273,8 @@ if __name__ == '__main__':
         'AbIRo_B_TPW': strategies.AbI_B_TPW(),
         'NsIRo_BC_TPW': strategies.NsI_BC_TPW(),
         'NsIRo_CB_TPW': strategies.NsI_CB_TPW(),
+        'AbIF9JRo_B_TPW': strategies.AbIF9JRo_B_TPW(),
+        'AbIF9JRo_BC_TPW': strategies.AbIF9JRo_BC_TPW(),
         'AbIF11JRo_B_TPW': strategies.AbIF11JRo_B_TPW(),
         'AbIF11JRo_BC_TPW': strategies.AbIF11JRo_BC_TPW(),
         'SwitchNsF12JRo': strategies.SwitchNsF12JRo(),
