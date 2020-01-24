@@ -203,7 +203,7 @@ if __name__ == '__main__':
         'MonteCarlo': strategies.MonteCarlo1000(),
         'NegaMax': strategies.NegaMax3_TPW(),
         'AlphaBeta': strategies.AlphaBeta4_TPW(),
-        'Iterative': strategies.AB_TI(),
+        'Iterative': strategies.NsI_B_TPW(),
         'FullReading' : strategies.AbIF9_B_TPW(),
         'Joseki' : strategies.AbIF9J_B_TPW(),
         'Switch' : strategies.SwitchNsF12J(),

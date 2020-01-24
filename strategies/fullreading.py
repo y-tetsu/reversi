@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.alphabeta import AlphaBeta_N
-from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW
+from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_BC_TPW
 from strategies.switch import SwitchNegaScout
 
 
@@ -169,6 +169,15 @@ class AbIF7_W_BC_TPOW(FullReading):
     (選択的探索:W、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
     """
     def __init__(self, remain=7, base=AbI_W_BC_TPOW()):
+        super().__init__(remain, base)
+
+
+class NsIF9_B_TPW(FullReading):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
+    """
+    def __init__(self, remain=9, base=NsI_B_TPW()):
         super().__init__(remain, base)
 
 
