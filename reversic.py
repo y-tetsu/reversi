@@ -26,8 +26,8 @@ BLACK_STRATEGIES = {
     'NegaMax': strategies.NegaMax3_TPW(),
     'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'Iterative': strategies.AB_TI(),
-    'FullReading': strategies.AbIF11_B_TPW(),
-    'Joseki': strategies.AbIF11J_B_TPW(),
+    'FullReading': strategies.AbIF9_B_TPW(),
+    'Joseki': strategies.AbIF9J_B_TPW(),
     'Switch': strategies.SwitchNsF12J(),
 }
 
@@ -43,8 +43,8 @@ WHITE_STRATEGIES = {
     'NegaMax': strategies.NegaMax3_TPW(),
     'AlphaBeta': strategies.AlphaBeta4_TPW(),
     'Iterative': strategies.AB_TI(),
-    'FullReading': strategies.AbIF11_B_TPW(),
-    'Joseki': strategies.AbIF11J_B_TPW(),
+    'FullReading': strategies.AbIF9_B_TPW(),
+    'Joseki': strategies.AbIF9J_B_TPW(),
     'Switch': strategies.SwitchNsF12J(),
 }
 
