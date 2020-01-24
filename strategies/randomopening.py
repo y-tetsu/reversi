@@ -14,7 +14,7 @@ from strategies.minmax import MinMax3_TPW, MinMax3_TPOW
 from strategies.negamax import NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW, AlphaBeta4_TPW
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW
-from strategies.iterative import AbI_B_TPW, NsI_BC_TPW, NsI_CB_TPW
+from strategies.iterative import AbI_B_TPW, NsI_B_TPW, NsI_BC_TPW, NsI_CB_TPW
 from strategies.joseki import AbIF9J_B_TPW, AbIF9J_BC_TPW, AbIF11J_B_TPW, AbIF11J_BC_TPW, SwitchNsF12J
 
 
@@ -134,6 +134,14 @@ class AbIRo_B_TPW(RandomOpening):
     RandamOpening(10手) + AbI_B_TPW
     """
     def __init__(self, depth=10, base=AbI_B_TPW()):
+        super().__init__(depth, base)
+
+
+class NsIRo_B_TPW(RandomOpening):
+    """
+    RandamOpening(10手) + NsI_B_TPW
+    """
+    def __init__(self, depth=10, base=NsI_B_TPW()):
         super().__init__(depth, base)
 
 
