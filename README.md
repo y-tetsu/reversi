@@ -9,9 +9,9 @@ Pythonで作るリバーシ
 $ python reversi.py
 ```
 
-上記の他、Windows版は下記よりexeをダウンロード可能です。
+上記の他、Windows版は下記よりexeをダウンロード可能です。<br>
 [ダウンロード](https://github.com/y-tetsu/reversi/releases)
-Assetsをクリックして開き、reversi.exeをクリックしてダウンロード可能です。
+Assetsをクリックして開き、reversi.exeをクリックしてダウンロード可能です。<br>
 ダブルクリックで起動できます。
 
 ### コンソール版
