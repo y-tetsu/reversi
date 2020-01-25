@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(MonteCarlo)
+モンテカルロ法
 """
 
 import sys
