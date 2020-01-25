@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(NegaMax)
+ネガマックス法
 """
 
 import sys
