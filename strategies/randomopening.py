@@ -15,8 +15,8 @@ from strategies.negamax import NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW, AlphaBeta4_TPW
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW
 from strategies.iterative import AbI_B_TPW, NsI_B_TPW, NsI_BC_TPW, NsI_CB_TPW
-from strategies.fullreading import AbIF9_B_TPW, NsIF9_B_TPW
-from strategies.joseki import AbIF9J_B_TPW, AbIF9J_BC_TPW, AbIF11J_B_TPW, AbIF11J_BC_TPW, SwitchNsF12J
+from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, NsIF9_B_TPW
+from strategies.joseki import AlphaBeta4F9J_TPW, AbIF9J_B_TPW, AbIF9J_BC_TPW, AbIF11J_B_TPW, AbIF11J_BC_TPW, NsIF9J_B_TPW, SwitchNsF12J
 
 
 class RandomOpening(AbstractStrategy):
@@ -162,6 +162,22 @@ class NsIRo_CB_TPW(RandomOpening):
         super().__init__(depth, base)
 
 
+class AlphaBeta4F9Ro_TPW(RandomOpening):
+    """
+    RandamOpening(12手) + AlphaBeta4F9_TPW
+    """
+    def __init__(self, depth=12, base=AlphaBeta4F9_TPW()):
+        super().__init__(depth, base)
+
+
+class AlphaBeta4F9JRo_TPW(RandomOpening):
+    """
+    RandamOpening(12手) + AlphaBeta4F9J_TPW
+    """
+    def __init__(self, depth=12, base=AlphaBeta4F9J_TPW()):
+        super().__init__(depth, base)
+
+
 class AbIF9Ro_B_TPW(RandomOpening):
     """
     RandamOpening(12手) + AbIF9_B_TPW
@@ -207,6 +223,14 @@ class AbIF11JRo_BC_TPW(RandomOpening):
     RandamOpening(12手) + AbIF11J_BC_TPW
     """
     def __init__(self, depth=12, base=AbIF11J_BC_TPW()):
+        super().__init__(depth, base)
+
+
+class NsIF9JRo_B_TPW(RandomOpening):
+    """
+    RandamOpening(12手) + NsIF9J_B_TPW
+    """
+    def __init__(self, depth=12, base=NsIF9J_B_TPW()):
         super().__init__(depth, base)
 
 

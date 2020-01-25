@@ -263,6 +263,8 @@ if __name__ == '__main__':
         'AlphaBeta3Ro_TPW': strategies.AlphaBeta3Ro_TPW(),
         'AlphaBeta3Ro_TPOW': strategies.AlphaBeta3Ro_TPOW(),
         'AlphaBeta4Ro_TPW': strategies.AlphaBeta4Ro_TPW(),
+        'AlphaBeta4F9Ro_TPW': strategies.AlphaBeta4F9Ro_TPW(),
+        'AlphaBeta4F9JRo_TPW': strategies.AlphaBeta4F9JRo_TPW(),
         'NegaScout3Ro_TPW': strategies.NegaScout3Ro_TPW(),
         'NegaScout3Ro_TPOW': strategies.NegaScout3Ro_TPOW(),
         'NegaScout4Ro_TPW': strategies.NegaScout4Ro_TPW(),
@@ -275,6 +277,7 @@ if __name__ == '__main__':
         'AbIF9JRo_BC_TPW': strategies.AbIF9JRo_BC_TPW(),
         'AbIF11JRo_B_TPW': strategies.AbIF11JRo_B_TPW(),
         'AbIF11JRo_BC_TPW': strategies.AbIF11JRo_BC_TPW(),
+        'NsIF9JRo_B_TPW': strategies.NsIF9JRo_B_TPW(),
         'SwitchNsF12JRo': strategies.SwitchNsF12JRo(),
     }
 

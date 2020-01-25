@@ -203,10 +203,10 @@ if __name__ == '__main__':
         'MonteCarlo': strategies.MonteCarlo1000(),
         'NegaMax': strategies.NegaMax3_TPW(),
         'AlphaBeta': strategies.AlphaBeta4_TPW(),
-        'Iterative': strategies.NsI_B_TPW(),
-        'FullReading' : strategies.AbIF9_B_TPW(),
-        'Joseki' : strategies.AbIF9J_B_TPW(),
-        'Switch' : strategies.SwitchNsF12J(),
+        'FullReading' : strategies.AlphaBeta4F9_TPW(),
+        'Joseki' : strategies.AlphaBeta4F9J_TPW(),
+        'Iterative': strategies.AbIF9J_B_TPW(),
+        'NegaScout': strategies.NsIF9J_B_TPW(),
     }
 
     # ゲーム用スレッド
