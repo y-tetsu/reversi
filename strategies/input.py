@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(入力)
+ユーザ入力
 """
 
 import sys
