@@ -10,7 +10,7 @@ $ python reversi.py
 ```
 
 上記の他、Windows版は下記よりexe(ダブルクリックで起動)をダウンロード可能です。<br>
-[ダウンロード](https://github.com/y-tetsu/reversi/releases/download/0.0.3/reversi.exe)
+[ダウンロード](https://github.com/y-tetsu/reversi/releases)
 
 ### コンソール版
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
