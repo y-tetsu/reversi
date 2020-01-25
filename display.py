@@ -159,7 +159,7 @@ class WindowDisplay(AbstractDisplay):
         """
         反則プレイヤーの表示
         """
-        self.info.set_text(palyer.color, 'winlose', '反則')
+        self.info.set_text(player.color, 'winlose', '反則')
 
     def win(self, player):
         """

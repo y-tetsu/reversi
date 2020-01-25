@@ -130,7 +130,7 @@ class Reversi:
             name = self.window.player[color]
             players[color] = Player(color, name, self.strategies[name])
 
-        game = Game(board, players['black'], players['white'], WindowDisplay(self.window))
+        game = Game(board, players['black'], players['white'], WindowDisplay(self.window), cancel=self.window.menu)
         game.play()
 
         time.sleep(1.5)  # 少し待って終了状態へ
@@ -185,8 +185,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'Switch']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'Switch']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'NegaScout']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'NegaScout']
 
     w = Window(root=root, black_players=b, white_players=w)
 

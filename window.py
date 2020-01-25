@@ -71,6 +71,7 @@ TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の�
 TURN_STONE_WAIT = 0.1                                                  # 石をひっくり返す待ち時間(s)
 
 ASSIST_MENU = ['ON', 'OFF']  # 打てる場所のハイライト表示の有無
+CANCEL_MENU = ['OK']         # ゲームのキャンセル
 
 STONE_MARK = '●'      # 石のマーク
 
@@ -98,6 +99,7 @@ class Window(tk.Frame):
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.assist = ASSIST_MENU[0]
+        self.cancel = CANCEL_MENU[0]
 
         # ウィンドウ設定
         root.title(WINDOW_TITLE)                   # タイトル
@@ -139,6 +141,7 @@ class Menu(tk.Menu):
         self.black_player = black_players[0]
         self.white_player = white_players[0]
         self.assist = ASSIST_MENU[0]
+        self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
 
         # イベントの生成
@@ -149,6 +152,7 @@ class Menu(tk.Menu):
         self.menu_items['black'] = black_players
         self.menu_items['white'] = white_players
         self.menu_items['assist'] = ASSIST_MENU
+        self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
 
     def _create_menu_items(self):
@@ -173,6 +177,7 @@ class Menu(tk.Menu):
                 self.black_player = item if name == 'black' else self.black_player
                 self.white_player= item if name == 'white' else self.white_player
                 self.assist= item if name == 'assist' else self.assist
+                self.cancel= item if name == 'cancel' else self.cancel
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
 
         return change_menu_selection
@@ -182,6 +187,8 @@ class Menu(tk.Menu):
         メニューのステータス設定(有効化/無効化)
         """
         for name in self.menu_items.keys():
+            if name == 'cancel':
+                state = 'normal' if state == 'disable' else 'disable'
             self.entryconfigure(name.title(), state=state)
 
 

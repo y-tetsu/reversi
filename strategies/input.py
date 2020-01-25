@@ -59,6 +59,10 @@ class WindowUserInput(AbstractStrategy):
         self.window.board.selectable_moves(moves)
 
         while True:
+            if self.window.menu.event.is_set():
+                # キャンセル時は反則負け
+                return (board.size//2-1, board.size//2-1)
+
             if self.window.board.event.is_set():
                 move = self.window.board.move
                 self.window.board.event.clear()

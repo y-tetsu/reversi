@@ -10,12 +10,13 @@ class Game:
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
-    def __init__(self, board, black_player, white_player, display, color='black'):
+    def __init__(self, board, black_player, white_player, display, color='black', cancel=None):
         self.board = board
         self.black_player = black_player
         self.white_player = white_player
         self.players = [self.black_player, self.white_player] if color == 'black' else [self.white_player, self.black_player]
         self.display = display
+        self.cancel = cancel
         self.result = []
 
     def play(self):
@@ -29,6 +30,12 @@ class Game:
                 playable, foul_player = 0, None
 
                 for player in self.players:
+                    # キャンセル許可時
+                    if self.cancel:
+                        if self.cancel.event.is_set():
+                            # キャンセルメニュー設定時は中断
+                            break
+
                     possibles = list(self.board.get_possibles(player.color).keys())
 
                     if not possibles:
