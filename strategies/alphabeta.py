@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(AlphaBeta)
+アルファベータ法(ネガアルファ法)
 """
 
 import sys
