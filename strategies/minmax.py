@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(MinMax)
+ミニマックス法
 """
 
 import sys
