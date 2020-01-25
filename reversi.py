@@ -185,8 +185,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'NegaScout']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'Iterative', 'FullReading', 'Joseki', 'NegaScout']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout']
 
     w = Window(root=root, black_players=b, white_players=w)
 
