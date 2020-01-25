@@ -13,4 +13,4 @@ from strategies.fullreading import AbIF5_B_TPOW, AbIF7_B_TPOW, AbIF9_B_TPW, AbIF
 from strategies.joseki import AbIF9J_B_TPW, AbIF9J_BC_TPW, AbIF11J_B_TPW, AbIF11J_BC_TPW, SwitchNsF11J, SwitchNsF12J
 from strategies.montecarlo import MonteCarlo30, MonteCarlo100, MonteCarlo1000
 from strategies.proto import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI
-from strategies.randomopening import MinMax3Ro_TPW, MinMax3Ro_TPOW, NegaMax3Ro_TPW, NegaMax3Ro_TPOW, AlphaBeta3Ro_TPW, AlphaBeta3Ro_TPOW, NegaScout3Ro_TPW, NegaScout3Ro_TPOW, AlphaBeta4Ro_TPW, NegaScout4Ro_TPW, AB_TI_Ro, NsIRo_B_TPW, NsIRo_BC_TPW, NsIRo_CB_TPW, AbIF9JRo_B_TPW, AbIF9JRo_BC_TPW, AbIF11JRo_B_TPW, AbIF11JRo_BC_TPW, SwitchNsF12JRo
+from strategies.randomopening import MinMax3Ro_TPW, MinMax3Ro_TPOW, NegaMax3Ro_TPW, NegaMax3Ro_TPOW, AlphaBeta3Ro_TPW, AlphaBeta3Ro_TPOW, NegaScout3Ro_TPW, NegaScout3Ro_TPOW, AlphaBeta4Ro_TPW, NegaScout4Ro_TPW, AB_TI_Ro, NsIRo_B_TPW, NsIRo_BC_TPW, NsIRo_CB_TPW, AbIF9Ro_B_TPW, NsIF9Ro_B_TPW, AbIF9JRo_B_TPW, AbIF9JRo_BC_TPW, AbIF11JRo_B_TPW, AbIF11JRo_BC_TPW, SwitchNsF12JRo
