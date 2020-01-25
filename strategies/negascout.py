@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(NegaScout)
+ネガスカウト法
 """
 
 import sys
