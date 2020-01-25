@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの評価関数
+盤面の評価値算出方法
 """
 
 import sys
