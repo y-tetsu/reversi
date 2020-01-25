@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-オセロの戦略(簡単)
+簡易戦略集
 """
 
 import sys
