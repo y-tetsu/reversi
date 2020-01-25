@@ -228,6 +228,14 @@ class NsIF12_B_TPW(FullReading):
         super().__init__(remain, base)
 
 
+class SwitchNsF9(FullReading):
+    """
+    SwitchNegaScout+完全読み開始:残り9手
+    """
+    def __init__(self, remain=9, base=SwitchNegaScout()):
+        super().__init__(remain, base)
+
+
 class SwitchNsF11(FullReading):
     """
     SwitchNegaScout+完全読み開始:残り11手

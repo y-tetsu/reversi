@@ -255,6 +255,7 @@ if __name__ == '__main__':
         'NsIF12_B_TPW': strategies.NsIF12_B_TPW(),
         'SwitchNegaScout': strategies.SwitchNegaScout(),
         'SwitchNsF11': strategies.SwitchNsF11(),
+        'SwitchNsF9J': strategies.SwitchNsF9J(),
         'SwitchNsF11J': strategies.SwitchNsF11J(),
         'SwitchNsF12J': strategies.SwitchNsF12J(),
         'MinMax3Ro_TPW': strategies.MinMax3Ro_TPW(),
@@ -279,6 +280,7 @@ if __name__ == '__main__':
         'AbIF11JRo_B_TPW': strategies.AbIF11JRo_B_TPW(),
         'AbIF11JRo_BC_TPW': strategies.AbIF11JRo_BC_TPW(),
         'NsIF9JRo_B_TPW': strategies.NsIF9JRo_B_TPW(),
+        'SwitchNsF9JRo': strategies.SwitchNsF9JRo(),
         'SwitchNsF12JRo': strategies.SwitchNsF12JRo(),
         'RandomF11': strategies.RandomF11(),
     }
