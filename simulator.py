@@ -104,7 +104,10 @@ class Simulator:
 
         ret = []
 
-        for _ in range(self.matches):
+        for i in range(self.matches):
+            if (i + 1) % 5 == 0:
+                print("    -", black.name, white.name, i + 1)
+
             board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
 
             game = Game(board, black, white, NoneDisplay())
