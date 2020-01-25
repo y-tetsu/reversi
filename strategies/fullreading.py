@@ -9,7 +9,8 @@ sys.path.append('../')
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.alphabeta import AlphaBeta_N, AlphaBeta4_TPW
+from strategies.easy import Random
+from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
 from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_BC_TPW
 from strategies.switch import SwitchNegaScout
 
@@ -35,6 +36,16 @@ class FullReading(AbstractStrategy):
             return self.fullreading.next_move(color, board)  # 完全読み
 
         return self.base.next_move(color, board)
+
+
+class _FullReading(FullReading):
+    """
+    終盤完全読み(時間制限なし)
+    """
+    def __init__(self, remain=None, base=None):
+        self.remain = remain
+        self.fullreading = _AlphaBeta_N(depth=remain)
+        self.base = base
 
 
 class AbIF5_B_TPOW(FullReading):
@@ -231,6 +242,22 @@ class SwitchNsF12(FullReading):
     """
     def __init__(self, remain=12, base=SwitchNegaScout()):
         super().__init__(remain, base)
+
+
+class RandomF11(_FullReading):
+    """
+    ランダムに手を読む
+    (4x4のみ完全読み:残り11手)
+    """
+    def __init__(self, remain=11, base=Random()):
+        super().__init__(remain, base)
+
+    @Measure.time
+    def next_move(self, color, board):
+        if board.size == 4:
+            return super().next_move(color, board)
+
+        return self.base.next_move(color, board)
 
 
 if __name__ == '__main__':

@@ -123,6 +123,14 @@ class AlphaBeta(_AlphaBeta):
         return super()._get_score(color, board, alpha, beta, depth)
 
 
+class _AlphaBeta_N(_AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_Nにより次の手を決める
+    """
+    def __init__(self, depth, evaluator=Evaluator_N()):
+        super().__init__(depth=depth, evaluator=evaluator)
+
+
 class AlphaBeta_N(AlphaBeta):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
