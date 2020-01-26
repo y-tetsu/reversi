@@ -37,7 +37,7 @@ class Simulator:
 
             for key2 in self.total:
                 if key1 == key2:
-                    row += '------          '
+                    row += '------               '
                     continue
 
                 wins += self.total[key1][key2]['wins']
@@ -45,7 +45,7 @@ class Simulator:
                 matches += self.total[key1][key2]['matches']
                 ratio = self.total[key1][key2]['wins'] / self.total[key1][key2]['matches'] * 100
                 ratio = f'{ratio:3.1f}%'
-                row += f'{ratio:>6s}          '
+                row += f'{ratio:>6s}               '
 
             body1 += f'{row}\n'
 
@@ -270,6 +270,9 @@ if __name__ == '__main__':
         'NegaScout3Ro_TPW': strategies.NegaScout3Ro_TPW(),
         'NegaScout3Ro_TPOW': strategies.NegaScout3Ro_TPOW(),
         'NegaScout4Ro_TPW': strategies.NegaScout4Ro_TPW(),
+        'MinMax2Ro_T': strategies.MinMax2Ro_T(),
+        'MinMax3Ro_T': strategies.MinMax3Ro_T(),
+        'MinMax3Ro_TP': strategies.MinMax3Ro_TP(),
         'AB_TI_Ro': strategies.AB_TI_Ro(),
         'AbIRo_B_TPW': strategies.AbI_B_TPW(),
         'NsIRo_B_TPW': strategies.NsI_B_TPW(),
