@@ -62,9 +62,9 @@ class SwitchNegaScout(Switch):
                 60
             ],
             strategies=[
-                NsI_B_TPW (search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1= 2))),
-                NsI_B_TPW (search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=40, c=-15, a=0, b=-1, x=-20, o=-3, w1= 5))),
-                NsI_BC_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=40, c=-10, a=5, b= 1, x=-15, o= 0, w1=10)))
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=50, c=-20, a=0, b=-1, x=-25, o=-5, w1= 5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=40, c=-15, a=3, b= 0, x=-20, o=-3, w1= 8))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=10, c=- 5, a=5, b= 1, x= -5, o= 0, w1=20)))
             ]):
         super().__init__(turns, strategies)
 
