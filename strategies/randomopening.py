@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.measure import Measure
 from strategies.easy import Random
 from strategies.proto import AB_TI
-from strategies.minmax import MinMax3_TPW, MinMax3_TPOW
+from strategies.minmax import MinMax2_T, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
 from strategies.negamax import NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW, AlphaBeta4_TPW
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW
@@ -40,6 +40,30 @@ class RandomOpening(AbstractStrategy):
             return self.random.next_move(color, board)
 
         return self.base.next_move(color, board)
+
+
+class MinMax2Ro_T(RandomOpening):
+    """
+    RandamOpening(12手) + MinMax2_T
+    """
+    def __init__(self, depth=12, base=MinMax2_T()):
+        super().__init__(depth, base)
+
+
+class MinMax3Ro_T(RandomOpening):
+    """
+    RandamOpening(12手) + MinMax3_T
+    """
+    def __init__(self, depth=12, base=MinMax3_T()):
+        super().__init__(depth, base)
+
+
+class MinMax3Ro_TP(RandomOpening):
+    """
+    RandamOpening(12手) + MinMax3_TP
+    """
+    def __init__(self, depth=12, base=MinMax3_TP()):
+        super().__init__(depth, base)
 
 
 class MinMax3Ro_TPW(RandomOpening):
