@@ -44,233 +44,233 @@ class RandomOpening(AbstractStrategy):
 
 class MinMax2Ro_T(RandomOpening):
     """
-    RandamOpening(12手) + MinMax2_T
+    RandamOpening(8手) + MinMax2_T
     """
-    def __init__(self, depth=12, base=MinMax2_T()):
+    def __init__(self, depth=8, base=MinMax2_T()):
         super().__init__(depth, base)
 
 
 class MinMax3Ro_T(RandomOpening):
     """
-    RandamOpening(12手) + MinMax3_T
+    RandamOpening(8手) + MinMax3_T
     """
-    def __init__(self, depth=12, base=MinMax3_T()):
+    def __init__(self, depth=8, base=MinMax3_T()):
         super().__init__(depth, base)
 
 
 class MinMax3Ro_TP(RandomOpening):
     """
-    RandamOpening(12手) + MinMax3_TP
+    RandamOpening(8手) + MinMax3_TP
     """
-    def __init__(self, depth=12, base=MinMax3_TP()):
+    def __init__(self, depth=8, base=MinMax3_TP()):
         super().__init__(depth, base)
 
 
 class MinMax3Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + MinMax3_TPW
+    RandamOpening(8手) + MinMax3_TPW
     """
-    def __init__(self, depth=12, base=MinMax3_TPW()):
+    def __init__(self, depth=8, base=MinMax3_TPW()):
         super().__init__(depth, base)
 
 
 class MinMax3Ro_TPOW(RandomOpening):
     """
-    RandamOpening(12手) + MinMax3_TPOW
+    RandamOpening(8手) + MinMax3_TPOW
     """
-    def __init__(self, depth=12, base=MinMax3_TPOW()):
+    def __init__(self, depth=8, base=MinMax3_TPOW()):
         super().__init__(depth, base)
 
 
 class NegaMax3Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NegaMax3_TPW
+    RandamOpening(8手) + NegaMax3_TPW
     """
-    def __init__(self, depth=12, base=NegaMax3_TPW()):
+    def __init__(self, depth=8, base=NegaMax3_TPW()):
         super().__init__(depth, base)
 
 
 class NegaMax3Ro_TPOW(RandomOpening):
     """
-    RandamOpening(12手) + NegaMax3_TPOW
+    RandamOpening(8手) + NegaMax3_TPOW
     """
-    def __init__(self, depth=12, base=NegaMax3_TPOW()):
+    def __init__(self, depth=8, base=NegaMax3_TPOW()):
         super().__init__(depth, base)
 
 
 class AlphaBeta3Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AlphaBeta3_TPW
+    RandamOpening(8手) + AlphaBeta3_TPW
     """
-    def __init__(self, depth=12, base=AlphaBeta3_TPW()):
+    def __init__(self, depth=8, base=AlphaBeta3_TPW()):
         super().__init__(depth, base)
 
 
 class AlphaBeta3Ro_TPOW(RandomOpening):
     """
-    RandamOpening(12手) + AlphaBeta3_TPOW
+    RandamOpening(8手) + AlphaBeta3_TPOW
     """
-    def __init__(self, depth=12, base=AlphaBeta3_TPOW()):
+    def __init__(self, depth=8, base=AlphaBeta3_TPOW()):
         super().__init__(depth, base)
 
 
 class AlphaBeta4Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AlphaBeta4_TPW
+    RandamOpening(8手) + AlphaBeta4_TPW
     """
-    def __init__(self, depth=12, base=AlphaBeta4_TPW()):
+    def __init__(self, depth=8, base=AlphaBeta4_TPW()):
         super().__init__(depth, base)
 
 
 class NegaScout3Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NegaScout3_TPW
+    RandamOpening(8手) + NegaScout3_TPW
     """
-    def __init__(self, depth=12, base=NegaScout3_TPW()):
+    def __init__(self, depth=8, base=NegaScout3_TPW()):
         super().__init__(depth, base)
 
 
 class NegaScout3Ro_TPOW(RandomOpening):
     """
-    RandamOpening(12手) + NegaScout3_TPOW
+    RandamOpening(8手) + NegaScout3_TPOW
     """
-    def __init__(self, depth=12, base=NegaScout3_TPOW()):
+    def __init__(self, depth=8, base=NegaScout3_TPOW()):
         super().__init__(depth, base)
 
 
 class NegaScout4Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NegaScout4_TPW
+    RandamOpening(8手) + NegaScout4_TPW
     """
-    def __init__(self, depth=12, base=NegaScout4_TPW()):
+    def __init__(self, depth=8, base=NegaScout4_TPW()):
         super().__init__(depth, base)
 
 
 class AB_TI_Ro(RandomOpening):
     """
-    RandamOpening(12手) + AB_TI
+    RandamOpening(8手) + AB_TI
     """
-    def __init__(self, depth=12, base=AB_TI()):
+    def __init__(self, depth=8, base=AB_TI()):
         super().__init__(depth, base)
 
 
 class AbIRo_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AbI_B_TPW
+    RandamOpening(8手) + AbI_B_TPW
     """
-    def __init__(self, depth=12, base=AbI_B_TPW()):
+    def __init__(self, depth=8, base=AbI_B_TPW()):
         super().__init__(depth, base)
 
 
 class NsIRo_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NsI_B_TPW
+    RandamOpening(8手) + NsI_B_TPW
     """
-    def __init__(self, depth=12, base=NsI_B_TPW()):
+    def __init__(self, depth=8, base=NsI_B_TPW()):
         super().__init__(depth, base)
 
 
 class NsIRo_BC_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NsI_BC_TPW
+    RandamOpening(8手) + NsI_BC_TPW
     """
-    def __init__(self, depth=12, base=NsI_BC_TPW()):
+    def __init__(self, depth=8, base=NsI_BC_TPW()):
         super().__init__(depth, base)
 
 
 class NsIRo_CB_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NsI_CB_TPW
+    RandamOpening(8手) + NsI_CB_TPW
     """
-    def __init__(self, depth=12, base=NsI_CB_TPW()):
+    def __init__(self, depth=8, base=NsI_CB_TPW()):
         super().__init__(depth, base)
 
 
 class AlphaBeta4F9Ro_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AlphaBeta4F9_TPW
+    RandamOpening(8手) + AlphaBeta4F9_TPW
     """
-    def __init__(self, depth=12, base=AlphaBeta4F9_TPW()):
+    def __init__(self, depth=8, base=AlphaBeta4F9_TPW()):
         super().__init__(depth, base)
 
 
 class AlphaBeta4F9JRo_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AlphaBeta4F9J_TPW
+    RandamOpening(8手) + AlphaBeta4F9J_TPW
     """
-    def __init__(self, depth=12, base=AlphaBeta4F9J_TPW()):
+    def __init__(self, depth=8, base=AlphaBeta4F9J_TPW()):
         super().__init__(depth, base)
 
 
 class AbIF9Ro_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AbIF9_B_TPW
+    RandamOpening(8手) + AbIF9_B_TPW
     """
-    def __init__(self, depth=12, base=AbIF9_B_TPW()):
+    def __init__(self, depth=8, base=AbIF9_B_TPW()):
         super().__init__(depth, base)
 
 
 class NsIF9Ro_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NsIF9_B_TPW
+    RandamOpening(8手) + NsIF9_B_TPW
     """
-    def __init__(self, depth=12, base=AbIF9_B_TPW()):
+    def __init__(self, depth=8, base=AbIF9_B_TPW()):
         super().__init__(depth, base)
 
 
 class AbIF9JRo_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AbIF9J_B_TPW
+    RandamOpening(8手) + AbIF9J_B_TPW
     """
-    def __init__(self, depth=12, base=AbIF9J_B_TPW()):
+    def __init__(self, depth=8, base=AbIF9J_B_TPW()):
         super().__init__(depth, base)
 
 
 class AbIF9JRo_BC_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AbIF9J_BC_TPW
+    RandamOpening(8手) + AbIF9J_BC_TPW
     """
-    def __init__(self, depth=12, base=AbIF9J_BC_TPW()):
+    def __init__(self, depth=8, base=AbIF9J_BC_TPW()):
         super().__init__(depth, base)
 
 
 class AbIF11JRo_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AbIF11J_B_TPW
+    RandamOpening(8手) + AbIF11J_B_TPW
     """
-    def __init__(self, depth=12, base=AbIF11J_B_TPW()):
+    def __init__(self, depth=8, base=AbIF11J_B_TPW()):
         super().__init__(depth, base)
 
 
 class AbIF11JRo_BC_TPW(RandomOpening):
     """
-    RandamOpening(12手) + AbIF11J_BC_TPW
+    RandamOpening(8手) + AbIF11J_BC_TPW
     """
-    def __init__(self, depth=12, base=AbIF11J_BC_TPW()):
+    def __init__(self, depth=8, base=AbIF11J_BC_TPW()):
         super().__init__(depth, base)
 
 
 class NsIF9JRo_B_TPW(RandomOpening):
     """
-    RandamOpening(12手) + NsIF9J_B_TPW
+    RandamOpening(8手) + NsIF9J_B_TPW
     """
-    def __init__(self, depth=12, base=NsIF9J_B_TPW()):
+    def __init__(self, depth=8, base=NsIF9J_B_TPW()):
         super().__init__(depth, base)
 
 
 class SwitchNsF9JRo(RandomOpening):
     """
-    RandamOpening(12手) + SwitchNsF9J
+    RandamOpening(8手) + SwitchNsF9J
     """
-    def __init__(self, depth=12, base=SwitchNsF9J()):
+    def __init__(self, depth=8, base=SwitchNsF9J()):
         super().__init__(depth, base)
 
 
 class SwitchNsF12JRo(RandomOpening):
     """
-    RandamOpening(12手) + SwitchNsF12J
+    RandamOpening(8手) + SwitchNsF12J
     """
-    def __init__(self, depth=12, base=SwitchNsF12J()):
+    def __init__(self, depth=8, base=SwitchNsF12J()):
         super().__init__(depth, base)
 
 
