@@ -11,7 +11,7 @@ from strategies.common import AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.negamax import NegaMax
-from strategies.evaluator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_N
+from strategies.evaluator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_N, Evaluator_NW
 
 
 class _AlphaBeta(AbstractStrategy):
@@ -131,11 +131,27 @@ class _AlphaBeta_N(_AlphaBeta):
         super().__init__(depth=depth, evaluator=evaluator)
 
 
+class _AlphaBeta_NW(_AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_NWにより次の手を決める
+    """
+    def __init__(self, depth, evaluator=Evaluator_NW()):
+        super().__init__(depth=depth, evaluator=evaluator)
+
+
 class AlphaBeta_N(AlphaBeta):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
     """
     def __init__(self, depth, evaluator=Evaluator_N()):
+        super().__init__(depth=depth, evaluator=evaluator)
+
+
+class AlphaBeta_NW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_NWにより次の手を決める
+    """
+    def __init__(self, depth, evaluator=Evaluator_NW()):
         super().__init__(depth=depth, evaluator=evaluator)
 
 
