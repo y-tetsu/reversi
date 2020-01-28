@@ -118,6 +118,29 @@ class Evaluator_TPO(AbstractEvaluator):
         return score_t + score_p + score_o
 
 
+class Evaluator_NW(AbstractEvaluator):
+    """
+    盤面の評価値を石数+勝敗で算出
+    """
+    def __init__(self, ww=10000):
+        self.n = Evaluator_N()
+        self.w = Evaluator_W(ww)
+
+    def evaluate(self, *args, **kwargs):
+        """
+        評価値の算出
+        """
+        score_w = self.w.evaluate(*args, **kwargs)
+
+        # 勝敗が決まっている場合
+        if score_w is not None:
+            return score_w
+
+        score_n = self.n.evaluate(*args, **kwargs)
+
+        return score_n
+
+
 class Evaluator_PW(AbstractEvaluator):
     """
     盤面の評価値を配置可能数+勝敗で算出
@@ -266,3 +289,15 @@ if __name__ == '__main__':
     score_b = evaluator.evaluate(color='black', board=board8, possibles_b=[], possibles_w=[])
     print('black score', score_b)
     assert score_b == -6
+
+    #----------------------------------------------------------------
+    # Evaluator_NW
+    evaluator = Evaluator_NW()
+
+    score = evaluator.evaluate(board=board8, possibles_b=[], possibles_w=[])
+    print('score', score)
+    assert score == -10006
+
+    score = evaluator.evaluate(board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    print('score', score)
+    assert score == -6
