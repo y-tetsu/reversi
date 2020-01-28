@@ -30,7 +30,7 @@ class NegaScout(AlphaBeta):
 
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
-            return self.evaluator.evaluate(color, board, possibles_b, possibles_w) * sign
+            return self.evaluator.evaluate(color=color, board=board, possibles_b=possibles_b, possibles_w=possibles_w) * sign
 
         # パスの場合
         possibles = possibles_b if color == 'black' else possibles_w

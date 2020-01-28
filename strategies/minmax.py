@@ -59,7 +59,7 @@ class MinMax(AbstractStrategy):
         is_game_end =  True if not possibles_b and not possibles_w else False
 
         if is_game_end or depth <= 0:
-            return self.evaluator.evaluate(color, board, possibles_b, possibles_w)
+            return self.evaluator.evaluate(color=color, board=board, possibles_b=possibles_b, possibles_w=possibles_w)
 
         # パスの場合
         possibles = possibles_b if color == 'black' else possibles_w
