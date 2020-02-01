@@ -18,10 +18,11 @@ class Table(AbstractStrategy):
     """
     評価テーブルで手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
     """
-    def __init__(self, size=8, corner=50, c=-20, a=0, b=-1, x=-25, o=-5):
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5):
         self._CORNER = corner
         self._C = c
-        self._A = a
+        self._A1 = a1
+        self._A2 = a2
         self._B = b
         self._X = x
         self._O = o
@@ -38,7 +39,7 @@ class Table(AbstractStrategy):
         for num in range(0, size//2, 2):
             if num != size//2 - 1:
                 for y, x in itertools.product((num, size-num-1), repeat=2):
-                    table[y][x] = self._A
+                    table[y][x] = self._A1
 
         for y in range(1, size//2-1, 2):
             for x in range(1, size//2-1, 2):
@@ -65,9 +66,9 @@ class Table(AbstractStrategy):
                         y_sign = 1 if y == y_min else -1
 
                         table[y][x+(1*x_sign)] = self._C
-                        table[y][x+(2*x_sign)] = self._B
+                        table[y][x+(2*x_sign)] = self._A2
                         table[y+(1*y_sign)][x] = self._C
-                        table[y+(2*y_sign)][x] = self._B
+                        table[y+(2*y_sign)][x] = self._A2
 
         self.table = np.array(table)
 
@@ -131,6 +132,7 @@ if __name__ == '__main__':
         [-20, -25, -5, -5, -5, -5, -25, -20],
         [ 50, -20, -1, -1, -1, -1, -20,  50],
     ]
+    print(table8.table)
     assert (table8.table == np.array(table8_ret)).all()
 
     table16 = Table(16)

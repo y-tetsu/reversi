@@ -64,11 +64,11 @@ class SwitchNegaScout(Switch):
                 60
             ],
             strategies=[
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=100, c=-20, a= 0, b=-1, x=-25, o=-5, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 70, c=-20, a= 0, b=-1, x=-25, o=-5, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 30, c=-10, a= 0, b= 0, x=-15, o=-3, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  1, c=  1, a= 1, b= 1, x=  1, o= 1, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  1, c=  1, a= 1, b= 1, x=  1, o= 1, wp= 5)))
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=100, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 70, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 30, c=-10, a1= 0, a2= 0, b= 0, x=-15, o=-3, wp= 5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  1, c=  1, a1= 1, a2= 1, b= 1, x=  1, o= 1, wp= 5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  1, c=  1, a1= 1, a2= 1, b= 1, x=  1, o= 1, wp= 5)))
             ]):
         super().__init__(turns, strategies)
 
