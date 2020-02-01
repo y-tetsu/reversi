@@ -56,7 +56,7 @@ class MinMax(AbstractStrategy):
         # ゲーム終了 or 最大深さに到達
         possibles_b = board.get_possibles('black', True)  # 黒の打てる場所
         possibles_w = board.get_possibles('white', True)  # 白の打てる場所
-        is_game_end =  True if not possibles_b and not possibles_w else False
+        is_game_end = True if not possibles_b and not possibles_w else False
 
         if is_game_end or depth <= 0:
             return self.evaluator.evaluate(color=color, board=board, possibles_b=possibles_b, possibles_w=possibles_w)
