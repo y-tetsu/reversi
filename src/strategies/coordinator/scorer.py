@@ -4,10 +4,9 @@
 """
 
 import sys
-sys.path.append('../')
 sys.path.append('../../')
 
-from common.abstract import AbstractScorer
+from strategies.common.abstract import AbstractScorer
 from strategies.table import Table
 
 from board import Board, BitBoard
