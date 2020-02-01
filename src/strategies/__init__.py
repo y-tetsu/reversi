@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractSorter, AbstractSelector
 from strategies.input import ConsoleUserInput, WindowUserInput
 from strategies.easy import Random, Greedy, Unselfish, SlowStarter
 from strategies.table import Table

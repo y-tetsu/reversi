@@ -5,8 +5,9 @@
 
 import sys
 sys.path.append('../')
+sys.path.append('../../')
 
-from strategies.common import AbstractSelector
+from common.abstract import AbstractSelector
 
 
 class Selector(AbstractSelector):
@@ -50,8 +51,11 @@ class Selector_W(Selector):
 
 
 if __name__ == '__main__':
+    import os
+    import time
+
     from board import BitBoard
-    from strategies.timer import Timer
+    from common.timer import Timer
     from strategies.alphabeta import AlphaBeta_TPOW
 
     bitboard8 = BitBoard(8)
@@ -85,7 +89,11 @@ if __name__ == '__main__':
 
     moves = bitboard8.get_possibles('black')
 
-    Timer.set_deadline(strategy.__class__.__name__, 0.5)
+    print(strategy.__class__.__name__)
+    #Timer.set_deadline(strategy.__class__.__name__, 10.5, -1000000)
+    key = strategy.__class__.__name__ + str(os.getpid())
+    Timer.timeout_flag[key] = False
+    Timer.deadline[key] = time.time() + 100
     best_move, scores = strategy.get_best_move('black', bitboard8, moves, 4)
 
     moves = selector.select_moves('black', bitboard8, None, scores, 2)

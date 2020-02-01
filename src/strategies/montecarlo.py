@@ -13,9 +13,7 @@ from game import Game
 from player import Player
 from display import NoneDisplay
 
-from strategies.common import CPU_TIME, AbstractStrategy
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 
 

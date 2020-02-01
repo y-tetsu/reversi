@@ -6,9 +6,7 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import CPU_TIME, AbstractStrategy
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_BC_TPW, AbIF11_B_TPW, AbIF11_BC_TPW, NsIF9_B_TPW, SwitchNsF9, SwitchNsF11, SwitchNsF12
 
 

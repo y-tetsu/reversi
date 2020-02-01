@@ -6,9 +6,7 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import CPU_TIME, AbstractStrategy
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
 from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_BC_TPW

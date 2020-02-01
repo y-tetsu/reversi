@@ -6,12 +6,10 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import CPU_TIME, AbstractStrategy
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.iterative import NsI_B_TPW, NsI_BC_TPW
 from strategies.negascout import NegaScout_TPW
-from strategies.evaluator import Evaluator_TPW
+from strategies.coordinator import Evaluator_TPW
 
 
 class SwitchSizeError(Exception):

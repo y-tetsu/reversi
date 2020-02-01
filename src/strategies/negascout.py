@@ -6,11 +6,9 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import CPU_TIME
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME
 from strategies.alphabeta import AlphaBeta
-from strategies.evaluator import Evaluator_TPW, Evaluator_TPOW
+from strategies.coordinator import Evaluator_TPW, Evaluator_TPOW
 
 
 class NegaScout(AlphaBeta):

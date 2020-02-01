@@ -8,9 +8,8 @@ sys.path.append('../')
 
 import random
 
-from strategies.common import AbstractStrategy
-from strategies.measure import Measure
-from strategies.evaluator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW
+from strategies.common import Measure, AbstractStrategy
+from strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW
 
 
 class MinMax(AbstractStrategy):

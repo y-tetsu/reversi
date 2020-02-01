@@ -5,8 +5,9 @@
 
 import sys
 sys.path.append('../')
+sys.path.append('../../')
 
-from strategies.common import AbstractSorter
+from strategies.common.abstract import AbstractSorter
 
 
 class Sorter(AbstractSorter):
@@ -149,7 +150,7 @@ class Sorter_CB(AbstractSorter):
 
 if __name__ == '__main__':
     from board import BitBoard
-    from strategies.timer import Timer
+    from common.timer import Timer
     from strategies.alphabeta import AlphaBeta_TPOW
 
     bitboard8 = BitBoard(8)

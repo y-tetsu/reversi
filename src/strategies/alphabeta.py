@@ -6,12 +6,9 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import CPU_TIME
-from strategies.common import AbstractStrategy
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.negamax import NegaMax
-from strategies.evaluator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_N, Evaluator_NW
+from strategies.coordinator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_N, Evaluator_NW
 
 
 class _AlphaBeta(AbstractStrategy):

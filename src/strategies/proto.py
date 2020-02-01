@@ -8,9 +8,7 @@ sys.path.append('../')
 
 import random
 
-from strategies.common import CPU_TIME, AbstractStrategy
-from strategies.timer import Timer
-from strategies.measure import Measure
+from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.table import Table
 
 

@@ -4,10 +4,10 @@
 """
 
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 
 from strategies.common import AbstractEvaluator
-from strategies.scorer import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer
+from strategies.coordinator.scorer import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer
 
 
 class Evaluator_T(AbstractEvaluator):

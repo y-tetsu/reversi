@@ -6,8 +6,7 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import CPU_TIME, AbstractStrategy
-from strategies.measure import Measure
+from strategies.common import Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 from strategies.proto import AB_TI
 from strategies.minmax import MinMax2_T, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
