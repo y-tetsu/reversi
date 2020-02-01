@@ -1,1 +1,1 @@
-pyinstaller ..\reversi.py --onefile  --noconsole
+pyinstaller ..\src\reversi.py --onefile  --noconsole
