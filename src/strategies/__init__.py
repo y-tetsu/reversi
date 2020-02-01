@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from strategies.common import Timer, Measure, AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractSorter, AbstractSelector
-from strategies.input import ConsoleUserInput, WindowUserInput
+from strategies.user import ConsoleUserInput, WindowUserInput
 from strategies.easy import Random, Greedy, Unselfish, SlowStarter
 from strategies.table import Table
 from strategies.minmax import MinMax1_T, MinMax2_T, MinMax3_T, MinMax4_T, MinMax1_TP, MinMax2_TP, MinMax3_TP, MinMax4_TP, MinMax1_TPO, MinMax2_TPO, MinMax3_TPO, MinMax4_TPO, MinMax2_TPW, MinMax3_TPW, MinMax4_TPW, MinMax1_TPOW, MinMax2_TPOW, MinMax3_TPOW, MinMax4_TPOW
