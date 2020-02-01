@@ -10,7 +10,7 @@ from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
 from strategies.easy import Random
-from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta_NW, AlphaBeta4_TPW
+from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
 from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_BC_TPW
 from strategies.switch import SwitchNegaScout
 
@@ -45,26 +45,6 @@ class _FullReading(FullReading):
     def __init__(self, remain=None, base=None):
         self.remain = remain
         self.fullreading = _AlphaBeta_N(depth=remain)
-        self.base = base
-
-
-class FullReadingW(FullReading):
-    """
-    終盤完全読み(時間制限なし)
-    """
-    def __init__(self, remain=None, base=None):
-        self.remain = remain
-        self.fullreading = AlphaBeta_NW(depth=remain)
-        self.base = base
-
-
-class _FullReadingW(FullReading):
-    """
-    終盤完全読み(時間制限なし)
-    """
-    def __init__(self, remain=None, base=None):
-        self.remain = remain
-        self.fullreading = _AlphaBeta_NW(depth=remain)
         self.base = base
 
 
