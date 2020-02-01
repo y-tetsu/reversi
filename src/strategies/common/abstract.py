@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-共通
+基底クラス
 """
 
 import abc
@@ -17,23 +17,23 @@ class AbstractStrategy(metaclass=abc.ABCMeta):
 
 class AbstractScorer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def get_score(self, color, board):
+    def get_score(self, *args, **kwargs):
         pass
 
 
 class AbstractEvaluator(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def evaluate(self, color, board):
+    def evaluate(self, *args, **kwargs):
         pass
 
 
 class AbstractSorter(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def sort_moves(self, board, moves, best_move):
+    def sort_moves(self, *args, **kwargs):
         pass
 
 
 class AbstractSelector(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def select_moves(self, color, board, moves, scores, depth):
+    def select_moves(self, *args, **kwargs):
         pass
