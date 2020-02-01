@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import AbstractScorer
-from strategies.easy import Table
+from strategies.table import Table
 
 from board import Board, BitBoard
 

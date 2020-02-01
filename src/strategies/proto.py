@@ -11,7 +11,7 @@ import random
 from strategies.common import CPU_TIME, AbstractStrategy
 from strategies.timer import Timer
 from strategies.measure import Measure
-from strategies.easy import Table
+from strategies.table import Table
 
 
 class MinMax_(AbstractStrategy):
