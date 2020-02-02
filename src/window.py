@@ -6,6 +6,7 @@ GUIウィンドウ
 import time
 import tkinter as tk
 import threading
+import re
 
 import board
 from board import Board
@@ -54,9 +55,13 @@ START_OFFSET_Y = 610              # スタートのYオフセット
 START_FONT_SIZE = 32              # スタートのフォントサイズ
 START_TEXT = 'クリックでスタート' # スタートのテキスト
 
-ASSIST_OFFSET_X = 50   # アシストのXオフセット
-ASSIST_OFFSET_Y = 20   # アシストのYオフセット
+ASSIST_OFFSET_X = 20   # アシストのXオフセット
+ASSIST_OFFSET_Y = 40   # アシストのYオフセット
 ASSIST_FONT_SIZE = 12  # アシストのフォントサイズ
+
+CPUTIME_OFFSET_X = 20  # CPUの持ち時間のXオフセット
+CPUTIME_OFFSET_Y = 20   # CPUの持ち時間のYオフセット
+CPUTIME_FONT_SIZE = 12  # CPUの持ち時間のフォントサイズ
 
 SQUAREHEADER_OFFSET_XY = 15  # マス目の列見出しのXYオフセット
 SQUAREHEADER_FONT_SIZE = 20  # マス目の列見出しのフォントサイズ
@@ -73,6 +78,9 @@ TURN_STONE_WAIT = 0.1                                                  # 石を�
 ASSIST_MENU = ['ON', 'OFF']  # 打てる場所のハイライト表示の有無
 CANCEL_MENU = ['OK']         # ゲームのキャンセル
 
+CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
+CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
+
 STONE_MARK = '●'      # 石のマーク
 
 DEFAULT_BOARD_SIZE = 8   # ボードサイズの初期値
@@ -86,6 +94,10 @@ DEFAULT_INFO_TEXT = {    # 表示テキストのテキスト初期値
     'move':    {'black': lambda s: '',                             'white': lambda s: ''                            },
 }
 
+CPUTIME_DIALOG_TITLE = 'Cpu Time(s)'  # タイトル
+CPUTIME_DIALOG_WIDTH = 230            # 幅
+CPUTIME_DIALOG_HEIGHT = 60            # 高さ
+
 
 class Window(tk.Frame):
     """
@@ -96,17 +108,19 @@ class Window(tk.Frame):
         self.pack()
 
         # 初期設定
+        self.root = root
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.assist = ASSIST_MENU[0]
         self.cancel = CANCEL_MENU[0]
+        self.cputime = CPU_TIME
 
         # ウィンドウ設定
-        root.title(WINDOW_TITLE)                   # タイトル
-        root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
+        self.root.title(WINDOW_TITLE)                   # タイトル
+        self.root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
 
         # メニューを配置
-        self.menu = Menu(root, black_players, white_players)
+        self.menu = Menu(self, black_players, white_players)
         root.configure(menu=self.menu)
 
         # キャンバスを配置
@@ -117,10 +131,10 @@ class Window(tk.Frame):
         """
         ゲーム画面の初期化
         """
-        self.canvas.delete('all')                                      # 全オブジェクト削除
-        self.board = ScreenBoard(self.canvas, self.size, self.assist)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player)               # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas)                          # スタートテキスト配置
+        self.canvas.delete('all')                                                    # 全オブジェクト削除
+        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player)                             # 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas)                                        # スタートテキスト配置
 
     def set_state(self, state):
         """
@@ -134,9 +148,10 @@ class Menu(tk.Menu):
     """
     メニュー
     """
-    def __init__(self, root, black_players, white_players):
-        super().__init__(root)
+    def __init__(self, window, black_players, white_players):
+        super().__init__(window.root)
 
+        self.window = window
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = black_players[0]
         self.white_player = white_players[0]
@@ -151,6 +166,7 @@ class Menu(tk.Menu):
         self.menu_items['size'] = range(board.MIN_BOARD_SIZE, board.MAX_BOARD_SIZE + 1, 2)
         self.menu_items['black'] = black_players
         self.menu_items['white'] = white_players
+        self.menu_items['cputime'] = CPUTIME_MENU
         self.menu_items['assist'] = ASSIST_MENU
         self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
@@ -176,6 +192,10 @@ class Menu(tk.Menu):
                 self.size = item if name == 'size' else self.size
                 self.black_player = item if name == 'black' else self.black_player
                 self.white_player= item if name == 'white' else self.white_player
+
+                if name == 'cputime':
+                    dialog = CpuTimeDialog(window=self.window, event=self.event)
+
                 self.assist= item if name == 'assist' else self.assist
                 self.cancel= item if name == 'cancel' else self.cancel
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
@@ -192,12 +212,50 @@ class Menu(tk.Menu):
             self.entryconfigure(name.title(), state=state)
 
 
+class CpuTimeDialog:
+    """
+    CPUの持ち時間設定ダイアログ
+    """
+    def __init__(self, window=None, event=None):
+        self.window = window
+        self.event = event
+        self.dialog = tk.Toplevel(master=self.window.root)
+        self.dialog.title(CPUTIME_DIALOG_TITLE)
+        self.dialog.minsize(CPUTIME_DIALOG_WIDTH, CPUTIME_DIALOG_HEIGHT)  # 最小サイズ
+        self.dialog.resizable(1, 0)  # 横方向だけリサイズ許可
+        self.dialog.grab_set()
+
+        self.parameter = tk.StringVar()
+        self.parameter.set(self.window.cputime)
+        entry = tk.Entry(self.dialog, textvariable=self.parameter)
+        entry.pack(fill='x', padx='5', pady='5')
+        button = tk.Button(self.dialog, text="設定", command=self.set_parameter)
+        button.pack()
+
+    def set_parameter(self):
+        """
+        パラメータを設定する
+        """
+        value = self.parameter.get()
+
+        # 入力値が数値である
+        if re.match(r'\d+(?:\.\d+)?', str(value)) is not None:
+            # floatに変換できる
+            try:
+                self.window.cputime = float(value)
+                self.event.set()  # ウィンドウへメニューの設定変更を通知
+                self.dialog.destroy()
+            except ValueError:
+                pass
+
+
 class ScreenBoard:
     """
     ボードの表示
     """
-    def __init__(self, canvas, size, assist):
+    def __init__(self, canvas, size, cputime, assist):
         self.size = size
+        self.cputime = cputime
         self.assist = assist
         self.canvas = canvas
         self._squares = []
@@ -208,6 +266,17 @@ class ScreenBoard:
         # イベント生成
         self.event = threading.Event()
 
+        # CPUの持ち時間表示
+        cputime_text = 'CPU_TIME(' + str(self.cputime) + 's)'
+        self.text = canvas.create_text(
+            CPUTIME_OFFSET_X,
+            CPUTIME_OFFSET_Y,
+            text=cputime_text,
+            font=('', CPUTIME_FONT_SIZE),
+            anchor='w',
+            fill=COLOR_WHITE
+        )
+
         # アシスト表示
         assist_text = 'Assist Off' if self.assist == 'OFF' else ''
         self.text = canvas.create_text(
@@ -215,6 +284,7 @@ class ScreenBoard:
             ASSIST_OFFSET_Y,
             text=assist_text,
             font=('', ASSIST_FONT_SIZE),
+            anchor='w',
             fill=COLOR_WHITE
         )
 

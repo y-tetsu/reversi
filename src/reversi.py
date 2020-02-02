@@ -130,6 +130,8 @@ class Reversi:
             name = self.window.player[color]
             players[color] = Player(color, name, self.strategies[name])
 
+        strategies.common.Timer.time_limit = self.window.cputime
+
         game = Game(board, players['black'], players['white'], WindowDisplay(self.window), cancel=self.window.menu)
         game.play()
 
