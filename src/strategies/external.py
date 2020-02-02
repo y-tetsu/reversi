@@ -58,7 +58,6 @@ class External(AbstractStrategy):
 
         # 戻り値がある場合
         if out:
-            print(out)
             x, y = out.split()
             # xとyが整数の場合
             if re.match(r'^\d+$', x) is not None and re.match(r'^\d+$', y) is not None:
