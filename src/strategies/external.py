@@ -27,6 +27,7 @@ class External(AbstractStrategy):
         """
         次の一手
         """
+        color_num = '0' if color == 'black' else '1'
         size = board.size
         info = "\n".join([" ".join(row) for row in [[str(col) for col in row] for row in board.get_board_info()]])
 
@@ -34,7 +35,7 @@ class External(AbstractStrategy):
         # {ボードのサイズ}
         # {ボードの情報}
         # ex)
-        # white
+        # 1
         # 8
         # 0 0 0 0 0 0 0 0
         # 0 0 0 0 0 0 0 0
@@ -44,7 +45,7 @@ class External(AbstractStrategy):
         # 0 0 0 0 1 -1 0 0
         # 0 0 0 0 1 -1 0 0
         # 0 0 0 0 0 0 0 0
-        input_info = "\n".join([color, str(size), info])
+        input_info = "\n".join([color_num, str(size), info])
 
         # 外部コマンド実行
         out = None
