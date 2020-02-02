@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-外部プログラム実行用
+外部コマンド実行用
 """
 
 import sys
@@ -18,7 +18,7 @@ TIMEOUT_TIME = 100  # タイムアウト時間(s)
 
 class External(AbstractStrategy):
     """
-    外部プログラムを実行する
+    外部コマンドを実行する
     """
     def __init__(self, cmd=None):
         self.cmd = cmd
