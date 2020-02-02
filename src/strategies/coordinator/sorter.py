@@ -6,7 +6,7 @@
 import sys
 sys.path.append('../../')
 
-from strategies.common.abstract import AbstractSorter
+from strategies.common import AbstractSorter
 
 
 class Sorter(AbstractSorter):
