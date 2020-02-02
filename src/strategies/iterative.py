@@ -6,7 +6,7 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from strategies.common import Timer, Measure, AbstractStrategy
 from strategies.alphabeta import AlphaBeta_TP, AlphaBeta_TPO, AlphaBeta_TPW, AlphaBeta_TPOW
 from strategies.negascout import NegaScout_TPW
 from strategies.coordinator import Selector, Selector_W, Sorter, Sorter_B, Sorter_BC, Sorter_CB
@@ -30,7 +30,7 @@ class IterativeDeepning(AbstractStrategy):
         """
         depth, moves, best_move, scores, = self.depth, None, None, {}
 
-        Timer.set_deadline(self.search.__class__.__name__, CPU_TIME, self.search._MIN)  # 探索クラスのタイムアウトを設定
+        Timer.set_deadline(self.search.__class__.__name__, self.search._MIN)  # 探索クラスのタイムアウトを設定
 
         while True:
             moves = self.selector.select_moves(color, board, moves, scores, depth)                      # 次の手の候補を選択
