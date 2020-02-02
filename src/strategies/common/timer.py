@@ -3,9 +3,13 @@
 タイマー
 """
 
+import sys
+sys.path.append('../../')
+
 import time
 import os
 
+from strategies.common import CPU_TIME
 
 class Timer:
     """
@@ -16,14 +20,14 @@ class Timer:
     timeout_value = {}
 
     @classmethod
-    def set_deadline(cls, name, limit, value):
+    def set_deadline(cls, name, value):
         """
         期限を設定
         """
         key = name + str(os.getpid())
-        Timer.deadline[key] = time.time() + limit  # デッドラインを設定する
-        Timer.timeout_flag[key] = False            # タイムアウト未発生
-        Timer.timeout_value[key] = value           # タイムアウト発生時の値を設定する
+        Timer.deadline[key] = time.time() + CPU_TIME  # デッドラインを設定する
+        Timer.timeout_flag[key] = False               # タイムアウト未発生
+        Timer.timeout_value[key] = value              # タイムアウト発生時の値を設定する
 
     @classmethod
     def start(cls, limit, value):
@@ -33,7 +37,7 @@ class Timer:
         def _start(func):
             def wrapper(*args, **kwargs):
                 name = args[0].__class__.__name__
-                cls.set_deadline(name, limit, value)
+                cls.set_deadline(name, value)
                 return func(*args, **kwargs)
             return wrapper
         return _start
