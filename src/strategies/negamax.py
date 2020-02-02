@@ -120,6 +120,14 @@ class NegaMax2_TPOW(NegaMax):
         super().__init__(depth, evaluator)
 
 
+class _NegaMax3_TPW(_NegaMax):
+    """
+    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
 class NegaMax3_TPW(NegaMax):
     """
     NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)

@@ -260,6 +260,7 @@ if __name__ == '__main__':
         'SwitchNsF12J': strategies.SwitchNsF12J(),
         'MinMax3Ro_TPW': strategies.MinMax3Ro_TPW(),
         'MinMax3Ro_TPOW': strategies.MinMax3Ro_TPOW(),
+        '_NegaMax3Ro_TPW': strategies._NegaMax3Ro_TPW(),
         'NegaMax3Ro_TPW': strategies.NegaMax3Ro_TPW(),
         'NegaMax3Ro_TPOW': strategies.NegaMax3Ro_TPOW(),
         'AlphaBeta3Ro_TPW': strategies.AlphaBeta3Ro_TPW(),
