@@ -13,7 +13,7 @@ import re
 from strategies.common import AbstractStrategy
 
 
-TIMEOUT_TIME = 180  # タイムアウト時間(s)
+TIMEOUT_TIME = 600  # タイムアウト時間(s)
 
 
 class External(AbstractStrategy):
