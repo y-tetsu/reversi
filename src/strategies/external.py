@@ -29,8 +29,8 @@ class External(AbstractStrategy):
         次の一手
         """
         color_num = '1' if color == 'black' else '-1'
-        size = board.size
-        info = "\n".join([" ".join(row) for row in [[str(col) for col in row] for row in board.get_board_info()]])
+        board_size = board.size
+        board_info = "\n".join([" ".join(row) for row in [[str(col) for col in row] for row in board.get_board_info()]])
 
         # {手番の色(黒:1、白:-1)}
         # {ボードのサイズ(4～26)}
@@ -46,14 +46,14 @@ class External(AbstractStrategy):
         # 0 0 0 0 1 -1 0 0
         # 0 0 0 0 1 -1 0 0
         # 0 0 0 0 0 0 0 0
-        input_info = "\n".join([color_num, str(size), info])
+        input_data = "\n".join([color_num, str(board_size), board_info])
 
         # 外部コマンド実行
         out = None
         if self.cmd:
             with subprocess.Popen(self.cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True) as pipe:
                 try:
-                    out, err = pipe.communicate(input_info, timeout=TIMEOUT_TIME)
+                    out, err = pipe.communicate(input_data, timeout=TIMEOUT_TIME)
                 except TimeoutExpired:
                     pipe.kill()
 
@@ -76,7 +76,7 @@ class External(AbstractStrategy):
             self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')')
 
         # 戻り値が正しくない場合は反則負け
-        return (size//2-1, size//2-1)
+        return (board_size//2-1, board_size//2-1)
 
     def error_message(self, message):
         """
