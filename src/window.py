@@ -97,9 +97,9 @@ DEFAULT_INFO_TEXT = {    # 表示テキストのテキスト初期値
     'move':    {'black': lambda s: '',                             'white': lambda s: ''                            },
 }
 
-CPUTIME_DIALOG_TITLE = 'Cpu Time(s)'  # タイトル
-CPUTIME_DIALOG_WIDTH = 230            # 幅
-CPUTIME_DIALOG_HEIGHT = 60            # 高さ
+CPUTIME_DIALOG_TITLE = 'CPU_TIME'  # タイトル
+CPUTIME_DIALOG_WIDTH = 230         # 幅
+CPUTIME_DIALOG_HEIGHT = 80         # 高さ
 
 EXTERNAL_DIALOG_TITLE = 'External'  # タイトル
 EXTERNAL_DIALOG_WIDTH = 450         # 幅
@@ -241,6 +241,8 @@ class CpuTimeDialog:
 
         self.parameter = tk.StringVar()
         self.parameter.set(self.window.cputime)
+        label = tk.Label(self.dialog, text='CPUの持ち時間(秒)')
+        label.pack(anchor='w')
         entry = tk.Entry(self.dialog, textvariable=self.parameter)
         entry.pack(fill='x', padx='5', pady='5')
         button = tk.Button(self.dialog, text="設定", command=self.set_parameter)
