@@ -23,6 +23,7 @@ class External(AbstractStrategy):
     """
     def __init__(self, cmd=None):
         self.cmd = cmd
+        self.timeouttime = TIMEOUT_TIME
 
     def next_move(self, color, board):
         """
