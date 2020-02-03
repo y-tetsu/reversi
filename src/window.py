@@ -81,6 +81,9 @@ CANCEL_MENU = ['OK']         # ゲームのキャンセル
 CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
 CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
 
+EXTERNAL_MENU = ['Set']                          # 外部プログラム設定の変更
+TIMEOUT_TIME = strategies.external.TIMEOUT_TIME  # 外部プログラムのタイムアウト時間
+
 STONE_MARK = '●'      # 石のマーク
 
 DEFAULT_BOARD_SIZE = 8   # ボードサイズの初期値
@@ -98,6 +101,10 @@ CPUTIME_DIALOG_TITLE = 'Cpu Time(s)'  # タイトル
 CPUTIME_DIALOG_WIDTH = 230            # 幅
 CPUTIME_DIALOG_HEIGHT = 60            # 高さ
 
+EXTERNAL_DIALOG_TITLE = 'External'  # タイトル
+EXTERNAL_DIALOG_WIDTH = 450         # 幅
+EXTERNAL_DIALOG_HEIGHT = 180        # 高さ
+
 
 class Window(tk.Frame):
     """
@@ -114,6 +121,9 @@ class Window(tk.Frame):
         self.assist = ASSIST_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
+        self.external_cmd1 = ''
+        self.external_cmd2 = ''
+        self.timeouttime = TIMEOUT_TIME
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -167,6 +177,7 @@ class Menu(tk.Menu):
         self.menu_items['black'] = black_players
         self.menu_items['white'] = white_players
         self.menu_items['cputime'] = CPUTIME_MENU
+        self.menu_items['external'] = EXTERNAL_MENU
         self.menu_items['assist'] = ASSIST_MENU
         self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
@@ -194,7 +205,10 @@ class Menu(tk.Menu):
                 self.white_player= item if name == 'white' else self.white_player
 
                 if name == 'cputime':
-                    dialog = CpuTimeDialog(window=self.window, event=self.event)
+                    CpuTimeDialog(window=self.window, event=self.event)
+
+                if name == 'external':
+                    ExternalDialog(window=self.window, event=self.event)
 
                 self.assist= item if name == 'assist' else self.assist
                 self.cancel= item if name == 'cancel' else self.cancel
@@ -243,6 +257,64 @@ class CpuTimeDialog:
             # floatに変換できる
             try:
                 self.window.cputime = float(value)
+                self.event.set()  # ウィンドウへメニューの設定変更を通知
+                self.dialog.destroy()
+            except ValueError:
+                pass
+
+
+class ExternalDialog:
+    """
+    External設定ダイアログ
+    """
+    def __init__(self, window=None, event=None):
+        self.window = window
+        self.event = event
+        self.dialog = tk.Toplevel(master=self.window.root)
+        self.dialog.title(EXTERNAL_DIALOG_TITLE)
+        self.dialog.minsize(EXTERNAL_DIALOG_WIDTH, EXTERNAL_DIALOG_HEIGHT)  # 最小サイズ
+        self.dialog.resizable(1, 0)  # 横方向だけリサイズ許可
+        self.dialog.grab_set()
+
+        self.external_cmd1 = tk.StringVar()
+        self.external_cmd1.set(self.window.external_cmd1)
+        label = tk.Label(self.dialog, text='External1のコマンド')
+        label.pack(anchor='w')
+        entry = tk.Entry(self.dialog, textvariable=self.external_cmd1)
+        entry.pack(fill='x', padx='5', pady='5')
+
+        self.external_cmd2 = tk.StringVar()
+        self.external_cmd2.set(self.window.external_cmd2)
+        label = tk.Label(self.dialog, text='External2のコマンド')
+        label.pack(anchor='w')
+        entry = tk.Entry(self.dialog, textvariable=self.external_cmd2)
+        entry.pack(fill='x', padx='5', pady='5')
+
+        self.timeouttime = tk.StringVar()
+        self.timeouttime.set(self.window.timeouttime)
+        label = tk.Label(self.dialog, text='コマンドのタイムアウト時間')
+        label.pack(anchor='w')
+        entry = tk.Entry(self.dialog, textvariable=self.timeouttime)
+        entry.pack(fill='x', padx='5', pady='5')
+
+        button = tk.Button(self.dialog, text="設定", command=self.set_parameter)
+        button.pack()
+
+    def set_parameter(self):
+        """
+        パラメータを設定する
+        """
+        external_cmd1 = self.external_cmd1.get()
+        external_cmd2 = self.external_cmd2.get()
+        timeouttime = self.timeouttime.get()
+
+        # 入力値が数値である
+        if re.match(r'\d+(?:\.\d+)?', str(timeouttime)) is not None:
+            # floatに変換できる
+            try:
+                self.window.external_cmd1 = external_cmd1
+                self.window.external_cmd2 = external_cmd2
+                self.window.timeouttime = float(timeouttime)
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
                 self.dialog.destroy()
             except ValueError:
