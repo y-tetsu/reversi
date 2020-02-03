@@ -9,6 +9,7 @@ sys.path.append('../')
 import subprocess
 from subprocess import PIPE, TimeoutExpired
 import re
+import tkinter as tk
 
 from strategies.common import AbstractStrategy
 
@@ -56,15 +57,38 @@ class External(AbstractStrategy):
                 except TimeoutExpired:
                     pipe.kill()
 
-        # 戻り値がある場合
-        if out:
-            x, y = out.split()
-            # xとyが整数の場合
-            if re.match(r'^\d+$', x) is not None and re.match(r'^\d+$', y) is not None:
-                return (int(x), int(y))
+        status = pipe.poll()
+
+        # プロセスが正常終了
+        if status == 0:
+            # 戻り値がある場合
+            if out:
+                x, y = out.split()
+                # xとyが整数の場合
+                if re.match(r'^\d+$', x) is not None and re.match(r'^\d+$', y) is not None:
+                    return (int(x), int(y))
+                else:
+                    out = out.rstrip()
+                    self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
+            else:
+                self.error_message('プログラムからの戻り値が存在しませんでした。')
+        else:
+            self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')')
 
         # 戻り値が正しくない場合は反則負け
         return (size//2-1, size//2-1)
+
+    def error_message(self, message):
+        """
+        エラーメッセージ
+        """
+        root = tk.Tk()
+        root.title('Error')
+        root.minsize(300, 30)
+        root.resizable(1, 0)
+        label = tk.Label(root, text=message)
+        label.pack(fill='x', padx='5', pady='5')
+        root.mainloop()
 
 
 if __name__ == '__main__':
