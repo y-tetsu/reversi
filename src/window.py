@@ -292,7 +292,7 @@ class ExternalDialog:
 
         self.timeouttime = tk.StringVar()
         self.timeouttime.set(self.window.timeouttime)
-        label = tk.Label(self.dialog, text='コマンドのタイムアウト時間')
+        label = tk.Label(self.dialog, text='コマンドのタイムアウト時間(秒)')
         label.pack(anchor='w')
         entry = tk.Entry(self.dialog, textvariable=self.timeouttime)
         entry.pack(fill='x', padx='5', pady='5')

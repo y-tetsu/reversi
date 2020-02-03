@@ -14,7 +14,7 @@ import tkinter as tk
 from strategies.common import AbstractStrategy
 
 
-TIMEOUT_TIME = 600  # タイムアウト時間(s)
+TIMEOUT_TIME = 60  # タイムアウト時間(s)
 
 
 class External(AbstractStrategy):
@@ -54,9 +54,13 @@ class External(AbstractStrategy):
         if self.cmd:
             with subprocess.Popen(self.cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True) as pipe:
                 try:
-                    out, err = pipe.communicate(input_data, timeout=TIMEOUT_TIME)
+                    out, err = pipe.communicate(input_data, timeout=self.timeouttime)
                 except TimeoutExpired:
                     pipe.kill()
+
+                    # タイムアウトした場合は反則負け
+                    self.error_message('コマンドがタイムアウトしました。')
+                    return (board_size//2-1, board_size//2-1)
 
             status = pipe.poll()
 
