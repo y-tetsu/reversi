@@ -73,7 +73,7 @@ class External(AbstractStrategy):
             except:
                 self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
         else:
-            self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')')
+            self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')' + '\n(標準エラー出力)\n' + str(err))
 
         # 戻り値が正しくない場合は反則負け
         return (board_size//2-1, board_size//2-1)
