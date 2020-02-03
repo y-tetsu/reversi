@@ -27,15 +27,15 @@ class External(AbstractStrategy):
         """
         次の一手
         """
-        color_num = '0' if color == 'black' else '1'
+        color_num = '1' if color == 'black' else '-1'
         size = board.size
         info = "\n".join([" ".join(row) for row in [[str(col) for col in row] for row in board.get_board_info()]])
 
-        # {手番の色(黒:0、白:1)}
+        # {手番の色(黒:1、白:-1)}
         # {ボードのサイズ(4～26)}
         # {ボードの情報(空:0、黒:1、白:-1)}
         # ex)
-        # 1
+        # -1
         # 8
         # 0 0 0 0 0 0 0 0
         # 0 0 0 0 0 0 0 0
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     bitboard8.put_stone('black', 4, 6)
     print(bitboard8)
 
-    # python実行
-    external = External('python .\external_samples\python_sample.py')
+    # TopLeft(python)実行
+    external = External('python .\\external_samples\\topleft.py')
     move = external.next_move('white', bitboard8)
     print(move)
