@@ -62,7 +62,7 @@ class External(AbstractStrategy):
         # プロセスが正常終了
         if status == 0:
             # 戻り値がある場合
-            if out:
+            try:
                 x, y = out.split()
                 # xとyが整数の場合
                 if re.match(r'^\d+$', x) is not None and re.match(r'^\d+$', y) is not None:
@@ -70,8 +70,8 @@ class External(AbstractStrategy):
                 else:
                     out = out.rstrip()
                     self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
-            else:
-                self.error_message('プログラムからの戻り値が存在しませんでした。')
+            except:
+                self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
         else:
             self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')')
 
