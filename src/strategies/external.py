@@ -85,7 +85,6 @@ class External(AbstractStrategy):
         root = tk.Tk()
         root.title('Error')
         root.minsize(300, 30)
-        root.resizable(1, 0)
         label = tk.Label(root, text=message)
         label.pack(fill='x', padx='5', pady='5')
         root.mainloop()
