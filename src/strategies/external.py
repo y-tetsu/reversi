@@ -108,6 +108,6 @@ if __name__ == '__main__':
     print(bitboard8)
 
     # TopLeft(python)実行
-    external = External('python .\\external_samples\\topleft.py')
+    external = External('python ./external_samples/topleft.py')
     move = external.next_move('white', bitboard8)
     print(move)
