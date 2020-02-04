@@ -82,7 +82,6 @@ CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
 CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
 
 EXTERNAL_MENU = ['Set']                          # 外部プログラム設定の変更
-TIMEOUT_TIME = strategies.external.TIMEOUT_TIME  # 外部プログラムのタイムアウト時間
 
 STONE_MARK = '●'      # 石のマーク
 
@@ -103,7 +102,7 @@ CPUTIME_DIALOG_HEIGHT = 80         # 高さ
 
 EXTERNAL_DIALOG_TITLE = 'External'  # タイトル
 EXTERNAL_DIALOG_WIDTH = 450         # 幅
-EXTERNAL_DIALOG_HEIGHT = 180        # 高さ
+EXTERNAL_DIALOG_HEIGHT = 80         # 高さ
 
 
 class Window(tk.Frame):
@@ -121,9 +120,7 @@ class Window(tk.Frame):
         self.assist = ASSIST_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
-        self.external_cmd1 = ''
-        self.external_cmd2 = ''
-        self.timeouttime = TIMEOUT_TIME
+        self.json_file = ''
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -278,49 +275,24 @@ class ExternalDialog:
         self.dialog.resizable(1, 0)  # 横方向だけリサイズ許可
         self.dialog.grab_set()
 
-        self.external_cmd1 = tk.StringVar()
-        self.external_cmd1.set(self.window.external_cmd1)
-        label = tk.Label(self.dialog, text='External1のコマンド')
+        self.json_file = tk.StringVar()
+        self.json_file.set(self.window.json_file)
+        label = tk.Label(self.dialog, text='登録用ファイル')
         label.pack(anchor='w')
-        entry = tk.Entry(self.dialog, textvariable=self.external_cmd1)
+        entry = tk.Entry(self.dialog, textvariable=self.json_file)
         entry.pack(fill='x', padx='5', pady='5')
 
-        self.external_cmd2 = tk.StringVar()
-        self.external_cmd2.set(self.window.external_cmd2)
-        label = tk.Label(self.dialog, text='External2のコマンド')
-        label.pack(anchor='w')
-        entry = tk.Entry(self.dialog, textvariable=self.external_cmd2)
-        entry.pack(fill='x', padx='5', pady='5')
-
-        self.timeouttime = tk.StringVar()
-        self.timeouttime.set(self.window.timeouttime)
-        label = tk.Label(self.dialog, text='コマンドのタイムアウト時間(秒)')
-        label.pack(anchor='w')
-        entry = tk.Entry(self.dialog, textvariable=self.timeouttime)
-        entry.pack(fill='x', padx='5', pady='5')
-
-        button = tk.Button(self.dialog, text="設定", command=self.set_parameter)
+        button = tk.Button(self.dialog, text="読み込む", command=self.set_parameter)
         button.pack()
 
     def set_parameter(self):
         """
         パラメータを設定する
         """
-        external_cmd1 = self.external_cmd1.get()
-        external_cmd2 = self.external_cmd2.get()
-        timeouttime = self.timeouttime.get()
-
-        # 入力値が数値である
-        if re.match(r'\d+(?:\.\d+)?', str(timeouttime)) is not None:
-            # floatに変換できる
-            try:
-                self.window.external_cmd1 = external_cmd1
-                self.window.external_cmd2 = external_cmd2
-                self.window.timeouttime = float(timeouttime)
-                self.event.set()  # ウィンドウへメニューの設定変更を通知
-                self.dialog.destroy()
-            except ValueError:
-                pass
+        json_file = self.json_file.get()
+        self.window.json_file = json_file
+        self.event.set()  # ウィンドウへメニューの設定変更を通知
+        self.dialog.destroy()
 
 
 class ScreenBoard:
