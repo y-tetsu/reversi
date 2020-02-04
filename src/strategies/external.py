@@ -21,9 +21,9 @@ class External(AbstractStrategy):
     """
     外部コマンドを実行する
     """
-    def __init__(self, cmd=None):
+    def __init__(self, cmd=None, timeouttime=TIMEOUT_TIME):
         self.cmd = cmd
-        self.timeouttime = TIMEOUT_TIME
+        self.timeouttime = timeouttime
 
     def next_move(self, color, board):
         """
