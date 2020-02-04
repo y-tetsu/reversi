@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+なるべく上の方の左端に置く
+"""
+
 import sys
 
 
