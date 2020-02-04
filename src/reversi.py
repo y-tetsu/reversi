@@ -132,10 +132,6 @@ class Reversi:
 
         # ウィンドウの設定をゲームに反映
         strategies.common.Timer.time_limit = self.window.cputime
-        self.strategies['External1'].cmd = self.window.external_cmd1
-        self.strategies['External1'].timeouttime = self.window.timeouttime
-        self.strategies['External2'].cmd = self.window.external_cmd2
-        self.strategies['External2'].timeouttime = self.window.timeouttime
 
         game = Game(board, players['black'], players['white'], WindowDisplay(self.window), cancel=self.window.menu)
         game.play()
@@ -192,8 +188,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch', 'External1']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch', 'External2']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -215,8 +211,6 @@ if __name__ == '__main__':
         'Iterative': strategies.AbIF9J_B_TPW(),
         'NegaScout': strategies.NsIF9J_B_TPW(),
         'Switch': strategies.SwitchNsF9J(),
-        'External1': strategies.External(),
-        'External2': strategies.External(),
     }
 
     # ゲーム用スレッド
