@@ -287,6 +287,7 @@ if __name__ == '__main__':
         'SwitchNsF9JRo': strategies.SwitchNsF9JRo(),
         'SwitchNsF12JRo': strategies.SwitchNsF12JRo(),
         'RandomF11': strategies.RandomF11(),
+        'TopLeft': strategies.External('python ./strategies/ex/python/topleft.py', 3),
     }
 
     black_players = [Player('black', c, strategy_list[c]) for c in setting['characters']]
