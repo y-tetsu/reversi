@@ -3,8 +3,10 @@
 GUIウィンドウ
 """
 
+import os
 import time
 import tkinter as tk
+import tkinter.filedialog as filedialog
 import threading
 import re
 
@@ -101,8 +103,8 @@ CPUTIME_DIALOG_WIDTH = 230         # 幅
 CPUTIME_DIALOG_HEIGHT = 80         # 高さ
 
 EXTERNAL_DIALOG_TITLE = 'External'  # タイトル
-EXTERNAL_DIALOG_WIDTH = 450         # 幅
-EXTERNAL_DIALOG_HEIGHT = 80         # 高さ
+EXTERNAL_DIALOG_WIDTH = 700         # 幅
+EXTERNAL_DIALOG_HEIGHT = 90         # 高さ
 
 
 class Window(tk.Frame):
@@ -277,13 +279,32 @@ class ExternalDialog:
 
         self.json_file = tk.StringVar()
         self.json_file.set(self.window.json_file)
-        label = tk.Label(self.dialog, text='登録用ファイル')
-        label.pack(anchor='w')
-        entry = tk.Entry(self.dialog, textvariable=self.json_file)
-        entry.pack(fill='x', padx='5', pady='5')
+        label = tk.Label(self.dialog, text='登録ファイルを読み込むとAIを追加できます')
+        label.pack(anchor='w', padx='5')
+
+        frame = tk.Frame(self.dialog)
+        frame.pack(fill='x', pady='5')
+        label = tk.Label(frame, text='登録ファイル')
+        label.pack(side='left', padx='5')
+
+        entry = tk.Entry(frame, textvariable=self.json_file)
+        entry.pack(side='left', expand=1, fill='x', pady='5')
+
+        button = tk.Button(frame, text="参照", command=self.select_json)
+        button.pack(side='right', padx='5')
 
         button = tk.Button(self.dialog, text="読み込む", command=self.set_parameter)
         button.pack()
+
+    def select_json(self):
+        """
+        JSONファイルを選択する
+        """
+        ini_dir = os.path.abspath(os.path.dirname('./strategies/ex/'))
+        json_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
+
+        if json_file:
+            self.json_file.set(json_file)
 
     def set_parameter(self):
         """
