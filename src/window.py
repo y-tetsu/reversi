@@ -9,6 +9,7 @@ import tkinter as tk
 import tkinter.filedialog as filedialog
 import threading
 import re
+import json
 
 import board
 from board import Board
@@ -185,8 +186,11 @@ class Menu(tk.Menu):
         """
         メニューの追加
         """
+        self.menus = {}
+
         for name, items in self.menu_items.items():
             menu = tk.Menu(self, tearoff=False)
+            self.menus[name] = menu
 
             for item in items:
                 menu.add_command(label=str(item), command=self._command(name, item))
@@ -320,6 +324,18 @@ class ExternalDialog:
         """
         json_file = self.json_file.get()
         self.window.json_file = json_file
+
+        with open(json_file, 'r') as f:
+            json_dict = json.load(f)
+
+            # メニューにAIの名前を追加
+            name = json_dict['name']
+
+            for color in ('black', 'white'):
+                if name not in self.window.menu.menu_items[color]:
+                    self.window.menu.menu_items[color].append(name)
+                    self.window.menu.menus[color].add_command(label=str(name), command=self.window.menu._command(color, name))
+
         self.event.set()  # ウィンドウへメニューの設定変更を通知
         self.dialog.destroy()
 
