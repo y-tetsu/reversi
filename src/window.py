@@ -9,7 +9,6 @@ import tkinter as tk
 import tkinter.filedialog as filedialog
 import threading
 import re
-import json
 
 import board
 from board import Board
@@ -123,7 +122,7 @@ class Window(tk.Frame):
         self.assist = ASSIST_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
-        self.json_file = ''
+        self.external_file = ''
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -289,8 +288,8 @@ class ExternalDialog:
         self.dialog.resizable(1, 0)  # 横方向だけリサイズ許可
         self.dialog.grab_set()
 
-        self.json_file = tk.StringVar()
-        self.json_file.set(self.window.json_file)
+        self.external_file = tk.StringVar()
+        self.external_file.set(self.window.external_file)
         label = tk.Label(self.dialog, text='登録ファイルを読み込むとAIを追加できます')
         label.pack(anchor='w', padx='5')
 
@@ -299,43 +298,31 @@ class ExternalDialog:
         label = tk.Label(frame, text='登録ファイル')
         label.pack(side='left', padx='5')
 
-        entry = tk.Entry(frame, textvariable=self.json_file)
+        entry = tk.Entry(frame, textvariable=self.external_file)
         entry.pack(side='left', expand=1, fill='x', pady='5')
 
-        button = tk.Button(frame, text="参照", command=self.select_json)
+        button = tk.Button(frame, text="参照", command=self.select_external_file)
         button.pack(side='right', padx='5')
 
         button = tk.Button(self.dialog, text="読み込む", command=self.set_parameter)
         button.pack()
 
-    def select_json(self):
+    def select_external_file(self):
         """
-        JSONファイルを選択する
+        登録ファイルを選択する
         """
         ini_dir = os.path.abspath(os.path.dirname('./strategies/ex/'))
-        json_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
+        external_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
 
-        if json_file:
-            self.json_file.set(json_file)
+        if external_file:
+            self.external_file.set(external_file)
 
     def set_parameter(self):
         """
         パラメータを設定する
         """
-        json_file = self.json_file.get()
-        self.window.json_file = json_file
-
-        with open(json_file, 'r') as f:
-            json_dict = json.load(f)
-
-            # メニューにAIの名前を追加
-            name = json_dict['name']
-
-            for color in ('black', 'white'):
-                if name not in self.window.menu.menu_items[color]:
-                    self.window.menu.menu_items[color].append(name)
-                    self.window.menu.menus[color].add_command(label=str(name), command=self.window.menu._command(color, name))
-
+        external_file = self.external_file.get()
+        self.window.external_file = external_file
         self.event.set()  # ウィンドウへメニューの設定変更を通知
         self.dialog.destroy()
 

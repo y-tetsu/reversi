@@ -4,7 +4,10 @@ GUI版リバーシアプリ
 """
 
 import sys
+import os
 import time
+import tkinter as tk
+import json
 
 from board import BitBoard
 from player import Player
@@ -60,7 +63,52 @@ class Reversi:
         """
         self.window.init_screen()
         self.window.set_state('normal')
+
+        # メニューで登録ファイルが読み込まれた場合
+        if self.window.external_file:
+            external_file = self.window.external_file
+            self.window.external_file = ""
+            self._load_external_file(external_file)
+
         self.state = Reversi.DEMO
+
+    def _load_external_file(self, external_file):
+        """
+        登録ファイルを読み込む
+        """
+        if os.path.isfile(external_file):
+            with open(external_file, 'r') as f:
+                try:
+                    json_dict = json.load(f)
+
+                    # メニューにAIの名前を追加
+                    name = json_dict['name']
+
+                    for color in ('black', 'white'):
+                        if name not in self.window.menu.menu_items[color]:
+                            self.window.menu.menu_items[color].append(name)
+                            self.window.menu.menus[color].add_command(label=str(name), command=self.window.menu._command(color, name))
+
+                except Exception:
+                    self.error_message('フォーマットエラーのため登録ファイルが読み込めませんでした')
+        else:
+            self.error_message('指定された登録ファイルが見つかりませんでした')
+
+    def error_message(self, message):
+        """
+        エラーメッセージを表示
+        """
+        root = tk.Tk()
+        root.title('Error')
+        root.minsize(300, 30)
+        label = tk.Label(root, text=message)
+        label.pack(fill='x', padx='5', pady='5')
+        root.mainloop()
+
+    def _load_extern_file(self):
+        """
+        JSONふぁｋ
+        """
 
     def __demo(self):
         """
