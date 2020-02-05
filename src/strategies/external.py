@@ -34,7 +34,7 @@ class External(AbstractStrategy):
         board_info = "\n".join([" ".join(row) for row in [[str(col) for col in row] for row in board.get_board_info()]])
 
         # {手番の色(黒:1、白:-1)}
-        # {ボードのサイズ(4～26)}
+        # {ボードのサイズ(4～26までの偶数)}
         # {ボードの情報(空:0、黒:1、白:-1)}
         # ex)
         # -1
