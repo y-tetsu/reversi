@@ -65,19 +65,19 @@ class Reversi:
         self.window.set_state('normal')
 
         # メニューで登録ファイルが読み込まれた場合
-        if self.window.external_file:
-            external_file = self.window.external_file
-            self.window.external_file = ""
-            self._load_external_file(external_file)
+        if self.window.extra_file:
+            extra_file = self.window.extra_file
+            self.window.extra_file = ""
+            self._load_extra_file(extra_file)
 
         self.state = Reversi.DEMO
 
-    def _load_external_file(self, external_file):
+    def _load_extra_file(self, extra_file):
         """
         登録ファイルを読み込む
         """
-        if os.path.isfile(external_file):
-            with open(external_file, 'r') as f:
+        if os.path.isfile(extra_file):
+            with open(extra_file, 'r') as f:
                 try:
                     # 設定の読み出し
                     json_dict = json.load(f)

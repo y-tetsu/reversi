@@ -83,7 +83,7 @@ CANCEL_MENU = ['OK']         # ゲームのキャンセル
 CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
 CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
 
-EXTERNAL_MENU = ['Set']                          # 外部プログラム設定の変更
+EXTRA_MENU = ['Set']  # プレイヤー追加設定の変更
 
 STONE_MARK = '●'      # 石のマーク
 
@@ -102,9 +102,9 @@ CPUTIME_DIALOG_TITLE = 'CPU_TIME'  # タイトル
 CPUTIME_DIALOG_WIDTH = 230         # 幅
 CPUTIME_DIALOG_HEIGHT = 90         # 高さ
 
-EXTERNAL_DIALOG_TITLE = 'External'  # タイトル
-EXTERNAL_DIALOG_WIDTH = 700         # 幅
-EXTERNAL_DIALOG_HEIGHT = 90         # 高さ
+EXTRA_DIALOG_TITLE = 'Extra'  # タイトル
+EXTRA_DIALOG_WIDTH = 700      # 幅
+EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
 
 class Window(tk.Frame):
@@ -122,7 +122,7 @@ class Window(tk.Frame):
         self.assist = ASSIST_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
-        self.external_file = ''
+        self.extra_file = ''
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -176,7 +176,7 @@ class Menu(tk.Menu):
         self.menu_items['black'] = black_players
         self.menu_items['white'] = white_players
         self.menu_items['cputime'] = CPUTIME_MENU
-        self.menu_items['external'] = EXTERNAL_MENU
+        self.menu_items['extra'] = EXTRA_MENU
         self.menu_items['assist'] = ASSIST_MENU
         self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
@@ -209,8 +209,8 @@ class Menu(tk.Menu):
                 if name == 'cputime':
                     CpuTimeDialog(window=self.window, event=self.event)
 
-                if name == 'external':
-                    ExternalDialog(window=self.window, event=self.event)
+                if name == 'extra':
+                    ExtraDialog(window=self.window, event=self.event)
 
                 self.assist= item if name == 'assist' else self.assist
                 self.cancel= item if name == 'cancel' else self.cancel
@@ -275,22 +275,22 @@ class CpuTimeDialog:
                 pass
 
 
-class ExternalDialog:
+class ExtraDialog:
     """
-    External設定ダイアログ
+    Extra設定ダイアログ
     """
     def __init__(self, window=None, event=None):
         self.window = window
         self.event = event
         self.dialog = tk.Toplevel(master=self.window.root)
-        self.dialog.title(EXTERNAL_DIALOG_TITLE)
-        self.dialog.minsize(EXTERNAL_DIALOG_WIDTH, EXTERNAL_DIALOG_HEIGHT)  # 最小サイズ
+        self.dialog.title(EXTRA_DIALOG_TITLE)
+        self.dialog.minsize(EXTRA_DIALOG_WIDTH, EXTRA_DIALOG_HEIGHT)  # 最小サイズ
         self.dialog.resizable(1, 0)  # 横方向だけリサイズ許可
         self.dialog.grab_set()
 
-        self.external_file = tk.StringVar()
-        self.external_file.set(self.window.external_file)
-        label = tk.Label(self.dialog, text='登録ファイルを読み込むとAIを追加できます')
+        self.extra_file = tk.StringVar()
+        self.extra_file.set(self.window.extra_file)
+        label = tk.Label(self.dialog, text='登録ファイルを読み込むとプレイヤーを追加できます')
         label.pack(anchor='w', padx='5')
 
         frame = tk.Frame(self.dialog)
@@ -298,31 +298,31 @@ class ExternalDialog:
         label = tk.Label(frame, text='登録ファイル')
         label.pack(side='left', padx='5')
 
-        entry = tk.Entry(frame, textvariable=self.external_file)
+        entry = tk.Entry(frame, textvariable=self.extra_file)
         entry.pack(side='left', expand=1, fill='x', pady='5')
 
-        button = tk.Button(frame, text="参照", command=self.select_external_file)
+        button = tk.Button(frame, text="参照", command=self.select_extra_file)
         button.pack(side='right', padx='5')
 
         button = tk.Button(self.dialog, text="読み込む", command=self.set_parameter)
         button.pack()
 
-    def select_external_file(self):
+    def select_extra_file(self):
         """
         登録ファイルを選択する
         """
-        ini_dir = os.path.abspath(os.path.dirname('./strategies/ex/'))
-        external_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
+        ini_dir = os.path.abspath(os.path.dirname('./strategies/extra/'))
+        extra_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
 
-        if external_file:
-            self.external_file.set(external_file)
+        if extra_file:
+            self.extra_file.set(extra_file)
 
     def set_parameter(self):
         """
         パラメータを設定する
         """
-        external_file = self.external_file.get()
-        self.window.external_file = external_file
+        extra_file = self.extra_file.get()
+        self.window.extra_file = extra_file
         self.event.set()  # ウィンドウへメニューの設定変更を通知
         self.dialog.destroy()
 
