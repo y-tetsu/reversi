@@ -93,7 +93,7 @@ $ python reversi.py
 ```
 
 下記に白の手番、盤面サイズ8x8の例を示します。<br>
-![stdin](https://github.com/y-tetsu/reversi/blob/master/image/stdin.png?raw=true)
+![stdin](https://github.com/y-tetsu/reversi/blob/master/image/stdin2.png?raw=true)
 ```
 -1
 8
