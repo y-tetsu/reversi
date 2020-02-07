@@ -85,7 +85,7 @@ Extraメニューより登録ファイルを読み込ませると遊べるよう
 盤面の石の2次元配置(空き:0、黒:1、白:-1をスペース区切り)
 ```
 
-下記に白の手番、盤面サイズ8x8の例を示します。
+下記に白の手番、盤面サイズ8x8の例を示します。<br>
 ![stdin](https://github.com/y-tetsu/reversi/blob/master/image/stdin.png?raw=true)
 ```
 -1
@@ -104,10 +104,10 @@ Extraメニューより登録ファイルを読み込ませると遊べるよう
 追加プレイヤーが標準出力する実行結果の情報です。
 ```
 盤面の座標(左上を起点(0,0)としてxとyをスペース区切り)
-![stdout](https://github.com/y-tetsu/reversi/blob/master/image/stdout.png?raw=true)
 ```
 
-下記にc5へ打つ場合の例を示します。
+下記にc5へ打つ場合の例を示します。<br>
+![stdout](https://github.com/y-tetsu/reversi/blob/master/image/stdout.png?raw=true)
 ```
 2 4
 ```
