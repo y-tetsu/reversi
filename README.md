@@ -86,6 +86,7 @@ Extraメニューより登録ファイルを読み込ませると遊べるよう
 ```
 
 下記に白の手番、盤面サイズ8x8の例を示します。
+![stdin](https://github.com/y-tetsu/reversi/blob/master/image/stdin.png?raw=true)
 ```
 -1
 8
@@ -103,6 +104,7 @@ Extraメニューより登録ファイルを読み込ませると遊べるよう
 追加プレイヤーが標準出力する実行結果の情報です。
 ```
 盤面の座標(左上を起点(0,0)としてxとyをスペース区切り)
+![stdout](https://github.com/y-tetsu/reversi/blob/master/image/stdout.png?raw=true)
 ```
 
 下記にc5へ打つ場合の例を示します。
@@ -132,7 +134,7 @@ Extraメニューより登録ファイルを読み込ませると遊べるよう
 
 ## その他
 ### コンソール版
-![gui](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
+![console](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
 #### 実行方法
 ```
 $ python reversic.py
