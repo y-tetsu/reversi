@@ -123,7 +123,7 @@ Extraメニューより登録ファイルを読み込ませると遊べるよう
 }
 ```
 
-下記に、pythonで作ったTopLeftの例を示します。
+下記に、pythonで動作するTopLeftの例を示します。
 ```
 {
     "name": "TopLeft",
