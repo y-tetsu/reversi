@@ -13,6 +13,8 @@ $ python reversi.py
 [ダウンロード](https://github.com/y-tetsu/reversi/releases)
 
 ### メニュー一覧
+ゲームで選べるメニューの一覧です。<br>
+
  |名前|内容|
  |:---|:---|
  |Size |盤面のサイズ(4～26までの偶数)を選択します。 |
@@ -76,7 +78,7 @@ $ python reversi.py
 
 ![external](https://github.com/y-tetsu/reversi/blob/master/image/external.png?raw=true)
 
-1. ゲーム開始後、追加プレイヤーの手番になると**reversi**は対応するプログラムのコマンドを実行します。<br>その際、標準入力に盤面情報を渡しプログラムからの応答を待ちます。
+1. ゲーム開始後、追加プレイヤーの手番になると**reversi**は対応するプログラムのコマンドを実行します。<br>その際、標準入力に盤面情報を渡し追加プレイヤーのプログラムからの応答を待ちます。
 
 2. 追加プレイヤーは標準入力から盤面情報を受け取り、次の手を決め、その結果を標準出力します。<br>(そのようなプログラムを書いてください)
 
@@ -139,7 +141,7 @@ $ python reversi.py
 
 ## その他
 ### コンソール版
-コマンドプロンプトなどコンソール上で遊べるタイプです。
+コマンドプロンプトなどコンソール上で遊べるタイプです。<br>
 ![console](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
 #### 実行方法
 ```
