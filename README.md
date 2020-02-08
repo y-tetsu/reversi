@@ -2,7 +2,7 @@
 Pythonで作るリバーシ
 
 ## ゲーム紹介
-![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi.gif?raw=true)
+![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
 
 ### 実行方法
 ```
