@@ -62,6 +62,7 @@ $ python reversi.py
  |名前|特徴|難易度|登録ファイル|開発言語|動作環境|
  |:---|:---|:---:|:---:|:---:|:---|
  |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |[Python 3.7.0](https://www.python.org/downloads/) |
+ |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
 
 ### プレイヤー作成手順
 プレイヤーを自作して遊ぶには、下記の手順でプレイヤーの作成と登録を行って下さい。
