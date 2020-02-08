@@ -1,0 +1,5 @@
+{
+    "name": "RandomCorner",
+    "cmd": "cscript ./strategies/extra/vbscript/randomcorner/randomcorner.py",
+    "timeouttime": 60
+}
