@@ -161,7 +161,7 @@ $ python reversic.py
     - numpy 1.15.1<br>
     - cython 0.28.5<br>
     - pyinstaller 3.4<br>
-- Microsoft Visual C++ 2019<br>
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ## 参考書籍
 - 「実践Python3」Mark Summerfield著 斎藤 康毅訳 株式会社オライリー・ジャパン [ISBN978-4-87311-739-3](https://www.oreilly.co.jp/books/9784873117393/)
