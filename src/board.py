@@ -113,9 +113,14 @@ class Board(AbstractBoard):
         """
         指定座標のひっくり返せる石の場所をすべて返す
         """
+        # 方向
+        # (-1,  1) (0,  1) (1,  1)
+        # (-1,  0)         (1,  0)
+        # (-1, -1) (0, -1) (1, -1)
         directions = [
-            (1, 0), (1, 1), (0, 1), (-1, 1),
-            (-1, 0), (-1, -1), (0, -1), (1, -1)
+            (-1,  1), (0,  1), (1,  1),
+            (-1,  0),          (1,  0),
+            (-1, -1), (0, -1), (1, -1)
         ]
         ret = []
 
@@ -145,7 +150,7 @@ class Board(AbstractBoard):
             if self._in_range(next_x, next_y):
                 next_value = self._board[next_y][next_x]
 
-                # 石が置いていない
+                # 石が置かれている
                 if next_value != self.stone['blank']:
                     # 置いた石と同じ色が見つかった場合
                     if next_value == self.stone[color]:
