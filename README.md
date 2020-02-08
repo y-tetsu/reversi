@@ -114,7 +114,7 @@ $ python reversi.py
 ```
 
 下記にc5へ打つ場合の例を示します。<br>
-![stdout](https://github.com/y-tetsu/reversi/blob/master/image/stdout.png?raw=true)
+![stdout](https://github.com/y-tetsu/reversi/blob/master/image/stdout2.png?raw=true)
 ```
 2 4
 ```
