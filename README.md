@@ -2,6 +2,8 @@
 Pythonで作るリバーシ
 
 ## ゲーム紹介
+盤面のサイズや対戦プレイヤーをいろいろ選べるデスクトップ上で遊ぶリバーシです。
+
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
 
 ### 実行方法
