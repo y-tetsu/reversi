@@ -74,7 +74,7 @@ $ python reversi.py
 
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/extra.gif?raw=true)
 
-### 追加プレイヤーの実行
+#### 追加プレイヤーの実行
 追加プレイヤーを**reversi**に登録すると外部プログラムとして実行されるようになります。<br>
 以下に処理の流れを示します。
 
@@ -121,7 +121,7 @@ $ python reversi.py
 2 4
 ```
 
-### 登録ファイル
+#### 登録ファイル
 追加プレイヤーを**reversi**に登録するために本ファイルを作成する必要があります。<br>
 登録ファイルは下記のフォーマット(JSON形式)に従って`stratgies/extra/`以下に作成してください。<br>
 作成後、Extraメニューより読み込む事でプレイヤーが追加されます。
