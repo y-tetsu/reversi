@@ -59,7 +59,7 @@ $ python reversi.py
 
  |名前|特徴|難易度|登録ファイル|開発言語|動作環境|
  |:---|:---|:---:|:---:|:---:|:---|
- |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Python 3.7.0 |
+ |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |[Python 3.7.0](https://www.python.org/downloads/) |
 
 ### プレイヤー作成手順
 プレイヤーを自作して遊ぶには、下記の手順でプレイヤーの作成と登録を行って下さい。
@@ -157,7 +157,7 @@ $ python reversic.py
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- Python 3.7.0<br>
+- [Python 3.7.0](https://www.python.org/downloads/)<br>
     - numpy 1.15.1<br>
     - cython 0.28.5<br>
     - pyinstaller 3.4<br>
