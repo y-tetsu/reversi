@@ -47,8 +47,6 @@ Dim aryPossibles
 
 aryPossibles = GetPossibles(intColor, intSize, intBoard)
 
-
-
 '--------------------
 ' Œ‹‰Êo—Í
 '--------------------
@@ -114,7 +112,6 @@ Function GetPossibles(intColor, intSize, intBoard)
     GetPossibles = aryPossibles
 
 End Function
-
 
 'Î‚ª‚Ğ‚Á‚­‚è•Ô‚¹‚é‚©”»’è‚·‚é
 Function IsReversible(intColor, intSize, intBoard, x, y)
