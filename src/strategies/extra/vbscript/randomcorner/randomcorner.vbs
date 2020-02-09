@@ -81,7 +81,6 @@ Next
 '‚»‚êˆÈŠO‚Íƒ‰ƒ“ƒ_ƒ€
 If strNextMove = "" Then
     Randomize
-    Wscript.StdErr.WriteLine(Ubound(aryPossibles))
     strNextMove = aryPossibles(Int(Rnd() * (Ubound(aryPossibles)+1)))
 End If
 
