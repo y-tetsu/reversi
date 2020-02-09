@@ -113,6 +113,7 @@ if __name__ == '__main__':
 
     # 置ける場所を取得
     possibles = list(get_possibles(color, size, board).keys())
+    print(possibles, file=sys.stderr)
 
     # 一番上の左端を取得
     x, y = possibles[0]
