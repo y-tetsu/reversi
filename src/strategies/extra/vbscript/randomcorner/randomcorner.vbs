@@ -52,9 +52,39 @@ aryPossibles = GetPossibles(intColor, intSize, intBoard)
 '--------------------
 ' 結果出力
 '--------------------
+Dim strNextMove
+
+strNextMove = ""
+
 '角がある場合は優先する
+Dim aryCorners
+Dim strCorner
+Dim strPossible
+Dim intNum
+
+aryCorners = Array("0 0", CStr(intSize-1) + " 0", "0 " + CStr(intSize-1), CStr(intSize-1) + " " + CStr(intSize-1))
+
+For Each strCorner in aryCorners
+    For Each strPossible in aryPossibles
+        If strCorner = strPossible Then
+            strNextMove = strCorner
+            Wscript.StdErr.WriteLine("CORNER : "  + strCorner)
+            Exit For
+        End If
+    Next
+
+    If strNextMove <> "" Then
+        Exit For
+    End If
+Next
+
 'それ以外はランダム
-Wscript.StdOut.WriteLine("0 0")
+If strNextMove = "" Then
+    Randomize
+    strNextMove = aryPossibles(Int(Rnd() * (Ubound(aryPossibles)+1)))
+End If
+
+Wscript.StdOut.WriteLine(strNextMove)
 
 
 '置ける場所をすべて返す
