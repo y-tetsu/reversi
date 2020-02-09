@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.iterative import NsI_B_TPW, NsI_BC_TPW
+from strategies.iterative import NsI_B_TPW
 from strategies.negascout import NegaScout_TPW
 from strategies.coordinator import Evaluator_TPW
 
@@ -48,9 +48,9 @@ class Switch(AbstractStrategy):
         return strategy.next_move(color, board)
 
 
-class SwitchNegaScout(Switch):
+class SwitchNsI_B_TPW(Switch):
     """
-    パラーメータ切り替え型
+    NsI_B_TPWのパラーメータ切り替え型
     """
     def __init__(
             self,
@@ -64,9 +64,9 @@ class SwitchNegaScout(Switch):
             strategies=[
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=100, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
                 NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 70, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 30, c=-10, a1= 0, a2= 0, b= 0, x=-15, o=-3, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  1, c=  1, a1= 1, a2= 1, b= 1, x=  1, o= 1, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  1, c=  1, a1= 1, a2= 1, b= 1, x=  1, o= 1, wp= 5)))
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 50, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 30, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 6))),
+                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  5, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 8)))
             ]):
         super().__init__(turns, strategies)
 
@@ -76,24 +76,62 @@ if __name__ == '__main__':
     import os
     from board import BitBoard
 
-    print('--- Test For SwitchNegaScout Strategy ---')
-    switch = SwitchNegaScout()
-    assert switch.turns == [20, 40, 60]
+    print('--- Test For SwitchNsI_B_TPW Strategy ---')
+    switch = SwitchNsI_B_TPW()
+    assert switch.turns == [15, 25, 35, 45, 60]
     assert switch.strategies[0].__class__.__name__ == 'NsI_B_TPW'
     assert switch.strategies[1].__class__.__name__ == 'NsI_B_TPW'
-    assert switch.strategies[2].__class__.__name__ == 'NsI_BC_TPW'
+    assert switch.strategies[2].__class__.__name__ == 'NsI_B_TPW'
+    assert switch.strategies[3].__class__.__name__ == 'NsI_B_TPW'
+    assert switch.strategies[4].__class__.__name__ == 'NsI_B_TPW'
 
-    assert switch.strategies[0].search.evaluator.table.table._CORNER == 70
-    assert switch.strategies[1].search.evaluator.table.table._CORNER == 50
-    assert switch.strategies[2].search.evaluator.table.table._CORNER == 50
+    assert switch.strategies[0].search.evaluator.t.scorer.table._CORNER == 100
+    assert switch.strategies[1].search.evaluator.t.scorer.table._CORNER == 70
+    assert switch.strategies[2].search.evaluator.t.scorer.table._CORNER == 50
+    assert switch.strategies[3].search.evaluator.t.scorer.table._CORNER == 30
+    assert switch.strategies[4].search.evaluator.t.scorer.table._CORNER == 5
 
-    assert switch.strategies[0].search.evaluator.table.table._C == -20
-    assert switch.strategies[1].search.evaluator.table.table._C == -20
-    assert switch.strategies[2].search.evaluator.table.table._C == -10
+    assert switch.strategies[0].search.evaluator.t.scorer.table._C == -20
+    assert switch.strategies[1].search.evaluator.t.scorer.table._C == -20
+    assert switch.strategies[2].search.evaluator.t.scorer.table._C == -20
+    assert switch.strategies[3].search.evaluator.t.scorer.table._C == 0
+    assert switch.strategies[4].search.evaluator.t.scorer.table._C == 0
 
-    assert switch.strategies[0].search.evaluator.possibility._W == 2
-    assert switch.strategies[1].search.evaluator.possibility._W == 5
-    assert switch.strategies[2].search.evaluator.possibility._W == 5
+    assert switch.strategies[0].search.evaluator.t.scorer.table._A1 == 0
+    assert switch.strategies[1].search.evaluator.t.scorer.table._A1 == 0
+    assert switch.strategies[2].search.evaluator.t.scorer.table._A1 == 0
+    assert switch.strategies[3].search.evaluator.t.scorer.table._A1 == 1
+    assert switch.strategies[4].search.evaluator.t.scorer.table._A1 == 1
+
+    assert switch.strategies[0].search.evaluator.t.scorer.table._A2 == -1
+    assert switch.strategies[1].search.evaluator.t.scorer.table._A2 == -1
+    assert switch.strategies[2].search.evaluator.t.scorer.table._A2 == -1
+    assert switch.strategies[3].search.evaluator.t.scorer.table._A2 == 1
+    assert switch.strategies[4].search.evaluator.t.scorer.table._A2 == 1
+
+    assert switch.strategies[0].search.evaluator.t.scorer.table._B == -1
+    assert switch.strategies[1].search.evaluator.t.scorer.table._B == -1
+    assert switch.strategies[2].search.evaluator.t.scorer.table._B == -1
+    assert switch.strategies[3].search.evaluator.t.scorer.table._B == 1
+    assert switch.strategies[4].search.evaluator.t.scorer.table._B == 1
+
+    assert switch.strategies[0].search.evaluator.t.scorer.table._X == -25
+    assert switch.strategies[1].search.evaluator.t.scorer.table._X == -25
+    assert switch.strategies[2].search.evaluator.t.scorer.table._X == -25
+    assert switch.strategies[3].search.evaluator.t.scorer.table._X == 0
+    assert switch.strategies[4].search.evaluator.t.scorer.table._X == 0
+
+    assert switch.strategies[0].search.evaluator.t.scorer.table._O == -5
+    assert switch.strategies[1].search.evaluator.t.scorer.table._O == -5
+    assert switch.strategies[2].search.evaluator.t.scorer.table._O == -5
+    assert switch.strategies[3].search.evaluator.t.scorer.table._O == 1
+    assert switch.strategies[4].search.evaluator.t.scorer.table._O == 1
+
+    assert switch.strategies[0].search.evaluator.p.scorer._W == 5
+    assert switch.strategies[1].search.evaluator.p.scorer._W == 5
+    assert switch.strategies[2].search.evaluator.p.scorer._W == 5
+    assert switch.strategies[3].search.evaluator.p.scorer._W == 6
+    assert switch.strategies[4].search.evaluator.p.scorer._W == 8
 
     bitboard8 = BitBoard()
     bitboard8.put_stone('black', 3, 2)
