@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_BC_TPW, AbIF11_B_TPW, AbIF11_BC_TPW, NsIF9_B_TPW, SwitchNsF9, SwitchNsF11, SwitchNsF12
+from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_BC_TPW, AbIF11_B_TPW, AbIF11_BC_TPW, NsIF9_B_TPW, SwitchNsIF9_B_TPW
 
 
 # ===== 定石リスト =====
@@ -913,30 +913,12 @@ class NsIF9J_B_TPW(Joseki):
         super().__init__(base)
 
 
-class SwitchNsF9J(Joseki):
+class SwitchNsIF9J_B_TPW(Joseki):
     """
-    SwitchNegaScout+定石打ち
+    SwitchNsIF9_B_TPW+定石打ち
     (完全読み開始:残り9手)
     """
-    def __init__(self, base=SwitchNsF9()):
-        super().__init__(base)
-
-
-class SwitchNsF11J(Joseki):
-    """
-    SwitchNegaScout+定石打ち
-    (完全読み開始:残り11手)
-    """
-    def __init__(self, base=SwitchNsF11()):
-        super().__init__(base)
-
-
-class SwitchNsF12J(Joseki):
-    """
-    SwitchNegaScout+定石打ち
-    (完全読み開始:残り12手)
-    """
-    def __init__(self, base=SwitchNsF12()):
+    def __init__(self, base=SwitchNsIF9_B_TPW()):
         super().__init__(base)
 
 
