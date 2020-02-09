@@ -263,7 +263,7 @@ if __name__ == '__main__':
         'Joseki' : strategies.AlphaBeta4F9J_TPW(),
         'Iterative': strategies.AbIF9J_B_TPW(),
         'NegaScout': strategies.NsIF9J_B_TPW(),
-        'Switch': strategies.SwitchNsF9J(),
+        'Switch': strategies.SwitchNsIF9J_B_TPW(),
     }
 
     # ゲーム用スレッド

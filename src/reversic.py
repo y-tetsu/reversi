@@ -29,7 +29,7 @@ BLACK_STRATEGIES = {
     'Joseki': strategies.AlphaBeta4F9J_TPW(),
     'Iterative': strategies.AbIF9J_B_TPW(),
     'NegaScout': strategies.NsIF9J_B_TPW(),
-    'Switch': strategies.SwitchNsF9J(),
+    'Switch': strategies.SwitchNsIF9J_B_TPW(),
 }
 
 WHITE_STRATEGIES = {
@@ -47,7 +47,7 @@ WHITE_STRATEGIES = {
     'Joseki': strategies.AlphaBeta4F9J_TPW(),
     'Iterative': strategies.AbIF9J_B_TPW(),
     'NegaScout': strategies.NsIF9J_B_TPW(),
-    'Switch': strategies.SwitchNsF9J(),
+    'Switch': strategies.SwitchNsIF9J_B_TPW(),
 }
 
 STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}
