@@ -81,6 +81,7 @@ Next
 '‚»‚êˆÈŠO‚Íƒ‰ƒ“ƒ_ƒ€
 If strNextMove = "" Then
     Randomize
+    Wscript.StdErr.WriteLine(Ubound(aryPossibles))
     strNextMove = aryPossibles(Int(Rnd() * (Ubound(aryPossibles)+1)))
 End If
 
@@ -123,7 +124,7 @@ Function IsReversible(intColor, intSize, intBoard, x, y)
     Dim aryDir
 
     intRet = 0
-    aryDirs = Array(Array(-1, 1), Array(0, 1), Array(1, 1), Array(-1, 0), Array(1, 0), Array(-1, -1), Array(0, 1), Array(1, -1))
+    aryDirs = Array(Array(-1, 1), Array(0, 1), Array(1, 1), Array(-1, 0), Array(1, 0), Array(-1, -1), Array(0, -1), Array(1, -1))
 
     If intBoard(y, x) = BLANK Then
         For Each aryDir in aryDirs
