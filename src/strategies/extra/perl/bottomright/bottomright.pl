@@ -30,6 +30,7 @@ foreach my $row (@board) {
 
 # 置ける場所の一番下の右端を返す
 my @possibles = &get_possibles($color, $size, \@board);
+print STDERR join(" , ", @possibles) . "\n";
 
 print($possibles[0]);
 
