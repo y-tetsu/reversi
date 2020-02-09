@@ -63,6 +63,7 @@ $ python reversi.py
  |:---|:---|:---:|:---:|:---:|:---|
  |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |[Python 3.7.0](https://www.python.org/downloads/) |
  |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
+ |RandomCorner |角が取れる時は必ず取ります。それ以外はランダムに手を選びます。 | ★ | randomcorner.json | VBScript |Windows10 64bit |
 
 ### プレイヤー作成手順
 プレイヤーを自作して遊ぶには、下記の手順でプレイヤーの作成と登録を行って下さい。
