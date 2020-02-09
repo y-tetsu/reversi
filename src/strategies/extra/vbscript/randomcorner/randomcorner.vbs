@@ -1,42 +1,144 @@
 Option Explicit
+'============================================================
+' RandomCorner : äpÇ™éÊÇÍÇÈéûÇÕïKÇ∏Ç∆ÇÈÅBÇªÇÍà»äOÇÕÉâÉìÉ_ÉÄÅB
+'============================================================
 
 Dim intColor
-Dim intBoardSize
+Dim intSize
 Dim intBoard()
 
+Const BLANK = 0
+Const BLACK = 1
+Const WHITE = -1
+
 '--------------------
-' Ê®ôÊ∫ñÂÖ•Âäõ„ÅÆÂèó„ÅëÂèñ„Çä
+' ïWèÄì¸óÕÇÃéÛÇØéÊÇË
 '--------------------
-intColor = WScript.StdIn.Readline() ' ÊâãÁï™
+intColor = CInt(WScript.StdIn.Readline()) ' éËî‘
 Wscript.StdErr.WriteLine(intColor)
 
-intBoardSize = WScript.StdIn.Readline() ' Áõ§Èù¢„Çµ„Ç§„Ç∫
-Wscript.StdErr.WriteLine(intBoardSize)
+intSize = CInt(WScript.StdIn.Readline()) ' î’ñ ÉTÉCÉY
+Wscript.StdErr.WriteLine(intSize)
 
-ReDim intBoard(intBoardSize-1, intBoardSize-1) ' Áü≥„ÅÆÈÖçÁΩÆ
+ReDim intBoard(intSize-1, intSize-1) ' êŒÇÃîzíu
+
 Dim x
 Dim y
-For y=0 To intBoardSize-1
+
+For y=0 To intSize-1
     Dim strLine
     Dim aryStrings
     Dim intTmp
+
     strLine = WScript.StdIn.ReadLine()
     Wscript.StdErr.WriteLine(strLine)
     aryStrings = Split(strLine, " ")
-    For x=0 To intBoardSize-1
-        intBoard(y, x) = aryStrings(x)
+
+    For x=0 To intSize-1
+        intBoard(y, x) = CInt(aryStrings(x))
     Next
+
 Next
 
 '--------------------
-' Êâã„ÅÆÂÄôË£ú„ÇíË™ø„Åπ„Çã
+' éËÇÃåÛï‚Çí≤Ç◊ÇÈ
 '--------------------
+Dim aryPossibles
+
+aryPossibles = GetPossibles(intColor, intSize, intBoard)
 
 
 
 '--------------------
-' ÁµêÊûúÂá∫Âäõ
+' åãâ èoóÕ
 '--------------------
-'Ëßí„Åå„ÅÇ„ÇãÂ†¥Âêà„ÅØÂÑ™ÂÖà„Åô„Çã
-'„Åù„Çå‰ª•Â§ñ„ÅØ„É©„É≥„ÉÄ„É†
+'äpÇ™Ç†ÇÈèÍçáÇÕóDêÊÇ∑ÇÈ
+'ÇªÇÍà»äOÇÕÉâÉìÉ_ÉÄ
 Wscript.StdOut.WriteLine("0 0")
+
+
+'íuÇØÇÈèÍèäÇÇ∑Ç◊Çƒï‘Ç∑
+Function GetPossibles(intColor, intSize, intBoard)
+    Dim aryPossibles()
+    Dim intReversible
+    Dim x
+    Dim y
+    Dim intCnt
+
+    intCnt = 0
+
+    For y=0 To intSize-1
+        For x=0 To intSize-1
+            intReversible = IsReversible(intColor, intSize, intBoard, x, y)
+
+            If intReversible > 0 Then
+                ReDim Preserve aryPossibles(intCnt)
+
+                aryPossibles(intCnt) = CStr(x) + " " + CStr(y)
+                Wscript.StdErr.WriteLine("POSSIBLE : " + CStr(x) + " " + CStr(y))
+                intCnt = intCnt + 1
+            End If
+        Next
+    Next
+
+    GetPossibles = aryPossibles
+
+End Function
+
+
+'êŒÇ™Ç–Ç¡Ç≠ÇËï‘ÇπÇÈÇ©îªíËÇ∑ÇÈ
+Function IsReversible(intColor, intSize, intBoard, x, y)
+    Dim intRet
+    Dim aryDirs
+    Dim aryDir
+
+    intRet = 0
+    aryDirs = Array(Array(-1, 1), Array(0, 1), Array(1, 1), Array(-1, 0), Array(1, 0), Array(-1, -1), Array(0, 1), Array(1, -1))
+
+    If intBoard(y, x) = BLANK Then
+        For Each aryDir in aryDirs
+            Dim intNextX
+            Dim intNextY
+            Dim intTmp
+
+            intNextX = x
+            intNextY = y
+
+            Do
+                intNextX = intNextX + aryDir(0)
+                intNextY = intNextY + aryDir(1)
+
+                'ç¿ïWÇ™îÕàÕì‡
+                If (intNextX >= 0) And (intNextX < intSize) And (intNextY >= 0) And (intNextY < intSize) Then
+                    Dim intNextValue
+
+                    intNextValue = intBoard(intNextY, intNextX)
+
+                    'êŒÇ™íuÇ©ÇÍÇƒÇ¢ÇÈ
+                    If intNextValue <> BLANK Then
+                        'íuÇ¢ÇΩêŒÇ∆ìØÇ∂êFÇ™íuÇ©ÇÍÇƒÇ¢ÇÈ
+                        If intNextValue = intColor Then
+                            Exit Do
+                        End If
+
+                        intTmp = intTmp + 1
+                    Else
+                        intTmp = 0
+                        Exit Do
+                    End If
+                Else
+                    intTmp = 0
+                    Exit Do
+                End If
+            Loop
+
+            intRet = intRet + intTmp
+        Next
+    End If
+
+    IsReversible = intRet
+
+End Function
+'============================================================
+' END
+'============================================================
