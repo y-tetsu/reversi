@@ -2,7 +2,8 @@
 Pythonで作るリバーシ
 
 ## ゲーム紹介
-盤面のサイズや対戦プレイヤーをいろいろ選べるデスクトップ上で遊ぶタイプのリバーシです。<br>
+盤面のサイズや対戦プレイヤーをいろいろ選べるデスクトップ上で遊ぶタイプのオフラインのリバーシです。<br>
+自分でプログラミングしたAIを追加して遊べるのが特徴です。<br>
 
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
 
