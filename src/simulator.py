@@ -281,6 +281,7 @@ if __name__ == '__main__':
         'AbIF11JRo_BC_TPW': strategies.AbIF11JRo_BC_TPW(),
         'NsIF9JRo_B_TPW': strategies.NsIF9JRo_B_TPW(),
         'SwitchNsIF9JRo_B_TPW': strategies.SwitchNsIF9JRo_B_TPW(),
+        'SwitchNsIF9JRo_B_TPWE': strategies.SwitchNsIF9JRo_B_TPWE(),
         'RandomF11': strategies.RandomF11(),
         'TopLeft': strategies.External('python ./strategies/ex/python/topleft.py', 3),
     }

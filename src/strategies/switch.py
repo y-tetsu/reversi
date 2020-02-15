@@ -7,9 +7,9 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.iterative import NsI_B_TPW
-from strategies.negascout import NegaScout_TPW
-from strategies.coordinator import Evaluator_TPW
+from strategies.iterative import IterativeDeepning
+from strategies.negascout import NegaScout
+from strategies.coordinator import Selector, Sorter_B, Evaluator_TPW, Evaluator_TPWE
 
 
 class SwitchSizeError(Exception):
@@ -62,11 +62,34 @@ class SwitchNsI_B_TPW(Switch):
                 60
             ],
             strategies=[
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=100, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 70, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 50, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner= 30, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 6))),
-                NsI_B_TPW(search=NegaScout_TPW(evaluator=Evaluator_TPW(corner=  5, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 8)))
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=100, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner= 70, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner= 50, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner= 30, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 6))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=  5, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 8)))
+            ]):
+        super().__init__(turns, strategies)
+
+
+class SwitchNsI_B_TPWE(Switch):
+    """
+    NsI_B_TPWEのパラーメータ切り替え型
+    """
+    def __init__(
+            self,
+            turns=[
+                15,
+                25,
+                35,
+                45,
+                60
+            ],
+            strategies=[
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=100, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner= 70, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner= 50, c=-20, a1= 0, a2=-1, b=-1, x=-25, o=-5, wp= 5))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner= 30, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 6))),
+                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=  5, c=  0, a1= 1, a2= 1, b= 1, x=  0, o= 1, wp= 8)))
             ]):
         super().__init__(turns, strategies)
 
@@ -79,11 +102,11 @@ if __name__ == '__main__':
     print('--- Test For SwitchNsI_B_TPW Strategy ---')
     switch = SwitchNsI_B_TPW()
     assert switch.turns == [15, 25, 35, 45, 60]
-    assert switch.strategies[0].__class__.__name__ == 'NsI_B_TPW'
-    assert switch.strategies[1].__class__.__name__ == 'NsI_B_TPW'
-    assert switch.strategies[2].__class__.__name__ == 'NsI_B_TPW'
-    assert switch.strategies[3].__class__.__name__ == 'NsI_B_TPW'
-    assert switch.strategies[4].__class__.__name__ == 'NsI_B_TPW'
+    assert switch.strategies[0].__class__.__name__ == 'IterativeDeepning'
+    assert switch.strategies[1].__class__.__name__ == 'IterativeDeepning'
+    assert switch.strategies[2].__class__.__name__ == 'IterativeDeepning'
+    assert switch.strategies[3].__class__.__name__ == 'IterativeDeepning'
+    assert switch.strategies[4].__class__.__name__ == 'IterativeDeepning'
 
     assert switch.strategies[0].search.evaluator.t.scorer.table._CORNER == 100
     assert switch.strategies[1].search.evaluator.t.scorer.table._CORNER == 70
@@ -193,6 +216,16 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 7, 1)
     print(bitboard8)
 
+    key = switch.strategies[1].search.__class__.__name__ + str(os.getpid())
+    Measure.count[key] = 0
+    move = switch.next_move('black', bitboard8)
+    print(move)
+    assert move == (3, 6)
+    print( 'count     :', Measure.count[key] )
+    assert Measure.count[key] >= 2000
+
+    print('--- Test For SwitchNsI_B_TPWE Strategy ---')
+    switch = SwitchNsI_B_TPWE()
     key = switch.strategies[1].search.__class__.__name__ + str(os.getpid())
     Measure.count[key] = 0
     move = switch.next_move('black', bitboard8)

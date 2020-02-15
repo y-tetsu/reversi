@@ -10,7 +10,7 @@ from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
 from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_BC_TPW
-from strategies.switch import SwitchNsI_B_TPW
+from strategies.switch import SwitchNsI_B_TPW, SwitchNsI_B_TPWE
 
 
 class FullReading(AbstractStrategy):
@@ -231,6 +231,14 @@ class SwitchNsIF9_B_TPW(FullReading):
     SwitchNsI_B_TPW+完全読み開始:残り9手
     """
     def __init__(self, remain=9, base=SwitchNsI_B_TPW()):
+        super().__init__(remain, base)
+
+
+class SwitchNsIF9_B_TPWE(FullReading):
+    """
+    SwitchNsI_B_TPWE+完全読み開始:残り9手
+    """
+    def __init__(self, remain=9, base=SwitchNsI_B_TPWE()):
         super().__init__(remain, base)
 
 

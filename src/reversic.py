@@ -30,6 +30,7 @@ BLACK_STRATEGIES = {
     'Iterative': strategies.AbIF9J_B_TPW(),
     'NegaScout': strategies.NsIF9J_B_TPW(),
     'Switch': strategies.SwitchNsIF9J_B_TPW(),
+    'Edge': strategies.SwitchNsIF9J_B_TPWE(),
 }
 
 WHITE_STRATEGIES = {
@@ -48,6 +49,7 @@ WHITE_STRATEGIES = {
     'Iterative': strategies.AbIF9J_B_TPW(),
     'NegaScout': strategies.NsIF9J_B_TPW(),
     'Switch': strategies.SwitchNsIF9J_B_TPW(),
+    'Edge': strategies.SwitchNsIF9J_B_TPWE(),
 }
 
 STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}
