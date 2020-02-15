@@ -241,8 +241,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MinMax', 'MonteCarlo', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -255,8 +255,8 @@ if __name__ == '__main__':
         'Greedy': strategies.Greedy(),
         'SlowStarter': strategies.SlowStarter(),
         'Table': strategies.Table(),
-        'MinMax': strategies.MinMax2_TPW(),
         'MonteCarlo': strategies.MonteCarlo1000(),
+        'MinMax': strategies.MinMax2_TPW(),
         'NegaMax': strategies.NegaMax3_TPW(),
         'AlphaBeta': strategies.AlphaBeta4_TPW(),
         'FullReading' : strategies.AlphaBeta4F9_TPW(),
