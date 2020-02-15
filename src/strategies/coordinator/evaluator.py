@@ -254,9 +254,6 @@ class Evaluator_TPWE(AbstractEvaluator):
         score_p = self.p.evaluate(*args, **kwargs)
         score_e = self.e.evaluate(*args, **kwargs)
 
-        print(score_t)
-        print(score_p)
-        print(score_e)
         return score_t + score_p + score_e
 
 
