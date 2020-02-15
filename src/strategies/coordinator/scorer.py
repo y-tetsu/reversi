@@ -135,12 +135,17 @@ class EdgeScorer(AbstractScorer):
     """
     辺のパターンに基づいて算出
     """
-    def __init__(self, w1=100):
+    def __init__(self, w1=50, w2=100):
         self._W1 = w1
+        self._W2 = w2
 
         # ピュア山
         self.pureyama_mask = [0xFF7E000000000000, 0x0103030303030301, 0x0000000000007EFF, 0x80C0C0C0C0C0C080]
         self.pureyama_value = [0x7E3C000000000000, 0x0001030303030100, 0x0000000000003C7E, 0x0080C0C0C0C08000]
+
+        # 山
+        self.yama_mask = [0xFF00000000000000, 0x0101010101010101, 0x00000000000000FF, 0x8080808080808080]
+        self.yama_value = [0x7E00000000000000, 0x0001010101010100, 0x000000000000007E, 0x0080808080808000]
 
     def get_score(self, board):
         """
@@ -156,6 +161,10 @@ class EdgeScorer(AbstractScorer):
         # ピュア山値
         for mask, value in zip(self.pureyama_mask, self.pureyama_value):
             score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W1)
+
+        # 山値
+        for mask, value in zip(self.yama_mask, self.yama_value):
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W2)
 
         return score
 
@@ -229,14 +238,21 @@ if __name__ == '__main__':
     # EdgeScorer
     scorer = EdgeScorer()
 
-    # ピュア山
+    # ピュア山/山
     board8 = BitBoard(8)
-    board8._black_bitboard = 0x7E3C000000000000
+    board8._black_bitboard = 0x7E00000000000000
     board8._white_bitboard = 0x0000000000000000
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
     assert score == 100
+
+    board8._black_bitboard = 0x7E3C000000000000
+    board8._white_bitboard = 0x0000000000000000
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 150
 
     board8._black_bitboard = 0xFE3C000000000000
     board8._white_bitboard = 0x0000000000000000
@@ -250,11 +266,11 @@ if __name__ == '__main__':
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 200
+    assert score == 300
 
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0x0081C3C3C3C38100
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -200
+    assert score == -300
