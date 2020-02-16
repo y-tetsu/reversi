@@ -135,13 +135,22 @@ class EdgeScorer(AbstractScorer):
     """
     辺のパターンに基づいて算出
     """
-    def __init__(self, w1=50, w2=100, w3=-15, w4=-30):
+    def __init__(self, w1=50, w2=100, w3=-15, w4=-30, w5=10):
         self._W1 = w1
         self._W2 = w2
         self._W3 = w3
         self._W4 = w4
+        self._W5 = w5
 
         # ピュア山
+        # □◎◎◎◎◎◎□
+        # □□◎◎◎◎□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
         self.pureyama_mask = [
             0xFF7E000000000000,
             0x0103030303030301,
@@ -156,6 +165,14 @@ class EdgeScorer(AbstractScorer):
         ]
 
         # 山
+        # □◎◎◎◎◎◎□
+        # □□――――□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
         self.yama_mask = [
             0xFF00000000000000,
             0x0101010101010101,
@@ -170,6 +187,14 @@ class EdgeScorer(AbstractScorer):
         ]
 
         # ピュアウィング
+        # □□◎◎◎◎◎□
+        # □□◎◎◎◎□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
         self.purewing_mask = [
             0xFF7E000000000000,
             0xFF7E000000000000,
@@ -192,6 +217,14 @@ class EdgeScorer(AbstractScorer):
         ]
 
         # ウィング
+        # □□◎◎◎◎◎□
+        # □□◎――◎□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
         self.wing_mask = [
             0xFF66000000000000,
             0xFF66000000000000,
@@ -214,17 +247,25 @@ class EdgeScorer(AbstractScorer):
         ]
 
         # ブロック
+        # □□◎◎◎◎□□
+        # □□×――×□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
         self.block_mask = [
-            0xFF24000000000000,
-            0x0101010101010101,
-            0x00000000000000FF,
-            0x8080808080808080
+            0xFF66000000000000,
+            0x0103030101030301,
+            0x00000000000066FF,
+            0x80C0C0C0C0C0C080
         ]
         self.block_value = [
-            0x7E00000000000000,
-            0x0001010101010100,
-            0x000000000000007E,
-            0x0080808080808000
+            0x3C00000000000000,
+            0x0000010101010000,
+            0x000000000000003C,
+            0x0000808080800000
         ]
 
     def get_score(self, board):
@@ -253,6 +294,10 @@ class EdgeScorer(AbstractScorer):
         # ウィング
         for mask, value in zip(self.wing_mask, self.wing_value):
             score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W4)
+
+        # ブロック
+        for mask, value in zip(self.block_mask, self.block_value):
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W5)
 
         return score
 
@@ -398,3 +443,18 @@ if __name__ == '__main__':
     score = scorer.get_score(board8)
     print('score', score)
     assert score == -15
+
+    # ブロック
+    board8._black_bitboard = 0xBC00000000000000
+    board8._white_bitboard = 0x0000000000000000
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 0
+
+    board8._black_bitboard = 0x0000000000000000
+    board8._white_bitboard = 0x3C0081818181003C
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == -40
