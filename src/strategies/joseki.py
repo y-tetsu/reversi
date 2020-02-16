@@ -1059,7 +1059,7 @@ class SwitchNsIF9J_B_TPW(Nezumi):
         super().__init__(base)
 
 
-class SwitchNsIF9J_B_TPWE(Nezumi):
+class SwitchNsIF9J_B_TPWE(Neko):
     """
     SwitchNsIF9_B_TPWE+定石打ち
     (完全読み開始:残り9手)
