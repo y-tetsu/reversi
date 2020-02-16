@@ -33,7 +33,7 @@ class TableScorer(AbstractScorer):
 
 class PossibilityScorer(AbstractScorer):
     """
-    配置可能数に基づいて算出
+    着手可能数に基づいて算出
     """
     def __init__(self, w=5):
         self._W = w
@@ -135,17 +135,83 @@ class EdgeScorer(AbstractScorer):
     """
     辺のパターンに基づいて算出
     """
-    def __init__(self, w1=50, w2=100):
+    def __init__(self, w1=50, w2=100, w3=-15, w4=-30):
         self._W1 = w1
         self._W2 = w2
+        self._W3 = w3
+        self._W4 = w4
 
         # ピュア山
-        self.pureyama_mask = [0xFF7E000000000000, 0x0103030303030301, 0x0000000000007EFF, 0x80C0C0C0C0C0C080]
-        self.pureyama_value = [0x7E3C000000000000, 0x0001030303030100, 0x0000000000003C7E, 0x0080C0C0C0C08000]
+        self.pureyama_mask = [
+            0xFF7E000000000000,
+            0x0103030303030301,
+            0x0000000000007EFF,
+            0x80C0C0C0C0C0C080
+        ]
+        self.pureyama_value = [
+            0x7E3C000000000000,
+            0x0001030303030100,
+            0x0000000000003C7E,
+            0x0080C0C0C0C08000
+        ]
 
         # 山
-        self.yama_mask = [0xFF00000000000000, 0x0101010101010101, 0x00000000000000FF, 0x8080808080808080]
-        self.yama_value = [0x7E00000000000000, 0x0001010101010100, 0x000000000000007E, 0x0080808080808000]
+        self.yama_mask = [
+            0xFF00000000000000,
+            0x0101010101010101,
+            0x00000000000000FF,
+            0x8080808080808080
+        ]
+        self.yama_value = [
+            0x7E00000000000000,
+            0x0001010101010100,
+            0x000000000000007E,
+            0x0080808080808000
+        ]
+
+        # ピュアウィング
+        self.purewing_mask = [
+            0xFF7E000000000000,
+            0xFF7E000000000000,
+            0x0103030303030301,
+            0x0103030303030301,
+            0x0000000000007EFF,
+            0x0000000000007EFF,
+            0x80C0C0C0C0C0C080,
+            0x80C0C0C0C0C0C080
+        ]
+        self.purewing_value = [
+            0x7C3C000000000000,
+            0x3E3C000000000000,
+            0x0001030303030000,
+            0x0000030303030100,
+            0x0000000000003C7C,
+            0x0000000000003C3E,
+            0x0080C0C0C0C00000,
+            0x0000C0C0C0C08000
+        ]
+
+        # ウィング
+        self.wing_mask = [
+            0xFF24000000000000,
+            0xFF24000000000000,
+            0x0103030101030301,
+            0x0103030101030301,
+            0x00000000000024FF,
+            0x00000000000024FF,
+            0x80C0C08080C0C080,
+            0x80C0C08080C0C080
+        ]
+        self.wing_value = [
+            0x7C24000000000000,
+            0x3E24000000000000,
+            0x0001030101030000,
+            0x0000030101030100,
+            0x000000000000247C,
+            0x000000000000243E,
+            0x0080C08080C00000,
+            0x0000C08080C08000
+        ]
 
     def get_score(self, board):
         """
@@ -165,6 +231,14 @@ class EdgeScorer(AbstractScorer):
         # 山値
         for mask, value in zip(self.yama_mask, self.yama_value):
             score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W2)
+
+        # ピュアウィング
+        for mask, value in zip(self.purewing_mask, self.purewing_value):
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W3)
+
+        # ウィング
+        for mask, value in zip(self.wing_mask, self.wing_value):
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W4)
 
         return score
 
@@ -274,3 +348,39 @@ if __name__ == '__main__':
     score = scorer.get_score(board8)
     print('score', score)
     assert score == -300
+
+    # ピュアウィング/ウィング
+    board8._black_bitboard = 0x7C3C000000003C7C
+    board8._white_bitboard = 0x0000000000000000
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == -90
+
+    board8._black_bitboard = 0x0081C3C3C3C30000
+    board8._white_bitboard = 0x0000000000000000
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == -90
+
+    board8._black_bitboard = 0x0000000000000000
+    board8._white_bitboard = 0x3E3C000000003C3E
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 90
+
+    board8._black_bitboard = 0x0000000000000000
+    board8._white_bitboard = 0x0000C3C3C3C38100
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 90
+
+    board8._black_bitboard = 0x0080C0C0C0C00000
+    board8._white_bitboard = 0x0000030103030100
+    print(board8)
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == -15
