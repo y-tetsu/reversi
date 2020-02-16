@@ -27,17 +27,17 @@ class Simulator:
 
     def __str__(self):
         board_size = '\nSize : ' + str(self.board_size) + '\n'
-        header1 = '                     | ' + ' '.join([f'{key:20s}' for key in self.total]) + '\n'
-        hr1 = '-'*18 + '-'*20*len(self.total) + '-'*(len(self.total)-1) + '\n'
+        header1 = '                          | ' + ' '.join([f'{key:25s}' for key in self.total]) + '\n'
+        hr1 = '-'*25 + '---' + '-'*25*len(self.total) + '-'*(len(self.total)-1) + '\n'
 
         body1 = ''
         for key1 in self.total:
-            row = f'{key1:20s} | '
+            row = f'{key1:25s} | '
             wins, draws, matches = 0, 0, 0
 
             for key2 in self.total:
                 if key1 == key2:
-                    row += '------               '
+                    row += '------                    '
                     continue
 
                 wins += self.total[key1][key2]['wins']
@@ -45,16 +45,16 @@ class Simulator:
                 matches += self.total[key1][key2]['matches']
                 ratio = self.total[key1][key2]['wins'] / self.total[key1][key2]['matches'] * 100
                 ratio = f'{ratio:3.1f}%'
-                row += f'{ratio:>6s}               '
+                row += f'{ratio:>6s}                    '
 
             body1 += f'{row}\n'
 
-        header2 = '                     | Total  | Win   Lose  Draw  Match\n'
-        hr2 = '-------------------------------------------------------\n'
+        header2 = '                          | Total  | Win   Lose  Draw  Match\n'
+        hr2 = '------------------------------------------------------------\n'
 
         body2 = ''
         for key1 in self.total:
-            row = f'{key1:20s} | '
+            row = f'{key1:25s} | '
             wins, draws, matches = 0, 0, 0
 
             for key2 in self.total:
