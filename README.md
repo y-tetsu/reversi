@@ -170,6 +170,8 @@ $ python reversic.py
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ## Windows10の環境構築方法
+Pythonから直接本プログラムを実行する場合は下記の手順に従って環境を準備して下さい。
+
 ### Pythonのインストール
 下記より64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
 [インストーラ](https://www.python.org/downloads/release/python-376/)<br>
