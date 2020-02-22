@@ -171,10 +171,10 @@ $ python reversic.py
 
 ## Windows10の環境構築方法
 ### Pythonのインストール
-下記より64bit版のexeをダウンロード後、インストールして下さい。<br>
+下記より64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
 [インストーラ](https://www.python.org/downloads/release/python-376/)<br>
 
-コマンドプロンプトを立ち上げて、下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
+インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
 ```
 $ py -3.7 --version
 Python 3.7.6
@@ -222,7 +222,7 @@ $ py -3.7 -m pip install wheel
 [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ### reversiの実行
-コマンドプロンプトにて下記を実行で起動します。
+上記までの環境を構築後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると本プログラムが起動します。
 ```
 $ python reversi.py
 ```
