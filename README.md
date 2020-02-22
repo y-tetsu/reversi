@@ -163,11 +163,65 @@ $ python reversic.py
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- [Python 3.7.0](https://www.python.org/downloads/)<br>
-    - numpy 1.15.1<br>
-    - cython 0.28.5<br>
-    - pyinstaller 3.4<br>
+- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
+    - cython 0.29.15<br>
+    - numpy 1.18.1<br>
+    - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+## Python環境(Windows10)の構築方法
+### Pythonのインストール
+下記より64bit版のexeをダウンロード後、インストールして下さい。
+[インストーラ](https://www.python.org/downloads/release/python-376/)<br>
+
+コマンドプロンプトを立ち上げて、下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
+```
+$ py -3.7 --version
+Python 3.7.6
+```
+
+### pipの更新
+下記を実行してpipをアップデートして下さい。※バージョンは異なる場合があります
+```
+$ py -3.7 -m pip install --upgrade pip
+Successfully installed pip-20.0.2
+```
+
+### cythonパッケージのインストール
+本プログラムをpythonから実行するためにはcythonという外部パッケージが必要となります。<br>下記を実行してインストールして下さい。
+```
+$ py -3.7 -m pip install cython
+Successfully installed cython-0.29.15
+```
+
+### numpyパッケージのインストール
+本プログラムをpythonから実行するためにはnumpyという外部パッケージが必要となります。<br>下記を実行してインストールして下さい。
+```
+$ py -3.7 -m pip install numpy
+Successfully installed numpy-1.18.1
+```
+
+### pyinstallerパッケージのインストール
+本プログラムのexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>下記を実行してインストールして下さい。
+```
+$ py -3.7 -m pip install pyinstaller
+Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
+```
+
+うまくいかない場合は下記を実行してみて下さい。
+```
+$ py -3.7 -m pip install wheel
+```
+
+### Visual C++のインストール
+本プログラムの実行にはC言語のコンパイル環境が必要となります。<br>下記よりVisual C++をダウンロードして下さい。
+[Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+### reversiの実行
+コマンドプロンプトにて下記を実行で起動します。
+```
+$ python reversi.py
+```
 
 ## 参考書籍
 - 「実践Python3」Mark Summerfield著 斎藤 康毅訳 株式会社オライリー・ジャパン [ISBN978-4-87311-739-3](https://www.oreilly.co.jp/books/9784873117393/)
