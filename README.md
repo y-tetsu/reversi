@@ -214,12 +214,12 @@ $ py -3.7 -m pip install pyinstaller
 Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
 ```
 
-うまくいかない場合は下記を実行してみて下さい。
+うまくいかない場合は下記を実行後に再度上記を試してみて下さい。
 ```
 $ py -3.7 -m pip install wheel
 ```
 
-環境変数に下記を追加しておいてください。
+環境変数には下記を追加しておいてください。
 ```
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
