@@ -266,6 +266,8 @@ if __name__ == '__main__':
         'NegaScout3Ro_TPW': strategies.NegaScout3Ro_TPW(),
         'NegaScout3Ro_TPOW': strategies.NegaScout3Ro_TPOW(),
         'NegaScout4Ro_TPW': strategies.NegaScout4Ro_TPW(),
+        'MinMax1Ro_TPW': strategies.MinMax1Ro_TPW(),
+        'MinMax1Ro_TPWE': strategies.MinMax1Ro_TPWE(),
         'MinMax2Ro_T': strategies.MinMax2Ro_T(),
         'MinMax2Ro_TPW': strategies.MinMax2Ro_TPW(),
         'MinMax2Ro_TPWE': strategies.MinMax2Ro_TPWE(),

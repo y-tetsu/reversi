@@ -185,6 +185,14 @@ class MinMax1_TPW(MinMax):
         super().__init__(depth, evaluator)
 
 
+class MinMax1_TPWE(MinMax):
+    """
+    MinMax法でEvaluator_TPWEにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPWE(corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=0, wy=0, wpwin=0, wwin=0, wb=0)):
+        super().__init__(depth, evaluator)
+
+
 class MinMax2_TPW(MinMax):
     """
     MinMax法でEvaluator_TPWにより次の手を決める(2手読み)
@@ -197,7 +205,7 @@ class MinMax2_TPWE(MinMax):
     """
     MinMax法でEvaluator_TPWEにより次の手を決める(2手読み)
     """
-    def __init__(self, depth=2, evaluator=Evaluator_TPWE(corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=0, wy=3, wpwin=0, wwin=0, wb=0)):
+    def __init__(self, depth=2, evaluator=Evaluator_TPWE(corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=100, wy=100, wpwin=0, wwin=0, wb=0)):
         super().__init__(depth, evaluator)
 
 
