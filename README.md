@@ -217,6 +217,11 @@ Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-
 $ py -3.7 -m pip install wheel
 ```
 
+環境変数に下記を追加しておいてください。
+```
+C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
+```
+
 ### Visual C++のインストール
 本プログラムの実行にはC言語のコンパイル環境が必要となります。<br>下記よりVisual C++をダウンロードして下さい。<br>
 [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
