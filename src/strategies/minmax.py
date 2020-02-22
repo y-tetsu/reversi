@@ -9,7 +9,7 @@ sys.path.append('../')
 import random
 
 from strategies.common import Measure, AbstractStrategy
-from strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW
+from strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPOW
 
 
 class MinMax(AbstractStrategy):
@@ -190,6 +190,14 @@ class MinMax2_TPW(MinMax):
     MinMax法でEvaluator_TPWにより次の手を決める(2手読み)
     """
     def __init__(self, depth=2, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_TPWE(MinMax):
+    """
+    MinMax法でEvaluator_TPWEにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPWE()):
         super().__init__(depth, evaluator)
 
 
