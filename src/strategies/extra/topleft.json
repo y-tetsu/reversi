@@ -1,5 +1,5 @@
 {
     "name": "TopLeft",
-    "cmd": "python ./strategies/extra/python/topleft/topleft.py",
+    "cmd": "py -3.7 ./strategies/extra/python/topleft/topleft.py",
     "timeouttime": 60
 }

@@ -63,7 +63,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 
  |名前|特徴|難易度|登録ファイル|開発言語|動作確認環境|
  |:---|:---|:---:|:---:|:---:|:---|
- |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |[Python 3.7.0](https://www.python.org/downloads/) |
+ |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Windows10 64bit<br>[Python 3.7.0](https://www.python.org/downloads/) |
  |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
  |RandomCorner |角が取れる時は必ず取ります。それ以外はランダムに手を選びます。 | ★ | randomcorner.json | VBScript |Windows10 64bit |
 
@@ -137,11 +137,11 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 }
 ```
 
-下記に、pythonで動作するTopLeft(あらかじめ用意されたプレイヤー)の例を示します。
+下記に、Windows10のPython上で動作するTopLeft(あらかじめ用意されたプレイヤー)の例を示します。
 ```
 {
     "name": "TopLeft",
-    "cmd": "python ./strategies/extra/python/topleft/topleft.py",
+    "cmd": "py -3.7 ./strategies/extra/python/topleft/topleft.py",
     "timeouttime": 60
 }
 ```
@@ -174,7 +174,7 @@ $ python reversic.py
 
 ### Pythonのインストール
 下記より64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
-[インストーラ](https://www.python.org/downloads/release/python-376/)<br>
+[Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
 
 インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
 ```
@@ -229,12 +229,19 @@ $ py -3.7 -m pip install wheel
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
 
+コマンドプロンプトにてexeフォルダ以下に移動し下記を実行すると<br>
+**reversi**のexeファイルがdistフォルダ以下に生成されます。
+```
+$ reversi.bat
+```
+
 ### Visual C++のインストール
-本プログラムの実行にはC言語のコンパイル環境が必要となります。<br>下記よりVisual C++をダウンロードして下さい。<br>
+本プログラムの実行にはC言語のコンパイル環境が必要となります。<br>
+下記よりVisual C++をダウンロードして下さい。<br>
 [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ### reversiの実行
-上記までの環境を構築後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると**reversi**が起動します。
+上記までの環境を準備した後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると**reversi**が起動します。
 ```
 $ py -3.7 reversi.py
 ```
