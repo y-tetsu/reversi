@@ -63,7 +63,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 
  |名前|特徴|難易度|登録ファイル|開発言語|動作確認環境|
  |:---|:---|:---:|:---:|:---:|:---|
- |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Windows10 64bit<br>[Python 3.7.0](https://www.python.org/downloads/) |
+ |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Windows10 64bit<br>[Python 3.7.6](https://www.python.org/downloads/release/python-376/) |
  |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
  |RandomCorner |角が取れる時は必ず取ります。それ以外はランダムに手を選びます。 | ★ | randomcorner.json | VBScript |Windows10 64bit |
 
