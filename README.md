@@ -137,7 +137,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 }
 ```
 
-下記に、Windows10上のPythonから実行して動作するTopLeft(あらかじめ用意されたプレイヤー)の例を示します。
+下記に、Windows10上のPythonで動作するTopLeft(あらかじめ用意されたプレイヤー)の例を示します。
 ```
 {
     "name": "TopLeft",
@@ -193,7 +193,7 @@ Successfully installed pip-20.0.2
 ※バージョンが異なる場合は上位であれば問題ないはずです
 
 ### cythonパッケージのインストール
-**reversi**をPythonから実行するためにはcythonという外部パッケージが必要となります。<br>
+**reversi**を実行するためにはcythonという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。
 ```
 $ py -3.7 -m pip install cython
@@ -202,7 +202,7 @@ Successfully installed cython-0.29.15
 ```
 
 ### numpyパッケージのインストール
-**reversi**をPythonから実行するためにはnumpyという外部パッケージが必要となります。<br>
+**reversi**を実行するためにはnumpyという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。
 ```
 $ py -3.7 -m pip install numpy
@@ -212,7 +212,7 @@ Successfully installed numpy-1.18.1
 
 ### pyinstallerパッケージのインストール
 **reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
-下記を実行してインストールして下さい。
+下記を実行してインストールして下さい。不要な場合は省略しても構いません。
 ```
 $ py -3.7 -m pip install pyinstaller
  :
