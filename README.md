@@ -64,7 +64,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
  |名前|特徴|難易度|登録ファイル|開発言語|動作確認環境|
  |:---|:---|:---:|:---:|:---:|:---|
  |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Windows10 64bit<br>[Python 3.7.6](https://www.python.org/downloads/release/python-376/) |
- |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
+ |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |Windows10 64bit<br>[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
  |RandomCorner |角が取れる時は必ず取ります。それ以外はランダムに手を選びます。 | ★ | randomcorner.json | VBScript |Windows10 64bit |
 
 ### プレイヤー作成手順
@@ -137,7 +137,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 }
 ```
 
-下記に、Windows10のPython上で動作するTopLeft(あらかじめ用意されたプレイヤー)の例を示します。
+下記に、Windows10上のPythonから実行して動作するTopLeft(あらかじめ用意されたプレイヤー)の例を示します。
 ```
 {
     "name": "TopLeft",
@@ -170,10 +170,10 @@ $ python reversic.py
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ## Windows10の環境準備
-**reversi**をWindows10上でPythonから実行する場合は下記の手順に従って環境を準備して下さい。
+**reversi**をWindows10上のPythonから実行する場合は下記の手順に従って環境を準備して下さい。
 
 ### Pythonのインストール
-下記より64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
+下記よりPythonの64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
 [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
 
 インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
