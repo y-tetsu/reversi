@@ -169,8 +169,8 @@ $ python reversic.py
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
-## Windows10の環境構築方法
-Pythonから直接本プログラムを実行する場合は下記の手順に従って環境を準備して下さい。
+## Windows10の環境準備
+**reversi**をWindows10上でPythonから実行する場合は下記の手順に従って環境を準備して下さい。
 
 ### Pythonのインストール
 下記より64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
@@ -183,15 +183,18 @@ Python 3.7.6
 ```
 
 ### pipの更新
-下記を実行してpipをアップデートして下さい。※バージョンが異なる場合は上位であれば問題ないはずです
+**reversi**をPythonから実行するためにはいくつかの外部パッケージが必要となります。<br>
+正しくインストールできるようにするために下記を実行してpipをアップデートして下さい。<br>
 ```
 $ py -3.7 -m pip install --upgrade pip
  :
 Successfully installed pip-20.0.2
 ```
+※バージョンが異なる場合は上位であれば問題ないはずです
 
 ### cythonパッケージのインストール
-本プログラムをPythonから実行するためにはcythonという外部パッケージが必要となります。<br>下記を実行してインストールして下さい。※バージョンが異なる場合は上位であれば問題ないはずです
+**reversi**をPythonから実行するためにはcythonという外部パッケージが必要となります。<br>
+下記を実行してインストールして下さい。
 ```
 $ py -3.7 -m pip install cython
  :
@@ -199,7 +202,8 @@ Successfully installed cython-0.29.15
 ```
 
 ### numpyパッケージのインストール
-本プログラムをPythonから実行するためにはnumpyという外部パッケージが必要となります。<br>下記を実行してインストールして下さい。※バージョンが異なる場合は上位であれば問題ないはずです
+**reversi**をPythonから実行するためにはnumpyという外部パッケージが必要となります。<br>
+下記を実行してインストールして下さい。
 ```
 $ py -3.7 -m pip install numpy
  :
@@ -207,19 +211,20 @@ Successfully installed numpy-1.18.1
 ```
 
 ### pyinstallerパッケージのインストール
-本プログラムのexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>下記を実行してインストールして下さい。※バージョンが異なる場合は上位であれば問題ないはずです
+**reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
+下記を実行してインストールして下さい。
 ```
 $ py -3.7 -m pip install pyinstaller
  :
 Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
 ```
 
-うまくいかない場合は下記を実行後に再度上記を試してみて下さい。
+うまくいかない場合は下記を実行後に、再度上記を試してみて下さい。
 ```
 $ py -3.7 -m pip install wheel
 ```
 
-環境変数には下記を追加しておいてください。
+インストール完了後、pyinstallerを実行できるようにするために環境変数に下記を追加して下さい。
 ```
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
@@ -229,9 +234,9 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ### reversiの実行
-上記までの環境を構築後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると本プログラムが起動します。
+上記までの環境を構築後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると**reversi**が起動します。
 ```
-$ python reversi.py
+$ py -3.7 reversi.py
 ```
 
 ## 参考書籍
