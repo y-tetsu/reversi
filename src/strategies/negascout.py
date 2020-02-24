@@ -8,7 +8,7 @@ sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME
 from strategies.alphabeta import AlphaBeta
-from strategies.coordinator import Evaluator_TPW, Evaluator_TPOW
+from strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPOW
 
 
 class NegaScout(AlphaBeta):
@@ -71,6 +71,14 @@ class NegaScout_TPW(NegaScout):
     NegaScout法でEvaluator_TPWにより次の手を決める
     """
     def __init__(self, evaluator=Evaluator_TPW()):
+        super().__init__(evaluator=evaluator)
+
+
+class NegaScout_TPWE(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWEにより次の手を決める
+    """
+    def __init__(self, evaluator=Evaluator_TPWE()):
         super().__init__(evaluator=evaluator)
 
 
