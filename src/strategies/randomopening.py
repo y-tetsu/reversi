@@ -11,7 +11,7 @@ from strategies.easy import Random
 from strategies.proto import AB_TI
 from strategies.minmax import  MinMax1_TPW, MinMax1_TPWE, MinMax2_T, MinMax2_TPW, MinMax2_TPWE, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
 from strategies.negamax import _NegaMax3_TPW, NegaMax3_TPW, NegaMax3_TPOW
-from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW, AlphaBeta4_TPW
+from strategies.alphabeta import AlphaBeta3_TPW, AlphaBeta3_TPOW, AlphaBeta4_TPW, AlphaBeta4_TPWE
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW
 from strategies.iterative import AbI_B_TPW, NsI_B_TPW, NsI_BC_TPW, NsI_CB_TPW
 from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, NsIF9_B_TPW
@@ -158,6 +158,14 @@ class AlphaBeta4Ro_TPW(RandomOpening):
     RandamOpening(8手) + AlphaBeta4_TPW
     """
     def __init__(self, depth=8, base=AlphaBeta4_TPW()):
+        super().__init__(depth, base)
+
+
+class AlphaBeta4Ro_TPWE(RandomOpening):
+    """
+    RandamOpening(8手) + AlphaBeta4_TPWE
+    """
+    def __init__(self, depth=8, base=AlphaBeta4_TPWE()):
         super().__init__(depth, base)
 
 

@@ -261,6 +261,7 @@ if __name__ == '__main__':
         'AlphaBeta3Ro_TPW': strategies.AlphaBeta3Ro_TPW(),
         'AlphaBeta3Ro_TPOW': strategies.AlphaBeta3Ro_TPOW(),
         'AlphaBeta4Ro_TPW': strategies.AlphaBeta4Ro_TPW(),
+        'AlphaBeta4Ro_TPWE': strategies.AlphaBeta4Ro_TPWE(),
         'AlphaBeta4F9Ro_TPW': strategies.AlphaBeta4F9Ro_TPW(),
         'AlphaBeta4F9JRo_TPW': strategies.AlphaBeta4F9JRo_TPW(),
         'NegaScout3Ro_TPW': strategies.NegaScout3Ro_TPW(),
