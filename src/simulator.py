@@ -270,6 +270,7 @@ if __name__ == '__main__':
         'NegaScout4Ro_TPWE': strategies.NegaScout4Ro_TPWE(),
         'MinMax1Ro_TPW': strategies.MinMax1Ro_TPW(),
         'MinMax1Ro_TPWE': strategies.MinMax1Ro_TPWE(),
+        'MinMax1Ro_TPW2': strategies.MinMax1Ro_TPW2(),
         'MinMax2Ro_T': strategies.MinMax2Ro_T(),
         'MinMax2Ro_TPW': strategies.MinMax2Ro_TPW(),
         'MinMax2Ro_TPWE': strategies.MinMax2Ro_TPWE(),
