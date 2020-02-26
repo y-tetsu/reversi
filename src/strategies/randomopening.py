@@ -269,7 +269,7 @@ class NsIF9Ro_B_TPW(RandomOpening):
     """
     RandamOpening(8手) + NsIF9_B_TPW
     """
-    def __init__(self, depth=8, base=AbIF9_B_TPW()):
+    def __init__(self, depth=8, base=NsIF9_B_TPW()):
         super().__init__(depth, base)
 
 
