@@ -1059,7 +1059,7 @@ class NsIF9J_B_TPW2(Ushi):
         super().__init__(base)
 
 
-class NsIF9J_B_TPWE(Neko):
+class NsIF9J_B_TPWE(Nezumi):
     """
     NegaScout法に反復深化法を適用して次の手を決める+定石打ち
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
@@ -1068,7 +1068,7 @@ class NsIF9J_B_TPWE(Neko):
         super().__init__(base)
 
 
-class SwitchNsIF9J_B_TPW(Nezumi):
+class SwitchNsIF9J_B_TPW(Tora):
     """
     SwitchNsIF9_B_TPW+定石打ち
     (完全読み開始:残り9手)

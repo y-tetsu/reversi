@@ -241,8 +241,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch', 'Edge']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Switch', 'Edge']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Edge', 'Switch']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'NegaScout', 'Edge', 'Switch']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -263,8 +263,8 @@ if __name__ == '__main__':
         'Joseki' : strategies.AlphaBeta4F9J_TPW(),
         'Iterative': strategies.AbIF9J_B_TPW(),
         'NegaScout': strategies.NsIF9J_B_TPW(),
+        'Edge': strategies.NsIF9J_B_TPWE(),
         'Switch': strategies.SwitchNsIF9J_B_TPW(),
-        'Edge': strategies.SwitchNsIF9J_B_TPWE(),
     }
 
     # ゲーム用スレッド
