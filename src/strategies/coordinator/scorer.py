@@ -473,6 +473,98 @@ class EdgeScorer(AbstractScorer):
         return score_b - score_w
 
 
+class CornerScorer(AbstractScorer):
+    """
+    角のパターンに基づいて算出
+    """
+    def __init__(self, w=100):
+        self._W = w
+
+        # 確定石
+        # Level1
+        # 1                1                1
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # ■■■■□□□□ ■■■■□□□□ ■■■■□□□□
+        # ●■■■□□□□ ●■■■□□□□ ■■■■□□□□
+        # ●◎■■□□□□ ●◎■■□□□□ ●◎■■□□□□
+        # ●●●■□□□□ ●●■■□□□□ ●●●■□□□□
+        self.level1_maskvalue = [
+            # 左下
+            [
+                0x000000000080C0E0,
+                0x000000000080C0C0,
+                0x000000000000C0E0,
+            ],
+            # 左上
+            [
+                0xE0C0800000000000,
+                0xE0C0000000000000,
+                0xC0C0800000000000,
+            ],
+            # 右上
+            [
+                0x0703010000000000,
+                0x0303010000000000,
+                0x0703000000000000,
+            ],
+            # 右下
+            [
+                0x0000000000010307,
+                0x0000000000000307,
+                0x0000000000010303,
+            ],
+        ]
+        self.level1_weight = [
+            1, 1, 1
+        ]
+        # Level2
+        # Level3
+        # Level4
+        # Level5
+
+    def get_score(self, board):
+        """
+        評価値の算出
+        """
+        score = 0
+        b_bitboard, w_bitboard = board.get_bitboard_info()
+
+        # 左下→左上→右上→右下
+        for index in range(4):
+            corner_score = 0
+
+            # Level1
+            maskvalues = self.level1_maskvalue[index]
+            for w_index, maskvalue in enumerate(maskvalues):
+                corner_score = self._get_mask_value(b_bitboard, w_bitboard, maskvalue, self.level1_weight[w_index])
+
+                if corner_score:
+                    break
+
+            if corner_score:
+                pass
+                # Level2
+                # Level3
+                # Level4
+                # Level5
+
+            score += corner_score
+
+        return score
+
+    def _get_mask_value(self, b_bitboard, w_bitboard, maskvalue, weight):
+        """
+        マスクした値を取得
+        """
+        score_b = weight * self._W if (b_bitboard & maskvalue) == maskvalue else 0
+        score_w = weight * self._W if (w_bitboard & maskvalue) == maskvalue else 0
+
+        return score_b - score_w
+
+
 if __name__ == '__main__':
     from board import BitBoard
 
@@ -669,3 +761,68 @@ if __name__ == '__main__':
     score = scorer.get_score(board8)
     print('score', score)
     assert score == -220
+
+    #------------------------------------------------------
+    # CornerScorer
+    scorer = CornerScorer()
+
+    def rotate_90(bits): # 90°回転
+        bits_tmp = [['0' for i in range(8)] for j in range(8)]
+
+        check = 1 << 63
+        for y in range(8):
+            for x in range(8):
+                if bits & check:
+                    bits_tmp[y][x] = '1'
+                check >>= 1
+
+        import numpy as np
+
+        bits_tmp = np.rot90(np.array(bits_tmp))
+        bits = int(''.join(bits_tmp.flatten()), 2)
+
+        return bits
+
+    # 左下
+    print('bottom left')
+    for i in scorer.level1_maskvalue[0]:
+        print('0x' + format(i, '016X') + ',')
+
+    # 左上
+    print('top left')
+    for i in scorer.level1_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右上
+    print('top right')
+    for i in scorer.level1_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右下
+    print('bottom right')
+    for i in scorer.level1_maskvalue[0]:
+        values = rotate_90(i)
+        print('0x' + format(values, '016X') + ',')
+
+    # Level1
+    board8 = BitBoard(8)
+    board8._black_bitboard = 0x0000000000000000
+    board8._white_bitboard = 0x0000000000000000
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 0
+
+    board8._black_bitboard = 0xE7C380000080C0C0
+    board8._white_bitboard = 0x0000000000010303
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 200
