@@ -520,10 +520,123 @@ class CornerScorer(AbstractScorer):
         self.level1_weight = [
             1, 1, 1
         ]
+
         # Level2
+        # 3                3                3                2                2
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # ●■■■□□□□ ●■■■□□□□ ■■■■□□□□ ●■■■□□□□ ■■■■□□□□
+        # ●◎■■□□□□ ●◎■■□□□□ ●◎■■□□□□ ●◎■■□□□□ ■■■■□□□□
+        # ●◎◎■□□□□ ●◎◎■□□□□ ●◎◎■□□□□ ●◎■■□□□□ ●◎◎■□□□□
+        # ●●●●□□□□ ●●●■□□□□ ●●●●□□□□ ●●■■□□□□ ●●●●□□□□
+        self.level2_maskvalue = [
+            # 左下
+            [
+                0x0000000080C0E0F0,
+                0x0000000080C0E0E0,
+                0x0000000000C0E0F0,
+                0x0000000080C0C0C0,
+                0x000000000000E0F0,
+            ],
+            # 左上
+            [
+                0xF0E0C08000000000,
+                0xF0E0C00000000000,
+                0xE0E0C08000000000,
+                0xF0E0000000000000,
+                0xC0C0C08000000000,
+            ],
+            # 右上
+            [
+                0x0F07030100000000,
+                0x0707030100000000,
+                0x0F07030000000000,
+                0x0303030100000000,
+                0x0F07000000000000,
+            ],
+            # 右下
+            [
+                0x000000000103070F,
+                0x000000000003070F,
+                0x0000000001030707,
+                0x000000000000070F,
+                0x0000000001030303,
+            ],
+        ]
+        self.level2_weight = [
+            3, 3, 3, 2, 2
+        ]
+
         # Level3
+        self.level3_maskvalue = [
+            # 左下
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 左上
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 右上
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 右下
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+        ]
+        self.level3_weight = [
+            0,
+        ]
+
         # Level4
+        self.level4_maskvalue = [
+            # 左下
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 左上
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 右上
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 右下
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+        ]
+        self.level4_weight = [
+            0,
+        ]
+
         # Level5
+        self.level5_maskvalue = [
+            # 左下
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 左上
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 右上
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            # 右下
+            [
+                0xFFFFFFFFFFFFFFFF,
+            ],
+        ]
+        self.level5_weight = [
+            0,
+        ]
 
     def get_score(self, board):
         """
@@ -540,16 +653,44 @@ class CornerScorer(AbstractScorer):
             maskvalues = self.level1_maskvalue[index]
             for w_index, maskvalue in enumerate(maskvalues):
                 corner_score = self._get_mask_value(b_bitboard, w_bitboard, maskvalue, self.level1_weight[w_index])
-
                 if corner_score:
                     break
 
             if corner_score:
-                pass
-                # Level2
-                # Level3
-                # Level4
                 # Level5
+                maskvalues = self.level5_maskvalue[index]
+                for w_index, maskvalue in enumerate(maskvalues):
+                    tmp_score = self._get_mask_value(b_bitboard, w_bitboard, maskvalue, self.level5_weight[w_index])
+                    if tmp_score:
+                        corner_score = tmp_score
+                        break
+
+                if not tmp_score:
+                    # Level4
+                    maskvalues = self.level4_maskvalue[index]
+                    for w_index, maskvalue in enumerate(maskvalues):
+                        tmp_score = self._get_mask_value(b_bitboard, w_bitboard, maskvalue, self.level4_weight[w_index])
+                        if tmp_score:
+                            corner_score = tmp_score
+                            break
+
+                    if not tmp_score:
+                        # Level3
+                        maskvalues = self.level3_maskvalue[index]
+                        for w_index, maskvalue in enumerate(maskvalues):
+                            tmp_score = self._get_mask_value(b_bitboard, w_bitboard, maskvalue, self.level3_weight[w_index])
+                            if tmp_score:
+                                corner_score = tmp_score
+                                break
+
+                        if not tmp_score:
+                            # Level2
+                            maskvalues = self.level2_maskvalue[index]
+                            for w_index, maskvalue in enumerate(maskvalues):
+                                tmp_score = self._get_mask_value(b_bitboard, w_bitboard, maskvalue, self.level2_weight[w_index])
+                                if tmp_score:
+                                    corner_score = tmp_score
+                                    break
 
             score += corner_score
 
@@ -783,6 +924,7 @@ if __name__ == '__main__':
 
         return bits
 
+    # Level1
     # 左下
     print('bottom left')
     for i in scorer.level1_maskvalue[0]:
@@ -809,7 +951,6 @@ if __name__ == '__main__':
         values = rotate_90(i)
         print('0x' + format(values, '016X') + ',')
 
-    # Level1
     board8 = BitBoard(8)
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0x0000000000000000
@@ -826,3 +967,39 @@ if __name__ == '__main__':
     score = scorer.get_score(board8)
     print('score', score)
     assert score == 200
+
+    # Level2
+    # 左下
+    print('bottom left')
+    for i in scorer.level2_maskvalue[0]:
+        print('0x' + format(i, '016X') + ',')
+
+    # 左上
+    print('top left')
+    for i in scorer.level2_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右上
+    print('top right')
+    for i in scorer.level2_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右下
+    print('bottom right')
+    for i in scorer.level2_maskvalue[0]:
+        values = rotate_90(i)
+        print('0x' + format(values, '016X') + ',')
+
+    board8 = BitBoard(8)
+    board8._black_bitboard = 0x0000000080C0E0F0
+    board8._white_bitboard = 0xF7E703010000070F
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == -400
