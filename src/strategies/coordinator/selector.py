@@ -89,7 +89,7 @@ if __name__ == '__main__':
     moves = bitboard8.get_possibles('black')
 
     print(strategy.__class__.__name__)
-    Timer.set_deadline(strategy.__class__.__name__, 10.5, -1000000)
+    Timer.set_deadline(strategy.__class__.__name__, -1000000)
     best_move, scores = strategy.get_best_move('black', bitboard8, moves, 4)
 
     moves = selector.select_moves('black', bitboard8, None, scores, 2)

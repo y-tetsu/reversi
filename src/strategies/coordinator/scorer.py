@@ -475,7 +475,7 @@ class EdgeScorer(AbstractScorer):
 
 class CornerScorer(AbstractScorer):
     """
-    角のパターンに基づいて算出
+    隅のパターンに基づいて算出
     """
     def __init__(self, w=100):
         self._W = w
