@@ -150,7 +150,6 @@ class Sorter_CB(AbstractSorter):
 if __name__ == '__main__':
     from board import BitBoard
     from common.timer import Timer
-    from strategies.alphabeta import AlphaBeta_TPOW
 
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
