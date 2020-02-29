@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_BC_TPW, AbIF11_B_TPW, AbIF11_BC_TPW, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE
+from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE
 
 
 # ===== 定石リスト =====
@@ -1014,33 +1014,6 @@ class AbIF9J_B_TPW(Tora):
         super().__init__(base)
 
 
-class AbIF9J_BC_TPW(Neko):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:BC、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_BC_TPW()):
-        super().__init__(base)
-
-
-class AbIF11J_B_TPW(Neko):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り11手)
-    """
-    def __init__(self, base=AbIF11_B_TPW()):
-        super().__init__(base)
-
-
-class AbIF11J_BC_TPW(Neko):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:BC、評価関数:TPW, 完全読み開始:残り11手)
-    """
-    def __init__(self, base=AbIF11_BC_TPW()):
-        super().__init__(base)
-
-
 class NsIF9J_B_TPW(Ushi):
     """
     NegaScout法に反復深化法を適用して次の手を決める+定石打ち
@@ -1068,7 +1041,7 @@ class NsIF9J_B_TPWE(Nezumi):
         super().__init__(base)
 
 
-class SwitchNsIF9J_B_TPW(Tora):
+class SwitchNsIF9J_B_TPW(Nezumi):
     """
     SwitchNsIF9_B_TPW+定石打ち
     (完全読み開始:残り9手)
@@ -1530,7 +1503,7 @@ if __name__ == '__main__':
     #--------------------------------------------
     # 猫定石
     print('--- Test For Neko Strategy ---')
-    joseki = AbIF9J_BC_TPW()
+    joseki = SwitchNsIF9J_B_TPWE()
 
     bitboard8 = BitBoard()
     print(bitboard8)
