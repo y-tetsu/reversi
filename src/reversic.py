@@ -29,7 +29,6 @@ BLACK_STRATEGIES = {
     'FullReading': strategies.AlphaBeta4F9J_TPW(),
     'Iterative': strategies.AbIF9J_B_TPW(),
     'Edge': strategies.AbIF9J_B_TPWE(),
-    'Switch': strategies.SwitchAbIF9J_B_TPW(),
 }
 
 WHITE_STRATEGIES = {
@@ -47,7 +46,6 @@ WHITE_STRATEGIES = {
     'FullReading': strategies.AlphaBeta4F9J_TPW(),
     'Iterative': strategies.AbIF9J_B_TPW(),
     'Edge': strategies.AbIF9J_B_TPWE(),
-    'Switch': strategies.SwitchAbIF9J_B_TPW(),
 }
 
 STRATEGIES = {'black': BLACK_STRATEGIES, 'white': WHITE_STRATEGIES}
