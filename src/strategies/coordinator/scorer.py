@@ -570,26 +570,76 @@ class CornerScorer(AbstractScorer):
         ]
 
         # Level3
+        # 6                6                6                5                5
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # ●□□□□□□□ ●□□□□□□□ □□□□□□□□ ●□□□□□□□ □□□□□□□□
+        # ●◎■■□□□□ ●◎■■□□□□ ●◎■■□□□□ ●◎■■□□□□ ■■■■□□□□
+        # ●◎◎■□□□□ ●◎◎■□□□□ ●◎◎■□□□□ ●◎◎■□□□□ ●◎◎■□□□□
+        # ●◎◎◎□□□□ ●◎◎◎□□□□ ●◎◎◎□□□□ ●◎◎■□□□□ ●◎◎◎□□□□
+        # ●●●●●□□□ ●●●●□□□□ ●●●●●□□□ ●●●■□□□□ ●●●●●□□□
+        # 4                4                3                3
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # ●□□□□□□□ □□□□□□□□ ●□□□□□□□ □□□□□□□□
+        # ●◎■■□□□□ ■■■■□□□□ ●◎■■□□□□ ■■■■□□□□
+        # ●◎■■□□□□ ●◎■■□□□□ ●◎■■□□□□ ■■■■□□□□
+        # ●◎◎■□□□□ ●◎◎◎□□□□ ●◎■■□□□□ ●◎◎◎□□□□
+        # ●●●■□□□□ ●●●●●□□□ ●●■■□□□□ ●●●●●□□□
         self.level3_maskvalue = [
             # 左下
             [
-                0xFFFFFFFFFFFFFFFF,
+                0x00000080C0E0F0F8,
+                0x00000080C0E0F0F0,
+                0x00000000C0E0F0F8,
+                0x00000080C0E0E0E0,
+                0x0000000000E0F0F8,
+                0x00000080C0C0E0E0,
+                0x0000000000C0F0F8,
+                0x00000080C0C0C0C0,
+                0x000000000000F0F8,
             ],
             # 左上
             [
-                0xFFFFFFFFFFFFFFFF,
+                0xF8F0E0C080000000,
+                0xF8F0E0C000000000,
+                0xF0F0E0C080000000,
+                0xF8F0E00000000000,
+                0xE0E0E0C080000000,
+                0xF8F0C00000000000,
+                0xE0E0C0C080000000,
+                0xF8F0000000000000,
+                0xC0C0C0C080000000,
             ],
             # 右上
             [
-                0xFFFFFFFFFFFFFFFF,
+                0x1F0F070301000000,
+                0x0F0F070301000000,
+                0x1F0F070300000000,
+                0x0707070301000000,
+                0x1F0F070000000000,
+                0x0707030301000000,
+                0x1F0F030000000000,
+                0x0303030301000000,
+                0x1F0F000000000000,
             ],
             # 右下
             [
-                0xFFFFFFFFFFFFFFFF,
+                0x0000000103070F1F,
+                0x0000000003070F1F,
+                0x0000000103070F0F,
+                0x0000000000070F1F,
+                0x0000000103070707,
+                0x0000000000030F1F,
+                0x0000000103030707,
+                0x0000000000000F1F,
+                0x0000000103030303,
             ],
         ]
         self.level3_weight = [
-            0,
+            6, 6, 6, 5, 5, 4, 4, 3, 3
         ]
 
         # Level4
@@ -1003,3 +1053,47 @@ if __name__ == '__main__':
     score = scorer.get_score(board8)
     print('score', score)
     assert score == -400
+
+    # Level3
+    # 左下
+    print('bottom left')
+    for i in scorer.level3_maskvalue[0]:
+        print('0x' + format(i, '016X') + ',')
+
+    # 左上
+    print('top left')
+    for i in scorer.level3_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右上
+    print('top right')
+    for i in scorer.level3_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右下
+    print('bottom right')
+    for i in scorer.level3_maskvalue[0]:
+        values = rotate_90(i)
+        print('0x' + format(values, '016X') + ',')
+
+    board8 = BitBoard(8)
+    board8._black_bitboard = 0x00000080C0E0F0F8
+    board8._white_bitboard = 0x0303030301000000
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 300
+
+    board8._black_bitboard = 0x0000000103070707
+    board8._white_bitboard = 0xF8F0C00000000000
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 100
