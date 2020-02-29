@@ -64,6 +64,15 @@ class AbIF9_B_TPW(FullReading):
         super().__init__(remain, base)
 
 
+class AbIF9_B_TPWE(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
+    """
+    def __init__(self, remain=9, base=AbI_B_TPWE()):
+        super().__init__(remain, base)
+
+
 class NsIF9_B_TPW(FullReading):
     """
     NegaScout法に反復深化法を適用して次の手を決める

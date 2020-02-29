@@ -241,8 +241,8 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.withdraw()  # 表示が整うまで隠す
 
-    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'Edge', 'Switch']
-    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'FullReading', 'Joseki', 'Iterative', 'Edge', 'Switch']
+    b = ['User1', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'Joseki', 'FullReading', 'Iterative', 'Edge', 'Switch']
+    w = ['User2', 'Unselfish', 'Random', 'Greedy', 'SlowStarter', 'Table', 'MonteCarlo', 'MinMax', 'NegaMax', 'AlphaBeta', 'Joseki', 'FullReading', 'Iterative', 'Edge', 'Switch']
 
     w = Window(root=root, black_players=b, white_players=w)
 
@@ -259,8 +259,8 @@ if __name__ == '__main__':
         'MinMax': strategies.MinMax2_TPW(),
         'NegaMax': strategies.NegaMax3_TPW(),
         'AlphaBeta': strategies.AlphaBeta4_TPW(),
-        'FullReading' : strategies.AlphaBeta4F9_TPW(),
-        'Joseki' : strategies.AlphaBeta4F9J_TPW(),
+        'Joseki' : strategies.AlphaBeta4J_TPW(),
+        'FullReading' : strategies.AlphaBeta4F9J_TPW(),
         'Iterative': strategies.AbIF9J_B_TPW(),
         'Edge': strategies.AbIF9J_B_TPWE(),
         'Switch': strategies.SwitchAbIF9J_B_TPW(),
