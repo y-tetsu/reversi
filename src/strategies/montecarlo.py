@@ -119,7 +119,7 @@ if __name__ == '__main__':
     bitboard.put_stone('black', 3, 2)
     print(bitboard)
 
-    Timer.set_deadline(montecarlo.__class__.__name__, 0.5, -10000000)
+    Timer.set_deadline(montecarlo.__class__.__name__, -10000000)
     ret = montecarlo.playout('white', bitboard, (3, 3))
     print(ret)
 
