@@ -7,7 +7,8 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE
+from strategies.alphabeta import AlphaBeta4_TPW
+from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE
 
 
 # ===== 定石リスト =====
@@ -996,7 +997,16 @@ class Neko(Joseki):
         self.joseki.update(CAT)        # 猫定石
 
 
-class AlphaBeta4F9J_TPW(Usagi):
+class AlphaBeta4J_TPW(Usagi):
+    """
+    AlphaBeta法で4手先読みして次の手を決める+定石打ち
+    (評価関数:TPW, 完全読み開始:残り9手)
+    """
+    def __init__(self, base=AlphaBeta4_TPW()):
+        super().__init__(base)
+
+
+class AlphaBeta4F9J_TPW(Tora):
     """
     AlphaBeta法で4手先読みして次の手を決める+定石打ち
     (評価関数:TPW, 完全読み開始:残り9手)
@@ -1005,12 +1015,21 @@ class AlphaBeta4F9J_TPW(Usagi):
         super().__init__(base)
 
 
-class AbIF9J_B_TPW(Tora):
+class AbIF9J_B_TPW(Nezumi):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
     (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
     """
     def __init__(self, base=AbIF9_B_TPW()):
+        super().__init__(base)
+
+
+class AbIF9J_B_TPWE(Ushi):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
+    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
+    """
+    def __init__(self, base=AbIF9_B_TPWE()):
         super().__init__(base)
 
 
@@ -1111,7 +1130,7 @@ if __name__ == '__main__':
     #--------------------------------------------
     # 兎定石
     print('--- Test For Usagi Strategy ---')
-    joseki = AlphaBeta4F9J_TPW()
+    joseki = AlphaBeta4J_TPW()
 
     bitboard8 = BitBoard()
     print(bitboard8)
@@ -1204,7 +1223,7 @@ if __name__ == '__main__':
     #--------------------------------------------
     # 虎定石
     print('--- Test For Tora Strategy ---')
-    joseki = AbIF9J_B_TPW()
+    joseki = AlphaBeta4F9J_TPW()
 
     bitboard8 = BitBoard()
     print(bitboard8)
@@ -1276,7 +1295,7 @@ if __name__ == '__main__':
     #--------------------------------------------
     # 牛定石
     print('--- Test For Ushi Strategy ---')
-    joseki = NsIF9J_B_TPW()
+    joseki = AbIF9J_B_TPWE()
 
     bitboard8 = BitBoard()
     print(bitboard8)
@@ -1369,7 +1388,7 @@ if __name__ == '__main__':
     #--------------------------------------------
     # 鼠定石
     print('--- Test For Nezumi Strategy ---')
-    joseki = SwitchNsIF9J_B_TPW()
+    joseki = AbIF9J_B_TPW()
 
     bitboard8 = BitBoard()
     print(bitboard8)
