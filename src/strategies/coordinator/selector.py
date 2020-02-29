@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     from board import BitBoard
     from strategies.common import Timer
-    from strategies.alphabeta import AlphaBeta_TPOW
+    from strategies.alphabeta import AlphaBeta_TPW
 
     bitboard8 = BitBoard(8)
     bitboard8.put_stone('black', 3, 2)
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     print('--- Test For Selector_W ---')
     print(bitboard8)
 
-    strategy = AlphaBeta_TPOW()
+    strategy = AlphaBeta_TPW()
     selector = Selector_W()
 
     assert selector.depth == 3
