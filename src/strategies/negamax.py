@@ -200,7 +200,7 @@ if __name__ == '__main__':
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
-    Timer.deadline[key] = time.time() + 5
+    Timer.deadline[key] = time.time() + 10
     score = negamax.get_score('white', bitboard8, 6)
     print(score)
     assert score == -3.5
