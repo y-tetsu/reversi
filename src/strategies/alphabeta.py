@@ -8,7 +8,7 @@ sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.negamax import NegaMax
-from strategies.coordinator import Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPOW, Evaluator_N, Evaluator_NW
+from strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_N
 
 
 class _AlphaBeta(AbstractStrategy):
@@ -128,44 +128,12 @@ class _AlphaBeta_N(_AlphaBeta):
         super().__init__(depth=depth, evaluator=evaluator)
 
 
-class _AlphaBeta_NW(_AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_NWにより次の手を決める
-    """
-    def __init__(self, depth, evaluator=Evaluator_NW()):
-        super().__init__(depth=depth, evaluator=evaluator)
-
-
 class AlphaBeta_N(AlphaBeta):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
     """
     def __init__(self, depth, evaluator=Evaluator_N()):
         super().__init__(depth=depth, evaluator=evaluator)
-
-
-class AlphaBeta_NW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_NWにより次の手を決める
-    """
-    def __init__(self, depth, evaluator=Evaluator_NW()):
-        super().__init__(depth=depth, evaluator=evaluator)
-
-
-class AlphaBeta_TP(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TP()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta_TPO(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPOにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPO()):
-        super().__init__(evaluator=evaluator)
 
 
 class AlphaBeta_TPW(AlphaBeta):
@@ -200,46 +168,6 @@ class AlphaBeta4_TPWE(AlphaBeta):
         super().__init__(depth, evaluator)
 
 
-class AlphaBeta_TPOW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPOWにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPOW()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta1_TPOW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPOWにより次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta2_TPOW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPOWにより次の手を決める(2手読み)
-    """
-    def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta3_TPOW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPOWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta4_TPOW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPOWにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
 if __name__ == '__main__':
     import time
     import os
@@ -247,7 +175,7 @@ if __name__ == '__main__':
 
     # AlphaBeta
     print('--- Test For AlphaBeta Strategy ---')
-    alphabeta = AlphaBeta3_TPOW()
+    alphabeta = AlphaBeta3_TPW()
 
     assert alphabeta.depth == 3
 
@@ -259,32 +187,47 @@ if __name__ == '__main__':
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2) == -10.75
+    score = alphabeta._get_score('white', bitboard8, -10000000, 10000000, 2)
+    print(score)
+    print(Measure.count[key])
+    assert score == -13
     assert Measure.count[key] == 16
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3) == 6.25
-    assert Measure.count[key] == 63
+    score = alphabeta._get_score('white', bitboard8, -10000000, 10000000, 3)
+    print(score)
+    print(Measure.count[key])
+    assert score == 4
+    assert Measure.count[key] == 62
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + CPU_TIME
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4) == -8.25
-    assert Measure.count[key] == 257
+    score = alphabeta._get_score('white', bitboard8, -10000000, 10000000, 4)
+    print(score)
+    print(Measure.count[key])
+    assert score == -9
+    assert Measure.count[key] == 263
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 1
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5) == 4.0
-    assert Measure.count[key] == 703
+    score = alphabeta._get_score('white', bitboard8, -10000000, 10000000, 5)
+    print(score)
+    print(Measure.count[key])
+    assert score == 1
+    assert Measure.count[key] == 812
 
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
-    assert alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6) == -3.5
-    assert Measure.count[key] == 2696
+    score = alphabeta._get_score('white', bitboard8, -10000000, 10000000, 6)
+    print(score)
+    print(Measure.count[key])
+    assert score == -5
+    assert Measure.count[key] == 2548
 
     print(bitboard8)
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
@@ -300,18 +243,24 @@ if __name__ == '__main__':
     Measure.count[key] = 0
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
-    assert alphabeta.next_move('black', bitboard8) == (2, 2)
+    move = alphabeta.next_move('black', bitboard8)
+    print(move)
+    assert move == (2, 2)
+    print(Measure.count[key])
     assert Measure.count[key] == 180
 
     Measure.count[key] = 0
     alphabeta.depth = 2
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
-    assert alphabeta.next_move('black', bitboard8) == (4, 5)
-    assert Measure.count[key] == 30
+    move = alphabeta.next_move('black', bitboard8)
+    print(move)
+    assert move == (2, 2)
+    print(Measure.count[key])
+    assert Measure.count[key] == 27
 
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
     moves = bitboard8.get_possibles('black').keys()  # 手の候補
     print( alphabeta.get_best_move('black', bitboard8, moves, 5) )
-    assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((2, 3), {(2, 2): 5.75, (2, 3): 6.25, (5, 3): 6.25, (1, 5): 6.25, (2, 5): 6.25, (3, 5): 6.25, (4, 5): 6.25, (6, 5): 6.25})
+    assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((2, 2), {(2, 2): 8, (2, 3): 8, (5, 3): 8, (1, 5): 8, (2, 5): 8, (3, 5): 8, (4, 5): 8, (6, 5): 8})
