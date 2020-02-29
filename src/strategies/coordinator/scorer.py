@@ -749,26 +749,43 @@ class CornerScorer(AbstractScorer):
         ]
 
         # Level5
+        # 9                9                9
+        # □□□□□□□□ □□□□□□□□ □□□□□□□□
+        # ●□□□□□□□ ●□□□□□□□ □□□□□□□□
+        # ●●□□□□□□ ●●□□□□□□ □□□□□□□□
+        # ●●●□□□□□ ●●●□□□□□ □□□□□□□□
+        # ●◎◎◎□□□□ ●◎◎◎□□□□ ●◎◎◎□□□□
+        # ●◎◎◎●□□□ ●◎◎◎□□□□ ●◎◎◎●□□□
+        # ●◎◎◎●●□□ ●◎◎◎□□□□ ●◎◎◎●●□□
+        # ●●●●●●●□ ●●●●□□□□ ●●●●●●●□
         self.level5_maskvalue = [
             # 左下
             [
-                0xFFFFFFFFFFFFFFFF,
+                0x0080C0E0F0F8FCFE,
+                0x0080C0E0F0F0F0F0,
+                0x00000000F0F8FCFE,
             ],
             # 左上
             [
-                0xFFFFFFFFFFFFFFFF,
+                0xFEFCF8F0E0C08000,
+                0xFEFCF8F000000000,
+                0xF0F0F0F0E0C08000,
             ],
             # 右上
             [
-                0xFFFFFFFFFFFFFFFF,
+                0x7F3F1F0F07030100,
+                0x0F0F0F0F07030100,
+                0x7F3F1F0F00000000,
             ],
             # 右下
             [
-                0xFFFFFFFFFFFFFFFF,
+                0x000103070F1F3F7F,
+                0x000000000F1F3F7F,
+                0x000103070F0F0F0F,
             ],
         ]
         self.level5_weight = [
-            0,
+            9, 9, 9
         ]
 
     def get_score(self, board):
@@ -1224,3 +1241,55 @@ if __name__ == '__main__':
     score = scorer.get_score(board8)
     print('score', score)
     assert score == 400
+
+    # Level5
+    # 左下
+    print('bottom left')
+    for i in scorer.level5_maskvalue[0]:
+        print('0x' + format(i, '016X') + ',')
+
+    # 左上
+    print('top left')
+    for i in scorer.level5_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右上
+    print('top right')
+    for i in scorer.level5_maskvalue[0]:
+        values = rotate_90(i)
+        values = rotate_90(values)
+        print('0x' + format(values, '016X') + ',')
+
+    # 右下
+    print('bottom right')
+    for i in scorer.level5_maskvalue[0]:
+        values = rotate_90(i)
+        print('0x' + format(values, '016X') + ',')
+
+    board8 = BitBoard(8)
+    board8._black_bitboard = 0xFFFCF8F0E0C08000
+    board8._white_bitboard = 0x0000000000000000
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 900
+
+    board8._black_bitboard = 0x0000000000000000
+    board8._white_bitboard = 0x0F0F0F0F07030100
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == -900
+
+    board8._black_bitboard = 0xFFFEFCF8F0000000
+    board8._white_bitboard = 0x000000000F1F3F7F
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 0
