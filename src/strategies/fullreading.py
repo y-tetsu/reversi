@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
-from strategies.iterative import AbI_B_TPW, AbI_BC_TPW, AbI_B_TPOW, AbI_BC_TPOW, AbI_W_BC_TPOW, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE, NsI_BC_TPW
+from strategies.iterative import AbI_B_TPW, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE, NsI_BC_TPW
 from strategies.switch import SwitchNsI_B_TPW, SwitchNsI_B_TPWE
 
 
@@ -46,24 +46,6 @@ class _FullReading(FullReading):
         self.base = base
 
 
-class AbIF5_B_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り5手)
-    """
-    def __init__(self, remain=5, base=AbI_B_TPOW()):
-        super().__init__(remain, base)
-
-
-class AbIF7_B_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り7手)
-    """
-    def __init__(self, remain=7, base=AbI_B_TPOW()):
-        super().__init__(remain, base)
-
-
 class AlphaBeta4F9_TPW(FullReading):
     """
     AlphaBeta法で4手先を読む
@@ -73,120 +55,12 @@ class AlphaBeta4F9_TPW(FullReading):
         super().__init__(remain, base)
 
 
-class AbIF9_B_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り9手)
-    """
-    def __init__(self, remain=9, base=AbI_B_TPOW()):
-        super().__init__(remain, base)
-
-
 class AbIF9_B_TPW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
     (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
     """
     def __init__(self, remain=9, base=AbI_B_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF9_BC_TPW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:BC、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, remain=9, base=AbI_BC_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF10_B_TPW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り10手)
-    """
-    def __init__(self, remain=10, base=AbI_B_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF11_B_TPW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り11手)
-    """
-    def __init__(self, remain=11, base=AbI_B_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF11_BC_TPW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:BC、評価関数:TPW, 完全読み開始:残り11手)
-    """
-    def __init__(self, remain=11, base=AbI_BC_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF12_B_TPW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り12手)
-    """
-    def __init__(self, remain=12, base=AbI_B_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF13_B_TPW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り13手)
-    """
-    def __init__(self, remain=13, base=AbI_B_TPW()):
-        super().__init__(remain, base)
-
-
-class AbIF11_B_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り11手)
-    """
-    def __init__(self, remain=11, base=AbI_B_TPOW()):
-        super().__init__(remain, base)
-
-
-class AbIF13_B_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り13手)
-    """
-    def __init__(self, remain=13, base=AbI_B_TPOW()):
-        super().__init__(remain, base)
-
-
-class AbIF15_B_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPOW, 完全読み開始:残り15手)
-    """
-    def __init__(self, remain=15, base=AbI_B_TPOW()):
-        super().__init__(remain, base)
-
-
-class AbIF7_BC_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
-    """
-    def __init__(self, remain=7, base=AbI_BC_TPOW()):
-        super().__init__(remain, base)
-
-
-class AbIF7_W_BC_TPOW(FullReading):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める
-    (選択的探索:W、並べ替え:BC、評価関数:TPOW, 完全読み開始:残り7手)
-    """
-    def __init__(self, remain=7, base=AbI_W_BC_TPOW()):
         super().__init__(remain, base)
 
 
@@ -332,8 +206,8 @@ if __name__ == '__main__':
     bitboard8.put_stone('white', 7, 1)
     print(bitboard8)
 
-    print('--- Test For AbIF7_BC_TPOW Strategy ---')
-    strategy = AbIF7_BC_TPOW(remain=11)
+    print('--- Test For AbIF9_B_TPW Strategy ---')
+    strategy = AbIF9_B_TPW(remain=11)
     assert strategy.remain == 11
 
     base_key = strategy.base.search.__class__.__name__ + str(os.getpid())
@@ -364,11 +238,13 @@ if __name__ == '__main__':
     print(bitboard8)
 
     # full
-    strategy = AbIF7_BC_TPOW()
-    assert strategy.remain == 7
+    strategy = AbIF9_B_TPW()
+    assert strategy.remain == 9
     Measure.count[fullreading_key] = 0
     move = strategy.next_move('white', bitboard8)
     print(move)
     assert move == (7, 0)
     print( 'count     :', Measure.count[fullreading_key] )
+    assert Measure.count[fullreading_key] == 859
     print( 'timeout   :', Timer.timeout_flag[fullreading_key] )
+    assert Timer.timeout_flag[fullreading_key] == False
