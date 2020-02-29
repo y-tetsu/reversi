@@ -135,7 +135,7 @@ class EdgeScorer(AbstractScorer):
     """
     辺のパターンに基づいて算出
     """
-    def __init__(self, w1=50, w2=100, w3=-15, w4=-30, w5=10, w6=10, w7=10, w8=10, w9=10, w10=10, w11=10, w12=10):
+    def __init__(self, w1=47, w2=28, w3=0, w4=-3, w5=0, w6=100, w7=100, w8=100, w9=100, w10=100, w11=100, w12=100):
         self._W1 = w1
         self._W2 = w2
         self._W3 = w3
@@ -773,35 +773,35 @@ if __name__ == '__main__':
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 100
+    assert score == 28
 
     board8._black_bitboard = 0x7E3C000000000000
     board8._white_bitboard = 0x0000000000000000
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 150
+    assert score == 75
 
     board8._black_bitboard = 0xFE3C000000000000
     board8._white_bitboard = 0x0000000000000000
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 60
+    assert score == 600
 
     board8._black_bitboard = 0x7E3C000000003C7E
     board8._white_bitboard = 0x0000000000000000
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 300
+    assert score == 150
 
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0x0081C3C3C3C38100
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -300
+    assert score == -150
 
     # ピュアウィング/ウィング
     board8._black_bitboard = 0x7C3C000000003C7C
@@ -809,35 +809,35 @@ if __name__ == '__main__':
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -90
+    assert score == -6
 
     board8._black_bitboard = 0x0081C3C3C3C30000
     board8._white_bitboard = 0x0000000000000000
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -90
+    assert score == -6
 
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0x3E3C000000003C3E
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 90
+    assert score == 6
 
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0x0000C3C3C3C38100
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 90
+    assert score == 6
 
     board8._black_bitboard = 0x0080C0C0C0C00000
     board8._white_bitboard = 0x0000030103030100
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -15
+    assert score == 0
 
     # ブロック
     board8._black_bitboard = 0xBC00000000000000
@@ -852,7 +852,7 @@ if __name__ == '__main__':
     print(board8)
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -40
+    assert score == 0
 
     # 確定石
     board8._black_bitboard = 0xC000000000000000
@@ -861,7 +861,7 @@ if __name__ == '__main__':
 
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 10
+    assert score == 100
 
     board8._black_bitboard = 0xE000000000000000
     board8._white_bitboard = 0x0000000000000000
@@ -869,7 +869,7 @@ if __name__ == '__main__':
 
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 20
+    assert score == 200
 
     board8._black_bitboard = 0xFF00000000000000
     board8._white_bitboard = 0x0000000000000000
@@ -877,7 +877,7 @@ if __name__ == '__main__':
 
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 130
+    assert score == 1300
 
     board8._black_bitboard = 0xFF818181818181FF
     board8._white_bitboard = 0x0000000000000000
@@ -885,7 +885,7 @@ if __name__ == '__main__':
 
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == 520
+    assert score == 5200
 
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0xC3810000000081C3
@@ -893,7 +893,7 @@ if __name__ == '__main__':
 
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -80
+    assert score == -800
 
     board8._black_bitboard = 0x0000000000000000
     board8._white_bitboard = 0xF7810080800081FF
@@ -901,7 +901,7 @@ if __name__ == '__main__':
 
     score = scorer.get_score(board8)
     print('score', score)
-    assert score == -220
+    assert score == -2200
 
     #------------------------------------------------------
     # CornerScorer
