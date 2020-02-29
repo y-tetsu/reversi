@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
-from strategies.iterative import AbI_B_TPW, AbI_B_TPWE, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE
+from strategies.iterative import AbI_B_TPW, AbI_B_TPWE, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE
 from strategies.switch import SwitchNsI_B_TPW, SwitchNsI_B_TPWE
 
 
@@ -70,6 +70,15 @@ class AbIF9_B_TPWE(FullReading):
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
     """
     def __init__(self, remain=9, base=AbI_B_TPWE()):
+        super().__init__(remain, base)
+
+
+class AbIF9_B_TPWEC(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPWEC, 完全読み開始:残り9手)
+    """
+    def __init__(self, remain=9, base=AbI_B_TPWEC()):
         super().__init__(remain, base)
 
 

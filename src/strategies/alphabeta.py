@@ -8,7 +8,7 @@ sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.negamax import NegaMax
-from strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_N
+from strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_N
 
 
 class _AlphaBeta(AbstractStrategy):
@@ -149,6 +149,14 @@ class AlphaBeta_TPWE(AlphaBeta):
     AlphaBeta法でEvaluator_TPWEにより次の手を決める
     """
     def __init__(self, evaluator=Evaluator_TPWE()):
+        super().__init__(evaluator=evaluator)
+
+
+class AlphaBeta_TPWEC(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWECにより次の手を決める
+    """
+    def __init__(self, evaluator=Evaluator_TPWEC()):
         super().__init__(evaluator=evaluator)
 
 

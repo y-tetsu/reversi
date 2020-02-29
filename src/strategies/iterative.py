@@ -7,7 +7,7 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, AbstractStrategy
-from strategies.alphabeta import AlphaBeta_TPW, AlphaBeta_TPWE
+from strategies.alphabeta import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWEC
 from strategies.negascout import NegaScout_TPW, NegaScout_TPW2, NegaScout_TPWE
 from strategies.coordinator import Selector, Sorter_B
 
@@ -60,6 +60,14 @@ class AbI_B_TPWE(IterativeDeepning):
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
     def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWE()):
+        super().__init__(depth, selector, sorter, search)
+
+
+class AbI_B_TPWEC(IterativeDeepning):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWEC)
+    """
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWEC()):
         super().__init__(depth, selector, sorter, search)
 
 
