@@ -144,6 +144,14 @@ class AlphaBeta_TPW(AlphaBeta):
         super().__init__(evaluator=evaluator)
 
 
+class AlphaBeta_TPWE(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWEにより次の手を決める
+    """
+    def __init__(self, evaluator=Evaluator_TPWE()):
+        super().__init__(evaluator=evaluator)
+
+
 class AlphaBeta3_TPW(AlphaBeta):
     """
     AlphaBeta法でEvaluator_TPWにより次の手を決める(3手読み)

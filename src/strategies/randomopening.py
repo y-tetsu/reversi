@@ -13,8 +13,7 @@ from strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_T
 from strategies.negamax import _NegaMax3_TPW, NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta4_TPW, AlphaBeta4_TPWE
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW, NegaScout4_TPWE
-from strategies.iterative import AbI_B_TPW, NsI_B_TPW, NsI_BC_TPW, NsI_CB_TPW
-from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, NsIF9_B_TPW
+from strategies.fullreading import AlphaBeta4F9_TPW
 from strategies.joseki import AlphaBeta4F9J_TPW, AbIF9J_B_TPW, NsIF9J_B_TPW, NsIF9J_B_TPW2, NsIF9J_B_TPWE, SwitchNsIF9J_B_TPW, SwitchNsIF9J_B_TPWE
 
 
@@ -209,38 +208,6 @@ class AB_TI_Ro(RandomOpening):
         super().__init__(depth, base)
 
 
-class AbIRo_B_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + AbI_B_TPW
-    """
-    def __init__(self, depth=8, base=AbI_B_TPW()):
-        super().__init__(depth, base)
-
-
-class NsIRo_B_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + NsI_B_TPW
-    """
-    def __init__(self, depth=8, base=NsI_B_TPW()):
-        super().__init__(depth, base)
-
-
-class NsIRo_BC_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + NsI_BC_TPW
-    """
-    def __init__(self, depth=8, base=NsI_BC_TPW()):
-        super().__init__(depth, base)
-
-
-class NsIRo_CB_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + NsI_CB_TPW
-    """
-    def __init__(self, depth=8, base=NsI_CB_TPW()):
-        super().__init__(depth, base)
-
-
 class AlphaBeta4F9Ro_TPW(RandomOpening):
     """
     RandamOpening(8手) + AlphaBeta4F9_TPW
@@ -254,22 +221,6 @@ class AlphaBeta4F9JRo_TPW(RandomOpening):
     RandamOpening(8手) + AlphaBeta4F9J_TPW
     """
     def __init__(self, depth=8, base=AlphaBeta4F9J_TPW()):
-        super().__init__(depth, base)
-
-
-class AbIF9Ro_B_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + AbIF9_B_TPW
-    """
-    def __init__(self, depth=8, base=AbIF9_B_TPW()):
-        super().__init__(depth, base)
-
-
-class NsIF9Ro_B_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + NsIF9_B_TPW
-    """
-    def __init__(self, depth=8, base=NsIF9_B_TPW()):
         super().__init__(depth, base)
 
 

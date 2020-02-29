@@ -7,9 +7,9 @@ import sys
 sys.path.append('../')
 
 from strategies.common import Timer, Measure, AbstractStrategy
-from strategies.alphabeta import AlphaBeta_TPW
+from strategies.alphabeta import AlphaBeta_TPW, AlphaBeta_TPWE
 from strategies.negascout import NegaScout_TPW, NegaScout_TPW2, NegaScout_TPWE
-from strategies.coordinator import Selector, Selector_W, Sorter, Sorter_B, Sorter_BC, Sorter_CB
+from strategies.coordinator import Selector, Sorter_B
 
 
 class IterativeDeepning(AbstractStrategy):
@@ -55,11 +55,11 @@ class AbI_B_TPW(IterativeDeepning):
         super().__init__(depth, selector, sorter, search)
 
 
-class AbI_BC_TPW(IterativeDeepning):
+class AbI_B_TPWE(IterativeDeepning):
     """
-    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:W、並べ替え:BC、評価関数:TPW)
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_BC(), search=AlphaBeta_TPW()):
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWE()):
         super().__init__(depth, selector, sorter, search)
 
 
@@ -71,14 +71,6 @@ class NsI_B_TPW(IterativeDeepning):
         super().__init__(depth, selector, sorter, search)
 
 
-class NsI_B_TPW2(IterativeDeepning):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW)
-    """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPW2()):
-        super().__init__(depth, selector, sorter, search)
-
-
 class NsI_B_TPWE(IterativeDeepning):
     """
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
@@ -87,19 +79,11 @@ class NsI_B_TPWE(IterativeDeepning):
         super().__init__(depth, selector, sorter, search)
 
 
-class NsI_BC_TPW(IterativeDeepning):
+class NsI_B_TPW2(IterativeDeepning):
     """
-    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:BC、評価関数:TPW)
+    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW2)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_BC(), search=NegaScout_TPW()):
-        super().__init__(depth, selector, sorter, search)
-
-
-class NsI_CB_TPW(IterativeDeepning):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:CB、評価関数:TPW)
-    """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_CB(), search=NegaScout_TPW()):
+    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPW2()):
         super().__init__(depth, selector, sorter, search)
 
 
