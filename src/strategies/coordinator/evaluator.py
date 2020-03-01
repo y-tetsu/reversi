@@ -84,8 +84,8 @@ class Evaluator_E(AbstractEvaluator):
     """
     辺のパターンの評価値を算出
     """
-    def __init__(self, wpy=50, wy=100, wpwin=-15, wwin=-30, wb=10, ws1=10, ws2=10, ws3=10, ws4=10, ws5=10, ws6=10, ws7=10, ws8=10):
-        self.scorer = EdgeScorer(wpy, wy, wpwin, wwin, wb, ws1, ws2, ws3, ws4, ws5, ws6, ws7, ws8)  # 辺のパターンによる評価値算出
+    def __init__(self, wpy=50, wy=100, wwin=-30, ws=10):
+        self.scorer = EdgeScorer(wpy, wy, wwin, ws)  # 辺のパターンによる評価値算出
 
     def evaluate(self, *args, **kwargs):
         """
@@ -248,11 +248,11 @@ class Evaluator_TPWE(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数+勝敗+辺のパターンで算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=47, wy=28, wpwin=0, wwin=-3, wb=0, ws1=0, ws2=100, ws3=100, ws4=100, ws5=100, ws6=100, ws7=100, ws8=100):
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=47, wy=28, wwin=-3, ws=100):
         self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
-        self.e = Evaluator_E(wpy, wy, wpwin, wwin, wb, ws1, ws2, ws3, ws4, ws5, ws6, ws7, ws8)
+        self.e = Evaluator_E(wpy, wy, wwin, ws)
 
     def evaluate(self, *args, **kwargs):
         """
@@ -275,11 +275,11 @@ class Evaluator_TPWEC(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数+勝敗+辺のパターン+隅のパターンで算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=47, wy=28, wpwin=0, wwin=-3, wb=0, ws1=0, ws2=25, ws3=25, ws4=25, ws5=25, ws6=25, ws7=25, ws8=25, wc=100):
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, wpy=47, wy=28, wwin=-3, ws=25, wc=100):
         self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
-        self.e = Evaluator_E(wpy, wy, wpwin, wwin, wb, ws1, ws2, ws3, ws4, ws5, ws6, ws7, ws8)
+        self.e = Evaluator_E(wpy, wy, wwin, ws)
         self.c = Evaluator_C(wc)
 
     def evaluate(self, *args, **kwargs):
@@ -304,10 +304,10 @@ class Evaluator_PWE(AbstractEvaluator):
     """
     盤面の評価値を配置可能数+勝敗+辺のパターンで算出
     """
-    def __init__(self, size=8, wp=10, ww=10000, wpy=50, wy=30, wpwin=-10, wwin=-5, wb=5, ws1=75, ws2=75, ws3=75, ws4=75, ws5=75, ws6=75, ws7=75, ws8=75):
+    def __init__(self, size=8, wp=10, ww=10000, wpy=50, wy=30, wwin=-5, ws=75):
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
-        self.e = Evaluator_E(wpy, wy, wpwin, wwin, wb, ws1, ws2, ws3, ws4, ws5, ws6, ws7, ws8)
+        self.e = Evaluator_E(wpy, wy, wwin, ws)
 
     def evaluate(self, *args, **kwargs):
         """
@@ -460,10 +460,10 @@ if __name__ == '__main__':
     score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
     print(board8)
     print('score', score)
-    assert score == -98
+    assert score == 5
 
     board8._black_bitboard = 0x0703012010003C7E
     score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
     print(board8)
     print('score', score)
-    assert score == 480
+    assert score == 390
