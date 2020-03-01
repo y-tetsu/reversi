@@ -1018,6 +1018,16 @@ if __name__ == '__main__':
     print('score', score)
     assert score == -2200
 
+    scorer = EdgeScorer(ws1=100)
+
+    board8._black_bitboard = 0x8100000000000080
+    board8._white_bitboard = 0x0000000000000001
+    print(board8)
+
+    score = scorer.get_score(board8)
+    print('score', score)
+    assert score == 200
+
     #------------------------------------------------------
     # CornerScorer
     scorer = CornerScorer()
