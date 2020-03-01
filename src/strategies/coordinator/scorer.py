@@ -795,6 +795,10 @@ class CornerScorer(AbstractScorer):
         score = 0
         b_bitboard, w_bitboard = board.get_bitboard_info()
 
+        # ボードサイズ8以外は考慮なし
+        if board.size != 8:
+            return score
+
         # 左下→左上→右上→右下
         for index in range(4):
             corner_score = 0
