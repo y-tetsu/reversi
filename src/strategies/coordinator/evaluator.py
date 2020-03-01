@@ -304,7 +304,7 @@ class Evaluator_PWE(AbstractEvaluator):
     """
     盤面の評価値を配置可能数+勝敗+辺のパターンで算出
     """
-    def __init__(self, size=8, wp=5, ww=10000, wpy=47, wy=28, wpwin=0, wwin=-3, wb=0, ws1=100, ws2=100, ws3=100, ws4=100, ws5=100, ws6=100, ws7=100, ws8=100):
+    def __init__(self, size=8, wp=10, ww=10000, wpy=50, wy=30, wpwin=-10, wwin=-5, wb=5, ws1=75, ws2=75, ws3=75, ws4=75, ws5=75, ws6=75, ws7=75, ws8=75):
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
         self.e = Evaluator_E(wpy, wy, wpwin, wwin, wb, ws1, ws2, ws3, ws4, ws5, ws6, ws7, ws8)

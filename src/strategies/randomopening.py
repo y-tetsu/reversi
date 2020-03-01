@@ -9,7 +9,7 @@ sys.path.append('../')
 from strategies.common import Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
 from strategies.proto import AB_TI
-from strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_TPWEC, MinMax2_T, MinMax2_TPW, MinMax2_TPWE, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
+from strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_TPWEC, MinMax1_PWE, MinMax2_T, MinMax2_TPW, MinMax2_TPWE, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
 from strategies.negamax import _NegaMax3_TPW, NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta4_TPW, AlphaBeta4_TPWE
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW, NegaScout4_TPWE
@@ -53,6 +53,14 @@ class MinMax1Ro_TPW(RandomOpening):
     RandamOpening(8手) + MinMax1_TPW
     """
     def __init__(self, depth=8, base=MinMax1_TPW()):
+        super().__init__(depth, base)
+
+
+class MinMax1Ro_PWE(RandomOpening):
+    """
+    RandamOpening(8手) + MinMax1_PWE
+    """
+    def __init__(self, depth=8, base=MinMax1_PWE()):
         super().__init__(depth, base)
 
 
