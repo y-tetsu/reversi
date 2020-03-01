@@ -135,19 +135,20 @@ class EdgeScorer(AbstractScorer):
     """
     辺のパターンに基づいて算出
     """
-    def __init__(self, w1=47, w2=28, w3=0, w4=-3, w5=0, w6=100, w7=100, w8=100, w9=100, w10=100, w11=100, w12=100):
-        self._W1 = w1
-        self._W2 = w2
-        self._W3 = w3
-        self._W4 = w4
-        self._W5 = w5
-        self._W6 = w6
-        self._W7 = w7
-        self._W8 = w8
-        self._W9 = w9
-        self._W10 = w10
-        self._W11 = w11
-        self._W12 = w12
+    def __init__(self, wpy=47, wy=28, wpw=0, ww=-3, wb=0, ws1=0, ws2=100, ws3=100, ws4=100, ws5=100, ws6=100, ws7=100, ws8=100):
+        self._WPY = wpy
+        self._WY = wy
+        self._WPW = wpw
+        self._WW = ww
+        self._WB = wb
+        self._WS1 = ws1
+        self._WS2 = ws2
+        self._WS3 = ws3
+        self._WS4 = ws4
+        self._WS5 = ws5
+        self._WS6 = ws6
+        self._WS7 = ws7
+        self._WS8 = ws8
 
         # ピュア山
         # ◇◎◎◎◎◎◎◇
@@ -276,6 +277,15 @@ class EdgeScorer(AbstractScorer):
         ]
 
         # 確定石
+        # ◎―――――――
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        # □□□□□□□□
+        #
         # ◎◎―――――― ◎◎◎――――― ◎◎◎◎―――― ◎◎◎◎◎――― ◎◎◎◎◎◎―― ◎◎◎◎◎◎◎―
         # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
         # □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□ □□□□□□□□
@@ -302,128 +312,79 @@ class EdgeScorer(AbstractScorer):
         # □□□□□□□□
         # □□□□□□□□
         # □□□□□□□□
-        self.stable_mask = [
-            0xC000000000000000,
-            0xE000000000000000,
-            0xF000000000000000,
-            0xF800000000000000,
-            0xFC00000000000000,
-            0xFE00000000000000,
-            0x0300000000000000,
-            0x0700000000000000,
-            0x0F00000000000000,
-            0x1F00000000000000,
-            0x3F00000000000000,
-            0x7F00000000000000,
-            0xFF00000000000000,
-            0x0101000000000000,
-            0x0101010000000000,
-            0x0101010100000000,
-            0x0101010101000000,
-            0x0101010101010000,
-            0x0101010101010100,
-            0x0000000000000101,
-            0x0000000000010101,
-            0x0000000001010101,
-            0x0000000101010101,
-            0x0000010101010101,
-            0x0001010101010101,
-            0x0101010101010101,
-            0x00000000000000C0,
-            0x00000000000000E0,
-            0x00000000000000F0,
-            0x00000000000000F8,
-            0x00000000000000FC,
-            0x00000000000000FE,
-            0x0000000000000003,
-            0x0000000000000007,
-            0x000000000000000F,
-            0x000000000000001F,
-            0x000000000000003F,
-            0x000000000000007F,
-            0x00000000000000FF,
-            0x8080000000000000,
-            0x8080800000000000,
-            0x8080808000000000,
-            0x8080808080000000,
-            0x8080808080800000,
-            0x8080808080808000,
-            0x0000000000008080,
-            0x0000000000808080,
-            0x0000000080808080,
-            0x0000008080808080,
-            0x0000808080808080,
-            0x0080808080808080,
-            0x8080808080808080,
-        ]
-        self.stable_value = [
-            0xC000000000000000,
-            0xE000000000000000,
-            0xF000000000000000,
-            0xF800000000000000,
-            0xFC00000000000000,
-            0xFE00000000000000,
-            0x0300000000000000,
-            0x0700000000000000,
-            0x0F00000000000000,
-            0x1F00000000000000,
-            0x3F00000000000000,
-            0x7F00000000000000,
-            0xFF00000000000000,
-            0x0101000000000000,
-            0x0101010000000000,
-            0x0101010100000000,
-            0x0101010101000000,
-            0x0101010101010000,
-            0x0101010101010100,
-            0x0000000000000101,
-            0x0000000000010101,
-            0x0000000001010101,
-            0x0000000101010101,
-            0x0000010101010101,
-            0x0001010101010101,
-            0x0101010101010101,
-            0x00000000000000C0,
-            0x00000000000000E0,
-            0x00000000000000F0,
-            0x00000000000000F8,
-            0x00000000000000FC,
-            0x00000000000000FE,
-            0x0000000000000003,
-            0x0000000000000007,
-            0x000000000000000F,
-            0x000000000000001F,
-            0x000000000000003F,
-            0x000000000000007F,
-            0x00000000000000FF,
-            0x8080000000000000,
-            0x8080800000000000,
-            0x8080808000000000,
-            0x8080808080000000,
-            0x8080808080800000,
-            0x8080808080808000,
-            0x0000000000008080,
-            0x0000000000808080,
-            0x0000000080808080,
-            0x0000008080808080,
-            0x0000808080808080,
-            0x0080808080808080,
-            0x8080808080808080,
+        self.stable_maskvalue = [
+            0x8000000000000000, # 上左1
+            0xC000000000000000, # 上左2
+            0xE000000000000000, # 上左3
+            0xF000000000000000, # 上左4
+            0xF800000000000000, # 上左5
+            0xFC00000000000000, # 上左6
+            0xFE00000000000000, # 上左7
+            0x0300000000000000, # 上右2
+            0x0700000000000000, # 上右3
+            0x0F00000000000000, # 上右4
+            0x1F00000000000000, # 上右5
+            0x3F00000000000000, # 上右6
+            0x7F00000000000000, # 上右7
+            0xFF00000000000000, # 上8
+            0x0100000000000000, # 右上1
+            0x0101000000000000, # 右上2
+            0x0101010000000000, # 右上3
+            0x0101010100000000, # 右上4
+            0x0101010101000000, # 右上5
+            0x0101010101010000, # 右上6
+            0x0101010101010100, # 右上7
+            0x0000000000000101, # 右下2
+            0x0000000000010101, # 右下3
+            0x0000000001010101, # 右下4
+            0x0000000101010101, # 右下5
+            0x0000010101010101, # 右下6
+            0x0001010101010101, # 右下7
+            0x0101010101010101, # 右8
+            0x0000000000000001, # 下右1
+            0x00000000000000C0, # 下左2
+            0x00000000000000E0, # 下左3
+            0x00000000000000F0, # 下左4
+            0x00000000000000F8, # 下左5
+            0x00000000000000FC, # 下左6
+            0x00000000000000FE, # 下左7
+            0x0000000000000003, # 下右2
+            0x0000000000000007, # 下右3
+            0x000000000000000F, # 下右4
+            0x000000000000001F, # 下右5
+            0x000000000000003F, # 下右6
+            0x000000000000007F, # 下右7
+            0x00000000000000FF, # 下8
+            0x0000000000000080, # 左下1
+            0x8080000000000000, # 左上2
+            0x8080800000000000, # 左上3
+            0x8080808000000000, # 左上4
+            0x8080808080000000, # 左上5
+            0x8080808080800000, # 左上6
+            0x8080808080808000, # 左上7
+            0x0000000000008080, # 左下2
+            0x0000000000808080, # 左下3
+            0x0000000080808080, # 左下4
+            0x0000008080808080, # 左下5
+            0x0000808080808080, # 左下6
+            0x0080808080808080, # 左下7
+            0x8080808080808080, # 左8
         ]
         self.stable_weight = [
-            self._W6,
-            self._W7,
-            self._W8,
-            self._W9,
-            self._W10,
-            self._W11,
-            self._W6,
-            self._W7,
-            self._W8,
-            self._W9,
-            self._W10,
-            self._W11,
-            self._W12,
+            self._WS1,
+            self._WS2,
+            self._WS3,
+            self._WS4,
+            self._WS5,
+            self._WS6,
+            self._WS7,
+            self._WS2,
+            self._WS3,
+            self._WS4,
+            self._WS5,
+            self._WS6,
+            self._WS7,
+            self._WS8,
         ]
 
     def get_score(self, board):
@@ -439,27 +400,27 @@ class EdgeScorer(AbstractScorer):
 
         # ピュア山値
         for mask, value in zip(self.pureyama_mask, self.pureyama_value):
-            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W1)
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._WPY)
 
         # 山値
         for mask, value in zip(self.yama_mask, self.yama_value):
-            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W2)
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._WY)
 
         # ピュアウィング
         for mask, value in zip(self.purewing_mask, self.purewing_value):
-            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W3)
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._WPW)
 
         # ウィング
         for mask, value in zip(self.wing_mask, self.wing_value):
-            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W4)
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._WW)
 
         # ブロック
         for mask, value in zip(self.block_mask, self.block_value):
-            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._W5)
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self._WB)
 
         # 確定石
-        for i, (mask, value) in enumerate(zip(self.stable_mask, self.stable_value)):
-            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self.stable_weight[i%13])
+        for i, (mask, value) in enumerate(zip(self.stable_maskvalue, self.stable_maskvalue)):
+            score += self._get_mask_value(b_bitboard, w_bitboard, mask, value, self.stable_weight[i%14])
 
         return score
 
