@@ -226,6 +226,7 @@ if __name__ == '__main__':
         '_NegaMax3Ro_TPW': strategies._NegaMax3Ro_TPW(),
         'NegaMax3Ro_TPW': strategies.NegaMax3Ro_TPW(),
         'AlphaBeta4Ro_TPW': strategies.AlphaBeta4Ro_TPW(),
+        'AlphaBeta4JRo_TPW': strategies.AlphaBeta4JRo_TPW(),
         'AlphaBeta4Ro_TPWE': strategies.AlphaBeta4Ro_TPWE(),
         'AlphaBeta4F9Ro_TPW': strategies.AlphaBeta4F9Ro_TPW(),
         'AlphaBeta4F9JRo_TPW': strategies.AlphaBeta4F9JRo_TPW(),
