@@ -865,6 +865,21 @@ CAT = {
     ('white', 0x0000183E78000000, 0x00000400043C0000): (7, 2),
     ('white', 0x0000001E7C180000, 0x00003C2000200000): (0, 5),
 }
+
+# 羊定石
+SHEEP = {
+    #---------------------------------------------------------------------
+    # 1手目
+    # □□□□□□□□
+    # □□□□□□□□
+    # □□□□□□□□
+    # □□□●〇□□□
+    # □□□〇●◎□□
+    # □□□□□□□□
+    # □□□□□□□□
+    # □□□□□□□□
+    #('black', 0x0000000810000000, 0x0000001008000000): (5, 4),
+}
 # ===== 定石リスト =====
 
 
@@ -992,10 +1007,31 @@ class Neko(Joseki):
         self.joseki.update(SROSE)      # Sローズ基本形
         self.joseki.update(ROSEVILLE)  # ローズビル基本形
         self.joseki.update(FASTBOAT)   # 快速船基礎形
-        #self.joseki.update(SHEEP)      # 羊定石
 
         # 最後にロード
         self.joseki.update(CAT)        # 猫定石
+
+
+class Hitsuji(Joseki):
+    """
+    羊
+    """
+    def __init__(self, base):
+        self.joseki = {}
+        self.base = base
+
+        # 定石のロード
+        self.joseki.update(BULL)       # 牛定石
+        self.joseki.update(MOUSE)      # 鼠定石
+        self.joseki.update(RABBIT)     # 兎定石
+        self.joseki.update(TIGER)      # 虎定石
+        self.joseki.update(SROSE)      # Sローズ基本形
+        self.joseki.update(ROSEVILLE)  # ローズビル基本形
+        self.joseki.update(FASTBOAT)   # 快速船基礎形
+        self.joseki.update(CAT)        # 猫定石
+
+        # 最後にロード
+        self.joseki.update(SHEEP)      # 羊定石
 
 
 class AlphaBeta4J_TPW(Usagi):
@@ -1034,7 +1070,7 @@ class AbIF9J_B_TPWE(Ushi):
         super().__init__(base)
 
 
-class AbIF9J_B_TPWEC(Neko):
+class AbIF9J_B_TPWEC(Hitsuji):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
     (選択的探索:なし、並べ替え:B、評価関数:TPWEC, 完全読み開始:残り9手)
@@ -1632,6 +1668,42 @@ if __name__ == '__main__':
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 7)
+    bitboard8.put_stone('white', *move)
+    print(bitboard8)
+
+    #--------------------------------------------
+    # 羊定石
+    print('--- Test For Hitsuji Strategy ---')
+    joseki = AbIF9J_B_TPWEC()
+
+    bitboard8 = BitBoard()
+    print(bitboard8)
+
+    # 1手目
+    move = joseki.next_move('black', bitboard8)
+    print(move)
+    assert move == (5, 4)
+    bitboard8.put_stone('black', *move)
+    print(bitboard8)
+
+    # 2手目
+    move = joseki.next_move('white', bitboard8)
+    print(move)
+    assert move == (3, 5)
+    bitboard8.put_stone('white', *move)
+    print(bitboard8)
+
+    # 3手目
+    move = joseki.next_move('black', bitboard8)
+    print(move)
+    assert move == (2, 3)
+    bitboard8.put_stone('black', *move)
+    print(bitboard8)
+
+    # 4手目
+    move = joseki.next_move('white', bitboard8)
+    print(move)
+    assert move == (3, 2)
     bitboard8.put_stone('white', *move)
     print(bitboard8)
 
