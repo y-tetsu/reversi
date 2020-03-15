@@ -992,6 +992,7 @@ class Neko(Joseki):
         self.joseki.update(SROSE)      # Sローズ基本形
         self.joseki.update(ROSEVILLE)  # ローズビル基本形
         self.joseki.update(FASTBOAT)   # 快速船基礎形
+        #self.joseki.update(SHEEP)      # 羊定石
 
         # 最後にロード
         self.joseki.update(CAT)        # 猫定石
