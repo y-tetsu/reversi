@@ -6,6 +6,8 @@ import os
 import json
 from random import choices, random
 from heapq import nlargest
+from statistics import mean
+
 from chromosome import Chromosome
 
 
@@ -81,8 +83,30 @@ class GeneticAlgorithm:
         変異
         """
         for individual in self._population:
-            if random() < self._mutation_chance:
+            if random() < self._setting["mutation_chance"]:
                 individual.mutate()
+
+    def run(self):
+        """
+        実行
+        """
+        best = max(self._population, key=self._fitness_key)
+
+        for generation in range(self._setting["max_generations"]):
+            if best.fitness() >= self._setting["threshold"]:
+                return best
+
+            print(f"Generation {generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
+
+            self._generation_change()
+            self._mutate()
+
+            highest = max(self._population, key=self._fitness_key)
+
+            if highest.fitness() > best.fitness():
+                best = highest
+
+        return best
 
 
 if __name__ == '__main__':
