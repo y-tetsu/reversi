@@ -4,6 +4,9 @@
 """
 import os
 import json
+from random import choices, random
+from heapq import nlargest
+from chromosome import Chromosome
 
 
 # ToDo : Evaluator_TPWEのパラメータ調整
@@ -15,6 +18,7 @@ class GeneticAlgorithm:
     def __init__(self, initial_population, setting_json):
         self._population = initial_population
         self._setting = self._load_setting(setting_json)
+        self._fitness_key = type(self._population[0]).fitness
 
     def _load_setting(self, setting_json):
         """
@@ -34,7 +38,22 @@ class GeneticAlgorithm:
 
         return setting
 
+    def _pick_roulette(self, wheel):
+        """
+        ルーレット選択
+        """
+        return tuple(choices(self._population, weight=wheel, k=2))
+
+    def _pick_tournament(self, num_participants):
+        """
+        トーナメント選択
+        """
+        participants = choices(self._population, k=num_participants)
+
+        return tuple(nlargest(2, participants, key=self._fitness_key))
+
 
 if __name__ == '__main__':
-    ga = GeneticAlgorithm([], './setting.json')
-    print(ga._setting)
+    pass
+    #ga = GeneticAlgorithm([], './setting.json')
+    #print(ga._setting)
