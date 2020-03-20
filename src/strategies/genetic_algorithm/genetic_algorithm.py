@@ -71,7 +71,8 @@ class GeneticAlgorithm:
 
         # 個数合わせ
         if len(new_population) > len(self._population):
-            new_population.pop()
+            for _ in range(len(new_population) - len(self._population)):
+                new_population.pop()
 
         self._population = new_population
 
