@@ -9,8 +9,6 @@ from heapq import nlargest
 from chromosome import Chromosome
 
 
-# ToDo : Evaluator_TPWEのパラメータ調整
-#        < corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, we=100 >
 class GeneticAlgorithm:
     """
     遺伝的アルゴリズム
@@ -52,8 +50,36 @@ class GeneticAlgorithm:
 
         return tuple(nlargest(2, participants, key=self._fitness_key))
 
+    def _generation_change(self):
+        """
+        世代交代
+        """
+        new_population = []
+
+        while len(new_population) < len(self._population):
+            # 両親を選ぶ
+            if self._setting["selection_type"] == "ROULETTE":
+                parents = self._pick_roulette([x.fitness() for x in self._population])
+            else:
+                parents = self._pick_tournament(len(self._population) // 2)
+
+            # 両親の交差
+            if random() < self._setting["crossover_chance"]:
+                new_population.extend(parents[0].crossover(parents[1]))
+            else:
+                new_population.extend(parents)
+
+        # 個数合わせ
+        if len(new_population) > len(self._population):
+            new_population.pop()
+
+        self._population = new_population
+
 
 if __name__ == '__main__':
-    pass
+    # ToDo : Evaluator_TPWEのパラメータ調整
+    #        < corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, we=100 >
+
     #ga = GeneticAlgorithm([], './setting.json')
     #print(ga._setting)
+    pass
