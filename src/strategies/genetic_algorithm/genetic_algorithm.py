@@ -76,6 +76,14 @@ class GeneticAlgorithm:
 
         self._population = new_population
 
+    def _mutate(self):
+        """
+        変異
+        """
+        for individual in self._population:
+            if random() < self._mutation_chance:
+                individual.mutate()
+
 
 if __name__ == '__main__':
     # ToDo : Evaluator_TPWEのパラメータ調整
