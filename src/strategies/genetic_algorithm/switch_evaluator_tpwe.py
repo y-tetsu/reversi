@@ -5,6 +5,8 @@ Switch_Evaluator_TPWEのパラメータ調整
 import sys
 sys.path.append('../../')
 
+import os
+import json
 from random import randrange, random
 from copy import deepcopy
 
@@ -20,7 +22,7 @@ from simulator import Simulator
 
 
 SWITCH_NUM = 5
-POPULATION_NUM = 2
+POPULATION_NUM = 3
 
 
 class Switch_Evaluator_TPWE(Chromosome):
@@ -225,9 +227,67 @@ class Switch_Evaluator_TPWE(Chromosome):
     def __str__(self):
         return f"corner: {self.corner}\nc: {self.c}\na1: {self.a1}\na2: {self.a2}\nb: {self.b}\no: {self.o}\nx: {self.x}\nwp: {self.wp}\nww: {self.ww}\nwe: {self.we}\nFitness: {self.fitness()}"
 
+    @classmethod
+    def load_population(cls, json_file):
+        """
+        母集団の取得
+        """
+        generation, population = 0, {}
+
+        if json_file is not None and os.path.isfile(json_file):
+            with open(json_file) as f:
+                json_setting = json.load(f)
+
+                generation = json_setting["generation"]
+                corner = json_setting["corner"]
+                c = json_setting["c"]
+                a1 = json_setting["a1"]
+                a2 = json_setting["a2"]
+                b = json_setting["b"]
+                o = json_setting["o"]
+                x = json_setting["x"]
+                wp = json_setting["wp"]
+                ww = json_setting["ww"]
+                we = json_setting["we"]
+
+                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(POPULATION_NUM)]
+
+        return generation, population
+
+    @classmethod
+    def save_population(cls, ga, json_file):
+        """
+        母集団の保存
+        """
+        generation = ga._generation
+        population = ga._population
+
+        parameters = {
+            "generation": generation,
+            "corner": [population[i].corner for i in range(POPULATION_NUM)],
+            "c": [population[i].c for i in range(POPULATION_NUM)],
+            "a1": [population[i].a1 for i in range(POPULATION_NUM)],
+            "a2": [population[i].a2 for i in range(POPULATION_NUM)],
+            "b": [population[i].b for i in range(POPULATION_NUM)],
+            "o": [population[i].o for i in range(POPULATION_NUM)],
+            "x": [population[i].x for i in range(POPULATION_NUM)],
+            "wp": [population[i].wp for i in range(POPULATION_NUM)],
+            "ww": [population[i].ww for i in range(POPULATION_NUM)],
+            "we": [population[i].we for i in range(POPULATION_NUM)],
+        }
+
+        with open(json_file, 'w') as f:
+            json.dump(parameters, f)
+
 
 if __name__ == '__main__':
-    initial_population = [Switch_Evaluator_TPWE.random_instance() for _ in range(POPULATION_NUM)]
-    ga = GeneticAlgorithm(initial_population, './setting.json')
-    result = ga.run()
-    print(result)
+    generation, population = 1, [Switch_Evaluator_TPWE.random_instance() for _ in range(POPULATION_NUM)]
+
+    if os.path.isfile('./population.json'):
+        generation, population = Switch_Evaluator_TPWE.load_population('./population.json')
+
+    ga = GeneticAlgorithm(generation, population, './setting.json')
+    #result = ga.run()
+    #print(result)
+
+    Switch_Evaluator_TPWE.save_population(ga, './population.json')

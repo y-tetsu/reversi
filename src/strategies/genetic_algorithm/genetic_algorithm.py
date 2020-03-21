@@ -13,7 +13,8 @@ class GeneticAlgorithm:
     """
     遺伝的アルゴリズム
     """
-    def __init__(self, initial_population, setting_json):
+    def __init__(self, generation, initial_population, setting_json):
+        self._generation = generation
         self._population = initial_population
         self._setting = self._load_setting(setting_json)
         self._fitness_key = type(self._population[0]).fitness
@@ -95,7 +96,9 @@ class GeneticAlgorithm:
             if best.fitness() >= self._setting["threshold"]:
                 return best
 
-            print(f"Generation {generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
+            generation_num = generation + self._generation
+
+            print(f"Generation {generation_num} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
 
             self._generation_change()
             self._mutate()
@@ -104,5 +107,7 @@ class GeneticAlgorithm:
 
             if highest.fitness() > best.fitness():
                 best = highest
+
+        self._generation += self._setting["max_generations"]
 
         return best
