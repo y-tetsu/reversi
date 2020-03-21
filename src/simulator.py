@@ -24,6 +24,7 @@ class Simulator:
         self.processes = processes
         self.game_results = []
         self.total = []
+        self.result_ratio = {}
 
     def __str__(self):
         board_size = '\nSize : ' + str(self.board_size) + '\n'
@@ -73,6 +74,8 @@ class Simulator:
             row += f'{ratio:>6s} | {wins:>5d} {loses:>5d} {draws:>5d} {matches:>5d}'
             body2 += f'{row}\n'
 
+            self.result_ratio[key1] = ratio
+
         return board_size + header1 + hr1 + body1 + hr1 + '\n' + header2 + hr2 + body2 + hr2
 
     def start(self):
@@ -80,6 +83,7 @@ class Simulator:
         シミュレーションを開始する
         """
         print('processes', self.processes)
+        self.result_ratio = {}
 
         if self.processes > 1:
             with Pool(processes=self.processes) as pool:
