@@ -23,10 +23,6 @@ class Chromosome(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def crossover(cls):
-        pass
-
-    @abc.abstractmethod
     def crossover(self, other):
         pass
 
