@@ -8,8 +8,6 @@ from random import choices, random
 from heapq import nlargest
 from statistics import mean
 
-from chromosome import Chromosome
-
 
 class GeneticAlgorithm:
     """
@@ -83,6 +81,7 @@ class GeneticAlgorithm:
         変異
         """
         for individual in self._population:
+            individual.reset_fitness()
             if random() < self._setting["mutation_chance"]:
                 individual.mutate()
 
@@ -107,12 +106,3 @@ class GeneticAlgorithm:
                 best = highest
 
         return best
-
-
-if __name__ == '__main__':
-    # ToDo : Evaluator_TPWEのパラメータ調整
-    #        < corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, we=100 >
-
-    #ga = GeneticAlgorithm([], './setting.json')
-    #print(ga._setting)
-    pass
