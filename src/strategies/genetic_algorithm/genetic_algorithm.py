@@ -82,9 +82,15 @@ class GeneticAlgorithm:
         変異
         """
         for individual in self._population:
-            individual.reset_fitness()
             if random() < self._setting["mutation_chance"]:
                 individual.mutate()
+
+    def _reset_fitness(self):
+        """
+        個体の適応度をリセット
+        """
+        for individual in self._population:
+            individual.reset_fitness()
 
     def run(self):
         """
@@ -102,6 +108,7 @@ class GeneticAlgorithm:
 
             self._generation_change()
             self._mutate()
+            self._reset_fitness()
 
             highest = max(self._population, key=self._fitness_key)
 
