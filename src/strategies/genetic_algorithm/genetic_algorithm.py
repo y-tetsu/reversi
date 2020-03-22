@@ -42,7 +42,16 @@ class GeneticAlgorithm:
         """
         ルーレット選択
         """
-        return tuple(choices(self._population, weights=wheel, k=2))
+        parents = (None, None)
+
+        while True:
+            parents = tuple(choices(self._population, weights=wheel, k=2))
+
+            # 同じ両親は除外
+            if parents[0] != parents[1]:
+                break
+
+        return parents
 
     def _pick_tournament(self, num_participants):
         """
@@ -61,13 +70,13 @@ class GeneticAlgorithm:
         while len(new_population) < len(self._population):
             # 両親を選ぶ
             if self._setting["selection_type"] == "ROULETTE":
-                parents = self._pick_roulette([x.fitness() for x in self._population])
+                parents = self._pick_roulette([x.fitness() + 0.001 for x in self._population])
             else:
                 parents = self._pick_tournament(len(self._population) // 2)
 
             # 両親の交差
             if random() < self._setting["crossover_chance"]:
-                print('crossover')
+                print(' + crossover')
                 new_population.extend(parents[0].crossover(parents[1]))
             else:
                 new_population.extend(parents)
@@ -85,7 +94,7 @@ class GeneticAlgorithm:
         """
         for individual in self._population:
             if random() < self._setting["mutation_chance"]:
-                print('mutate')
+                print(' + mutate')
                 individual.mutate()
 
     def _reset_fitness(self):

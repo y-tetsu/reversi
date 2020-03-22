@@ -124,44 +124,44 @@ class Switch_Evaluator_TPWE(Chromosome):
         child2 = deepcopy(other)
 
         if num1 <= 0 and num2 >= 0:
-            child1.corner = other.corner
-            child2.corner = self.corner
+            child1.corner = other.corner[:]
+            child2.corner = self.corner[:]
 
         if num1 <= 1 and num2 >= 1:
-            child1.c = other.c
-            child2.c = self.c
+            child1.c = other.c[:]
+            child2.c = self.c[:]
 
         if num1 <= 2 and num2 >= 2:
-            child1.a1 = other.a1
-            child2.a1 = self.a1
+            child1.a1 = other.a1[:]
+            child2.a1 = self.a1[:]
 
         if num1 <= 3 and num2 >= 3:
-            child1.a2 = other.a2
-            child2.a2 = self.a2
+            child1.a2 = other.a2[:]
+            child2.a2 = self.a2[:]
 
         if num1 <= 4 and num2 >= 4:
-            child1.b = other.b
-            child2.b = self.b
+            child1.b = other.b[:]
+            child2.b = self.b[:]
 
         if num1 <= 5 and num2 >= 5:
-            child1.x = other.x
-            child2.x = self.x
+            child1.x = other.x[:]
+            child2.x = self.x[:]
 
         if num1 <= 6 and num2 >= 6:
-            child1.o = other.o
-            child2.o = self.o
+            child1.o = other.o[:]
+            child2.o = self.o[:]
 
         if num1 <= 7 and num2 >= 7:
-            child1.wp = other.wp
-            child2.wp = self.wp
+            child1.wp = other.wp[:]
+            child2.wp = self.wp[:]
 
         if num1 <= 8 and num2 >= 8:
-            child1.ww = other.ww
-            child2.ww = self.ww
+            child1.ww = other.ww[:]
+            child2.ww = self.ww[:]
 
         if num1 <= 9 and num2 >= 9:
-            child1.we = other.we
-            child2.we = self.we
+            child1.we = other.we[:]
+            child2.we = self.we[:]
 
         return child1, child2
 
@@ -171,8 +171,6 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         parameter_index = randrange(10)
         stage_index = randrange(SWITCH_NUM)
-
-        print(parameter_index, stage_index)
 
         if parameter_index == 0:
             if random() > 0.5:
@@ -275,7 +273,7 @@ class Switch_Evaluator_TPWE(Chromosome):
             "wp": [population[i].wp for i in range(POPULATION_NUM)],
             "ww": [population[i].ww for i in range(POPULATION_NUM)],
             "we": [population[i].we for i in range(POPULATION_NUM)],
-            #"fitness": [population[i].fitness for i in range(POPULATION_NUM)],
+            "fitness": [population[i].fitness() for i in range(POPULATION_NUM)],
         }
 
         with open(json_file, 'w') as f:
@@ -290,6 +288,9 @@ if __name__ == '__main__':
 
     ga = GeneticAlgorithm(generation, population, './setting.json')
     result = ga.run()
+
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>')
     print(result)
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>')
 
     Switch_Evaluator_TPWE.save_population(ga, './population.json')
