@@ -2,6 +2,7 @@
 """
 遺伝的アルゴリズム
 """
+import sys
 import os
 import json
 from random import choices, random
@@ -41,7 +42,7 @@ class GeneticAlgorithm:
         """
         ルーレット選択
         """
-        return tuple(choices(self._population, weight=wheel, k=2))
+        return tuple(choices(self._population, weights=wheel, k=2))
 
     def _pick_tournament(self, num_participants):
         """
@@ -66,6 +67,7 @@ class GeneticAlgorithm:
 
             # 両親の交差
             if random() < self._setting["crossover_chance"]:
+                print('crossover')
                 new_population.extend(parents[0].crossover(parents[1]))
             else:
                 new_population.extend(parents)
@@ -83,6 +85,7 @@ class GeneticAlgorithm:
         """
         for individual in self._population:
             if random() < self._setting["mutation_chance"]:
+                print('mutate')
                 individual.mutate()
 
     def _reset_fitness(self):
@@ -99,12 +102,17 @@ class GeneticAlgorithm:
         best = max(self._population, key=self._fitness_key)
 
         for generation in range(self._setting["max_generations"]):
+            print()
+            print('best')
+            print(best)
+            print()
+
             if best.fitness() >= self._setting["threshold"]:
                 return best
 
             generation_num = generation + self._generation
 
-            print(f"Generation {generation_num} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
+            print(f"\n*****\nGeneration {generation_num} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
 
             self._generation_change()
             self._mutate()
@@ -116,5 +124,11 @@ class GeneticAlgorithm:
                 best = highest
 
         self._generation += self._setting["max_generations"]
+
+        print()
+        print('best')
+        print(best)
+        print()
+        print(f"\n*****\nGeneration {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
 
         return best

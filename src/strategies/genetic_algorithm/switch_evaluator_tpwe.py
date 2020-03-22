@@ -22,7 +22,7 @@ from simulator import Simulator
 
 
 SWITCH_NUM = 5
-POPULATION_NUM = 3
+POPULATION_NUM = 2
 
 
 class Switch_Evaluator_TPWE(Chromosome):
@@ -46,7 +46,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         適応度
         """
-        if self.fitness_value:
+        if self.fitness_value is not None:
             return self.fitness_value
 
         # 自分
@@ -76,7 +76,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         simulator = Simulator(
             black_players,
             white_players,
-            15,
+            5,
             8,
             "bitboard",
             2
@@ -84,9 +84,10 @@ class Switch_Evaluator_TPWE(Chromosome):
 
         # 2手読みのEdgeと対戦させ勝率を返す
         simulator.start()
-        self.fitness = simulator.result_ratio['Challenger']
+        print(simulator)
+        self.fitness_value = simulator.result_ratio['Challenger']
 
-        return self.fitness
+        return self.fitness_value
 
     def reset_fitness(self):
         """
@@ -274,6 +275,7 @@ class Switch_Evaluator_TPWE(Chromosome):
             "wp": [population[i].wp for i in range(POPULATION_NUM)],
             "ww": [population[i].ww for i in range(POPULATION_NUM)],
             "we": [population[i].we for i in range(POPULATION_NUM)],
+            #"fitness": [population[i].fitness for i in range(POPULATION_NUM)],
         }
 
         with open(json_file, 'w') as f:
@@ -281,13 +283,13 @@ class Switch_Evaluator_TPWE(Chromosome):
 
 
 if __name__ == '__main__':
-    generation, population = 1, [Switch_Evaluator_TPWE.random_instance() for _ in range(POPULATION_NUM)]
+    generation, population = 0, [Switch_Evaluator_TPWE.random_instance() for _ in range(POPULATION_NUM)]
 
     if os.path.isfile('./population.json'):
         generation, population = Switch_Evaluator_TPWE.load_population('./population.json')
 
     ga = GeneticAlgorithm(generation, population, './setting.json')
-    #result = ga.run()
-    #print(result)
+    result = ga.run()
+    print(result)
 
     Switch_Evaluator_TPWE.save_population(ga, './population.json')
