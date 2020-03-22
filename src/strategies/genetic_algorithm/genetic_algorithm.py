@@ -28,6 +28,7 @@ class GeneticAlgorithm:
             "threshold": 0,
             "max_generations": 0,
             "mutation_chance": 0,
+            "large_mutation": 0,
             "crossover_chance": 0,
             "selection_type": "ROULETTE"
         }
@@ -100,9 +101,13 @@ class GeneticAlgorithm:
         変異
         """
         for individual in self._population:
-            if random() < self._setting["mutation_chance"]:
-                print(' + mutate')
-                individual.mutate()
+            if (self._generation + 1) % self._setting["large_mutation"] == 0:
+                print(' + large_mutate')
+                individual.large_mutate()
+            else:
+                if random() < self._setting["mutation_chance"]:
+                    print(' + mutate')
+                    individual.mutate()
 
     def _reset_fitness(self):
         """
@@ -126,15 +131,14 @@ class GeneticAlgorithm:
             if best.fitness() >= self._setting["threshold"]:
                 return best
 
-            generation_num = generation + self._generation
-
             #---
-            type(self._population[0]).save_population(self, './population' + str(generation_num) + '.json')
+            type(self._population[0]).save_population(self, './population' + str(self._generation) + '.json')
             #---
 
-            print(f"\n*****\nGeneration {generation_num} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
+            print(f"\n*****\nGeneration {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
 
             self._generation_change()
+            self._generation += 1
             self._mutate()
             self._reset_fitness()
 
@@ -142,8 +146,6 @@ class GeneticAlgorithm:
 
             if highest.fitness() > best.fitness():
                 best = highest
-
-        self._generation += self._setting["max_generations"]
 
         print()
         print('best')

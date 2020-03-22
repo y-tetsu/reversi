@@ -29,3 +29,7 @@ class Chromosome(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def mutate(self):
         pass
+
+    @abc.abstractmethod
+    def large_mutate(self):
+        pass
