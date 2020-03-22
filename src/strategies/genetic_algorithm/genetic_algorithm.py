@@ -79,7 +79,10 @@ class GeneticAlgorithm:
                 print(' + crossover')
                 new_population.extend(parents[0].crossover(parents[1]))
             else:
-                new_population.extend(parents)
+                for parent in parents:
+                    # 同じ個体は増やさない
+                    if parent not in new_population:
+                        new_population.append(parent)
 
         # 個数合わせ
         if len(new_population) > len(self._population):

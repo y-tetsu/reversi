@@ -21,15 +21,12 @@ from player import Player
 from simulator import Simulator
 
 
-SWITCH_NUM = 5
-POPULATION_NUM = 20
-
-
 class Switch_Evaluator_TPWE(Chromosome):
     """
     Switch_Evaluator_TPWEのパラメータ調整
     """
-    def __init__(self, corner, c, a1, a2, b, x, o, wp, ww, we):
+    def __init__(self, corner=None, c=None, a1=None, a2=None, b=None, x=None, o=None, wp=None, ww=None, we=None):
+        self.setting = self._load_setting('./switch_setting.json')
         self.corner = corner
         self.c = c
         self.a1 = a1
@@ -42,6 +39,22 @@ class Switch_Evaluator_TPWE(Chromosome):
         self.we = we
         self.fitness_value = None
 
+    def _load_setting(self, setting_json):
+        """
+        設定値読み込み
+        """
+        setting = {
+            "turns": [60],
+            "population_num": 15,
+            "matches": 5,
+        }
+
+        if setting_json is not None and os.path.isfile(setting_json):
+            with open(setting_json) as f:
+                setting = json.load(f)
+
+        return setting
+
     def fitness(self):
         """
         適応度
@@ -49,17 +62,11 @@ class Switch_Evaluator_TPWE(Chromosome):
         if self.fitness_value is not None:
             return self.fitness_value
 
-        # 自分
+        # 遺伝個体(2手読みSwitch-Edge)
         challenger = Switch(
-            turns=[
-                12,
-                24,
-                36,
-                48,
-                60
-            ],
+            turns=self.setting['turns'],
             strategies=[
-                MinMax2Ro_TPWE(base=MinMax2_TPWE(evaluator=Evaluator_TPWE(corner=self.corner[i], c=self.c[i], a1=self.a1[i], a2=self.a2[i], b=self.b[i], o=self.o[i], x=self.x[i], wp=self.wp[i], ww=self.ww[i], we=self.we[i]))) for i in range(SWITCH_NUM)
+                MinMax2Ro_TPWE(base=MinMax2_TPWE(evaluator=Evaluator_TPWE(corner=self.corner[i], c=self.c[i], a1=self.a1[i], a2=self.a2[i], b=self.b[i], o=self.o[i], x=self.x[i], wp=self.wp[i], ww=self.ww[i], we=self.we[i]))) for i in range(len(self.setting['turns']))
             ]
         )
 
@@ -76,10 +83,10 @@ class Switch_Evaluator_TPWE(Chromosome):
         simulator = Simulator(
             black_players,
             white_players,
-            10,
-            8,
-            "bitboard",
-            2
+            self.setting['matches'],
+            self.setting['board_size'],
+            self.setting['board_type'],
+            self.setting['processes']
         )
 
         # 2手読みのEdgeと対戦させ勝率を返す
@@ -100,16 +107,17 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         初期パラメータ設定
         """
-        corner = [randrange(200) for _ in range(SWITCH_NUM)]
-        c = [randrange(200) for _ in range(SWITCH_NUM)]
-        a1 = [randrange(200) for _ in range(SWITCH_NUM)]
-        a2 = [randrange(200) for _ in range(SWITCH_NUM)]
-        b = [randrange(200) for _ in range(SWITCH_NUM)]
-        x = [randrange(200) for _ in range(SWITCH_NUM)]
-        o = [randrange(200) for _ in range(SWITCH_NUM)]
-        wp = [randrange(200) for _ in range(SWITCH_NUM)]
-        ww = [randrange(1000) for _ in range(SWITCH_NUM)]
-        we = [randrange(200) for _ in range(SWITCH_NUM)]
+        switch_num = len(Switch_Evaluator_TPWE().setting["turns"])
+        corner = [randrange(200) for _ in range(switch_num)]
+        c = [randrange(200) for _ in range(switch_num)]
+        a1 = [randrange(200) for _ in range(switch_num)]
+        a2 = [randrange(200) for _ in range(switch_num)]
+        b = [randrange(200) for _ in range(switch_num)]
+        x = [randrange(200) for _ in range(switch_num)]
+        o = [randrange(200) for _ in range(switch_num)]
+        wp = [randrange(200) for _ in range(switch_num)]
+        ww = [randrange(1000) for _ in range(switch_num)]
+        we = [randrange(200) for _ in range(switch_num)]
 
         return Switch_Evaluator_TPWE(corner, c, a1, a2, b, x, o, wp, ww, we)
 
@@ -175,7 +183,8 @@ class Switch_Evaluator_TPWE(Chromosome):
         変異(摂動)
         """
         parameter_index = randrange(10)
-        stage_index = randrange(SWITCH_NUM)
+        switch_num = len(self.setting["turns"])
+        stage_index = randrange(switch_num)
 
         if parameter_index == 0:
             if random() > 0.5:
@@ -254,7 +263,7 @@ class Switch_Evaluator_TPWE(Chromosome):
                 ww = json_setting["ww"]
                 we = json_setting["we"]
 
-                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(POPULATION_NUM)]
+                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(self.setting["population_num"])]
 
         return generation, population
 
@@ -268,17 +277,17 @@ class Switch_Evaluator_TPWE(Chromosome):
 
         parameters = {
             "generation": generation,
-            "corner": [population[i].corner for i in range(POPULATION_NUM)],
-            "c": [population[i].c for i in range(POPULATION_NUM)],
-            "a1": [population[i].a1 for i in range(POPULATION_NUM)],
-            "a2": [population[i].a2 for i in range(POPULATION_NUM)],
-            "b": [population[i].b for i in range(POPULATION_NUM)],
-            "o": [population[i].o for i in range(POPULATION_NUM)],
-            "x": [population[i].x for i in range(POPULATION_NUM)],
-            "wp": [population[i].wp for i in range(POPULATION_NUM)],
-            "ww": [population[i].ww for i in range(POPULATION_NUM)],
-            "we": [population[i].we for i in range(POPULATION_NUM)],
-            "fitness": [population[i].fitness() for i in range(POPULATION_NUM)],
+            "corner": [individual.corner for individual in population],
+            "c": [individual.c for individual in population],
+            "a1": [individual.a1 for individual in population],
+            "a2": [individual.a2 for individual in population],
+            "b": [individual.b for individual in population],
+            "o": [individual.o for individual in population],
+            "x": [individual.x for individual in population],
+            "wp": [individual.wp for individual in population],
+            "ww": [individual.ww for individual in population],
+            "we": [individual.we for individual in population],
+            "fitness": [individual.fitness() for individual in population],
         }
 
         with open(json_file, 'w') as f:
@@ -286,14 +295,14 @@ class Switch_Evaluator_TPWE(Chromosome):
 
 
 if __name__ == '__main__':
-    generation, population = 0, [Switch_Evaluator_TPWE.random_instance() for _ in range(POPULATION_NUM)]
+    generation, population = 0, [Switch_Evaluator_TPWE.random_instance() for _ in range(Switch_Evaluator_TPWE().setting["population_num"])]
 
     if os.path.isfile('./population.json'):
         generation, population = Switch_Evaluator_TPWE.load_population('./population.json')
     else:
         print('[random_instance]')
 
-    ga = GeneticAlgorithm(generation, population, './setting.json')
+    ga = GeneticAlgorithm(generation, population, './ga_setting.json')
     result = ga.run()
 
     print('>>>>>>>>>>>>>>>>>>>>>>>>>')
