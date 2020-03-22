@@ -121,6 +121,10 @@ class GeneticAlgorithm:
 
             generation_num = generation + self._generation
 
+            #---
+            type(self._population[0]).save_population(self, './population' + str(generation_num) + '.json')
+            #---
+
             print(f"\n*****\nGeneration {generation_num} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
 
             self._generation_change()

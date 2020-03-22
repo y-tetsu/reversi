@@ -1,7 +1,7 @@
 {
     "threshold": 60,
-    "max_generations": 5,
-    "mutation_chance": 0.8,
+    "max_generations": 3,
+    "mutation_chance": 0.05,
     "crossover_chance": 0.7,
     "selection_type": "ROULETTE"
 }

@@ -22,7 +22,7 @@ from simulator import Simulator
 
 
 SWITCH_NUM = 5
-POPULATION_NUM = 3
+POPULATION_NUM = 20
 
 
 class Switch_Evaluator_TPWE(Chromosome):
@@ -76,7 +76,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         simulator = Simulator(
             black_players,
             white_players,
-            5,
+            10,
             8,
             "bitboard",
             2
@@ -100,16 +100,16 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         初期パラメータ設定
         """
-        corner = [randrange(100) for _ in range(SWITCH_NUM)]
-        c = [randrange(100) for _ in range(SWITCH_NUM)]
-        a1 = [randrange(100) for _ in range(SWITCH_NUM)]
-        a2 = [randrange(100) for _ in range(SWITCH_NUM)]
-        b = [randrange(100) for _ in range(SWITCH_NUM)]
-        x = [randrange(100) for _ in range(SWITCH_NUM)]
-        o = [randrange(100) for _ in range(SWITCH_NUM)]
-        wp = [randrange(100) for _ in range(SWITCH_NUM)]
+        corner = [randrange(200) for _ in range(SWITCH_NUM)]
+        c = [randrange(200) for _ in range(SWITCH_NUM)]
+        a1 = [randrange(200) for _ in range(SWITCH_NUM)]
+        a2 = [randrange(200) for _ in range(SWITCH_NUM)]
+        b = [randrange(200) for _ in range(SWITCH_NUM)]
+        x = [randrange(200) for _ in range(SWITCH_NUM)]
+        o = [randrange(200) for _ in range(SWITCH_NUM)]
+        wp = [randrange(200) for _ in range(SWITCH_NUM)]
         ww = [randrange(1000) for _ in range(SWITCH_NUM)]
-        we = [randrange(100) for _ in range(SWITCH_NUM)]
+        we = [randrange(200) for _ in range(SWITCH_NUM)]
 
         return Switch_Evaluator_TPWE(corner, c, a1, a2, b, x, o, wp, ww, we)
 
@@ -290,6 +290,8 @@ if __name__ == '__main__':
 
     if os.path.isfile('./population.json'):
         generation, population = Switch_Evaluator_TPWE.load_population('./population.json')
+    else:
+        print('[random_instance]')
 
     ga = GeneticAlgorithm(generation, population, './setting.json')
     result = ga.run()
