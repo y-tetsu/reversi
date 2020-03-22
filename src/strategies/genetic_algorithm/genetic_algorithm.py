@@ -19,6 +19,7 @@ class GeneticAlgorithm:
         self._population = initial_population
         self._setting = self._load_setting(setting_json)
         self._fitness_key = type(self._population[0]).fitness
+        self.best = None
 
     def _load_setting(self, setting_json):
         """
@@ -152,5 +153,7 @@ class GeneticAlgorithm:
         print(best)
         print()
         print(f"\n*****\nGeneration {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
+
+        self.best = best
 
         return best

@@ -1,6 +1,6 @@
 {
-    "threshold": 20,
-    "max_generations": 5,
+    "threshold": 65,
+    "max_generations": 2,
     "mutation_chance": 0.05,
     "large_mutation": 100,
     "crossover_chance": 0.7,

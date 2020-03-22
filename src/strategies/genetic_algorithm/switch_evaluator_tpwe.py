@@ -97,7 +97,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         # 2手読みのEdgeと対戦させ勝率を返す
         simulator.start()
         print(simulator)
-        self.fitness_value = simulator.result_ratio['Challenger'] - simulator.result_ratio['Opponent']
+        self.fitness_value = ((simulator.result_ratio['Challenger'] - simulator.result_ratio['Opponent']) + 100) / 2
 
         return self.fitness_value
 
@@ -397,6 +397,8 @@ class Switch_Evaluator_TPWE(Chromosome):
 
 
 if __name__ == '__main__':
+    import timeit
+
     generation, population = 0, [Switch_Evaluator_TPWE.random_instance() for _ in range(Switch_Evaluator_TPWE().setting["population_num"])]
 
     if os.path.isfile('./population.json'):
@@ -405,10 +407,11 @@ if __name__ == '__main__':
         print('[random_instance]')
 
     ga = GeneticAlgorithm(generation, population, './ga_setting.json')
-    result = ga.run()
+    elapsed_time = timeit.timeit('ga.run()', globals=globals(), number=1)
 
     print('>>>>>>>>>>>>>>>>>>>>>>>>>')
-    print(result)
+    print(ga.best)
+    print(elapsed_time, '(s)')
     print('>>>>>>>>>>>>>>>>>>>>>>>>>')
 
     Switch_Evaluator_TPWE.save_population(ga, './population.json')
