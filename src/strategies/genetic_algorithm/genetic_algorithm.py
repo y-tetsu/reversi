@@ -81,7 +81,11 @@ class GeneticAlgorithm:
             else:
                 for parent in parents:
                     # 同じ個体は増やさない
-                    if parent not in new_population:
+                    for individual in new_population:
+                        if parent == individual:
+                            print('skip')
+                            break
+                    else:
                         new_population.append(parent)
 
         # 個数合わせ

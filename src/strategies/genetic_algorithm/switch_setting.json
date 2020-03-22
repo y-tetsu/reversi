@@ -1,6 +1,6 @@
 {
     "turns": [12, 24, 36, 48, 60],
-    "population_num": 5,
+    "population_num": 3,
     "board_size": 8,
     "matches": 5,
     "board_type": "bitboard",

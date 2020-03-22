@@ -240,6 +240,12 @@ class Switch_Evaluator_TPWE(Chromosome):
     def __str__(self):
         return f"corner: {self.corner}\nc: {self.c}\na1: {self.a1}\na2: {self.a2}\nb: {self.b}\no: {self.o}\nx: {self.x}\nwp: {self.wp}\nww: {self.ww}\nwe: {self.we}\nFitness: {self.fitness()}"
 
+    def __eq__(self, other):
+        if other is None or type(self) != type(other):
+            return False
+
+        return self.__dict__ == other.__dict__
+
     @classmethod
     def load_population(cls, json_file):
         """
@@ -263,7 +269,7 @@ class Switch_Evaluator_TPWE(Chromosome):
                 ww = json_setting["ww"]
                 we = json_setting["we"]
 
-                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(self.setting["population_num"])]
+                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(Switch_Evaluator_TPWE().setting["population_num"])]
 
         return generation, population
 
