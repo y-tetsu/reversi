@@ -22,7 +22,7 @@ from simulator import Simulator
 
 
 SWITCH_NUM = 5
-POPULATION_NUM = 2
+POPULATION_NUM = 3
 
 
 class Switch_Evaluator_TPWE(Chromosome):
@@ -120,48 +120,53 @@ class Switch_Evaluator_TPWE(Chromosome):
         num1, num2 = randrange(10), randrange(10)
         (num1, num2) = (num1, num2) if num1 < num2 else (num2, num1)
 
+        population_num = len(self.corner)
+        num3, num4 = randrange(population_num), randrange(population_num)
+        (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
+
         child1 = deepcopy(self)
         child2 = deepcopy(other)
 
         if num1 <= 0 and num2 >= 0:
-            child1.corner = other.corner[:]
-            child2.corner = self.corner[:]
+
+            child1.corner[num3:num4+1] = other.corner[num3:num4+1]
+            child2.corner[num3:num4+1] = self.corner[num3:num4+1]
 
         if num1 <= 1 and num2 >= 1:
-            child1.c = other.c[:]
-            child2.c = self.c[:]
+            child1.c[num3:num4+1] = other.c[num3:num4+1]
+            child2.c[num3:num4+1] = self.c[num3:num4+1]
 
         if num1 <= 2 and num2 >= 2:
-            child1.a1 = other.a1[:]
-            child2.a1 = self.a1[:]
+            child1.a1[num3:num4+1] = other.a1[num3:num4+1]
+            child2.a1[num3:num4+1] = self.a1[num3:num4+1]
 
         if num1 <= 3 and num2 >= 3:
-            child1.a2 = other.a2[:]
-            child2.a2 = self.a2[:]
+            child1.a2[num3:num4+1] = other.a2[num3:num4+1]
+            child2.a2[num3:num4+1] = self.a2[num3:num4+1]
 
         if num1 <= 4 and num2 >= 4:
-            child1.b = other.b[:]
-            child2.b = self.b[:]
+            child1.b[num3:num4+1] = other.b[num3:num4+1]
+            child2.b[num3:num4+1] = self.b[num3:num4+1]
 
         if num1 <= 5 and num2 >= 5:
-            child1.x = other.x[:]
-            child2.x = self.x[:]
+            child1.x[num3:num4+1] = other.x[num3:num4+1]
+            child2.x[num3:num4+1] = self.x[num3:num4+1]
 
         if num1 <= 6 and num2 >= 6:
-            child1.o = other.o[:]
-            child2.o = self.o[:]
+            child1.o[num3:num4+1] = other.o[num3:num4+1]
+            child2.o[num3:num4+1] = self.o[num3:num4+1]
 
         if num1 <= 7 and num2 >= 7:
-            child1.wp = other.wp[:]
-            child2.wp = self.wp[:]
+            child1.wp[num3:num4+1] = other.wp[num3:num4+1]
+            child2.wp[num3:num4+1] = self.wp[num3:num4+1]
 
         if num1 <= 8 and num2 >= 8:
-            child1.ww = other.ww[:]
-            child2.ww = self.ww[:]
+            child1.ww[num3:num4+1] = other.ww[num3:num4+1]
+            child2.ww[num3:num4+1] = self.ww[num3:num4+1]
 
         if num1 <= 9 and num2 >= 9:
-            child1.we = other.we[:]
-            child2.we = self.we[:]
+            child1.we[num3:num4+1] = other.we[num3:num4+1]
+            child2.we[num3:num4+1] = self.we[num3:num4+1]
 
         return child1, child2
 
