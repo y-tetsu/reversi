@@ -65,13 +65,11 @@ class Simulator:
                 wins += self.total[key1][key2]['wins']
                 draws += self.total[key1][key2]['draws']
                 matches += self.total[key1][key2]['matches']
-                ratio = self.total[key1][key2]['wins'] / self.total[key1][key2]['matches'] * 100
-                ratio = f'{ratio:3.1f}%'
 
             ratio = wins / matches * 100
-            ratio = f'{ratio:3.1f}%'
+            ratio_par = f'{ratio:3.1f}%'
             loses = matches - wins - draws
-            row += f'{ratio:>6s} | {wins:>5d} {loses:>5d} {draws:>5d} {matches:>5d}'
+            row += f'{ratio_par:>6s} | {wins:>5d} {loses:>5d} {draws:>5d} {matches:>5d}'
             body2 += f'{row}\n'
 
             self.result_ratio[key1] = ratio
