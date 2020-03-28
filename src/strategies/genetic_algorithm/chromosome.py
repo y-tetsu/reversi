@@ -17,6 +17,10 @@ class Chromosome(metaclass=abc.ABCMeta):
     def reset_fitness(self):
         pass
 
+    @abc.abstractmethod
+    def is_optimal(self):
+        pass
+
     @classmethod
     @abc.abstractmethod
     def random_instance(cls):
