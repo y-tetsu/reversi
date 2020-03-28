@@ -1,8 +1,7 @@
 {
-    "population_num": 5,
-    "offspring_num": 10,
-    "max_generations": 20,
+    "population_num": 10,
+    "offspring_num": 8,
+    "max_generations": 10,
     "mutation_chance": 0.05,
-    "large_mutation": 5,
-    "crossover_chance": 0.7
+    "large_mutation": 100
 }

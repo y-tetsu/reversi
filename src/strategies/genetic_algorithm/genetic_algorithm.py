@@ -13,10 +13,17 @@ class GeneticAlgorithm:
     """
     遺伝的アルゴリズム
     """
-    def __init__(self, generation, setting_json, chromosome_cls):
-        self._generation = generation
+    def __init__(self, setting_json, chromosome_cls):
         self._setting = self._load_setting(setting_json)
+
+        self._generation = 0
         self._population = [chromosome_cls.random_instance() for _ in range(self._setting["population_num"])]
+
+        if os.path.isfile('./population.json'):
+            self.generation, self.population = chromosome_cls.load_population('./population.json')
+        else:
+            print('[random_instance]')
+
         self._fitness_key = type(self._population[0]).fitness
         self.best = None
 
@@ -29,8 +36,7 @@ class GeneticAlgorithm:
             "offspring_num": 0,
             "max_generations": 0,
             "mutation_chance": 0,
-            "large_mutation": 0,
-            "crossover_chance": 0
+            "large_mutation": 0
         }
 
         if setting_json is not None and os.path.isfile(setting_json):
@@ -92,13 +98,16 @@ class GeneticAlgorithm:
             print()
 
             #---
-            if hasattr(type(self._population[0]), 'save_population'):
-                type(self._population[0]).save_population(self, './population' + str(self._generation) + '.json')
             #---
 
             if best.is_optimal():
                 print('----- optimal pattern is found! -----')
+                if hasattr(type(self._population[0]), 'save_population'):
+                    type(self._population[0]).save_population(self, './population.json')
                 return best
+            else:
+                if hasattr(type(self._population[0]), 'save_population'):
+                    type(self._population[0]).save_population(self, './population' + str(self._generation) + '.json')
 
             self._generation_change()
             self._generation += 1
@@ -111,6 +120,9 @@ class GeneticAlgorithm:
                 best = highest
 
         print(f"Generation {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
+
+        if hasattr(type(self._population[0]), 'save_population'):
+            type(self._population[0]).save_population(self, './population.json')
 
         self.best = best
 
@@ -164,20 +176,6 @@ if __name__ == '__main__':
         def __str__(self):
             return 'name=' + self.name + " parameter=" + str(self.parameter)
 
-    # _generation_change
-    ga = GeneticAlgorithm(0, './ga_setting.json', Test)
-
-    for individual in ga._population:
-        print('1', individual.parameter, individual.name)
-    print()
-
-    ga._generation_change()
-
-    for individual in ga._population:
-        print('2', individual.parameter, individual.name)
-    print()
-
-    # run
-    ga = GeneticAlgorithm(0, './ga_setting.json', Test)
+    ga = GeneticAlgorithm('./ga_setting.json', Test)
     result = ga.run()
     print('result:', result)
