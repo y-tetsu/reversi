@@ -18,17 +18,27 @@ class GeneticAlgorithm:
 
         self._generation = 0
         self._population = [chromosome_cls.random_instance() for _ in range(self._setting["population_num"])]
+        self._fitness_key = type(self._population[0]).fitness
 
         if os.path.isfile('./population.json'):
             if hasattr(type(self._population[0]), 'load_population'):
                 print('[load_population]')
                 self._generation, self._population = chromosome_cls.load_population('./population.json')
+
+                diff = self._setting["population_num"] - len(self._population)
+
+                if diff > 0:
+                    print(' - expansion')
+                    for _ in range(diff):
+                        self._population.append(chromosome_cls.random_instance())
+                elif diff < 0:
+                    print(' - reduction')
+                    self._population = nlargest(self._setting["population_num"], self._population, key=self._fitness_key)
             else:
                 print('[random_instance]')
         else:
             print('[random_instance]')
 
-        self._fitness_key = type(self._population[0]).fitness
         self.best = None
 
     def _load_setting(self, setting_json):
