@@ -164,29 +164,41 @@ class Switch_Evaluator_TPWE(Chromosome):
         num1, num2 = randrange(9), randrange(9)
         (num1, num2) = (num1, num2) if num1 < num2 else (num2, num1)
 
-        child = deepcopy(self)
-        child.reset_fitness()
+        child1 = deepcopy(self)
+        child1.reset_fitness()
+
+        child2 = deepcopy(other)
+        child2.reset_fitness()
 
         if num1 <= 0 and num2 >= 0:
-            child.corner = other.corner
+            child1.corner = other.corner
+            child2.corner = self.corner
         if num1 <= 1 and num2 >= 1:
-            child.c = other.c
+            child1.c = other.c
+            child2.c = self.c
         if num1 <= 2 and num2 >= 2:
-            child.a1 = other.a1
+            child1.a1 = other.a1
+            child2.a1 = self.a1
         if num1 <= 3 and num2 >= 3:
-            child.a2 = other.a2
+            child1.a2 = other.a2
+            child2.a2 = self.a2
         if num1 <= 4 and num2 >= 4:
-            child.b = other.b
+            child1.b = other.b
+            child2.b = self.b
         if num1 <= 5 and num2 >= 5:
-            child.x = other.x
+            child1.x = other.x
+            child2.x = self.x
         if num1 <= 6 and num2 >= 6:
-            child.o = other.o
+            child1.o = other.o
+            child2.o = self.o
         if num1 <= 7 and num2 >= 7:
-            child.wp = other.wp
+            child1.wp = other.wp
+            child2.wp = self.wp
         if num1 <= 8 and num2 >= 8:
-            child.we = other.we
+            child1.we = other.we
+            child2.we = self.we
 
-        return child
+        return child1 if random() > 0.5 else child2
 
     def mutate(self):
         """
