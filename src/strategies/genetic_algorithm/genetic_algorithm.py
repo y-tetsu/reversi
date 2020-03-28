@@ -97,9 +97,6 @@ class GeneticAlgorithm:
             print('best:', best)
             print()
 
-            #---
-            #---
-
             if best.is_optimal():
                 print('----- optimal pattern is found! -----')
                 if hasattr(type(self._population[0]), 'save_population'):
