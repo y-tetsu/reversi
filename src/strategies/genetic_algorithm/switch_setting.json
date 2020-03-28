@@ -1,10 +1,10 @@
 {
     "turns": [12, 24, 36, 48, 60],
-    "population_num": 5,
+    "threshold": 65,
     "mutation_value": 1,
     "large_mutation_value": 30,
     "board_size": 8,
-    "matches": 25,
+    "matches": 10,
     "board_type": "bitboard",
     "processes": 2
 }

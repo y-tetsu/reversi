@@ -14,10 +14,10 @@ class GeneticAlgorithm:
     """
     遺伝的アルゴリズム
     """
-    def __init__(self, generation, initial_population, setting_json):
+    def __init__(self, generation, setting_json, chromosome_cls):
         self._generation = generation
-        self._population = initial_population
         self._setting = self._load_setting(setting_json)
+        self._population = [chromosome_cls.random_instance() for _ in range(self._setting["population_num"])]
         self._fitness_key = type(self._population[0]).fitness
         self.best = None
 
@@ -26,12 +26,12 @@ class GeneticAlgorithm:
         設定ファイルのロード
         """
         setting = {
-            "threshold": 0,
+            "population_num": 0,
+            "offspring_num": 0,
             "max_generations": 0,
             "mutation_chance": 0,
             "large_mutation": 0,
-            "crossover_chance": 0,
-            "selection_type": "ROULETTE"
+            "crossover_chance": 0
         }
 
         if setting_json is not None and os.path.isfile(setting_json):
@@ -40,62 +40,48 @@ class GeneticAlgorithm:
 
         return setting
 
-    def _pick_roulette(self, wheel):
-        """
-        ルーレット選択
-        """
-        parents = (None, None)
-
-        while True:
-            parents = tuple(choices(self._population, weights=wheel, k=2))
-
-            # 同じ両親は除外
-            if parents[0] != parents[1]:
-                break
-
-        return parents
-
-    def _pick_tournament(self, num_participants):
-        """
-        トーナメント選択
-        """
-        participants = choices(self._population, k=num_participants)
-
-        return tuple(nlargest(2, participants, key=self._fitness_key))
-
     def _generation_change(self):
         """
-        世代交代
+        世代交代(MGG-best2)
         """
         new_population = []
 
-        while len(new_population) < len(self._population):
-            # 両親を選ぶ
-            if self._setting["selection_type"] == "ROULETTE":
-                parents = self._pick_roulette([x.fitness() + 0.001 for x in self._population])
-            else:
-                parents = self._pick_tournament(len(self._population) // 2)
+        # 個体群の中から親を2つランダムに選ぶ
+        parent1, parent2 = random.sample(self._population, 2)
+        self._population.remove(parent1)
+        self._population.remove(parent2)
 
-            # 両親の交差
-            if random() < self._setting["crossover_chance"]:
-                print(' + crossover')
-                new_population.extend(parents[0].crossover(parents[1]))
-            else:
-                for parent in parents:
-                    # 同じ個体は増やさない
-                    for individual in new_population:
-                        if parent == individual:
-                            print('skip')
-                            break
-                    else:
-                        new_population.append(parent)
+        # 選ばれた親個体間で交叉を行い、子個体を offspring_num 個生成する
+        # 親個体と子個体全ての適応度を求める
+        # 最良の適応度の個体を2つ選ぶ
+        # 2つの個体を親個体と入れ替える
+        #while len(new_population) < len(self._population):
+        #    # 両親を選ぶ
+        #    if self._setting["selection_type"] == "ROULETTE":
+        #        parents = self._pick_roulette([x.fitness() + 0.001 for x in self._population])
+        #    else:
+        #        parents = self._pick_tournament(len(self._population) // 2)
 
-        # 個数合わせ
-        if len(new_population) > len(self._population):
-            for _ in range(len(new_population) - len(self._population)):
-                new_population.pop()
+        #    # 両親の交差
+        #    if random() < self._setting["crossover_chance"]:
+        #        print(' + crossover')
+        #        new_population.extend(parents[0].crossover(parents[1]))
+        #    else:
+        #        for parent in parents:
+        #            # 同じ個体は増やさない
+        #            for individual in new_population:
+        #                if parent == individual:
+        #                    print('skip')
+        #                    break
+        #            else:
+        #                new_population.append(parent)
 
-        self._population = new_population
+        ## 個数合わせ
+        #if len(new_population) > len(self._population):
+        #    for _ in range(len(new_population) - len(self._population)):
+        #        new_population.pop()
+
+        #self._population = new_population
 
     def _mutate(self):
         """
@@ -129,7 +115,7 @@ class GeneticAlgorithm:
             print(best)
             print()
 
-            if best.fitness() >= self._setting["threshold"]:
+            if best.is_optimal():
                 return best
 
             #---
@@ -157,3 +143,44 @@ class GeneticAlgorithm:
         self.best = best
 
         return best
+
+if __name__ == '__main__':
+    from random import randrange
+    from chromosome import Chromosome
+
+    class Test(Chromosome):
+        def __init__(self, parameter):
+            self.parameter = parameter
+
+        def fitness(self):
+            pass
+
+        def reset_fitness(self):
+            pass
+
+        def is_optimal(self):
+            pass
+
+        @classmethod
+        def random_instance(cls):
+            return Test(randrange(100))
+
+        def fitness(self):
+            pass
+
+        def crossover(self):
+            pass
+
+        def mutate(self):
+            pass
+
+        def large_mutate(self):
+            pass
+
+    ga = GeneticAlgorithm(0, './ga_setting.json', Test)
+
+    for individual in ga._population:
+        print(individual.parameter)
+
+
+

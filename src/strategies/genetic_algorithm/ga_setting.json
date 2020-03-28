@@ -1,8 +1,8 @@
 {
-    "threshold": 65,
-    "max_generations": 2,
+    "population_num": 5,
+    "offspring_num": 10,
+    "max_generations": 5,
     "mutation_chance": 0.05,
     "large_mutation": 100,
-    "crossover_chance": 0.7,
-    "selection_type": "ROULETTE"
+    "crossover_chance": 0.7
 }
