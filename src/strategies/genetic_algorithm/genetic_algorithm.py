@@ -20,7 +20,8 @@ class GeneticAlgorithm:
         self._population = [chromosome_cls.random_instance() for _ in range(self._setting["population_num"])]
 
         if os.path.isfile('./population.json'):
-            self.generation, self.population = chromosome_cls.load_population('./population.json')
+            if hasattr(type(self._population[0]), 'load_population'):
+                self.generation, self.population = chromosome_cls.load_population('./population.json')
         else:
             print('[random_instance]')
 
