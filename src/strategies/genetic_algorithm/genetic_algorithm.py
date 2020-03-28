@@ -5,7 +5,7 @@
 import sys
 import os
 import json
-from random import choices, random
+import random
 from heapq import nlargest
 from statistics import mean
 
@@ -44,44 +44,22 @@ class GeneticAlgorithm:
         """
         世代交代(MGG-best2)
         """
-        new_population = []
-
         # 個体群の中から親を2つランダムに選ぶ
         parent1, parent2 = random.sample(self._population, 2)
         self._population.remove(parent1)
         self._population.remove(parent2)
 
         # 選ばれた親個体間で交叉を行い、子個体を offspring_num 個生成する
-        # 親個体と子個体全ての適応度を求める
-        # 最良の適応度の個体を2つ選ぶ
-        # 2つの個体を親個体と入れ替える
-        #while len(new_population) < len(self._population):
-        #    # 両親を選ぶ
-        #    if self._setting["selection_type"] == "ROULETTE":
-        #        parents = self._pick_roulette([x.fitness() + 0.001 for x in self._population])
-        #    else:
-        #        parents = self._pick_tournament(len(self._population) // 2)
+        offspring_num = self._setting["offspring_num"]
+        offsprings = []
 
-        #    # 両親の交差
-        #    if random() < self._setting["crossover_chance"]:
-        #        print(' + crossover')
-        #        new_population.extend(parents[0].crossover(parents[1]))
-        #    else:
-        #        for parent in parents:
-        #            # 同じ個体は増やさない
-        #            for individual in new_population:
-        #                if parent == individual:
-        #                    print('skip')
-        #                    break
-        #            else:
-        #                new_population.append(parent)
+        while len(offsprings) < offspring_num:
+            offsprings.append(parent1.crossover(parent2))
 
-        ## 個数合わせ
-        #if len(new_population) > len(self._population):
-        #    for _ in range(len(new_population) - len(self._population)):
-        #        new_population.pop()
-
-        #self._population = new_population
+        # 親個体と子個体全ての適応度を求め最良の適応度の個体を2つ選び入れ替える
+        offsprings.extend((parent1, parent2))
+        best1, best2 = nlargest(2, offsprings, key=self._fitness_key)
+        self._population.extend((best1, best2))
 
     def _mutate(self):
         """
@@ -146,14 +124,17 @@ class GeneticAlgorithm:
 
 if __name__ == '__main__':
     from random import randrange
+    from copy import deepcopy
+
     from chromosome import Chromosome
 
     class Test(Chromosome):
         def __init__(self, parameter):
             self.parameter = parameter
+            self.name = str(parameter)
 
         def fitness(self):
-            pass
+            return 100 - abs(77 - self.parameter)
 
         def reset_fitness(self):
             pass
@@ -165,11 +146,16 @@ if __name__ == '__main__':
         def random_instance(cls):
             return Test(randrange(100))
 
-        def fitness(self):
-            pass
+        def crossover(self, other):
+            child = deepcopy(self)
 
-        def crossover(self):
-            pass
+            parent1 = randrange(self.parameter)
+            parent2 = randrange(other.parameter)
+
+            child.parameter = (parent1 + parent2) % 100
+            child.name = '(' + self.name + '&' + other.name + ')'
+
+            return child
 
         def mutate(self):
             pass
@@ -180,7 +166,13 @@ if __name__ == '__main__':
     ga = GeneticAlgorithm(0, './ga_setting.json', Test)
 
     for individual in ga._population:
-        print(individual.parameter)
+        print('1', individual.parameter, individual.name)
+    print()
+
+    ga._generation_change()
+
+    for individual in ga._population:
+        print('2', individual.parameter, individual.name)
 
 
 
