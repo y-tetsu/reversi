@@ -134,15 +134,15 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         初期パラメータ設定
         """
-        corner_sign = 1 if randrange(1) else -1
-        c_sign = 1 if randrange(1) else -1
-        a1_sign = 1 if randrange(1) else -1
-        a2_sign = 1 if randrange(1) else -1
-        b_sign = 1 if randrange(1) else -1
-        x_sign = 1 if randrange(1) else -1
-        o_sign = 1 if randrange(1) else -1
-        wp_sign = 1 if randrange(1) else -1
-        we_sign = 1 if randrange(1) else -1
+        corner_sign = 1 if random() > 0.5 else -1
+        c_sign = 1 if random() > 0.5 else -1
+        a1_sign = 1 if random() > 0.5 else -1
+        a2_sign = 1 if random() > 0.5 else -1
+        b_sign = 1 if random() > 0.5 else -1
+        x_sign = 1 if random() > 0.5 else -1
+        o_sign = 1 if random() > 0.5 else -1
+        wp_sign = 1 if random() > 0.5 else -1
+        we_sign = 1 if random() > 0.5 else -1
 
         corner = randrange(200) * corner_sign
         c = randrange(200) * c_sign
