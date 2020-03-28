@@ -250,6 +250,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         母集団の取得
         """
+        print('[load_population]')
         generation, population = 0, {}
 
         if json_file is not None and os.path.isfile(json_file):
