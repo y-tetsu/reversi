@@ -2,7 +2,6 @@
 """
 遺伝的アルゴリズム
 """
-import sys
 import os
 import json
 import random
@@ -66,11 +65,11 @@ class GeneticAlgorithm:
         変異
         """
         for individual in self._population:
-            if (self._generation + 1) % self._setting["large_mutation"] == 0:
+            if self._generation and self._generation % self._setting["large_mutation"] == 0:
                 print(' + large_mutate')
                 individual.large_mutate()
             else:
-                if random() < self._setting["mutation_chance"]:
+                if random.random() < self._setting["mutation_chance"]:
                     print(' + mutate')
                     individual.mutate()
 
@@ -88,19 +87,18 @@ class GeneticAlgorithm:
         best = max(self._population, key=self._fitness_key)
 
         for generation in range(self._setting["max_generations"]):
+            print(f"Generation {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
+            print('best:', best)
             print()
-            print('best')
-            print(best)
-            print()
+
+            #---
+            if hasattr(type(self._population[0]), 'save_population'):
+                type(self._population[0]).save_population(self, './population' + str(self._generation) + '.json')
+            #---
 
             if best.is_optimal():
+                print('----- optimal pattern is found! -----')
                 return best
-
-            #---
-            type(self._population[0]).save_population(self, './population' + str(self._generation) + '.json')
-            #---
-
-            print(f"\n*****\nGeneration {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
 
             self._generation_change()
             self._generation += 1
@@ -112,11 +110,7 @@ class GeneticAlgorithm:
             if highest.fitness() > best.fitness():
                 best = highest
 
-        print()
-        print('best')
-        print(best)
-        print()
-        print(f"\n*****\nGeneration {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}\n*****\n")
+        print(f"Generation {self._generation} Best {best.fitness()} Avg {mean(map(self._fitness_key, self._population))}")
 
         self.best = best
 
@@ -129,6 +123,9 @@ if __name__ == '__main__':
     from chromosome import Chromosome
 
     class Test(Chromosome):
+        """
+        乱数を足しながら77にする
+        """
         def __init__(self, parameter):
             self.parameter = parameter
             self.name = str(parameter)
@@ -140,7 +137,7 @@ if __name__ == '__main__':
             pass
 
         def is_optimal(self):
-            pass
+            return self.parameter == 77
 
         @classmethod
         def random_instance(cls):
@@ -149,8 +146,8 @@ if __name__ == '__main__':
         def crossover(self, other):
             child = deepcopy(self)
 
-            parent1 = randrange(self.parameter)
-            parent2 = randrange(other.parameter)
+            parent1 = 0 if self.parameter == 0 else randrange(self.parameter)
+            parent2 = 0 if other.parameter == 0 else randrange(other.parameter)
 
             child.parameter = (parent1 + parent2) % 100
             child.name = '(' + self.name + '&' + other.name + ')'
@@ -158,11 +155,16 @@ if __name__ == '__main__':
             return child
 
         def mutate(self):
-            pass
+            self.parameter = (self.parameter + 1) % 100
 
         def large_mutate(self):
-            pass
+            self.parameter = randrange(100)
+            self.name = str(self.parameter)
 
+        def __str__(self):
+            return 'name=' + self.name + " parameter=" + str(self.parameter)
+
+    # _generation_change
     ga = GeneticAlgorithm(0, './ga_setting.json', Test)
 
     for individual in ga._population:
@@ -173,6 +175,9 @@ if __name__ == '__main__':
 
     for individual in ga._population:
         print('2', individual.parameter, individual.name)
+    print()
 
-
-
+    # run
+    ga = GeneticAlgorithm(0, './ga_setting.json', Test)
+    result = ga.run()
+    print('result:', result)
