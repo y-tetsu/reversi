@@ -102,6 +102,7 @@ class GeneticAlgorithm:
                 print('----- optimal pattern is found! -----')
                 if hasattr(type(self._population[0]), 'save_population'):
                     type(self._population[0]).save_population(self, './population.json')
+                self.best = best
                 return best
             else:
                 if hasattr(type(self._population[0]), 'save_population'):
