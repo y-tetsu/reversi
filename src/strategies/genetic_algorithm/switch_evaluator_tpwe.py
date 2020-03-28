@@ -268,7 +268,7 @@ class Switch_Evaluator_TPWE(Chromosome):
                 ww = json_setting["ww"]
                 we = json_setting["we"]
 
-                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(Switch_Evaluator_TPWE().setting["population_num"])]
+                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(len(corner))]
 
         return generation, population
 
