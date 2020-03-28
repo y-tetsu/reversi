@@ -21,7 +21,10 @@ class GeneticAlgorithm:
 
         if os.path.isfile('./population.json'):
             if hasattr(type(self._population[0]), 'load_population'):
+                print('[load_population]')
                 self._generation, self._population = chromosome_cls.load_population('./population.json')
+            else:
+                print('[random_instance]')
         else:
             print('[random_instance]')
 
