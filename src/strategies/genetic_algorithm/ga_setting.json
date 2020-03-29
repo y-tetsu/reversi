@@ -3,5 +3,5 @@
     "offspring_num": 5,
     "max_generations": 20,
     "mutation_chance": 0.05,
-    "large_mutation": 100
+    "large_mutation": 30
 }
