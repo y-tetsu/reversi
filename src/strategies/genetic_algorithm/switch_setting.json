@@ -1,9 +1,9 @@
 {
-    "threshold": 70,
+    "threshold": 75,
     "mutation_value": 1,
     "large_mutation_value": 30,
     "board_size": 8,
-    "matches": 35,
+    "matches": 40,
     "board_type": "bitboard",
     "processes": 2
 }
