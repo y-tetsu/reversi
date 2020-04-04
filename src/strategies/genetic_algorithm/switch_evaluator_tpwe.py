@@ -44,6 +44,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         設定値読み込み
         """
         setting = {
+            "turns": [36, 48, 60],
             "threshold": 60,
             "mutation_value": 1,
             "large_mutation_value": 10,
@@ -68,26 +69,24 @@ class Switch_Evaluator_TPWE(Chromosome):
 
         # 遺伝個体(2手読みSwitch-Edge)
         challenger = Switch(
-            # 48手-60手
-            turns=[48, 60],
+            turns=[36, 48, 60],
             strategies=[
-                MinMax2Ro_TPWE(),
                 MinMax2Ro_TPWE(
                     base=MinMax2_TPWE(
                         evaluator=Evaluator_TPWE(
-                            corner=self.corner,
-                            c=self.c,
-                            a1=self.a1,
-                            a2=self.a2,
-                            b=self.b,
-                            o=self.o,
-                            x=self.x,
-                            wp=self.wp,
-                            ww=self.ww,
-                            we=self.we
+                            corner=self.corner[i],
+                            c=self.c[i],
+                            a1=self.a1[i],
+                            a2=self.a2[i],
+                            b=self.b[i],
+                            o=self.o[i],
+                            x=self.x[i],
+                            wp=self.wp[i],
+                            ww=self.ww[i],
+                            we=self.we[i]
                         )
                     )
-                )
+                ) for i in range(len(self.setting['turns']))
             ]
         )
 
@@ -134,6 +133,8 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         初期パラメータ設定
         """
+        switch_num = len(Switch_Evaluator_TPWE().setting["turns"])
+
         corner_sign = 1 if random() > 0.5 else -1
         c_sign = 1 if random() > 0.5 else -1
         a1_sign = 1 if random() > 0.5 else -1
@@ -144,16 +145,16 @@ class Switch_Evaluator_TPWE(Chromosome):
         wp_sign = 1 if random() > 0.5 else -1
         we_sign = 1 if random() > 0.5 else -1
 
-        corner = randrange(200) * corner_sign
-        c = randrange(200) * c_sign
-        a1 = randrange(200) * a1_sign
-        a2 = randrange(200) * a2_sign
-        b = randrange(200) * b_sign
-        x = randrange(200) * x_sign
-        o = randrange(200) * o_sign
-        wp = randrange(200) * wp_sign
-        ww = 10000
-        we = randrange(200) * we_sign
+        corner = [randrange(200) * corner_sign for _ in range(switch_num)]
+        c = [randrange(200) * c_sign for _ in range(switch_num)]
+        a1 = [randrange(200) * a1_sign for _ in range(switch_num)]
+        a2 = [randrange(200) * a2_sign for _ in range(switch_num)]
+        b = [randrange(200) * b_sign for _ in range(switch_num)]
+        x = [randrange(200) * x_sign for _ in range(switch_num)]
+        o = [randrange(200) * o_sign for _ in range(switch_num)]
+        wp = [randrange(200) * wp_sign for _ in range(switch_num)]
+        ww = [10000 for _ in range(switch_num)]
+        we = [randrange(200) * we_sign for _ in range(switch_num)]
 
         return Switch_Evaluator_TPWE(corner, c, a1, a2, b, x, o, wp, ww, we)
 
@@ -164,6 +165,10 @@ class Switch_Evaluator_TPWE(Chromosome):
         num1, num2 = randrange(9), randrange(9)
         (num1, num2) = (num1, num2) if num1 < num2 else (num2, num1)
 
+        population_num = len(self.corner)
+        num3, num4 = randrange(population_num), randrange(population_num)
+        (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
+
         child1 = deepcopy(self)
         child1.reset_fitness()
 
@@ -171,32 +176,32 @@ class Switch_Evaluator_TPWE(Chromosome):
         child2.reset_fitness()
 
         if num1 <= 0 and num2 >= 0:
-            child1.corner = other.corner
-            child2.corner = self.corner
+            child1.corner[num3:num4+1] = other.corner[num3:num4+1]
+            child2.corner[num3:num4+1] = self.corner[num3:num4+1]
         if num1 <= 1 and num2 >= 1:
-            child1.c = other.c
-            child2.c = self.c
+            child1.c[num3:num4+1] = other.c[num3:num4+1]
+            child2.c[num3:num4+1] = self.c[num3:num4+1]
         if num1 <= 2 and num2 >= 2:
-            child1.a1 = other.a1
-            child2.a1 = self.a1
+            child1.a1[num3:num4+1] = other.a1[num3:num4+1]
+            child2.a1[num3:num4+1] = self.a1[num3:num4+1]
         if num1 <= 3 and num2 >= 3:
-            child1.a2 = other.a2
-            child2.a2 = self.a2
+            child1.a2[num3:num4+1] = other.a2[num3:num4+1]
+            child2.a2[num3:num4+1] = self.a2[num3:num4+1]
         if num1 <= 4 and num2 >= 4:
-            child1.b = other.b
-            child2.b = self.b
+            child1.b[num3:num4+1] = other.b[num3:num4+1]
+            child2.b[num3:num4+1] = self.b[num3:num4+1]
         if num1 <= 5 and num2 >= 5:
-            child1.x = other.x
-            child2.x = self.x
+            child1.x[num3:num4+1] = other.x[num3:num4+1]
+            child2.x[num3:num4+1] = self.x[num3:num4+1]
         if num1 <= 6 and num2 >= 6:
-            child1.o = other.o
-            child2.o = self.o
+            child1.o[num3:num4+1] = other.o[num3:num4+1]
+            child2.o[num3:num4+1] = self.o[num3:num4+1]
         if num1 <= 7 and num2 >= 7:
-            child1.wp = other.wp
-            child2.wp = self.wp
+            child1.wp[num3:num4+1] = other.wp[num3:num4+1]
+            child2.wp[num3:num4+1] = self.wp[num3:num4+1]
         if num1 <= 8 and num2 >= 8:
-            child1.we = other.we
-            child2.we = self.we
+            child1.we[num3:num4+1] = other.we[num3:num4+1]
+            child2.we[num3:num4+1] = self.we[num3:num4+1]
 
         return child1 if random() > 0.5 else child2
 
@@ -205,54 +210,58 @@ class Switch_Evaluator_TPWE(Chromosome):
         変異(摂動)
         """
         parameter_index = randrange(9)
+        switch_num = len(self.setting["turns"])
+        stage_index = randrange(switch_num)
         sign = 1 if random() > 0.5 else -1
         mutation_value = self.setting["mutation_value"]
 
         if parameter_index == 0:
-            self.corner += mutation_value * sign
+            self.corner[stage_index] += mutation_value * sign
         elif parameter_index == 1:
-            self.c += mutation_value * sign
+            self.c[stage_index] += mutation_value * sign
         elif parameter_index == 2:
-            self.a1 += mutation_value * sign
+            self.a1[stage_index] += mutation_value * sign
         elif parameter_index == 3:
-            self.a2 += mutation_value * sign
+            self.a2[stage_index] += mutation_value * sign
         elif parameter_index == 4:
-            self.b += mutation_value * sign
+            self.b[stage_index] += mutation_value * sign
         elif parameter_index == 5:
-            self.o += mutation_value * sign
+            self.o[stage_index] += mutation_value * sign
         elif parameter_index == 6:
-            self.x += mutation_value * sign
+            self.x[stage_index] += mutation_value * sign
         elif parameter_index == 7:
-            self.wp += mutation_value * sign
+            self.wp[stage_index] += mutation_value * sign
         elif parameter_index == 8:
-            self.we += mutation_value * sign
+            self.we[stage_index] += mutation_value * sign
 
     def large_mutate(self):
         """
         大変異(摂動)
         """
         parameter_index = randrange(9)
+        switch_num = len(self.setting["turns"])
+        stage_index = randrange(switch_num)
         sign = 1 if random() > 0.5 else -1
         large_mutation_value = self.setting["large_mutation_value"]
 
         if parameter_index == 0:
-            self.corner += large_mutation_value * sign
+            self.corner[stage_index] += large_mutation_value * sign
         elif parameter_index == 1:
-            self.c += large_mutation_value * sign
+            self.c[stage_index] += large_mutation_value * sign
         elif parameter_index == 2:
-            self.a1 += large_mutation_value * sign
+            self.a1[stage_index] += large_mutation_value * sign
         elif parameter_index == 3:
-            self.a2 += large_mutation_value * sign
+            self.a2[stage_index] += large_mutation_value * sign
         elif parameter_index == 4:
-            self.b += large_mutation_value * sign
+            self.b[stage_index] += large_mutation_value * sign
         elif parameter_index == 5:
-            self.o += large_mutation_value * sign
+            self.o[stage_index] += large_mutation_value * sign
         elif parameter_index == 6:
-            self.x += large_mutation_value * sign
+            self.x[stage_index] += large_mutation_value * sign
         elif parameter_index == 7:
-            self.wp += large_mutation_value * sign
+            self.wp[stage_index] += large_mutation_value * sign
         elif parameter_index == 8:
-            self.we += large_mutation_value * sign
+            self.we[stage_index] += large_mutation_value * sign
 
     def __str__(self):
         return f"corner: {self.corner}\nc: {self.c}\na1: {self.a1}\na2: {self.a2}\nb: {self.b}\no: {self.o}\nx: {self.x}\nwp: {self.wp}\nww: {self.ww}\nwe: {self.we}\nFitness: {self.fitness()}"

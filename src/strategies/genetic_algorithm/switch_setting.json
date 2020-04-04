@@ -1,4 +1,5 @@
 {
+    "turns": [36, 48, 60],
     "threshold": 72,
     "mutation_value": 1,
     "large_mutation_value": 30,
