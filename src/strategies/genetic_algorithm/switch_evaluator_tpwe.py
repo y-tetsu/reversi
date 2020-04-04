@@ -69,7 +69,7 @@ class Switch_Evaluator_TPWE(Chromosome):
 
         # 遺伝個体(2手読みSwitch-Edge)
         challenger = Switch(
-            turns=[36, 48, 60],
+            turns=self.setting['turns'],
             strategies=[
                 MinMax2Ro_TPWE(
                     base=MinMax2_TPWE(
@@ -126,14 +126,14 @@ class Switch_Evaluator_TPWE(Chromosome):
         """
         最適解が見つかったか判定
         """
-        return self.fitness() >= self.setting["threshold"]
+        return self.fitness() >= self.setting['threshold']
 
     @classmethod
     def random_instance(cls):
         """
         初期パラメータ設定
         """
-        switch_num = len(Switch_Evaluator_TPWE().setting["turns"])
+        switch_num = len(Switch_Evaluator_TPWE().setting['turns'])
 
         corner_sign = 1 if random() > 0.5 else -1
         c_sign = 1 if random() > 0.5 else -1
@@ -160,14 +160,12 @@ class Switch_Evaluator_TPWE(Chromosome):
 
     def crossover(self, other):
         """
-        二点交叉
+        交叉
         """
         num1, num2 = randrange(9), randrange(9)
         (num1, num2) = (num1, num2) if num1 < num2 else (num2, num1)
 
         population_num = len(self.corner)
-        num3, num4 = randrange(population_num), randrange(population_num)
-        (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
 
         child1 = deepcopy(self)
         child1.reset_fitness()
@@ -176,30 +174,48 @@ class Switch_Evaluator_TPWE(Chromosome):
         child2.reset_fitness()
 
         if num1 <= 0 and num2 >= 0:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.corner[num3:num4+1] = other.corner[num3:num4+1]
             child2.corner[num3:num4+1] = self.corner[num3:num4+1]
         if num1 <= 1 and num2 >= 1:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.c[num3:num4+1] = other.c[num3:num4+1]
             child2.c[num3:num4+1] = self.c[num3:num4+1]
         if num1 <= 2 and num2 >= 2:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.a1[num3:num4+1] = other.a1[num3:num4+1]
             child2.a1[num3:num4+1] = self.a1[num3:num4+1]
         if num1 <= 3 and num2 >= 3:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.a2[num3:num4+1] = other.a2[num3:num4+1]
             child2.a2[num3:num4+1] = self.a2[num3:num4+1]
         if num1 <= 4 and num2 >= 4:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.b[num3:num4+1] = other.b[num3:num4+1]
             child2.b[num3:num4+1] = self.b[num3:num4+1]
         if num1 <= 5 and num2 >= 5:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.x[num3:num4+1] = other.x[num3:num4+1]
             child2.x[num3:num4+1] = self.x[num3:num4+1]
         if num1 <= 6 and num2 >= 6:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.o[num3:num4+1] = other.o[num3:num4+1]
             child2.o[num3:num4+1] = self.o[num3:num4+1]
         if num1 <= 7 and num2 >= 7:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.wp[num3:num4+1] = other.wp[num3:num4+1]
             child2.wp[num3:num4+1] = self.wp[num3:num4+1]
         if num1 <= 8 and num2 >= 8:
+            num3, num4 = randrange(population_num), randrange(population_num)
+            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
             child1.we[num3:num4+1] = other.we[num3:num4+1]
             child2.we[num3:num4+1] = self.we[num3:num4+1]
 
@@ -210,10 +226,10 @@ class Switch_Evaluator_TPWE(Chromosome):
         変異(摂動)
         """
         parameter_index = randrange(9)
-        switch_num = len(self.setting["turns"])
+        switch_num = len(self.setting['turns'])
         stage_index = randrange(switch_num)
         sign = 1 if random() > 0.5 else -1
-        mutation_value = self.setting["mutation_value"]
+        mutation_value = self.setting['mutation_value']
 
         if parameter_index == 0:
             self.corner[stage_index] += mutation_value * sign
@@ -239,10 +255,10 @@ class Switch_Evaluator_TPWE(Chromosome):
         大変異(摂動)
         """
         parameter_index = randrange(9)
-        switch_num = len(self.setting["turns"])
+        switch_num = len(self.setting['turns'])
         stage_index = randrange(switch_num)
         sign = 1 if random() > 0.5 else -1
-        large_mutation_value = self.setting["large_mutation_value"]
+        large_mutation_value = self.setting['large_mutation_value']
 
         if parameter_index == 0:
             self.corner[stage_index] += large_mutation_value * sign

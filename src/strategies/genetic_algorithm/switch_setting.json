@@ -1,8 +1,8 @@
 {
-    "turns": [36, 48, 60],
-    "threshold": 72,
-    "mutation_value": 1,
-    "large_mutation_value": 30,
+    "turns": [12, 24, 36, 48, 60],
+    "threshold": 80,
+    "mutation_value": 3,
+    "large_mutation_value": 50,
     "board_size": 8,
     "matches": 50,
     "board_type": "bitboard",
