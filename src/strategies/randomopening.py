@@ -13,7 +13,7 @@ from strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_T
 from strategies.negamax import _NegaMax3_TPW, NegaMax3_TPW, NegaMax3_TPOW
 from strategies.alphabeta import AlphaBeta4_TPW, AlphaBeta4_TPWE
 from strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW, NegaScout4_TPWE
-from strategies.fullreading import AlphaBeta4F9_TPW
+from strategies.fullreading import MinMax2F9_TPWE, AlphaBeta4F9_TPW
 from strategies.joseki import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPW2, NsIF9J_B_TPWE, SwitchNsIF9J_B_TPW, SwitchNsIF9J_B_TPWE
 
 
@@ -101,6 +101,14 @@ class MinMax2Ro_TPWE(RandomOpening):
     RandamOpening(8手) + MinMax2_TPWE
     """
     def __init__(self, depth=8, base=MinMax2_TPWE()):
+        super().__init__(depth, base)
+
+
+class MinMax2F9Ro_TPWE(RandomOpening):
+    """
+    RandamOpening(8手) + MinMax2F9_TPWE
+    """
+    def __init__(self, depth=8, base=MinMax2F9_TPWE()):
         super().__init__(depth, base)
 
 

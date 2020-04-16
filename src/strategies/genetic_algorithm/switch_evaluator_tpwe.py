@@ -13,8 +13,9 @@ from copy import deepcopy
 from chromosome import Chromosome
 from genetic_algorithm import GeneticAlgorithm
 
+from strategies.randomopening import RandomOpening, MinMax2F9Ro_TPWE
+from strategies.fullreading import FullReading
 from strategies.switch import Switch
-from strategies import MinMax2Ro_TPWE
 from strategies.minmax import MinMax2_TPWE
 from strategies.coordinator import Evaluator_TPWE
 from player import Player
@@ -67,31 +68,35 @@ class Switch_Evaluator_TPWE(Chromosome):
         if self.fitness_value is not None:
             return self.fitness_value
 
-        # 遺伝個体(2手読みSwitch-Edge)
-        challenger = Switch(
-            turns=self.setting['turns'],
-            strategies=[
-                MinMax2Ro_TPWE(
-                    base=MinMax2_TPWE(
-                        evaluator=Evaluator_TPWE(
-                            corner=self.corner[i],
-                            c=self.c[i],
-                            a1=self.a1[i],
-                            a2=self.a2[i],
-                            b=self.b[i],
-                            o=self.o[i],
-                            x=self.x[i],
-                            wp=self.wp[i],
-                            ww=self.ww[i],
-                            we=self.we[i]
-                        )
-                    )
-                ) for i in range(len(self.setting['turns']))
-            ]
+        # 遺伝個体(MinMax-Edge2手読みSwitch + FullReading9 + RandomOpening8)
+        challenger = RandomOpening(
+            depth=8,
+            base = FullReading(
+                remain=9,
+                base=Switch(
+                    turns=self.setting['turns'],
+                    strategies=[
+                        MinMax2_TPWE(
+                            evaluator=Evaluator_TPWE(
+                                corner=self.corner[i],
+                                c=self.c[i],
+                                a1=self.a1[i],
+                                a2=self.a2[i],
+                                b=self.b[i],
+                                o=self.o[i],
+                                x=self.x[i],
+                                wp=self.wp[i],
+                                ww=self.ww[i],
+                                we=self.we[i]
+                            )
+                        ) for i in range(len(self.setting['turns']))
+                    ]
+                )
+            )
         )
 
-        # 対戦相手(2手読みEdge)
-        opponent = MinMax2Ro_TPWE()
+        # 対戦相手(MinMax-Edge2手読み + FullReading9 + RandomOpening)
+        opponent = MinMax2F9Ro_TPWE()
 
         # シミュレータ準備
         strategy_list = {

@@ -4,7 +4,7 @@
     "mutation_value": 3,
     "large_mutation_value": 25,
     "board_size": 8,
-    "matches": 250,
+    "matches": 300,
     "board_type": "bitboard",
     "processes": 2
 }

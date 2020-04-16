@@ -8,6 +8,7 @@ sys.path.append('../')
 
 from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from strategies.easy import Random
+from strategies.minmax import MinMax2_TPWE
 from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
 from strategies.iterative import AbI_B_TPW, AbI_B_TPWE, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE
 from strategies.switch import SwitchNsI_B_TPW, SwitchNsI_B_TPWE
@@ -44,6 +45,15 @@ class _FullReading(FullReading):
         self.remain = remain
         self.fullreading = _AlphaBeta_N(depth=remain)
         self.base = base
+
+
+class MinMax2F9_TPWE(FullReading):
+    """
+    MinMax法で2手先を読む
+    (評価関数:TPWE, 完全読み開始:残り9手)
+    """
+    def __init__(self, remain=9, base=MinMax2_TPWE()):
+        super().__init__(remain, base)
 
 
 class AlphaBeta4F9_TPW(FullReading):
