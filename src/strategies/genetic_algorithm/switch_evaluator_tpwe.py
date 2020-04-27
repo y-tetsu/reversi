@@ -68,7 +68,7 @@ class Switch_Evaluator_TPWE(Chromosome):
         if self.fitness_value is not None:
             return self.fitness_value
 
-        # 遺伝個体(MinMax-Edge2手読みSwitch + FullReading9 + RandomOpening8)
+        # 遺伝個体(MinMax-Edge2手読みSwitch + FullReading9手読み + RandomOpening8手)
         challenger = RandomOpening(
             depth=8,
             base = FullReading(
