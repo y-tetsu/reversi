@@ -29,7 +29,7 @@ if __name__ == '__main__':
                 wp = population['wp'][max_index]
                 we = population['we'][max_index]
 
-            text = "\t".join([str(param) for param in [i, fitness, corner, c, a1, a2, b, o, x, wp, we]])
+            text = "\t".join([str(param) for param in [i, format(fitness, '.1f'), corner, c, a1, a2, b, o, x, wp, we]])
 
             print(text)
         else:
