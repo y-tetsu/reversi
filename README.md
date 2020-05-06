@@ -169,9 +169,9 @@ $ python reversic.py
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ## Windows10の環境準備
-**reversi**をWindows10上のPythonから実行する場合は下記の手順に従って環境を準備して下さい。
+**reversi**をWindows10上のPythonから実行する場合は下記の手順(1～5)に従って環境を準備して下さい。
 
-### Pythonのインストール
+### 1. Pythonのインストール
 下記よりPythonの64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
 [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
 
@@ -181,7 +181,7 @@ $ py -3.7 --version
 Python 3.7.6
 ```
 
-### pipの更新
+### 2. pipの更新
 **reversi**をPythonから実行するためにはいくつかの外部パッケージが必要となります。<br>
 正しくインストールできるようにするために下記を実行してpipをアップデートして下さい。<br>
 ```
@@ -191,7 +191,26 @@ Successfully installed pip-20.0.2
 ```
 ※バージョンが異なる場合は上位であれば問題ないはずです
 
-### cythonパッケージのインストール
+### 3. 関連パッケージのインストール
+**reversi**の実行に必要なパッケージのインストールは下記で一括して行えます。<br>
+```
+$ py -3.7 -m pip install -r requirements.txt
+```
+もしうまくいかない場合は、以降の"パッケージインストールの補足"を個別に実行してください。
+
+### 4. Visual C++のインストール
+本プログラムの実行にはC言語のコンパイル環境が必要となります。<br>
+下記よりVisual C++をダウンロードして下さい。<br>
+[Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+### 5. reversiの実行
+上記までの環境を準備した後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると**reversi**が起動します。
+```
+$ py -3.7 reversi.py
+```
+
+### (パッケージインストールの補足)
+#### cythonパッケージのインストール
 **reversi**を実行するためにはcythonという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。
 ```
@@ -200,7 +219,7 @@ $ py -3.7 -m pip install cython
 Successfully installed cython-0.29.15
 ```
 
-### numpyパッケージのインストール
+#### numpyパッケージのインストール
 **reversi**を実行するためにはnumpyという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。
 ```
@@ -209,7 +228,7 @@ $ py -3.7 -m pip install numpy
 Successfully installed numpy-1.18.1
 ```
 
-### pyinstallerパッケージのインストール
+#### pyinstallerパッケージのインストール
 **reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。不要な場合は省略しても構いません。
 ```
@@ -232,17 +251,6 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 **reversi**のexeファイルがdistフォルダ以下に生成されます。
 ```
 $ reversi.bat
-```
-
-### Visual C++のインストール
-本プログラムの実行にはC言語のコンパイル環境が必要となります。<br>
-下記よりVisual C++をダウンロードして下さい。<br>
-[Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
-
-### reversiの実行
-上記までの環境を準備した後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると**reversi**が起動します。
-```
-$ py -3.7 reversi.py
 ```
 
 ## 参考書籍
