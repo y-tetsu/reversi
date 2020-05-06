@@ -192,7 +192,7 @@ Successfully installed pip-20.0.2
 ※バージョンが異なる場合は上位であれば問題ないはずです
 
 ### 3. 関連パッケージのインストール
-**reversi**の実行に必要なパッケージのインストールは下記で一括して行えます。<br>
+**reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
 事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいてください。<br>
 ```
 $ py -3.7 -m pip install -r requirements.txt
