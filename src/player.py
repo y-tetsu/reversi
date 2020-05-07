@@ -3,7 +3,7 @@
 プレイヤーの管理
 """
 
-from stone import StoneFactory
+from disc import DiscFactory
 
 
 class Player:
@@ -12,22 +12,22 @@ class Player:
     """
     def __init__(self, color, name, strategy):
         self.color = color
-        factory = StoneFactory()
-        self.stone = factory.create(color)
+        factory = DiscFactory()
+        self.disc = factory.create(color)
         self.name = name
         self.strategy = strategy
         self.move = (None, None)
         self.captures = []
 
     def __str__(self):
-        return self.stone + self.name
+        return self.disc + self.name
 
-    def put_stone(self, board):
+    def put_disc(self, board):
         """
         次の手を決めて石を置く
         """
         self.move = self.strategy.next_move(self.color, board)    # 戦略に基づいた次の一手
-        self.captures =  board.put_stone(self.color, *self.move)  # ボードに手を打つ
+        self.captures =  board.put_disc(self.color, *self.move)  # ボードに手を打つ
 
 
 if __name__ == '__main__':
@@ -50,5 +50,5 @@ if __name__ == '__main__':
                 coordinate = (chr(value[0] + 97), str(value[1] + 1))
                 print(f'{index:2d}:', coordinate)
 
-            player.put_stone(board4)
+            player.put_disc(board4)
             print(board4)

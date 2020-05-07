@@ -43,7 +43,7 @@ class Game:
 
                     self.display.turn(player, possibles)
 
-                    player.put_stone(self.board)
+                    player.put_disc(self.board)
 
                     self.display.move(player, possibles)
                     self.display.progress(self.board, self.black_player, self.white_player)
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     import strategies
 
     class Foul():
-        def next_move(self, stone, board):
+        def next_move(self, disc, board):
             return (1, 1)
 
     board4x4 = Board(4)
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     white_player = Player('white', 'Table', strategies.Table(4))
 
     board4x4 = Board(4)
-    board4x4.put_stone('black', 1, 0)
+    board4x4.put_disc('black', 1, 0)
     print(board4x4)
     game = Game(board4x4, black_player, white_player, ConsoleDisplay(), 'white')
     game.play()

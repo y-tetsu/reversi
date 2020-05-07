@@ -75,7 +75,7 @@ TURNOVAL_SIZE_DIVISOR = 10  # 石をひっくり返す途中のサイズ(マス�
 
 TURN_BLACK_PATTERN = [('white', 'turnwhite'), ('turnwhite', 'black')]  # 黒の石をひっくり返すパターン
 TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の石をひっくり返すパターン
-TURN_STONE_WAIT = 0.1                                                  # 石をひっくり返す待ち時間(s)
+TURN_DISC_WAIT = 0.1                                                   # 石をひっくり返す待ち時間(s)
 
 ASSIST_MENU = ['ON', 'OFF']  # 打てる場所のハイライト表示の有無
 CANCEL_MENU = ['OK']         # ゲームのキャンセル
@@ -85,17 +85,17 @@ CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
 
 EXTRA_MENU = ['Set']  # プレイヤー追加設定の変更
 
-STONE_MARK = '●'      # 石のマーク
+DISC_MARK = '●'      # 石のマーク
 
 DEFAULT_BOARD_SIZE = 8   # ボードサイズの初期値
 DEFAULT_BLACK_NUM = '2'  # 黒の石の数初期値
 DEFAULT_WHITE_NUM = '2'  # 白の石の数初期値
 DEFAULT_INFO_TEXT = {    # 表示テキストのテキスト初期値
-    'name':    {'black': lambda s: STONE_MARK + s.player['black'], 'white': lambda s: STONE_MARK + s.player['white']},
-    'score':   {'black': lambda s: '2',                            'white': lambda s: '2'                           },
-    'winlose': {'black': lambda s: '',                             'white': lambda s: ''                            },
-    'turn':    {'black': lambda s: '',                             'white': lambda s: ''                            },
-    'move':    {'black': lambda s: '',                             'white': lambda s: ''                            },
+    'name':    {'black': lambda s: DISC_MARK + s.player['black'], 'white': lambda s: DISC_MARK + s.player['white']},
+    'score':   {'black': lambda s: '2',                           'white': lambda s: '2'                          },
+    'winlose': {'black': lambda s: '',                            'white': lambda s: ''                           },
+    'turn':    {'black': lambda s: '',                            'white': lambda s: ''                           },
+    'move':    {'black': lambda s: '',                            'white': lambda s: ''                           },
 }
 
 CPUTIME_DIALOG_TITLE = 'CPU_TIME'  # タイトル
@@ -419,12 +419,12 @@ class ScreenBoard:
 
         # 初期位置に石を置く
         center = size // 2
-        self.put_stone('black', center, center-1)
-        self.put_stone('black', center-1, center)
-        self.put_stone('white', center-1, center-1)
-        self.put_stone('white', center, center)
+        self.put_disc('black', center, center-1)
+        self.put_disc('black', center-1, center)
+        self.put_disc('white', center-1, center-1)
+        self.put_disc('white', center, center)
 
-    def put_stone(self, color, index_x, index_y):
+    def put_disc(self, color, index_x, index_y):
         """
         石を置く
         """
@@ -452,7 +452,7 @@ class ScreenBoard:
             x3, x4 = x, x + w2
             self.canvas.create_rectangle(x3, y1, x4, y2, tag=label2, fill=color2, outline=color2)
 
-    def remove_stone(self, color, index_x, index_y):
+    def remove_disc(self, color, index_x, index_y):
         """
         石を消す
         """
@@ -482,7 +482,7 @@ class ScreenBoard:
         """
         return name + '_' + chr(x + 97) + str(y + 1)
 
-    def turn_stone(self, color, captures):
+    def turn_disc(self, color, captures):
         """
         石をひっくり返す
         """
@@ -490,10 +490,10 @@ class ScreenBoard:
 
         for remove_color, put_color in ptn:
             for x, y in captures:
-                self.remove_stone(remove_color, x, y)
+                self.remove_disc(remove_color, x, y)
             for x, y in captures:
-                self.put_stone(put_color, x, y)
-            time.sleep(TURN_STONE_WAIT)
+                self.put_disc(put_color, x, y)
+            time.sleep(TURN_DISC_WAIT)
 
     def enable_moves(self, moves):
         """
@@ -723,9 +723,9 @@ if __name__ == '__main__':
                     return False
 
                 # アニメーション処理
-                time.sleep(TURN_STONE_WAIT)
-                window.board.remove_stone(remove_color, x, y)
-                window.board.put_stone(put_color, x, y)
+                time.sleep(TURN_DISC_WAIT)
+                window.board.remove_disc(remove_color, x, y)
+                window.board.put_disc(put_color, x, y)
 
         return True
 
@@ -775,15 +775,15 @@ if __name__ == '__main__':
                         window.board.selectable_moves(moves)
 
                         time.sleep(0.3)
-                        black_player.put_stone(board)
+                        black_player.put_disc(board)
 
                         window.board.disable_moves(moves)
                         window.board.enable_move(*black_player.move)
 
-                        window.board.put_stone('black', *black_player.move)
+                        window.board.put_disc('black', *black_player.move)
 
                         time.sleep(0.3)
-                        window.board.turn_stone('black', black_player.captures)
+                        window.board.turn_disc('black', black_player.captures)
 
                         window.board.disable_move(*black_player.move)
 
@@ -795,15 +795,15 @@ if __name__ == '__main__':
                         window.board.enable_moves(moves)
 
                         time.sleep(0.3)
-                        white_player.put_stone(board)
+                        white_player.put_disc(board)
 
                         window.board.disable_moves(moves)
                         window.board.enable_move(*white_player.move)
 
-                        window.board.put_stone('white', *white_player.move)
+                        window.board.put_disc('white', *white_player.move)
 
                         time.sleep(0.3)
-                        window.board.turn_stone('white', white_player.captures)
+                        window.board.turn_disc('white', white_player.captures)
                         window.board.disable_move(*white_player.move)
 
                         playable += 1

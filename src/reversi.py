@@ -17,7 +17,7 @@ from window import Window
 import strategies
 
 
-TURN_STONE_WAIT = 0.1
+TURN_DISC_WAIT = 0.1
 
 
 class Reversi:
@@ -164,9 +164,9 @@ class Reversi:
                     return False
 
                 # アニメーション処理
-                time.sleep(TURN_STONE_WAIT)
-                self.window.board.remove_stone(remove_color, x, y)
-                self.window.board.put_stone(put_color, x, y)
+                time.sleep(TURN_DISC_WAIT)
+                self.window.board.remove_disc(remove_color, x, y)
+                self.window.board.put_disc(put_color, x, y)
 
         return True
 

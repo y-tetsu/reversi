@@ -149,10 +149,10 @@ class WindowDisplay(AbstractDisplay):
 
         self.board.disable_moves(possibles)  # 打てる候補のハイライトをなくす
         self.board.enable_move(*player.move)  # 打った手をハイライト
-        self.board.put_stone(player.color, *player.move)  # 石を置く
+        self.board.put_disc(player.color, *player.move)  # 石を置く
         time.sleep(0.3)
         self.info.set_text(player.color, 'move', f'({x}, {y}) に置きました')  # 打った手を表示
-        self.board.turn_stone(player.color, player.captures)  # 石をひっくり返すアニメーション
+        self.board.turn_disc(player.color, player.captures)  # 石をひっくり返すアニメーション
         self.board.disable_move(*player.move)
 
     def foul(self, player):
@@ -192,7 +192,7 @@ if __name__ == '__main__':
     possibles = board8x8.get_possibles('black')
     display.turn(black_player, possibles)
 
-    black_player.put_stone(board8x8)
+    black_player.put_disc(board8x8)
     display.move(black_player, possibles)
     display.progress(board8x8, black_player, white_player)
 
