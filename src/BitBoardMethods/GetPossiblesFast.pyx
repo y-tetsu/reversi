@@ -164,28 +164,28 @@ cdef _get_possibles_size8(color, b, w):
         if y < 4:
             for x in range(8):
                 if possibles0 & mask0:
-                    ret[(x, y)] = _get_reversibles_size8(p0, p1, o0, o1, x, y)
+                    ret[(x, y)] = _get_flippable_discs_size8(p0, p1, o0, o1, x, y)
                 mask0 >>= 1
         # ビットボード下位32bit
         else:
             for x in range(8):
                 if possibles1 & mask1:
-                    ret[(x, y)] = _get_reversibles_size8(p0, p1, o0, o1, x, y)
+                    ret[(x, y)] = _get_flippable_discs_size8(p0, p1, o0, o1, x, y)
                 mask1 >>= 1
 
     return ret
 
 
-cdef _get_reversibles_size8(unsigned int p0, unsigned int p1, unsigned int o0, unsigned int o1, unsigned int x, unsigned int y):
+cdef _get_flippable_discs_size8(unsigned int p0, unsigned int p1, unsigned int o0, unsigned int o1, unsigned int x, unsigned int y):
     """
     指定座標のひっくり返せる石の場所をすべて返す(サイズ8限定)
     """
     cdef:
         unsigned int direction, next0, next1, buff0, buff1
-        unsigned int put0 = 0          # 石を置く場所(上位)
-        unsigned int put1 = 0          # 石を置く場所(下位)
-        unsigned int reversibles0 = 0  # ひっくり返せる場所(上位)
-        unsigned int reversibles1 = 0  # ひっくり返せる場所(下位)
+        unsigned int put0 = 0              # 石を置く場所(上位)
+        unsigned int put1 = 0              # 石を置く場所(下位)
+        unsigned int flippable_discs0 = 0  # ひっくり返せる場所(上位)
+        unsigned int flippable_discs1 = 0  # ひっくり返せる場所(下位)
 
     # 石を置く場所
     if y < 4:
@@ -206,8 +206,8 @@ cdef _get_reversibles_size8(unsigned int p0, unsigned int p1, unsigned int o0, u
 
         # 自分の石で囲まれている場合は結果を格納する
         if (next0 & p0) or (next1 & p1):
-            reversibles0 |= buff0
-            reversibles1 |= buff1
+            flippable_discs0 |= buff0
+            flippable_discs1 |= buff1
 
     # 配列に変換
     ret = []
@@ -220,13 +220,13 @@ cdef _get_reversibles_size8(unsigned int p0, unsigned int p1, unsigned int o0, u
         # ビットボード上位32bit
         if y < 4:
             for x in range(8):
-                if reversibles0 & mask0:
+                if flippable_discs0 & mask0:
                     ret += [(x, y)]
                 mask0 >>= 1
         # ビットボード下位32bit
         else:
             for x in range(8):
-                if reversibles1 & mask1:
+                if flippable_discs1 & mask1:
                     ret += [(x, y)]
                 mask1 >>= 1
 
@@ -300,18 +300,18 @@ cdef _get_possibles(color, size, b, w, mask):
         for x in range(size):
             # 石が置ける場合
             if possibles & check:
-                ret[(x, y)] = _get_reversibles(size, player, opponent, x, y, mask)
+                ret[(x, y)] = _get_flippable_discs(size, player, opponent, x, y, mask)
             check >>= 1
 
     return ret
 
 
-cdef _get_reversibles(size, player, opponent, x, y, mask):
+cdef _get_flippable_discs(size, player, opponent, x, y, mask):
     """
     指定座標のひっくり返せる石の場所をすべて返す(サイズ8以外)
     """
     ret = []
-    reversibles = 0
+    flippable_discs = 0
 
     # 石を置く場所
     put = 1 << ((size*size-1)-(y*size+x))
@@ -328,13 +328,13 @@ cdef _get_reversibles(size, player, opponent, x, y, mask):
 
         # 自分の石で囲まれている場合は結果を格納する
         if check & player:
-            reversibles |= tmp
+            flippable_discs |= tmp
 
     # 配列に変換
     check = 1 << (size*size-1)
     for y in range(size):
         for x in range(size):
-            if reversibles & check:
+            if flippable_discs & check:
                 ret += [(x, y)]
             check >>= 1
 

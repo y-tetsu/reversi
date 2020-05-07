@@ -33,12 +33,12 @@ def get_possibles(color, size, b, w, mask):
         for x in range(size):
             # 石が置ける場合
             if possibles & check:
-                ret[(x, y)] = get_reversibles(size, player, opponent, x, y, mask)
+                ret[(x, y)] = get_flippable_discs(size, player, opponent, x, y, mask)
             check >>= 1
 
     return ret
 
-def get_reversibles(size, player, opponent, x, y, mask):
+def get_flippable_discs(size, player, opponent, x, y, mask):
     """
     指定座標のひっくり返せる石の場所をすべて返す
     """

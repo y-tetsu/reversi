@@ -100,16 +100,16 @@ class Board(AbstractBoard):
 
         for y in range(self.size):
             for x in range(self.size):
-                reversibles = self._get_reversibles(color, x, y)
+                flippable_discs = self._get_flippable_discs(color, x, y)
 
-                if reversibles:
-                    possibles[(x, y)] = reversibles
+                if flippable_discs:
+                    possibles[(x, y)] = flippable_discs
 
         self._possibles_cache[color] = possibles
 
         return possibles
 
-    def _get_reversibles(self, color, x, y):
+    def _get_flippable_discs(self, color, x, y):
         """
         指定座標のひっくり返せる石の場所をすべて返す
         """
@@ -128,14 +128,14 @@ class Board(AbstractBoard):
         if self._in_range(x, y) and self._board[y][x] == self.disc['blank']:
             # 8方向をチェック
             for direction in directions:
-                tmp = self._get_reversibles_in_direction(color, x, y, direction)
+                tmp = self._get_flippable_discs_in_direction(color, x, y, direction)
 
                 if tmp:
                     ret += tmp
 
         return ret
 
-    def _get_reversibles_in_direction(self, color, x, y, direction):
+    def _get_flippable_discs_in_direction(self, color, x, y, direction):
         """
         指定座標から指定方向に向けてひっくり返せる石の場所を返す
         """
@@ -181,18 +181,18 @@ class Board(AbstractBoard):
 
         if (x, y) in possibles:
             self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
-            reversibles = possibles[(x, y)]
+            flippable_discs = possibles[(x, y)]
 
             # ひっくり返せる場所に指定した色の石を変更する
-            for tmp_x, tmp_y, in reversibles:
+            for tmp_x, tmp_y, in flippable_discs:
                 self._board[tmp_y][tmp_x] = self.disc[color]
 
             self._update_disc_num()
 
             # 打った手の記録
-            self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles})
+            self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
 
-            return reversibles
+            return flippable_discs
 
         return []
 
@@ -235,10 +235,10 @@ class Board(AbstractBoard):
             prev_color = 'white' if color == 'black' else 'black'
             x = prev['x']
             y = prev['y']
-            reversibles = prev['reversibles']
+            flippable_discs = prev['flippable_discs']
             self._board[y][x] = self.disc['blank']
 
-            for prev_x, prev_y in reversibles:
+            for prev_x, prev_y in flippable_discs:
                 self._board[prev_y][prev_x] = self.disc[prev_color]
 
             self._update_disc_num()
@@ -366,24 +366,24 @@ class BitBoard(AbstractBoard):
 
             # 反転位置を整数に変換
             reversibles_list = possibles[(x, y)]
-            reversibles = 0
+            flippable_discs = 0
             for tmp_x, tmp_y in reversibles_list:
-                reversibles |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
+                flippable_discs |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
 
             # 自分の石を置いて相手の石をひっくり返す
             if color == 'black':
-                self._black_bitboard ^= put | reversibles
-                self._white_bitboard ^= reversibles
+                self._black_bitboard ^= put | flippable_discs
+                self._white_bitboard ^= flippable_discs
                 self.score['black'] += 1 + len(reversibles_list)
                 self.score['white'] -= len(reversibles_list)
             else:
-                self._white_bitboard ^= put | reversibles
-                self._black_bitboard ^= reversibles
+                self._white_bitboard ^= put | flippable_discs
+                self._black_bitboard ^= flippable_discs
                 self.score['black'] -= len(reversibles_list)
                 self.score['white'] += 1 + len(reversibles_list)
 
             # 打った手の記録
-            self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles, 'disc_num': len(reversibles_list)})
+            self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs, 'disc_num': len(reversibles_list)})
 
             return reversibles_list
 
@@ -404,18 +404,18 @@ class BitBoard(AbstractBoard):
 
         if prev:
             size = self.size
-            reversibles, disc_num = prev['reversibles'], prev['disc_num']
+            flippable_discs, disc_num = prev['flippable_discs'], prev['disc_num']
 
             put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
 
             if prev['color'] == 'black':
-                self._black_bitboard ^= put | reversibles
-                self._white_bitboard ^= reversibles
+                self._black_bitboard ^= put | flippable_discs
+                self._white_bitboard ^= flippable_discs
                 self.score['black'] -= 1 + disc_num
                 self.score['white'] += disc_num
             else:
-                self._white_bitboard ^= put | reversibles
-                self._black_bitboard ^= reversibles
+                self._white_bitboard ^= put | flippable_discs
+                self._black_bitboard ^= flippable_discs
                 self.score['black'] += disc_num
                 self.score['white'] -= 1 + disc_num
 
@@ -641,9 +641,9 @@ if __name__ == '__main__':
     print('BitBoard')
     print(bitboard4)
     assert len(bitboard4.put_disc('black', 1, 0)) == 1
-    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'disc_num': 1}]
+    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'flippable_discs': 1024, 'disc_num': 1}]
     assert len(bitboard4.put_disc('white', 0, 0)) == 1
-    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'disc_num': 1}, {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024, 'disc_num': 1}]
+    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'flippable_discs': 1024, 'disc_num': 1}, {'color': 'white', 'x': 0, 'y': 0, 'flippable_discs': 1024, 'disc_num': 1}]
     assert len(bitboard4.put_disc('black', 0, 1)) == 1
     assert len(bitboard4.put_disc('white', 2, 0)) == 2
     assert len(bitboard4.put_disc('black', 3, 2)) == 1
