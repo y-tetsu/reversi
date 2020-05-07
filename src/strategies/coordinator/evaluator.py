@@ -329,12 +329,12 @@ if __name__ == '__main__':
     from board import BitBoard
 
     board8 = BitBoard(8)
-    board8.put_stone('black', 3, 2)
-    board8.put_stone('white', 2, 2)
-    board8.put_stone('black', 2, 3)
-    board8.put_stone('white', 4, 2)
-    board8.put_stone('black', 1, 1)
-    board8.put_stone('white', 0, 0)
+    board8.put_disc('black', 3, 2)
+    board8.put_disc('white', 2, 2)
+    board8.put_disc('black', 2, 3)
+    board8.put_disc('white', 4, 2)
+    board8.put_disc('black', 1, 1)
+    board8.put_disc('white', 0, 0)
 
     possibles_b = board8.get_possibles('black', True)
     possibles_w = board8.get_possibles('white', True)
@@ -447,7 +447,7 @@ if __name__ == '__main__':
     score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
     print(board8)
     print('score', score)
-    assert score == 102
+    assert score == 422
 
     #----------------------------------------------------------------
     # Evaluator_PWE

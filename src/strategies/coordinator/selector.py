@@ -58,7 +58,7 @@ if __name__ == '__main__':
     from strategies.alphabeta import AlphaBeta_TPW
 
     bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_disc('black', 3, 2)
     print(bitboard8)
 
     print('--- Test For Selector ---')
@@ -68,13 +68,13 @@ if __name__ == '__main__':
     print(moves)
     assert moves == [(2, 2), (4, 2), (2, 4)]
 
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 1, 5)
-    bitboard8.put_stone('white', 1, 4)
-    bitboard8.put_stone('black', 2, 5)
-    bitboard8.put_stone('white', 2, 6)
-    bitboard8.put_stone('black', 1, 6)
-    bitboard8.put_stone('white', 1, 7)
+    bitboard8.put_disc('white', 2, 4)
+    bitboard8.put_disc('black', 1, 5)
+    bitboard8.put_disc('white', 1, 4)
+    bitboard8.put_disc('black', 2, 5)
+    bitboard8.put_disc('white', 2, 6)
+    bitboard8.put_disc('black', 1, 6)
+    bitboard8.put_disc('white', 1, 7)
     print(bitboard8)
 
     print('--- Test For Selector_W ---')

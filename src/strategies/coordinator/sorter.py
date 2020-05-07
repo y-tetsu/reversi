@@ -80,7 +80,7 @@ class Sorter_O(Sorter):
         openings = {}
 
         for move in moves:
-            reversibles = board.put_stone(color, *move)
+            reversibles = board.put_disc(color, *move)
             opening = self.get_opening(board, reversibles)
             openings[move] = opening
             board.undo()
@@ -100,9 +100,9 @@ class Sorter_O(Sorter):
         ]
 
         # ひっくり返した石の周りをチェックする
-        for stone_x, stone_y in reversibles:
+        for disc_x, disc_y in reversibles:
             for dx, dy in directions:
-                x, y = stone_x + dx, stone_y + dy
+                x, y = disc_x + dx, disc_y + dy
 
                 if 0 <= x < size and 0 <= y < size:
                     if board_info[y][x] == 0:
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     from common.timer import Timer
 
     bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_disc('black', 3, 2)
     print(bitboard8)
 
     best_move = (4, 2)
@@ -171,13 +171,13 @@ if __name__ == '__main__':
     print(moves)
     assert moves == [(4, 2), (2, 2), (2, 4)]
 
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 1, 5)
-    bitboard8.put_stone('white', 1, 4)
-    bitboard8.put_stone('black', 2, 5)
-    bitboard8.put_stone('white', 2, 6)
-    bitboard8.put_stone('black', 1, 6)
-    bitboard8.put_stone('white', 1, 7)
+    bitboard8.put_disc('white', 2, 4)
+    bitboard8.put_disc('black', 1, 5)
+    bitboard8.put_disc('white', 1, 4)
+    bitboard8.put_disc('black', 2, 5)
+    bitboard8.put_disc('white', 2, 6)
+    bitboard8.put_disc('black', 1, 6)
+    bitboard8.put_disc('white', 1, 7)
     print(bitboard8)
 
     print('--- Test For Sorter_C ---')

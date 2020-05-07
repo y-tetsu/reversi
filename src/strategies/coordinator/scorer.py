@@ -72,21 +72,21 @@ class OpeningScorer(AbstractScorer):
         if isinstance(board, BitBoard):
             reversibles = board.prev[-1]['reversibles']
 
-            stones = []
+            discs = []
             mask = 1 << ((size * size) - 1)
 
             for y in range(size):
                 for x in range(size):
                     if mask & reversibles:
-                        stones.append([x, y])
+                        discs.append([x, y])
                     mask >>= 1
         else:
-            stones = board.prev[-1]['reversibles']
+            discs = board.prev[-1]['reversibles']
 
         # ひっくり返した石の周りをチェックする
-        for stone_x, stone_y in stones:
+        for disc_x, disc_y in discs:
             for dx, dy in directions:
-                x, y = stone_x + dx, stone_y + dy
+                x, y = disc_x + dx, disc_y + dy
 
                 if 0 <= x < size and 0 <= y < size:
                     if board_info[y][x] == 0:
@@ -632,12 +632,12 @@ if __name__ == '__main__':
     from board import BitBoard
 
     board8 = BitBoard(8)
-    board8.put_stone('black', 3, 2)
-    board8.put_stone('white', 2, 2)
-    board8.put_stone('black', 2, 3)
-    board8.put_stone('white', 4, 2)
-    board8.put_stone('black', 1, 1)
-    board8.put_stone('white', 0, 0)
+    board8.put_disc('black', 3, 2)
+    board8.put_disc('white', 2, 2)
+    board8.put_disc('black', 2, 3)
+    board8.put_disc('white', 4, 2)
+    board8.put_disc('black', 1, 1)
+    board8.put_disc('white', 0, 0)
 
     possibles_b = board8.get_possibles('black', True)
     possibles_w = board8.get_possibles('white', True)
