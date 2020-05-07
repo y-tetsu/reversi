@@ -6,7 +6,7 @@
 import abc
 from collections import namedtuple
 
-from stone import StoneFactory
+from disc import DiscFactory
 import BitBoardMethods
 
 
@@ -20,7 +20,7 @@ class AbstractBoard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def put_stone(self, color, x, y):
+    def put_disc(self, color, x, y):
         pass
 
     @abc.abstractmethod
@@ -52,12 +52,12 @@ class Board(AbstractBoard):
         self.size = size
 
         # 石とスコアの初期設定
-        self.stone = {}
+        self.disc = {}
         self.score = {}
-        factory = StoneFactory()
+        factory = DiscFactory()
 
         for color in ('black', 'white', 'blank'):
-            self.stone[color] = factory.create(color)
+            self.disc[color] = factory.create(color)
             if color != 'blank':
                 self.score[color] = 2
 
@@ -66,11 +66,11 @@ class Board(AbstractBoard):
 
         # 盤面の初期設定
         center = size // 2
-        self._board = [[self.stone['blank'] for _ in range(size)] for _ in range(size)]
-        self._board[center][center-1] = self.stone['black']
-        self._board[center-1][center] = self.stone['black']
-        self._board[center-1][center-1] = self.stone['white']
-        self._board[center][center] = self.stone['white']
+        self._board = [[self.disc['blank'] for _ in range(size)] for _ in range(size)]
+        self._board[center][center-1] = self.disc['black']
+        self._board[center-1][center] = self.disc['black']
+        self._board[center-1][center-1] = self.disc['white']
+        self._board[center][center] = self.disc['white']
 
         # 置ける場所のキャッシュ
         self._possibles_cache = {}
@@ -125,7 +125,7 @@ class Board(AbstractBoard):
         ret = []
 
         # 指定座標が範囲内 かつ 石が置いていない
-        if self._in_range(x, y) and self._board[y][x] == self.stone['blank']:
+        if self._in_range(x, y) and self._board[y][x] == self.disc['blank']:
             # 8方向をチェック
             for direction in directions:
                 tmp = self._get_reversibles_in_direction(color, x, y, direction)
@@ -151,9 +151,9 @@ class Board(AbstractBoard):
                 next_value = self._board[next_y][next_x]
 
                 # 石が置かれている
-                if next_value != self.stone['blank']:
+                if next_value != self.disc['blank']:
                     # 置いた石と同じ色が見つかった場合
-                    if next_value == self.stone[color]:
+                    if next_value == self.disc[color]:
                         return ret
 
                     ret += [(next_x, next_y)]
@@ -173,21 +173,21 @@ class Board(AbstractBoard):
 
         return False
 
-    def put_stone(self, color, x, y):
+    def put_disc(self, color, x, y):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
         possibles = self.get_possibles(color)
 
         if (x, y) in possibles:
-            self._board[y][x] = self.stone[color]  # 指定座標に指定した色の石を置く
+            self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
             reversibles = possibles[(x, y)]
 
             # ひっくり返せる場所に指定した色の石を変更する
             for tmp_x, tmp_y, in reversibles:
-                self._board[tmp_y][tmp_x] = self.stone[color]
+                self._board[tmp_y][tmp_x] = self.disc[color]
 
-            self._update_stone_num()
+            self._update_disc_num()
 
             # 打った手の記録
             self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles})
@@ -196,12 +196,12 @@ class Board(AbstractBoard):
 
         return []
 
-    def _update_stone_num(self):
+    def _update_disc_num(self):
         """
         石の数を更新する
         """
         for color in ('black', 'white'):
-            self.score[color] = sum([row.count(self.stone[color]) for row in self._board])
+            self.score[color] = sum([row.count(self.disc[color]) for row in self._board])
 
     def get_board_info(self):
         """
@@ -213,11 +213,11 @@ class Board(AbstractBoard):
             tmp = []
 
             for col in row:
-                if col == self.stone['black']:
+                if col == self.disc['black']:
                     tmp.append(1)
-                elif col == self.stone['white']:
+                elif col == self.disc['white']:
                     tmp.append(-1)
-                elif col == self.stone['blank']:
+                elif col == self.disc['blank']:
                     tmp.append(0)
 
             board_info.append(tmp)
@@ -236,12 +236,12 @@ class Board(AbstractBoard):
             x = prev['x']
             y = prev['y']
             reversibles = prev['reversibles']
-            self._board[y][x] = self.stone['blank']
+            self._board[y][x] = self.disc['blank']
 
             for prev_x, prev_y in reversibles:
-                self._board[prev_y][prev_x] = self.stone[prev_color]
+                self._board[prev_y][prev_x] = self.disc[prev_color]
 
-            self._update_stone_num()
+            self._update_disc_num()
 
         self._possibles_cache.clear()
 
@@ -255,9 +255,9 @@ class Board(AbstractBoard):
 
         for y in range(self.size):
             for x in range(self.size):
-                if self._board[y][x] == self.stone['black']:
+                if self._board[y][x] == self.disc['black']:
                     black_bitboard |= put
-                if self._board[y][x] == self.stone['white']:
+                if self._board[y][x] == self.disc['white']:
                     white_bitboard |= put
                 put >>= 1
 
@@ -277,11 +277,11 @@ class BitBoard(AbstractBoard):
         self.size = size
 
         # 石とスコアの初期設定
-        self.stone, self.score = {}, {}
-        factory = StoneFactory()
+        self.disc, self.score = {}, {}
+        factory = DiscFactory()
 
         for color in ('black', 'white', 'blank'):
-            self.stone[color] = factory.create(color)
+            self.disc[color] = factory.create(color)
             if color != 'blank':
                 self.score[color] = 2
 
@@ -321,15 +321,15 @@ class BitBoard(AbstractBoard):
         header = '   ' + ' '.join([chr(97 + i) for i in range(size)]) + '\n'
 
         # 行の見出し+盤面
-        board = [[self.stone['blank'] for _ in range(size)] for _ in range(size)]
+        board = [[self.disc['blank'] for _ in range(size)] for _ in range(size)]
 
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
                 if self._black_bitboard & mask:
-                    board[y][x] = self.stone['black']
+                    board[y][x] = self.disc['black']
                 elif self._white_bitboard & mask:
-                    board[y][x] = self.stone['white']
+                    board[y][x] = self.disc['white']
                 mask >>= 1
 
         body = ''
@@ -353,7 +353,7 @@ class BitBoard(AbstractBoard):
 
         return ret
 
-    def put_stone(self, color, x, y):
+    def put_disc(self, color, x, y):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
@@ -383,7 +383,7 @@ class BitBoard(AbstractBoard):
                 self.score['white'] += 1 + len(reversibles_list)
 
             # 打った手の記録
-            self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles, 'stone_num': len(reversibles_list)})
+            self.prev.append({'color': color, 'x': x, 'y': y, 'reversibles': reversibles, 'disc_num': len(reversibles_list)})
 
             return reversibles_list
 
@@ -404,20 +404,20 @@ class BitBoard(AbstractBoard):
 
         if prev:
             size = self.size
-            reversibles, stone_num = prev['reversibles'], prev['stone_num']
+            reversibles, disc_num = prev['reversibles'], prev['disc_num']
 
             put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
 
             if prev['color'] == 'black':
                 self._black_bitboard ^= put | reversibles
                 self._white_bitboard ^= reversibles
-                self.score['black'] -= 1 + stone_num
-                self.score['white'] += stone_num
+                self.score['black'] -= 1 + disc_num
+                self.score['white'] += disc_num
             else:
                 self._white_bitboard ^= put | reversibles
                 self._black_bitboard ^= reversibles
-                self.score['black'] += stone_num
-                self.score['white'] -= 1 + stone_num
+                self.score['black'] += disc_num
+                self.score['white'] -= 1 + disc_num
 
         self._possibles_cache.clear()
 
@@ -468,82 +468,82 @@ if __name__ == '__main__':
     board26 = Board(26)
 
     print(board4)
-    board4_ini = [[board4.stone['blank'] for _ in range(4)] for _ in range(4)]
-    board4_ini[2][1] = board4.stone['black']
-    board4_ini[1][2] = board4.stone['black']
-    board4_ini[1][1] = board4.stone['white']
-    board4_ini[2][2] = board4.stone['white']
+    board4_ini = [[board4.disc['blank'] for _ in range(4)] for _ in range(4)]
+    board4_ini[2][1] = board4.disc['black']
+    board4_ini[1][2] = board4.disc['black']
+    board4_ini[1][1] = board4.disc['white']
+    board4_ini[2][2] = board4.disc['white']
     assert board4._board == board4_ini
 
     print(board6)
-    board6_ini = [[board6.stone['blank'] for _ in range(6)] for _ in range(6)]
-    board6_ini[3][2] = board6.stone['black']
-    board6_ini[2][3] = board6.stone['black']
-    board6_ini[2][2] = board6.stone['white']
-    board6_ini[3][3] = board6.stone['white']
+    board6_ini = [[board6.disc['blank'] for _ in range(6)] for _ in range(6)]
+    board6_ini[3][2] = board6.disc['black']
+    board6_ini[2][3] = board6.disc['black']
+    board6_ini[2][2] = board6.disc['white']
+    board6_ini[3][3] = board6.disc['white']
     assert board6._board == board6_ini
 
     print(board8)
-    board8_ini = [[board8.stone['blank'] for _ in range(8)] for _ in range(8)]
-    board8_ini[4][3] = board8.stone['black']
-    board8_ini[3][4] = board8.stone['black']
-    board8_ini[3][3] = board8.stone['white']
-    board8_ini[4][4] = board8.stone['white']
+    board8_ini = [[board8.disc['blank'] for _ in range(8)] for _ in range(8)]
+    board8_ini[4][3] = board8.disc['black']
+    board8_ini[3][4] = board8.disc['black']
+    board8_ini[3][3] = board8.disc['white']
+    board8_ini[4][4] = board8.disc['white']
     assert board8._board == board8_ini
 
     print(board10)
-    board10_ini = [[board10.stone['blank'] for _ in range(10)] for _ in range(10)]
-    board10_ini[5][4] = board10.stone['black']
-    board10_ini[4][5] = board10.stone['black']
-    board10_ini[4][4] = board10.stone['white']
-    board10_ini[5][5] = board10.stone['white']
+    board10_ini = [[board10.disc['blank'] for _ in range(10)] for _ in range(10)]
+    board10_ini[5][4] = board10.disc['black']
+    board10_ini[4][5] = board10.disc['black']
+    board10_ini[4][4] = board10.disc['white']
+    board10_ini[5][5] = board10.disc['white']
     assert board10._board == board10_ini
 
     print(board26)
-    board26_ini = [[board26.stone['blank'] for _ in range(26)] for _ in range(26)]
-    board26_ini[13][12] = board26.stone['black']
-    board26_ini[12][13] = board26.stone['black']
-    board26_ini[12][12] = board26.stone['white']
-    board26_ini[13][13] = board26.stone['white']
+    board26_ini = [[board26.disc['blank'] for _ in range(26)] for _ in range(26)]
+    board26_ini[13][12] = board26.disc['black']
+    board26_ini[12][13] = board26.disc['black']
+    board26_ini[12][12] = board26.disc['white']
+    board26_ini[13][13] = board26.disc['white']
     assert board26._board == board26_ini
 
     # 石を置く
-    assert board4.put_stone('black', 0, 0) == []
-    assert board4.put_stone('black', 3, 5) == []
-    assert board4.put_stone('black', 1, 0) == [(1, 1)]
-    assert board4.put_stone('white', 0, 0) == [(1, 1)]
-    assert board4.put_stone('black', 0, 1) == [(1, 1)]
-    assert board4.put_stone('white', 2, 0) == [(2, 1), (1, 0)]
-    assert board4.put_stone('black', 3, 0) == [(2, 1)]
-    assert board4.put_stone('white', 1, 3) == [(1, 2), (1, 1)]
-    assert board4.put_stone('black', 0, 3) == [(1, 2)]
-    assert board4.put_stone('white', 0, 2) == [(1, 2), (0, 1)]
-    assert board4.put_stone('black', 2, 3) == [(1, 3), (2, 2)]
-    assert board4.put_stone('white', 3, 2) == [(2, 2), (2, 1)]
-    assert board4.put_stone('black', 3, 1) == [(2, 2)]
-    assert board4.put_stone('white', 3, 3) == [(2, 2)]
+    assert board4.put_disc('black', 0, 0) == []
+    assert board4.put_disc('black', 3, 5) == []
+    assert board4.put_disc('black', 1, 0) == [(1, 1)]
+    assert board4.put_disc('white', 0, 0) == [(1, 1)]
+    assert board4.put_disc('black', 0, 1) == [(1, 1)]
+    assert board4.put_disc('white', 2, 0) == [(2, 1), (1, 0)]
+    assert board4.put_disc('black', 3, 0) == [(2, 1)]
+    assert board4.put_disc('white', 1, 3) == [(1, 2), (1, 1)]
+    assert board4.put_disc('black', 0, 3) == [(1, 2)]
+    assert board4.put_disc('white', 0, 2) == [(1, 2), (0, 1)]
+    assert board4.put_disc('black', 2, 3) == [(1, 3), (2, 2)]
+    assert board4.put_disc('white', 3, 2) == [(2, 2), (2, 1)]
+    assert board4.put_disc('black', 3, 1) == [(2, 2)]
+    assert board4.put_disc('white', 3, 3) == [(2, 2)]
 
     assert board4.get_bitboard_info() == (4366, 61169)
 
     # プレイ結果
     print(board4)
-    board4_ret = [[board4.stone['blank'] for _ in range(4)] for _ in range(4)]
-    board4_ret[0][0] = board4.stone['white']
-    board4_ret[0][1] = board4.stone['white']
-    board4_ret[0][2] = board4.stone['white']
-    board4_ret[0][3] = board4.stone['black']
-    board4_ret[1][0] = board4.stone['white']
-    board4_ret[1][1] = board4.stone['white']
-    board4_ret[1][2] = board4.stone['white']
-    board4_ret[1][3] = board4.stone['black']
-    board4_ret[2][0] = board4.stone['white']
-    board4_ret[2][1] = board4.stone['white']
-    board4_ret[2][2] = board4.stone['white']
-    board4_ret[2][3] = board4.stone['white']
-    board4_ret[3][0] = board4.stone['black']
-    board4_ret[3][1] = board4.stone['black']
-    board4_ret[3][2] = board4.stone['black']
-    board4_ret[3][3] = board4.stone['white']
+    board4_ret = [[board4.disc['blank'] for _ in range(4)] for _ in range(4)]
+    board4_ret[0][0] = board4.disc['white']
+    board4_ret[0][1] = board4.disc['white']
+    board4_ret[0][2] = board4.disc['white']
+    board4_ret[0][3] = board4.disc['black']
+    board4_ret[1][0] = board4.disc['white']
+    board4_ret[1][1] = board4.disc['white']
+    board4_ret[1][2] = board4.disc['white']
+    board4_ret[1][3] = board4.disc['black']
+    board4_ret[2][0] = board4.disc['white']
+    board4_ret[2][1] = board4.disc['white']
+    board4_ret[2][2] = board4.disc['white']
+    board4_ret[2][3] = board4.disc['white']
+    board4_ret[3][0] = board4.disc['black']
+    board4_ret[3][1] = board4.disc['black']
+    board4_ret[3][2] = board4.disc['black']
+    board4_ret[3][3] = board4.disc['white']
     assert board4._board == board4_ret
     assert board4.score['black'] == 5
     assert board4.score['white'] == 11
@@ -552,7 +552,7 @@ if __name__ == '__main__':
 
     # やり直し
     board4 = Board(4)
-    board4.put_stone('black', 0, 1)
+    board4.put_disc('black', 0, 1)
     print(board4)
     assert board4.score['black'] == 4
     assert board4.score['white'] == 1
@@ -560,7 +560,7 @@ if __name__ == '__main__':
     print(board4)
     assert board4.score['black'] == 2
     assert board4.score['white'] == 2
-    board4.put_stone('white', 0, 2)
+    board4.put_disc('white', 0, 2)
     print(board4)
     board4.undo()
     print(board4)
@@ -634,27 +634,27 @@ if __name__ == '__main__':
     possibles = bitboard4.get_possibles('white')
     assert possibles == {(2, 0): [(2, 1)], (3, 0): [(2, 1)], (3, 1): [(2, 1)]}
 
-    # put_stone
+    # put_disc
     bitboard4._black_bitboard = 0x240
     bitboard4._white_bitboard = 0x420
 
     print('BitBoard')
     print(bitboard4)
-    assert len(bitboard4.put_stone('black', 1, 0)) == 1
-    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'stone_num': 1}]
-    assert len(bitboard4.put_stone('white', 0, 0)) == 1
-    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'stone_num': 1}, {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024, 'stone_num': 1}]
-    assert len(bitboard4.put_stone('black', 0, 1)) == 1
-    assert len(bitboard4.put_stone('white', 2, 0)) == 2
-    assert len(bitboard4.put_stone('black', 3, 2)) == 1
-    assert len(bitboard4.put_stone('white', 3, 3)) == 2
-    assert len(bitboard4.put_stone('black', 3, 1)) == 2
-    assert len(bitboard4.put_stone('white', 3, 0)) == 2
-    assert len(bitboard4.put_stone('black', 2, 3)) == 1
-    assert len(bitboard4.put_stone('white', 1, 3)) == 4
-    assert len(bitboard4.put_stone('black', 0, 3)) == 1
+    assert len(bitboard4.put_disc('black', 1, 0)) == 1
+    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'disc_num': 1}]
+    assert len(bitboard4.put_disc('white', 0, 0)) == 1
+    assert bitboard4.prev == [{'color': 'black', 'x': 1, 'y': 0, 'reversibles': 1024, 'disc_num': 1}, {'color': 'white', 'x': 0, 'y': 0, 'reversibles': 1024, 'disc_num': 1}]
+    assert len(bitboard4.put_disc('black', 0, 1)) == 1
+    assert len(bitboard4.put_disc('white', 2, 0)) == 2
+    assert len(bitboard4.put_disc('black', 3, 2)) == 1
+    assert len(bitboard4.put_disc('white', 3, 3)) == 2
+    assert len(bitboard4.put_disc('black', 3, 1)) == 2
+    assert len(bitboard4.put_disc('white', 3, 0)) == 2
+    assert len(bitboard4.put_disc('black', 2, 3)) == 1
+    assert len(bitboard4.put_disc('white', 1, 3)) == 4
+    assert len(bitboard4.put_disc('black', 0, 3)) == 1
     print(bitboard4)
-    assert len(bitboard4.put_stone('white', 0, 2)) == 2
+    assert len(bitboard4.put_disc('white', 0, 2)) == 2
     print(bitboard4)
 
     # score
