@@ -4,26 +4,26 @@
 """
 
 
-class Stone(str):
+class Disc(str):
     """
     石の基底クラス
     """
     __slots__ = ()  # データを持たない
 
 
-class Black(Stone):
+class Black(Disc):
     pass
 
 
-class White(Stone):
+class White(Disc):
     pass
 
 
-class Blank(Stone):
+class Blank(Disc):
     pass
 
 
-class StoneFactory:
+class DiscFactory:
     """
     石ファクトリ
     """
@@ -46,12 +46,12 @@ class StoneFactory:
 if __name__ == '__main__':
     from collections import namedtuple
 
-    factory = StoneFactory()
+    factory = DiscFactory()
 
-    CheckStone = namedtuple('CheckStone', 'color cls mark')
-    black = CheckStone('black', Black, '〇')
-    white = CheckStone('white', White, '●')
-    blank = CheckStone('blank', Blank, '□')
+    CheckDisc = namedtuple('CheckDisc', 'color cls mark')
+    black = CheckDisc('black', Black, '〇')
+    white = CheckDisc('white', White, '●')
+    blank = CheckDisc('blank', Blank, '□')
 
     for check in (black, white, blank):
         obj = factory.create(check.color)
