@@ -44,13 +44,13 @@ class NegaScout(AlphaBeta):
         tmp, null_window = None, beta
         for i, move in enumerate(moves):
             if alpha < beta:
-                board.put_stone(color, *move)
+                board.put_disc(color, *move)
                 tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1)
                 board.undo()
 
                 if alpha < tmp:
                     if tmp <= null_window and i:
-                        board.put_stone(color, *move)
+                        board.put_disc(color, *move)
                         alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1)
                         board.undo()
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     assert negascout.depth == 4
 
     bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_disc('black', 3, 2)
 
     key = negascout.__class__.__name__ + str(os.getpid())
 
@@ -195,11 +195,11 @@ if __name__ == '__main__':
     assert negascout.next_move('white', bitboard8) == (2, 4)
 
     print('* black check')
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 5, 5)
-    bitboard8.put_stone('white', 4, 2)
-    bitboard8.put_stone('black', 5, 2)
-    bitboard8.put_stone('white', 5, 4)
+    bitboard8.put_disc('white', 2, 4)
+    bitboard8.put_disc('black', 5, 5)
+    bitboard8.put_disc('white', 4, 2)
+    bitboard8.put_disc('black', 5, 2)
+    bitboard8.put_disc('white', 5, 4)
     print(bitboard8)
 
     Measure.count[key] = 0

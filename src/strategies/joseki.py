@@ -1371,35 +1371,35 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 2手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 3手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 4手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 5手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # Sローズ基本形
@@ -1407,49 +1407,49 @@ if __name__ == '__main__':
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 7手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (3, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 8手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 9手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 10手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 6)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 11手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (6, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 12手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     #--------------------------------------------
@@ -1464,21 +1464,21 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 2手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 3手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # ローズビル基本形
@@ -1486,42 +1486,42 @@ if __name__ == '__main__':
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 5手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 3)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 6手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 7手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 8手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (1, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 9手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 1)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     #--------------------------------------------
@@ -1536,42 +1536,42 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 2手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 3手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 4手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 5手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 6手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 4)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 快速船基礎形
@@ -1579,42 +1579,42 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 3)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 8手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (4, 6)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 9手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 10手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (4, 1)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 11手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 12手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 1)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     #--------------------------------------------
@@ -1629,126 +1629,126 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 2手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 3手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 4手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 5手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (3, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 6手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 4)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 7手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (3, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 8手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 9手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 10手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 6)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 11手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (3, 6)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 12手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 13手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (6, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 14手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (6, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 15手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 16手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 1)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 17手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 1)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 18手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (4, 6)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     #--------------------------------------------
@@ -1763,98 +1763,98 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 2手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 3手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 3)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 4手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 5手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 6手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 7手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 8手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 9手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 1)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 10手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 11手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 12手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 13手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (3, 6)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 14手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 7)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     #--------------------------------------------
@@ -1869,126 +1869,126 @@ if __name__ == '__main__':
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (5, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 2手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 3手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 3)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 4手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (3, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 5手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 6手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 3)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 7手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (4, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 8手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 2)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 9手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 5)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 10手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (5, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 11手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (6, 4)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 12手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (6, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 13手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (2, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 14手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (7, 5)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 15手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (6, 3)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 16手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (7, 4)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     # 17手目
     move = joseki.next_move('black', bitboard8)
     print(move)
     assert move == (7, 2)
-    bitboard8.put_stone('black', *move)
+    bitboard8.put_disc('black', *move)
     print(bitboard8)
 
     # 18手目
     move = joseki.next_move('white', bitboard8)
     print(move)
     assert move == (2, 4)
-    bitboard8.put_stone('white', *move)
+    bitboard8.put_disc('white', *move)
     print(bitboard8)
 
     #-----------------------------------#

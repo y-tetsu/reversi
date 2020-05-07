@@ -57,7 +57,7 @@ class _AlphaBeta(AbstractStrategy):
         """
         手を打った時の評価値を取得
         """
-        board.put_stone(color, *move)                                        # 一手打つ
+        board.put_disc(color, *move)                                         # 一手打つ
         next_color = 'white' if color == 'black' else 'black'                # 相手の色
         score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
         board.undo()                                                         # 打った手を戻す
@@ -87,7 +87,7 @@ class _AlphaBeta(AbstractStrategy):
 
         # 評価値を算出
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     assert alphabeta.depth == 3
 
     bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_disc('black', 3, 2)
 
     key = alphabeta.__class__.__name__ + str(os.getpid())
 
@@ -249,11 +249,11 @@ if __name__ == '__main__':
     assert alphabeta.next_move('white', bitboard8) == (2, 4)
 
     print('* black check')
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 5, 5)
-    bitboard8.put_stone('white', 4, 2)
-    bitboard8.put_stone('black', 5, 2)
-    bitboard8.put_stone('white', 5, 4)
+    bitboard8.put_disc('white', 2, 4)
+    bitboard8.put_disc('black', 5, 5)
+    bitboard8.put_disc('white', 4, 2)
+    bitboard8.put_disc('black', 5, 2)
+    bitboard8.put_disc('white', 5, 4)
     print(bitboard8)
 
     Measure.count[key] = 0

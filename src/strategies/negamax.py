@@ -32,7 +32,7 @@ class _NegaMax(AbstractStrategy):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)                             # 一手打つ
+            board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                              # 打った手を戻す
 
@@ -73,7 +73,7 @@ class _NegaMax(AbstractStrategy):
         max_score = self._MIN
 
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = -self.get_score(next_color, board, depth-1)
             board.undo()
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     from board import BitBoard
 
     bitboard8 = BitBoard(8)
-    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_disc('black', 3, 2)
 
     print('--- Test For NegaMax Strategy ---')
     negamax = NegaMax3_TPOW()
@@ -209,11 +209,11 @@ if __name__ == '__main__':
     print(bitboard8)
     assert negamax.next_move('white', bitboard8) == (2, 4)
 
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 5, 5)
-    bitboard8.put_stone('white', 4, 2)
-    bitboard8.put_stone('black', 5, 2)
-    bitboard8.put_stone('white', 5, 4)
+    bitboard8.put_disc('white', 2, 4)
+    bitboard8.put_disc('black', 5, 5)
+    bitboard8.put_disc('white', 4, 2)
+    bitboard8.put_disc('black', 5, 2)
+    bitboard8.put_disc('white', 5, 4)
     print(bitboard8)
 
     Measure.count[key] = 0

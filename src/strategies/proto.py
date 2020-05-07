@@ -35,7 +35,7 @@ class MinMax_(AbstractStrategy):
 
         # 打てる手の中から評価値の最も良い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)                            # 一手打つ
+            board.put_disc(color, *move)                             # 一手打つ
             score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                             # 打った手を戻す
 
@@ -72,7 +72,7 @@ class MinMax_(AbstractStrategy):
         best_score = self._MIN if color == 'black' else self._MAX
 
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = self.get_score(next_color, board, depth-1)
             board.undo()
 
@@ -131,7 +131,7 @@ class NegaMax_(MinMax_):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)                             # 一手打つ
+            board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                              # 打った手を戻す
 
@@ -172,7 +172,7 @@ class NegaMax_(MinMax_):
         max_score = self._MIN
 
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = -self.get_score(next_color, board, depth-1)
             board.undo()
 
@@ -230,7 +230,7 @@ class AlphaBeta_(NegaMax_):
         """
         手を打った時の評価値を取得
         """
-        board.put_stone(color, *move)                                        # 一手打つ
+        board.put_disc(color, *move)                                         # 一手打つ
         next_color = 'white' if color == 'black' else 'black'                # 相手の色
         score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
         board.undo()                                                         # 打った手を戻す
@@ -260,7 +260,7 @@ class AlphaBeta_(NegaMax_):
 
         # 評価値を算出
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 

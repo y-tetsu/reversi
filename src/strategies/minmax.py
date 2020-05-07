@@ -34,7 +34,7 @@ class MinMax(AbstractStrategy):
 
         # 打てる手の中から評価値の最も良い手を選ぶ
         for move in board.get_possibles(color).keys():
-            board.put_stone(color, *move)                            # 一手打つ
+            board.put_disc(color, *move)                             # 一手打つ
             score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                             # 打った手を戻す
 
@@ -71,7 +71,7 @@ class MinMax(AbstractStrategy):
         best_score = self._MIN if color == 'black' else self._MAX
 
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = self.get_score(next_color, board, depth-1)
             board.undo()
 
@@ -299,7 +299,7 @@ if __name__ == '__main__':
 
     assert minmax.depth == 3
 
-    bitboard8.put_stone('black', 3, 2)
+    bitboard8.put_disc('black', 3, 2)
     print( minmax.get_score('white', bitboard8, 2) )
     assert minmax.get_score('white', bitboard8, 2) == 10.75
     print( minmax.get_score('white', bitboard8, 3) )
@@ -308,11 +308,11 @@ if __name__ == '__main__':
     print(bitboard8)
     print( minmax.next_move('white', bitboard8) )
     assert minmax.next_move('white', bitboard8) == (2, 4)
-    bitboard8.put_stone('white', 2, 4)
-    bitboard8.put_stone('black', 5, 5)
-    bitboard8.put_stone('white', 4, 2)
-    bitboard8.put_stone('black', 5, 2)
-    bitboard8.put_stone('white', 5, 4)
+    bitboard8.put_disc('white', 2, 4)
+    bitboard8.put_disc('black', 5, 5)
+    bitboard8.put_disc('white', 4, 2)
+    bitboard8.put_disc('black', 5, 2)
+    bitboard8.put_disc('white', 5, 4)
     print(bitboard8)
     print( minmax.next_move('black', bitboard8) )
     assert minmax.next_move('black', bitboard8) == (2, 2)

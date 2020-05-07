@@ -94,7 +94,7 @@ if __name__ == '__main__':
         for player in [p1, p2]:
             if board4x4.get_possibles(player.color):
                 print(player, 'の番です')
-                player.put_stone(board4x4)
+                player.put_disc(board4x4)
                 move = '(' + chr(player.move[0] + 97) + ', ' + str(player.move[1] + 1) + ')'
                 print(move + 'に置きました\n')
                 print(board4x4)

@@ -94,7 +94,7 @@ class Table(AbstractStrategy):
         moves = {}
 
         for move in possibles.keys():
-            board.put_stone(color, *move)
+            board.put_disc(color, *move)
             score = self.get_score(color, board)
 
             if max_score is None or score > max_score:
@@ -157,12 +157,12 @@ if __name__ == '__main__':
     assert (table16.table == np.array(table16_ret)).all()
 
     board8 = Board(8)
-    board8.put_stone('black', 3, 2)
-    board8.put_stone('white', 2, 2)
-    board8.put_stone('black', 2, 3)
-    board8.put_stone('white', 4, 2)
-    board8.put_stone('black', 1, 1)
-    board8.put_stone('white', 0, 0)
+    board8.put_disc('black', 3, 2)
+    board8.put_disc('white', 2, 2)
+    board8.put_disc('black', 2, 3)
+    board8.put_disc('white', 4, 2)
+    board8.put_disc('black', 1, 1)
+    board8.put_disc('white', 0, 0)
     print(board8)
     for row in table8.table:
         print(row)

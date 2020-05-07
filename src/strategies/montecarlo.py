@@ -59,8 +59,8 @@ class MonteCarlo(AbstractStrategy):
         remain = board.size * board.size - (board.score['black'] + board.score['white'])
 
         if remain <= self.remain:
-            playout_board = copy.deepcopy(board)   # 現在の盤面をコピー
-            playout_board.put_stone(color, *move)  # 調べたい手を打つ
+            playout_board = copy.deepcopy(board)  # 現在の盤面をコピー
+            playout_board.put_disc(color, *move)  # 調べたい手を打つ
 
             # 勝敗が決まるまでゲームを進める
             next_color = 'white' if color == 'black' else 'black'  # 相手の色を調べる
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
     # playout
     bitboard = BitBoard(4)
-    bitboard.put_stone('black', 3, 2)
+    bitboard.put_disc('black', 3, 2)
     print(bitboard)
 
     Timer.set_deadline(montecarlo.__class__.__name__, -10000000)
@@ -125,9 +125,9 @@ if __name__ == '__main__':
 
     # next_move
     bitboard = BitBoard(8)
-    bitboard.put_stone('black', 3, 2)
-    bitboard.put_stone('white', 2, 4)
-    bitboard.put_stone('black', 1, 5)
+    bitboard.put_disc('black', 3, 2)
+    bitboard.put_disc('white', 2, 4)
+    bitboard.put_disc('black', 1, 5)
     print(bitboard)
 
     move = montecarlo.next_move('white', bitboard)
