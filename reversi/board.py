@@ -6,8 +6,8 @@
 import abc
 from collections import namedtuple
 
-from disc import DiscFactory
-import BitBoardMethods
+from reversi.disc import DiscFactory
+import reversi.BitBoardMethods
 
 
 MIN_BOARD_SIZE = 4   # 最小ボードサイズ

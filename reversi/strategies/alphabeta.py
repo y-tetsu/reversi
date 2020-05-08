@@ -6,9 +6,9 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.negamax import NegaMax
-from strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_N
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.negamax import NegaMax
+from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_N
 
 
 class _AlphaBeta(AbstractStrategy):

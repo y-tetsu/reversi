@@ -6,8 +6,8 @@
 import sys
 sys.path.append('../../')
 
-from strategies.common import AbstractEvaluator
-from strategies.coordinator import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer, EdgeScorer, CornerScorer
+from reversi.strategies.common import AbstractEvaluator
+from reversi.strategies.coordinator import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer, EdgeScorer, CornerScorer
 
 
 class Evaluator_T(AbstractEvaluator):

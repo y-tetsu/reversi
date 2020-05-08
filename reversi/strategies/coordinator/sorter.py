@@ -6,7 +6,7 @@
 import sys
 sys.path.append('../../')
 
-from strategies.common import AbstractSorter
+from reversi.strategies.common import AbstractSorter
 
 
 class Sorter(AbstractSorter):

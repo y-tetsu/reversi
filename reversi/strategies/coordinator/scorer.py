@@ -6,10 +6,10 @@
 import sys
 sys.path.append('../../')
 
-from strategies.common import AbstractScorer
-from strategies.table import Table
+from reversi.strategies.common import AbstractScorer
+from reversi.strategies.table import Table
 
-from board import Board, BitBoard
+from reversi.board import Board, BitBoard
 
 
 class TableScorer(AbstractScorer):

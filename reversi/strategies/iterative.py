@@ -6,10 +6,10 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import Timer, Measure, AbstractStrategy
-from strategies.alphabeta import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWEC
-from strategies.negascout import NegaScout_TPW, NegaScout_TPW2, NegaScout_TPWE
-from strategies.coordinator import Selector, Sorter_B
+from reversi.strategies.common import Timer, Measure, AbstractStrategy
+from reversi.strategies.alphabeta import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWEC
+from reversi.strategies.negascout import NegaScout_TPW, NegaScout_TPW2, NegaScout_TPWE
+from reversi.strategies.coordinator import Selector, Sorter_B
 
 
 class IterativeDeepning(AbstractStrategy):

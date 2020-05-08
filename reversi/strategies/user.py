@@ -9,7 +9,7 @@ sys.path.append('../')
 import re
 import time
 
-from strategies.common import AbstractStrategy
+from reversi.strategies.common import AbstractStrategy
 
 
 class ConsoleUserInput(AbstractStrategy):

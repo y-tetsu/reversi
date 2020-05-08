@@ -11,7 +11,7 @@ from subprocess import PIPE, TimeoutExpired
 import re
 import tkinter as tk
 
-from strategies.common import AbstractStrategy
+from reversi.strategies.common import AbstractStrategy
 
 
 TIMEOUT_TIME = 60  # タイムアウト時間(s)

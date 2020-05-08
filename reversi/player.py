@@ -3,7 +3,7 @@
 プレイヤーの管理
 """
 
-from disc import DiscFactory
+from reversi.disc import DiscFactory
 
 
 class Player:

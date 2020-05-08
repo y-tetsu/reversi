@@ -8,8 +8,8 @@ sys.path.append('../')
 
 import random
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.coordinator import Evaluator_TPW, Evaluator_TPOW
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPOW
 
 
 class _NegaMax(AbstractStrategy):

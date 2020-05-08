@@ -9,12 +9,12 @@ sys.path.append('../')
 import random
 import copy
 
-from game import Game
-from player import Player
-from display import NoneDisplay
+from reversi.game import Game
+from reversi.player import Player
+from reversi.display import NoneDisplay
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.easy import Random
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.easy import Random
 
 
 class MonteCarlo(AbstractStrategy):

@@ -9,7 +9,7 @@ sys.path.append('../../')
 import time
 import os
 
-from strategies.common import CPU_TIME
+from reversi.strategies.common import CPU_TIME
 
 class Timer:
     """

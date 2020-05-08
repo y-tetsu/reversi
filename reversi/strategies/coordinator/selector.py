@@ -6,7 +6,7 @@
 import sys
 sys.path.append('../../')
 
-from strategies.common import AbstractSelector
+from reversi.strategies.common import AbstractSelector
 
 
 class Selector(AbstractSelector):

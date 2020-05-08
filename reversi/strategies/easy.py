@@ -9,7 +9,7 @@ sys.path.append('../')
 import random
 import itertools
 
-from strategies.common import AbstractStrategy
+from reversi.strategies.common import AbstractStrategy
 
 
 class Random(AbstractStrategy):

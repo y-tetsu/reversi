@@ -6,12 +6,12 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.easy import Random
-from strategies.minmax import MinMax2_TPWE
-from strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
-from strategies.iterative import AbI_B_TPW, AbI_B_TPWE, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE
-from strategies.switch import SwitchNsI_B_TPW, SwitchNsI_B_TPWE
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.easy import Random
+from reversi.strategies.minmax import MinMax2_TPWE
+from reversi.strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
+from reversi.strategies.iterative import AbI_B_TPW, AbI_B_TPWE, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPW2, NsI_B_TPWE
+from reversi.strategies.switch import SwitchNsI_B_TPW, SwitchNsI_B_TPWE
 
 
 class FullReading(AbstractStrategy):

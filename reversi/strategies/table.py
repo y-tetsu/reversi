@@ -11,7 +11,7 @@ import itertools
 
 import numpy as np
 
-from strategies.common import AbstractStrategy
+from reversi.strategies.common import AbstractStrategy
 
 
 class Table(AbstractStrategy):

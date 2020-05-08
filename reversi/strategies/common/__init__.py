@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from strategies.common.cputime import CPU_TIME
-from strategies.common.timer import Timer
-from strategies.common.measure import Measure
-from strategies.common.abstract import AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractSorter, AbstractSelector
+from reversi.strategies.common.cputime import CPU_TIME
+from reversi.strategies.common.timer import Timer
+from reversi.strategies.common.measure import Measure
+from reversi.strategies.common.abstract import AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractSorter, AbstractSelector

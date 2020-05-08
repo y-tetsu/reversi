@@ -8,8 +8,8 @@ sys.path.append('../')
 
 import random
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.table import Table
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.table import Table
 
 
 class MinMax_(AbstractStrategy):

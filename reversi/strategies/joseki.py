@@ -6,9 +6,9 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.alphabeta import AlphaBeta4_TPW
-from strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.alphabeta import AlphaBeta4_TPW
+from reversi.strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE
 
 
 # ===== 定石リスト =====

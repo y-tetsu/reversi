@@ -6,10 +6,10 @@
 import sys
 sys.path.append('../')
 
-from strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from strategies.iterative import IterativeDeepning
-from strategies.negascout import NegaScout
-from strategies.coordinator import Selector, Sorter_B, Evaluator_TPW, Evaluator_TPWE
+from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.iterative import IterativeDeepning
+from reversi.strategies.negascout import NegaScout
+from reversi.strategies.coordinator import Selector, Sorter_B, Evaluator_TPW, Evaluator_TPWE
 
 
 class SwitchSizeError(Exception):

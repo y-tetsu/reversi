@@ -10,9 +10,9 @@ import tkinter.filedialog as filedialog
 import threading
 import re
 
-import board
-from board import Board
-import strategies
+import reversi.board as board
+from reversi.board import Board
+import reversi.strategies as strategies
 
 
 WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
@@ -311,7 +311,7 @@ class ExtraDialog:
         """
         登録ファイルを選択する
         """
-        ini_dir = os.path.abspath(os.path.dirname('./strategies/extra/'))
+        ini_dir = os.path.abspath(os.path.dirname('./extra/'))
         extra_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
 
         if extra_file:
