@@ -1,5 +1,5 @@
 {
     "name": "BottomRight",
-    "cmd": "perl ./strategies/extra/perl/bottomright/bottomright.pl",
+    "cmd": "perl ./extra/perl/bottomright/bottomright.pl",
     "timeouttime": 60
 }
