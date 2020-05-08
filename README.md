@@ -1,5 +1,4 @@
 # reversi
-Pythonで作るリバーシ<br>
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
 ## ゲーム紹介
