@@ -266,11 +266,17 @@ class Reversic:
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
-    def __init__(self, size, black_player, white_player, in_strategies):
-        self.board_size = size
-        self.player_names = {'black': black_player, 'white': white_player}
+    def __init__(self, s=None):
+        self.board_size = 8
+        self.player_names = {'black': 'User1', 'white': 'User2'}
         self.state = Reversic.START
-        self.strategies = in_strategies
+
+        b, w = {}, {}
+        b['User1'] = strategies.ConsoleUserInput()
+        b.update(s)
+        w['User2'] = strategies.ConsoleUserInput()
+        w.update(s)
+        self.strategies = {'black': b, 'white': w}
 
     @property
     def state(self):
@@ -287,9 +293,9 @@ class Reversic:
         else:
             self.game = self.__play
 
-    def mainloop(self):
+    def start(self):
         """
-        メインループ
+        アプリ開始
         """
         while True:
             self.game()
