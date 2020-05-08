@@ -3,12 +3,14 @@
 対戦シミュレーター
 """
 
+if '__file__' in globals():
+    import os, sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import itertools
 from multiprocessing import Pool
 
-from game import Game
-from board import Board, BitBoard
-from display import NoneDisplay
+from reversi import Board, BitBoard, Player, NoneDisplay, Game, strategies
 
 
 class Simulator:
@@ -165,8 +167,6 @@ if __name__ == '__main__':
     import timeit
     import os
     import json
-    from player import Player
-    import strategies
 
     setting_file, setting = './setting.json', {}
 
