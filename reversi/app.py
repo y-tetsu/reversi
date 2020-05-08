@@ -4,11 +4,13 @@
 """
 
 import sys
+import os
 import time
 import tkinter as tk
 import json
+import threading
 
-from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, WindowDisplay, ConsoleDisplay, Game, strategies
+from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, strategies
 
 
 TURN_DISC_WAIT = 0.1
@@ -20,10 +22,19 @@ class Reversi:
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, window=None, strategies=None):
+    def __init__(self, s=None):
+        root = tk.Tk()
+        root.withdraw()  # 表示が整うまで隠す
+
         self.state = Reversi.INIT
-        self.window = window
-        self.strategies = strategies
+
+        b = ['User1'] + list(s.keys())
+        w = ['User2'] + list(s.keys())
+        self.window = Window(root=root, black_players=b, white_players=w)
+
+        s['User1'] = strategies.WindowUserInput(self.window)
+        s['User2'] = strategies.WindowUserInput(self.window)
+        self.strategies = s
 
     @property
     def state(self):
@@ -44,12 +55,34 @@ class Reversi:
         else:
             self.game = self.__reinit
 
-    def mainloop(self):
+    def gameloop(self):
         """
-        メインループ
+        ゲーム処理
         """
         while True:
             self.game()
+
+    def start(self):
+        """
+        アプリ開始
+        """
+        self.game_start()    # ゲーム開始
+        self.window_start()  # ウィンドウ開始
+
+    def game_start(self):
+        """
+        ゲーム開始
+        """
+        game = threading.Thread(target=self.gameloop)
+        game.daemon = True
+        game.start()
+
+    def window_start(self):
+        """
+        ウィンドウ開始
+        """
+        self.window.root.deiconify()  # 表示する
+        self.window.root.mainloop()
 
     def __init(self):
         """
@@ -233,11 +266,11 @@ class Reversic:
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
-    def __init__(self, size, black_player, white_player, strategies):
+    def __init__(self, size, black_player, white_player, in_strategies):
         self.board_size = size
         self.player_names = {'black': black_player, 'white': white_player}
         self.state = Reversic.START
-        self.strategies = strategies
+        self.strategies = in_strategies
 
     @property
     def state(self):
