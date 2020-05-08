@@ -3,15 +3,13 @@
 コンソール版リバーシアプリ
 """
 
-import sys
+if '__file__' in globals():
+    import os, sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import time
 
-import board
-from board import BitBoard
-from player import Player
-from display import ConsoleDisplay
-from game import Game
-import strategies
+from reversi import BitBoard, Player, ConsoleDisplay, Game, Window, strategies
 
 
 BLACK_STRATEGIES = {
