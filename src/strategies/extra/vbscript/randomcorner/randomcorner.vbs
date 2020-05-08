@@ -43,9 +43,9 @@ Next
 '--------------------
 ' 手の候補を調べる
 '--------------------
-Dim aryPossibles
+Dim aryLegalMoves
 
-aryPossibles = GetPossibles(intColor, intSize, intBoard)
+aryLegalMoves = GetLegalMoves(intColor, intSize, intBoard)
 
 '--------------------
 ' 結果出力
@@ -63,7 +63,7 @@ Dim intNum
 aryCorners = Array("0 0", CStr(intSize-1) + " 0", "0 " + CStr(intSize-1), CStr(intSize-1) + " " + CStr(intSize-1))
 
 For Each strCorner in aryCorners
-    For Each strPossible in aryPossibles
+    For Each strPossible in aryLegalMoves
         If strCorner = strPossible Then
             strNextMove = strCorner
             Wscript.StdErr.WriteLine("CORNER : "  + strCorner)
@@ -79,15 +79,15 @@ Next
 'それ以外はランダム
 If strNextMove = "" Then
     Randomize
-    strNextMove = aryPossibles(Int(Rnd() * (Ubound(aryPossibles)+1)))
+    strNextMove = aryLegalMoves(Int(Rnd() * (Ubound(aryLegalMoves)+1)))
 End If
 
 Wscript.StdOut.WriteLine(strNextMove)
 
 
 '置ける場所をすべて返す
-Function GetPossibles(intColor, intSize, intBoard)
-    Dim aryPossibles()
+Function GetLegalMoves(intColor, intSize, intBoard)
+    Dim aryLegalMoves()
     Dim intReversible
     Dim x
     Dim y
@@ -100,16 +100,16 @@ Function GetPossibles(intColor, intSize, intBoard)
             intReversible = IsReversible(intColor, intSize, intBoard, x, y)
 
             If intReversible > 0 Then
-                ReDim Preserve aryPossibles(intCnt)
+                ReDim Preserve aryLegalMoves(intCnt)
 
-                aryPossibles(intCnt) = CStr(x) + " " + CStr(y)
+                aryLegalMoves(intCnt) = CStr(x) + " " + CStr(y)
                 Wscript.StdErr.WriteLine("POSSIBLE : " + CStr(x) + " " + CStr(y))
                 intCnt = intCnt + 1
             End If
         Next
     Next
 
-    GetPossibles = aryPossibles
+    GetLegalMoves = aryLegalMoves
 
 End Function
 

@@ -21,20 +21,20 @@ def get_message():
     return (color, size, board)
 
 
-def get_possibles(color, size, board):
+def get_legal_moves(color, size, board):
     """
     石が置ける場所をすべて返す
     """
-    possibles = {}
+    legal_moves = {}
 
     for y in range(size):
         for x in range(size):
             reversibles = get_reversibles(color, size, board, x, y)
 
             if reversibles:
-                possibles[(x, y)] = reversibles
+                legal_moves[(x, y)] = reversibles
 
-    return possibles
+    return legal_moves
 
 
 def get_reversibles(color, size, board, x, y):
@@ -112,11 +112,11 @@ if __name__ == '__main__':
     print(board, file=sys.stderr)
 
     # 置ける場所を取得
-    possibles = list(get_possibles(color, size, board).keys())
-    print(possibles, file=sys.stderr)
+    legal_moves = list(get_legal_moves(color, size, board).keys())
+    print(legal_moves, file=sys.stderr)
 
     # 一番上の左端を取得
-    x, y = possibles[0]
+    x, y = legal_moves[0]
 
     # 結果を標準出力
     print(x, y)

@@ -29,26 +29,26 @@ foreach my $row (@board) {
 }
 
 # 置ける場所の一番下の右端を返す
-my @possibles = &get_possibles($color, $size, \@board);
-print STDERR join(" , ", @possibles) . "\n";
+my @legal_moves = &get_legal_moves($color, $size, \@board);
+print STDERR join(" , ", @legal_moves) . "\n";
 
-print($possibles[0]);
+print($legal_moves[0]);
 
 
 # 石が置ける場所をすべて返す
-sub get_possibles {
+sub get_legal_moves {
     my ($color, $size, $r_board) = @_;
-    my @possibles = ();
+    my @legal_moves = ();
 
     foreach my $y (reverse(0..$size-1)) {
         foreach my $x (reverse(0..$size-1)) {
             if (&is_reversible($color, $size, $r_board, $x, $y) > 0) {
-                push @possibles, "$x $y";
+                push @legal_moves, "$x $y";
             }
         }
     }
 
-    return @possibles;
+    return @legal_moves;
 }
 
 # 石をひっくり返せるか判定する
