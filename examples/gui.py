@@ -12,12 +12,6 @@ import tkinter as tk
 import json
 
 from reversi import BitBoard, Player, WindowDisplay, Game, Window, strategies
-#from board import BitBoard
-#from player import Player
-#from display import WindowDisplay
-#from game import Game
-#from window import Window
-#import strategies
 
 
 TURN_DISC_WAIT = 0.1
