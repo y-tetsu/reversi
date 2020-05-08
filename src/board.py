@@ -187,7 +187,7 @@ class Board(AbstractBoard):
             for tmp_x, tmp_y, in flippable_discs:
                 self._board[tmp_y][tmp_x] = self.disc[color]
 
-            self._update_disc_num()
+            self._update_score()
 
             # 打った手の記録
             self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
@@ -196,9 +196,9 @@ class Board(AbstractBoard):
 
         return []
 
-    def _update_disc_num(self):
+    def _update_score(self):
         """
-        石の数を更新する
+        スコアを更新する
         """
         for color in ('black', 'white'):
             self.score[color] = sum([row.count(self.disc[color]) for row in self._board])
@@ -241,7 +241,7 @@ class Board(AbstractBoard):
             for prev_x, prev_y in flippable_discs:
                 self._board[prev_y][prev_x] = self.disc[prev_color]
 
-            self._update_disc_num()
+            self._update_score()
 
         self._legal_moves_cache.clear()
 
