@@ -3,23 +3,47 @@
 対戦シミュレーター
 """
 
+import os
+import json
 import itertools
 from multiprocessing import Pool
 
-from reversi import Board, BitBoard, Player, NoneDisplay, Game, strategies
+from reversi import Board, BitBoard, Player, NoneDisplay, Game
 
 
 class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self, black_players, white_players, matches, board_size=8, board_type='bitboard', processes=1):
+    def __init__(self, strategies, setting_file):
+        if os.path.isfile(setting_file):
+            with open(setting_file) as f:
+                setting = json.load(f)
+        else:
+            setting = {
+                "board_size": 8,
+                "board_type": "bitboard",
+                "matches": 10,
+                "processes": 1,
+                "characters": [
+                    "Unselfish",
+                    "Random",
+                    "Greedy",
+                    "SlowStarter",
+                    "Table",
+                ]
+            }
+
+        self.matches = setting['matches']
+        self.board_size = setting['board_size']
+        self.board_type = setting['board_type']
+        self.processes = setting['processes']
+
+        black_players = [Player('black', c, strategies[c]) for c in setting['characters']]
+        white_players = [Player('white', c, strategies[c]) for c in setting['characters']]
         self.black_players = black_players
         self.white_players = white_players
-        self.matches = matches
-        self.board_size = board_size
-        self.board_type = board_type
-        self.processes = processes
+
         self.game_results = []
         self.total = []
         self.result_ratio = {}
