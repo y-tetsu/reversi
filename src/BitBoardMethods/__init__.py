@@ -3,9 +3,9 @@ import pyximport
 pyximport.install()
 
 try:
-    from BitBoardMethods.GetPossiblesFast import get_possibles
+    from BitBoardMethods.GetLegalMovesFast import get_legal_moves
 except ImportError:
-    from BitBoardMethods.GetPossibles import get_possibles
+    from BitBoardMethods.GetLegalMoves import get_legal_moves
 
 try:
     from BitBoardMethods.GetBoardInfoFast import get_board_info

@@ -768,7 +768,7 @@ if __name__ == '__main__':
                 while True:
                     playable = 0
 
-                    moves = list(board.get_possibles('black').keys())
+                    moves = list(board.get_legal_moves('black').keys())
 
                     if moves:
                         window.board.enable_moves(moves)
@@ -789,7 +789,7 @@ if __name__ == '__main__':
 
                         playable += 1
 
-                    moves = list(board.get_possibles('white').keys())
+                    moves = list(board.get_legal_moves('white').keys())
 
                     if moves:
                         window.board.enable_moves(moves)

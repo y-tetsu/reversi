@@ -41,12 +41,12 @@ if __name__ == '__main__':
     p2 = Player('white', 'ユーザ2', ConsoleUserInput())
 
     for player in [p1, p2]:
-        possibles = board4.get_possibles(player.color)
+        legal_moves = board4.get_legal_moves(player.color)
 
-        if possibles:
+        if legal_moves:
             print(player, 'の番です')
 
-            for index, value in enumerate(possibles, 1):
+            for index, value in enumerate(legal_moves, 1):
                 coordinate = (chr(value[0] + 97), str(value[1] + 1))
                 print(f'{index:2d}:', coordinate)
 

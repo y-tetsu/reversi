@@ -4,10 +4,10 @@ from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
 # GetPsossiblesFast
-ext_modules = [Extension("GetPossiblesFast", ["GetPossiblesFast.pyx"])]
+ext_modules = [Extension("GetLegalMovesFast", ["GetLegalMovesFast.pyx"])]
 
 setup(
-  name = 'GetPossiblesFast',
+  name = 'GetLegalMovesFast',
   cmdclass = {'build_ext': build_ext},
   ext_modules = ext_modules
 )

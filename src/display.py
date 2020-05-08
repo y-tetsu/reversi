@@ -16,11 +16,11 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def turn(self, player, possibles):
+    def turn(self, player, legal_moves):
         pass
 
     @abc.abstractmethod
-    def move(self, player, possibles):
+    def move(self, player, legal_moves):
         pass
 
     @abc.abstractmethod
@@ -50,18 +50,18 @@ class ConsoleDisplay(AbstractDisplay):
         print(score_b, score_w)
         print(board)
 
-    def turn(self, player, possibles):
+    def turn(self, player, legal_moves):
         """
         手番の表示
         """
         time.sleep(1)
         print(player, 'の番です')
 
-        for index, value in enumerate(possibles, 1):
+        for index, value in enumerate(legal_moves, 1):
             coordinate = (chr(value[0] + 97), str(value[1] + 1))
             print(f'{index:2d}:', coordinate)
 
-    def move(self, player, possibles):
+    def move(self, player, legal_moves):
         """
         手の表示
         """
@@ -97,10 +97,10 @@ class NoneDisplay(AbstractDisplay):
     def progress(self, board, black_player, white_player):
         pass
 
-    def turn(self, player, possibles):
+    def turn(self, player, legal_moves):
         pass
 
-    def move(self, player, possibles):
+    def move(self, player, legal_moves):
         pass
 
     def foul(self, player):
@@ -128,15 +128,15 @@ class WindowDisplay(AbstractDisplay):
         for color in PLAYER_COLORS:
             self.info.set_text(color, 'score', str(board.score[color]))
 
-    def turn(self, player, possibles):
+    def turn(self, player, legal_moves):
         """
         手番の表示
         """
         self.info.set_text(player.color, 'turn', '手番です')  # 手番の表示
-        self.board.enable_moves(possibles)  # 打てる候補を表示
+        self.board.enable_moves(legal_moves)  # 打てる候補を表示
         time.sleep(0.3)
 
-    def move(self, player, possibles):
+    def move(self, player, legal_moves):
         """
         手の表示
         """
@@ -147,7 +147,7 @@ class WindowDisplay(AbstractDisplay):
             self.info.set_text(color, 'turn', '')  # 手番の表示を消す
             self.info.set_text(color, 'move', '')  # 打った手の表示を消す
 
-        self.board.disable_moves(possibles)  # 打てる候補のハイライトをなくす
+        self.board.disable_moves(legal_moves)  # 打てる候補のハイライトをなくす
         self.board.enable_move(*player.move)  # 打った手をハイライト
         self.board.put_disc(player.color, *player.move)  # 石を置く
         time.sleep(0.3)
@@ -189,11 +189,11 @@ if __name__ == '__main__':
     display = ConsoleDisplay()
     display.progress(board8x8, black_player, white_player)
 
-    possibles = board8x8.get_possibles('black')
-    display.turn(black_player, possibles)
+    legal_moves = board8x8.get_legal_moves('black')
+    display.turn(black_player, legal_moves)
 
     black_player.put_disc(board8x8)
-    display.move(black_player, possibles)
+    display.move(black_player, legal_moves)
     display.progress(board8x8, black_player, white_player)
 
     display.foul(black_player)

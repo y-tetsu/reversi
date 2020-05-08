@@ -36,16 +36,16 @@ class Game:
                             # キャンセルメニュー設定時は中断
                             break
 
-                    possibles = list(self.board.get_possibles(player.color).keys())
+                    legal_moves = list(self.board.get_legal_moves(player.color).keys())
 
-                    if not possibles:
+                    if not legal_moves:
                         continue
 
-                    self.display.turn(player, possibles)
+                    self.display.turn(player, legal_moves)
 
                     player.put_disc(self.board)
 
-                    self.display.move(player, possibles)
+                    self.display.move(player, legal_moves)
                     self.display.progress(self.board, self.black_player, self.white_player)
 
                     if not player.captures:

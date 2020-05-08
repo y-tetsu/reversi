@@ -16,7 +16,7 @@ MAX_BOARD_SIZE = 26  # 最大ボードサイズ
 
 class AbstractBoard(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def get_possibles(self, color):
+    def get_legal_moves(self, color):
         pass
 
     @abc.abstractmethod
@@ -73,7 +73,7 @@ class Board(AbstractBoard):
         self._board[center][center] = self.disc['white']
 
         # 置ける場所のキャッシュ
-        self._possibles_cache = {}
+        self._legal_moves_cache = {}
 
     def __str__(self):
         # 列の見出し
@@ -87,27 +87,27 @@ class Board(AbstractBoard):
 
         return header + body
 
-    def get_possibles(self, color, force=False):
+    def get_legal_moves(self, color, force=False):
         """
         石が置ける場所をすべて返す
         """
         # キャッシュが存在する場合
-        if not force and color in self._possibles_cache:
-            return self._possibles_cache[color]
+        if not force and color in self._legal_moves_cache:
+            return self._legal_moves_cache[color]
 
-        self._possibles_cache.clear()
-        possibles = {}
+        self._legal_moves_cache.clear()
+        legal_moves = {}
 
         for y in range(self.size):
             for x in range(self.size):
                 flippable_discs = self._get_flippable_discs(color, x, y)
 
                 if flippable_discs:
-                    possibles[(x, y)] = flippable_discs
+                    legal_moves[(x, y)] = flippable_discs
 
-        self._possibles_cache[color] = possibles
+        self._legal_moves_cache[color] = legal_moves
 
-        return possibles
+        return legal_moves
 
     def _get_flippable_discs(self, color, x, y):
         """
@@ -177,11 +177,11 @@ class Board(AbstractBoard):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        possibles = self.get_possibles(color)
+        legal_moves = self.get_legal_moves(color)
 
-        if (x, y) in possibles:
+        if (x, y) in legal_moves:
             self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
-            flippable_discs = possibles[(x, y)]
+            flippable_discs = legal_moves[(x, y)]
 
             # ひっくり返せる場所に指定した色の石を変更する
             for tmp_x, tmp_y, in flippable_discs:
@@ -243,7 +243,7 @@ class Board(AbstractBoard):
 
             self._update_disc_num()
 
-        self._possibles_cache.clear()
+        self._legal_moves_cache.clear()
 
     def get_bitboard_info(self):
         """
@@ -312,7 +312,7 @@ class BitBoard(AbstractBoard):
         )
 
         # 置ける場所のキャッシュ
-        self._possibles_cache = {}
+        self._legal_moves_cache = {}
 
     def __str__(self):
         size = self.size
@@ -338,18 +338,18 @@ class BitBoard(AbstractBoard):
 
         return header + body
 
-    def get_possibles(self, color, force=False):
+    def get_legal_moves(self, color, force=False):
         """
         石が置ける場所をすべて返す
         """
         # キャッシュが存在する場合
-        if not force and color in self._possibles_cache:
-            return self._possibles_cache[color]
+        if not force and color in self._legal_moves_cache:
+            return self._legal_moves_cache[color]
 
-        self._possibles_cache.clear()
+        self._legal_moves_cache.clear()
 
-        ret = BitBoardMethods.get_possibles(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
-        self._possibles_cache[color] = ret
+        ret = BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
+        self._legal_moves_cache[color] = ret
 
         return ret
 
@@ -357,15 +357,15 @@ class BitBoard(AbstractBoard):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        possibles = self.get_possibles(color)
+        legal_moves = self.get_legal_moves(color)
 
-        if (x, y) in possibles:
+        if (x, y) in legal_moves:
             # 配置位置を整数に変換
             size = self.size
             put = 1 << ((size*size-1)-(y*size+x))
 
             # 反転位置を整数に変換
-            reversibles_list = possibles[(x, y)]
+            reversibles_list = legal_moves[(x, y)]
             flippable_discs = 0
             for tmp_x, tmp_y in reversibles_list:
                 flippable_discs |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
@@ -419,7 +419,7 @@ class BitBoard(AbstractBoard):
                 self.score['black'] += disc_num
                 self.score['white'] -= 1 + disc_num
 
-        self._possibles_cache.clear()
+        self._legal_moves_cache.clear()
 
     def get_bitboard_info(self):
         """
@@ -605,34 +605,34 @@ if __name__ == '__main__':
     assert bitboard8._mask.l == 0xFEFEFEFEFEFEFEFE
     assert bitboard8._mask.ul == 0xFEFEFEFEFEFEFE00
 
-    # get_possibles
+    # get_legal_moves
     bitboard4._black_bitboard = 0x640
     bitboard4._white_bitboard = 0x020
-    possibles = bitboard4.get_possibles('black')
-    assert possibles == {(3, 2): [(2, 2)], (2, 3): [(2, 2)], (3, 3): [(2, 2)]}
-    possibles = bitboard4.get_possibles('white')
-    assert possibles == {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (0, 2): [(1, 2)]}
+    legal_moves = bitboard4.get_legal_moves('black')
+    assert legal_moves == {(3, 2): [(2, 2)], (2, 3): [(2, 2)], (3, 3): [(2, 2)]}
+    legal_moves = bitboard4.get_legal_moves('white')
+    assert legal_moves == {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (0, 2): [(1, 2)]}
 
     bitboard4._black_bitboard = 0x040
     bitboard4._white_bitboard = 0x620
-    possibles = bitboard4.get_possibles('black')
-    assert possibles == {(1, 0): [(1, 1)], (3, 0): [(2, 1)], (3, 2): [(2, 2)]}
-    possibles = bitboard4.get_possibles('white')
-    assert possibles == {(0, 2): [(1, 2)], (0, 3): [(1, 2)], (1, 3): [(1, 2)]}
+    legal_moves = bitboard4.get_legal_moves('black')
+    assert legal_moves == {(1, 0): [(1, 1)], (3, 0): [(2, 1)], (3, 2): [(2, 2)]}
+    legal_moves = bitboard4.get_legal_moves('white')
+    assert legal_moves == {(0, 2): [(1, 2)], (0, 3): [(1, 2)], (1, 3): [(1, 2)]}
 
     bitboard4._black_bitboard = 0x260
     bitboard4._white_bitboard = 0x400
-    possibles = bitboard4.get_possibles('black')
-    assert possibles == {(0, 0): [(1, 1)], (1, 0): [(1, 1)], (0, 1): [(1, 1)]}
-    possibles = bitboard4.get_possibles('white')
-    assert possibles == {(3, 1): [(2, 1)], (1, 3): [(1, 2)], (3, 3): [(2, 2)]}
+    legal_moves = bitboard4.get_legal_moves('black')
+    assert legal_moves == {(0, 0): [(1, 1)], (1, 0): [(1, 1)], (0, 1): [(1, 1)]}
+    legal_moves = bitboard4.get_legal_moves('white')
+    assert legal_moves == {(3, 1): [(2, 1)], (1, 3): [(1, 2)], (3, 3): [(2, 2)]}
 
     bitboard4._black_bitboard = 0x200
     bitboard4._white_bitboard = 0x460
-    possibles = bitboard4.get_possibles('black')
-    assert possibles == {(0, 1): [(1, 1)], (0, 3): [(1, 2)], (2, 3): [(2, 2)]}
-    possibles = bitboard4.get_possibles('white')
-    assert possibles == {(2, 0): [(2, 1)], (3, 0): [(2, 1)], (3, 1): [(2, 1)]}
+    legal_moves = bitboard4.get_legal_moves('black')
+    assert legal_moves == {(0, 1): [(1, 1)], (0, 3): [(1, 2)], (2, 3): [(2, 2)]}
+    legal_moves = bitboard4.get_legal_moves('white')
+    assert legal_moves == {(2, 0): [(2, 1)], (3, 0): [(2, 1)], (3, 1): [(2, 1)]}
 
     # put_disc
     bitboard4._black_bitboard = 0x240
@@ -676,57 +676,57 @@ if __name__ == '__main__':
 
     # size8
     bitboard8 = BitBoard(8)
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}
 
     # 全般
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0x0000240000240000
     bitboard8._white_bitboard = 0x007E5A7A5E5A7E00
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (3, 0): [(4, 1)], (4, 0): [(3, 1)], (5, 0): [(5, 1)], (7, 0): [(6, 1)], (0, 2): [(1, 2)], (7, 2): [(6, 2)], (0, 3): [(1, 4)], (5, 3): [(5, 4)], (7, 3): [(6, 4)], (0, 4): [(1, 3)], (2, 4): [(2, 3)], (7, 4): [(6, 3)], (0, 5): [(1, 5)], (7, 5): [(6, 5)], (0, 7): [(1, 6)], (2, 7): [(2, 6)], (3, 7): [(4, 6)], (4, 7): [(3, 6)], (5, 7): [(5, 6)], (7, 7): [(6, 6)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (3, 0): [(4, 1)], (4, 0): [(3, 1)], (5, 0): [(5, 1)], (7, 0): [(6, 1)], (0, 2): [(1, 2)], (7, 2): [(6, 2)], (0, 3): [(1, 4)], (5, 3): [(5, 4)], (7, 3): [(6, 4)], (0, 4): [(1, 3)], (2, 4): [(2, 3)], (7, 4): [(6, 3)], (0, 5): [(1, 5)], (7, 5): [(6, 5)], (0, 7): [(1, 6)], (2, 7): [(2, 6)], (3, 7): [(4, 6)], (4, 7): [(3, 6)], (5, 7): [(5, 6)], (7, 7): [(6, 6)]}
 
     # 上黒
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0x00000001000000BF
     bitboard8._white_bitboard = 0x006573787C7E7F00
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (2, 0): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 0): [(5, 1), (6, 2)], (7, 0): [(7, 1), (7, 2)], (0, 1): [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)], (3, 1): [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)], (0, 2): [(1, 3), (2, 4), (3, 5), (4, 6)], (4, 2): [(4, 3), (4, 4), (4, 5), (4, 6)], (5, 2): [(4, 3), (3, 4), (2, 5), (1, 6)], (0, 3): [(1, 4), (2, 5), (3, 6)], (5, 3): [(5, 4), (5, 5), (5, 6)], (6, 3): [(5, 4), (4, 5), (3, 6)], (0, 4): [(1, 5), (2, 6)], (6, 4): [(5, 5), (6, 5), (4, 6), (6, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(1, 6)], (7, 5): [(6, 6), (7, 6)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (2, 0): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 0): [(5, 1), (6, 2)], (7, 0): [(7, 1), (7, 2)], (0, 1): [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)], (3, 1): [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)], (0, 2): [(1, 3), (2, 4), (3, 5), (4, 6)], (4, 2): [(4, 3), (4, 4), (4, 5), (4, 6)], (5, 2): [(4, 3), (3, 4), (2, 5), (1, 6)], (0, 3): [(1, 4), (2, 5), (3, 6)], (5, 3): [(5, 4), (5, 5), (5, 6)], (6, 3): [(5, 4), (4, 5), (3, 6)], (0, 4): [(1, 5), (2, 6)], (6, 4): [(5, 5), (6, 5), (4, 6), (6, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(1, 6)], (7, 5): [(6, 6), (7, 6)]}
 
     # 上白
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0x00A6CE1E3E7EFE00
     bitboard8._white_bitboard = 0x00000080000000FD
-    possibles = bitboard8.get_possibles('white')
-    assert possibles == {(0, 0): [(0, 1), (0, 2)], (3, 0): [(2, 1), (1, 2)], (5, 0): [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (4, 1): [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)], (7, 1): [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)], (2, 2): [(3, 3), (4, 4), (5, 5), (6, 6)], (3, 2): [(3, 3), (3, 4), (3, 5), (3, 6)], (7, 2): [(6, 3), (5, 4), (4, 5), (3, 6)], (1, 3): [(2, 4), (3, 5), (4, 6)], (2, 3): [(2, 4), (2, 5), (2, 6)], (7, 3): [(6, 4), (5, 5), (4, 6)], (0, 4): [(1, 5), (2, 6)], (1, 4): [(1, 5), (2, 5), (1, 6), (3, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(0, 6), (1, 6)], (7, 5): [(6, 6)]}
+    legal_moves = bitboard8.get_legal_moves('white')
+    assert legal_moves == {(0, 0): [(0, 1), (0, 2)], (3, 0): [(2, 1), (1, 2)], (5, 0): [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (4, 1): [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)], (7, 1): [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)], (2, 2): [(3, 3), (4, 4), (5, 5), (6, 6)], (3, 2): [(3, 3), (3, 4), (3, 5), (3, 6)], (7, 2): [(6, 3), (5, 4), (4, 5), (3, 6)], (1, 3): [(2, 4), (3, 5), (4, 6)], (2, 3): [(2, 4), (2, 5), (2, 6)], (7, 3): [(6, 4), (5, 5), (4, 6)], (0, 4): [(1, 5), (2, 6)], (1, 4): [(1, 5), (2, 5), (1, 6), (3, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(0, 6), (1, 6)], (7, 5): [(6, 6)]}
 
     # 左黒
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0x0100010101010111
     bitboard8._white_bitboard = 0x007E7E3E1E4E2662
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (1, 0): [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)], (2, 0): [(3, 1), (4, 2), (5, 3), (6, 4)], (3, 0): [(4, 1), (5, 2), (6, 3)], (4, 0): [(5, 1), (6, 2)], (5, 0): [(6, 1)], (0, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (1, 3): [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)], (0, 4): [(1, 5), (2, 6)], (2, 4): [(3, 4), (4, 4), (5, 4), (6, 4)], (2, 5): [(6, 1), (5, 2), (4, 3), (3, 4)], (3, 5): [(4, 5), (5, 5), (6, 5)], (3, 6): [(6, 3), (5, 4), (4, 5)], (4, 6): [(6, 4), (5, 5), (5, 6), (6, 6)], (0, 7): [(1, 7), (2, 7)], (4, 7): [(6, 5), (5, 6)], (5, 7): [(6, 6), (6, 7)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (1, 0): [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)], (2, 0): [(3, 1), (4, 2), (5, 3), (6, 4)], (3, 0): [(4, 1), (5, 2), (6, 3)], (4, 0): [(5, 1), (6, 2)], (5, 0): [(6, 1)], (0, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (1, 3): [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)], (0, 4): [(1, 5), (2, 6)], (2, 4): [(3, 4), (4, 4), (5, 4), (6, 4)], (2, 5): [(6, 1), (5, 2), (4, 3), (3, 4)], (3, 5): [(4, 5), (5, 5), (6, 5)], (3, 6): [(6, 3), (5, 4), (4, 5)], (4, 6): [(6, 4), (5, 5), (5, 6), (6, 6)], (0, 7): [(1, 7), (2, 7)], (4, 7): [(6, 5), (5, 6)], (5, 7): [(6, 6), (6, 7)]}
 
     # 下黒
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0xBF00000001000000
     bitboard8._white_bitboard = 0x007F7E7C78736500
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(0, 2): [(1, 1)], (7, 2): [(6, 1), (7, 1)], (0, 3): [(2, 1), (1, 2)], (6, 3): [(4, 1), (6, 1), (5, 2), (6, 2)], (7, 3): [(5, 1), (6, 2)], (0, 4): [(3, 1), (2, 2), (1, 3)], (5, 4): [(5, 1), (5, 2), (5, 3)], (6, 4): [(3, 1), (4, 2), (5, 3)], (0, 5): [(4, 1), (3, 2), (2, 3), (1, 4)], (4, 5): [(4, 1), (4, 2), (4, 3), (4, 4)], (5, 5): [(1, 1), (2, 2), (3, 3), (4, 4)], (0, 6): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (3, 6): [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5)], (0, 7): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (2, 7): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 7): [(6, 5), (5, 6)], (7, 7): [(7, 5), (7, 6)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(0, 2): [(1, 1)], (7, 2): [(6, 1), (7, 1)], (0, 3): [(2, 1), (1, 2)], (6, 3): [(4, 1), (6, 1), (5, 2), (6, 2)], (7, 3): [(5, 1), (6, 2)], (0, 4): [(3, 1), (2, 2), (1, 3)], (5, 4): [(5, 1), (5, 2), (5, 3)], (6, 4): [(3, 1), (4, 2), (5, 3)], (0, 5): [(4, 1), (3, 2), (2, 3), (1, 4)], (4, 5): [(4, 1), (4, 2), (4, 3), (4, 4)], (5, 5): [(1, 1), (2, 2), (3, 3), (4, 4)], (0, 6): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (3, 6): [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5)], (0, 7): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (2, 7): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 7): [(6, 5), (5, 6)], (7, 7): [(7, 5), (7, 6)]}
 
     # 右黒
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0x8000808080808088
     bitboard8._white_bitboard = 0x007E7E7C78726446
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(2, 0): [(1, 1)], (3, 0): [(2, 1), (1, 2)], (4, 0): [(3, 1), (2, 2), (1, 3)], (5, 0): [(4, 1), (3, 2), (2, 3), (1, 4)], (6, 0): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (7, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (6, 3): [(1, 3), (2, 3), (3, 3), (4, 3), (5, 3)], (5, 4): [(1, 4), (2, 4), (3, 4), (4, 4)], (7, 4): [(6, 5), (5, 6)], (4, 5): [(1, 5), (2, 5), (3, 5)], (5, 5): [(1, 1), (2, 2), (3, 3), (4, 4)], (3, 6): [(1, 4), (2, 5), (1, 6), (2, 6)], (4, 6): [(1, 3), (2, 4), (3, 5)], (2, 7): [(1, 6), (1, 7)], (3, 7): [(1, 5), (2, 6)], (7, 7): [(5, 7), (6, 7)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(2, 0): [(1, 1)], (3, 0): [(2, 1), (1, 2)], (4, 0): [(3, 1), (2, 2), (1, 3)], (5, 0): [(4, 1), (3, 2), (2, 3), (1, 4)], (6, 0): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (7, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (6, 3): [(1, 3), (2, 3), (3, 3), (4, 3), (5, 3)], (5, 4): [(1, 4), (2, 4), (3, 4), (4, 4)], (7, 4): [(6, 5), (5, 6)], (4, 5): [(1, 5), (2, 5), (3, 5)], (5, 5): [(1, 1), (2, 2), (3, 3), (4, 4)], (3, 6): [(1, 4), (2, 5), (1, 6), (2, 6)], (4, 6): [(1, 3), (2, 4), (3, 5)], (2, 7): [(1, 6), (1, 7)], (3, 7): [(1, 5), (2, 6)], (7, 7): [(5, 7), (6, 7)]}
 
     # test1
     bitboard8 = BitBoard(8)
     bitboard8._black_bitboard = 0x0000000000081000
     bitboard8._white_bitboard = 0x0000001C1C140000
-    possibles = bitboard8.get_possibles('black')
-    assert possibles == {(3, 2): [(3, 3), (3, 4), (3, 5)], (4, 2): [(4, 3), (4, 4)], (2, 3): [(3, 4)], (6, 3): [(5, 4)], (2, 5): [(3, 5)], (6, 5): [(5, 5)]}
+    legal_moves = bitboard8.get_legal_moves('black')
+    assert legal_moves == {(3, 2): [(3, 3), (3, 4), (3, 5)], (4, 2): [(4, 3), (4, 4)], (2, 3): [(3, 4)], (6, 3): [(5, 4)], (2, 5): [(3, 5)], (6, 5): [(5, 5)]}
 
     # get_bitboard_info
     assert bitboard8.get_bitboard_info() == (0x0000000000081000, 0x0000001C1C140000)
