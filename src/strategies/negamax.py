@@ -31,7 +31,7 @@ class _NegaMax(AbstractStrategy):
         moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
-        for move in board.get_possibles(color).keys():
+        for move in board.get_legal_moves(color).keys():
             board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                              # 打った手を戻す
@@ -54,25 +54,25 @@ class _NegaMax(AbstractStrategy):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        possibles_b = board.get_possibles('black', True)
-        possibles_w = board.get_possibles('white', True)
-        is_game_end =  True if not possibles_b and not possibles_w else False
+        legal_moves_b = board.get_legal_moves('black', True)
+        legal_moves_w = board.get_legal_moves('white', True)
+        is_game_end =  True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
-            return self.evaluator.evaluate(color=color, board=board, possibles_b=possibles_b, possibles_w=possibles_w) * sign
+            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w) * sign
 
         # パスの場合
-        possibles = possibles_b if color == 'black' else possibles_w
+        legal_moves = legal_moves_b if color == 'black' else legal_moves_w
         next_color = 'white' if color == 'black' else 'black'
 
-        if not possibles:
+        if not legal_moves:
             return -self.get_score(next_color, board, depth)
 
         # 評価値を算出
         max_score = self._MIN
 
-        for move in possibles.keys():
+        for move in legal_moves.keys():
             board.put_disc(color, *move)
             score = -self.get_score(next_color, board, depth-1)
             board.undo()

@@ -38,13 +38,13 @@ class PossibilityScorer(AbstractScorer):
     def __init__(self, w=5):
         self._W = w
 
-    def get_score(self, possibles_b, possibles_w):
+    def get_score(self, legal_moves_b, legal_moves_w):
         """
         評価値の算出
         """
         # 置ける場所の数に重みを掛ける
-        black_num = len(list(possibles_b.keys()))
-        white_num = len(list(possibles_w.keys()))
+        black_num = len(list(legal_moves_b.keys()))
+        white_num = len(list(legal_moves_w.keys()))
 
         return (black_num - white_num) * self._W
 
@@ -70,18 +70,18 @@ class OpeningScorer(AbstractScorer):
 
         # 最後にひっくり返された石の場所を取得する
         if isinstance(board, BitBoard):
-            reversibles = board.prev[-1]['reversibles']
+            flippable_discs = board.prev[-1]['flippable_discs']
 
             discs = []
             mask = 1 << ((size * size) - 1)
 
             for y in range(size):
                 for x in range(size):
-                    if mask & reversibles:
+                    if mask & flippable_discs:
                         discs.append([x, y])
                     mask >>= 1
         else:
-            discs = board.prev[-1]['reversibles']
+            discs = board.prev[-1]['flippable_discs']
 
         # ひっくり返した石の周りをチェックする
         for disc_x, disc_y in discs:
@@ -102,14 +102,14 @@ class WinLoseScorer(AbstractScorer):
     def __init__(self, w=10000):
         self._W = w
 
-    def get_score(self, board, possibles_b, possibles_w):
+    def get_score(self, board, legal_moves_b, legal_moves_w):
         """
         評価値の算出
         """
         ret = None
 
         # 対局終了時
-        if not possibles_b and not possibles_w:
+        if not legal_moves_b and not legal_moves_w:
             ret = board.score['black'] - board.score['white']
 
             if ret > 0:    # 黒が勝った
@@ -639,8 +639,8 @@ if __name__ == '__main__':
     board8.put_disc('black', 1, 1)
     board8.put_disc('white', 0, 0)
 
-    possibles_b = board8.get_possibles('black', True)
-    possibles_w = board8.get_possibles('white', True)
+    legal_moves_b = board8.get_legal_moves('black', True)
+    legal_moves_w = board8.get_legal_moves('white', True)
 
     print(board8)
 
@@ -657,8 +657,8 @@ if __name__ == '__main__':
     # PossibilityScorer
     scorer = PossibilityScorer()
 
-    print('score', scorer.get_score(possibles_b, possibles_w))
-    assert scorer.get_score(possibles_b, possibles_w) == 5
+    print('score', scorer.get_score(legal_moves_b, legal_moves_w))
+    assert scorer.get_score(legal_moves_b, legal_moves_w) == 5
 
     #------------------------------------------------------
     # OpeningScorer
@@ -674,8 +674,8 @@ if __name__ == '__main__':
     print('score', scorer.get_score(board8, [], []))
     assert scorer.get_score(board8, [], []) == -10006
 
-    print('score', scorer.get_score(board8, possibles_b, possibles_w))
-    assert scorer.get_score(board8, possibles_b, possibles_w) is None
+    print('score', scorer.get_score(board8, legal_moves_b, legal_moves_w))
+    assert scorer.get_score(board8, legal_moves_b, legal_moves_w) is None
 
     #------------------------------------------------------
     # NumberScorer

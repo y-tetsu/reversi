@@ -23,7 +23,7 @@ class ConsoleUserInput(AbstractStrategy):
         """
         次の一手
         """
-        possibles = list(board.get_possibles(color).keys())
+        legal_moves = list(board.get_legal_moves(color).keys())
         select = None
 
         while True:
@@ -32,10 +32,10 @@ class ConsoleUserInput(AbstractStrategy):
             if self._is_digit(user_in):
                 select = int(user_in) - 1
 
-                if 0 <= select < len(possibles):
+                if 0 <= select < len(legal_moves):
                     break
 
-        return possibles[select]
+        return legal_moves[select]
 
     def _is_digit(self, string):
         """
@@ -55,7 +55,7 @@ class WindowUserInput(AbstractStrategy):
         """
         次の一手
         """
-        moves = list(board.get_possibles(color).keys())
+        moves = list(board.get_legal_moves(color).keys())
         self.window.board.selectable_moves(moves)
 
         while True:
@@ -87,9 +87,9 @@ if __name__ == '__main__':
     print(board)
     console_user_input = ConsoleUserInput()
 
-    possibles = board.get_possibles('black')
+    legal_moves = board.get_legal_moves('black')
 
-    for index, value in enumerate(possibles, 1):
+    for index, value in enumerate(legal_moves, 1):
         coordinate = (chr(value[0] + 97), str(value[1] + 1))
         print(f'{index:2d}:', coordinate)
 

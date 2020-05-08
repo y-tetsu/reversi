@@ -27,7 +27,7 @@ class _AlphaBeta(AbstractStrategy):
         """
         次の一手
         """
-        moves = board.get_possibles(color).keys()  # 手の候補
+        moves = board.get_legal_moves(color).keys()  # 手の候補
         best_move, _ = self.get_best_move(color, board, moves, self.depth)
 
         return best_move
@@ -70,23 +70,23 @@ class _AlphaBeta(AbstractStrategy):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        possibles_b = board.get_possibles('black', True)
-        possibles_w = board.get_possibles('white', True)
-        is_game_end =  True if not possibles_b and not possibles_w else False
+        legal_moves_b = board.get_legal_moves('black', True)
+        legal_moves_w = board.get_legal_moves('white', True)
+        is_game_end =  True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
-            return self.evaluator.evaluate(color=color, board=board, possibles_b=possibles_b, possibles_w=possibles_w) * sign
+            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w) * sign
 
         # パスの場合
-        possibles = possibles_b if color == 'black' else possibles_w
+        legal_moves = legal_moves_b if color == 'black' else legal_moves_w
         next_color = 'white' if color == 'black' else 'black'
 
-        if not possibles:
+        if not legal_moves:
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 評価値を算出
-        for move in possibles.keys():
+        for move in legal_moves.keys():
             board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
@@ -277,6 +277,6 @@ if __name__ == '__main__':
 
     Timer.timeout_flag[key] = False
     Timer.deadline[key] = time.time() + 3
-    moves = bitboard8.get_possibles('black').keys()  # 手の候補
+    moves = bitboard8.get_legal_moves('black').keys()  # 手の候補
     print( alphabeta.get_best_move('black', bitboard8, moves, 5) )
     assert alphabeta.get_best_move('black', bitboard8, moves, 5) == ((2, 2), {(2, 2): 8, (2, 3): 8, (5, 3): 8, (1, 5): 8, (2, 5): 8, (3, 5): 8, (4, 5): 8, (6, 5): 8})

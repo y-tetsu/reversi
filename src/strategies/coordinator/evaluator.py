@@ -35,7 +35,7 @@ class Evaluator_P(AbstractEvaluator):
         """
         評価値の算出
         """
-        return self.scorer.get_score(kwargs['possibles_b'], kwargs['possibles_w'])
+        return self.scorer.get_score(kwargs['legal_moves_b'], kwargs['legal_moves_w'])
 
 
 class Evaluator_O(AbstractEvaluator):
@@ -63,7 +63,7 @@ class Evaluator_W(AbstractEvaluator):
         """
         評価値の算出
         """
-        return self.scorer.get_score(kwargs['board'], kwargs['possibles_b'], kwargs['possibles_w'])
+        return self.scorer.get_score(kwargs['board'], kwargs['legal_moves_b'], kwargs['legal_moves_w'])
 
 
 class Evaluator_N(AbstractEvaluator):
@@ -336,8 +336,8 @@ if __name__ == '__main__':
     board8.put_disc('black', 1, 1)
     board8.put_disc('white', 0, 0)
 
-    possibles_b = board8.get_possibles('black', True)
-    possibles_w = board8.get_possibles('white', True)
+    legal_moves_b = board8.get_legal_moves('black', True)
+    legal_moves_w = board8.get_legal_moves('white', True)
 
     print(board8)
 
@@ -356,7 +356,7 @@ if __name__ == '__main__':
     # Evaluator_TP
     evaluator = Evaluator_TP()
 
-    score_b = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print('black score', score_b)
     assert score_b == -17
 
@@ -364,7 +364,7 @@ if __name__ == '__main__':
     # Evaluator_TPO
     evaluator = Evaluator_TPO()
 
-    score_b = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print('black score', score_b)
     assert score_b == -25.25
 
@@ -372,11 +372,11 @@ if __name__ == '__main__':
     # Evaluator_TPOW
     evaluator = Evaluator_TPOW()
 
-    score_b = evaluator.evaluate(color='black', board=board8, possibles_b=[], possibles_w=[])
+    score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=[], legal_moves_w=[])
     print('black score', score_b)
     assert score_b == -10006
 
-    score_b = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print('black score', score_b)
     assert score_b == -25.25
 
@@ -384,18 +384,18 @@ if __name__ == '__main__':
     # Evaluator_PW
     evaluator = Evaluator_PW()
 
-    score = evaluator.evaluate(board=board8, possibles_b=[], possibles_w=[])
+    score = evaluator.evaluate(board=board8, legal_moves_b=[], legal_moves_w=[])
     print('score', score)
     assert score == -10006
 
-    score = evaluator.evaluate(board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print('score', score)
     assert score == 5
     #----------------------------------------------------------------
     # Evaluator_N
     evaluator = Evaluator_N()
 
-    score_b = evaluator.evaluate(color='black', board=board8, possibles_b=[], possibles_w=[])
+    score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=[], legal_moves_w=[])
     print('black score', score_b)
     assert score_b == -6
 
@@ -403,11 +403,11 @@ if __name__ == '__main__':
     # Evaluator_NW
     evaluator = Evaluator_NW()
 
-    score = evaluator.evaluate(board=board8, possibles_b=[], possibles_w=[])
+    score = evaluator.evaluate(board=board8, legal_moves_b=[], legal_moves_w=[])
     print('score', score)
     assert score == -10006
 
-    score = evaluator.evaluate(board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print('score', score)
     assert score == -6
 
@@ -416,16 +416,16 @@ if __name__ == '__main__':
     evaluator = Evaluator_TPWE()
 
     board8._black_bitboard = 0x0000002010003C7E
-    possibles_b = board8.get_possibles('black', True)
-    possibles_w = board8.get_possibles('white', True)
+    legal_moves_b = board8.get_legal_moves('black', True)
+    legal_moves_w = board8.get_legal_moves('white', True)
 
-    score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print(board8)
     print('score', score)
     assert score == -81
 
     board8._black_bitboard = 0x0000002010003C7C
-    score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print(board8)
     print('score', score)
     assert score == -61
@@ -435,16 +435,16 @@ if __name__ == '__main__':
     evaluator = Evaluator_TPWEC()
 
     board8._black_bitboard = 0x0000002010003C7C
-    possibles_b = board8.get_possibles('black', True)
-    possibles_w = board8.get_possibles('white', True)
+    legal_moves_b = board8.get_legal_moves('black', True)
+    legal_moves_w = board8.get_legal_moves('white', True)
 
-    score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print(board8)
     print('score', score)
     assert score == -61
 
     board8._black_bitboard = 0x0703012010003C7E
-    score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print(board8)
     print('score', score)
     assert score == 422
@@ -454,16 +454,16 @@ if __name__ == '__main__':
     evaluator = Evaluator_PWE()
 
     board8._black_bitboard = 0x0000002010003C7C
-    possibles_b = board8.get_possibles('black', True)
-    possibles_w = board8.get_possibles('white', True)
+    legal_moves_b = board8.get_legal_moves('black', True)
+    legal_moves_w = board8.get_legal_moves('white', True)
 
-    score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print(board8)
     print('score', score)
     assert score == 10
 
     board8._black_bitboard = 0x0703012010003C7E
-    score = evaluator.evaluate(color='black', board=board8, possibles_b=possibles_b, possibles_w=possibles_w)
+    score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
     print(board8)
     print('score', score)
     assert score == 310

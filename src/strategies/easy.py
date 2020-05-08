@@ -20,7 +20,7 @@ class Random(AbstractStrategy):
         """
         次の一手
         """
-        moves = list(board.get_possibles(color).keys())
+        moves = list(board.get_legal_moves(color).keys())
 
         return random.choice(moves)
 
@@ -33,9 +33,9 @@ class Greedy(AbstractStrategy):
         """
         次の一手
         """
-        possibles = board.get_possibles(color)
-        max_count = max([len(value) for value in possibles.values()])
-        moves = [key for key, value in possibles.items() if len(value) == max_count]
+        legal_moves = board.get_legal_moves(color)
+        max_count = max([len(value) for value in legal_moves.values()])
+        moves = [key for key, value in legal_moves.items() if len(value) == max_count]
 
         return random.choice(moves)
 
@@ -48,9 +48,9 @@ class Unselfish(AbstractStrategy):
         """
         次の一手
         """
-        possibles = board.get_possibles(color)
-        min_count = min([len(value) for value in possibles.values()])
-        moves = [key for key, value in possibles.items() if len(value) == min_count]
+        legal_moves = board.get_legal_moves(color)
+        min_count = min([len(value) for value in legal_moves.values()])
+        moves = [key for key, value in legal_moves.items() if len(value) == min_count]
 
         return random.choice(moves)
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         cnt = 0
 
         for player in [p1, p2]:
-            if board4x4.get_possibles(player.color):
+            if board4x4.get_legal_moves(player.color):
                 print(player, 'の番です')
                 player.put_disc(board4x4)
                 move = '(' + chr(player.move[0] + 97) + ', ' + str(player.move[1] + 1) + ')'

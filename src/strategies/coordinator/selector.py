@@ -18,7 +18,7 @@ class Selector(AbstractSelector):
         手の候補を決める
         """
         if moves is None:
-            return list(board.get_possibles(color).keys())
+            return list(board.get_legal_moves(color).keys())
 
         return moves
 
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     assert selector.depth == 3
     assert selector.limit == 3
 
-    moves = bitboard8.get_possibles('black')
+    moves = bitboard8.get_legal_moves('black')
 
     print(strategy.__class__.__name__)
     Timer.set_deadline(strategy.__class__.__name__, -1000000)
