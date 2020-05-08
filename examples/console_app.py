@@ -9,7 +9,7 @@ if '__file__' in globals():
 
 import time
 
-from reversi import BitBoard, Player, ConsoleDisplay, Game, Window, strategies
+from reversi import BitBoard, Player, ConsoleDisplay, Game, strategies
 
 
 BLACK_STRATEGIES = {
