@@ -8,8 +8,9 @@
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
 
 ### 実行方法
+examplesフォルダに移動し下記を実行してください。
 ```
-$ python reversi.py
+$ py -3.7 gui_app.py
 ```
 
 Windows版は下記よりexe(ダブルクリックで起動)をダウンロード可能です。<br>
@@ -126,7 +127,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 
 #### 登録ファイル
 追加プレイヤーを**reversi**に登録するために本ファイルを作成する必要があります。<br>
-登録ファイルは下記のフォーマット(JSON形式)に従って`strategies/extra/`以下に作成して下さい。<br>
+登録ファイルは下記のフォーマット(JSON形式)に従って`extra/`以下に作成して下さい。<br>
 作成後、Extraメニューより読み込む事でプレイヤーが追加されます。
 ```
 {
@@ -140,7 +141,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 ```
 {
     "name": "TopLeft",
-    "cmd": "py -3.7 ./strategies/extra/python/topleft/topleft.py",
+    "cmd": "py -3.7 ./extra/python/topleft/topleft.py",
     "timeouttime": 60
 }
 ```
@@ -152,8 +153,9 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 ![console](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
 
 #### 実行方法
+examplesフォルダに移動し下記を実行してください。
 ```
-$ python reversic.py
+$ py -3.7 console_app.py
 ```
 
 ---
@@ -205,9 +207,9 @@ $ py -3.7 -m pip install -r requirements.txt
 [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ### 5. reversiの実行
-上記までの環境を準備した後、コマンドプロンプトにてsrcフォルダ以下に移動し下記を実行すると**reversi**が起動します。
+上記までの環境を準備した後、コマンドプロンプトにてexamplesフォルダ以下に移動し下記を実行すると**reversi**が起動します。
 ```
-$ py -3.7 reversi.py
+$ py -3.7 gui_app.py
 ```
 
 ### (パッケージインストールの補足)
@@ -248,8 +250,7 @@ $ py -3.7 -m pip install wheel
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
 
-コマンドプロンプトにてexeフォルダ以下に移動し下記を実行すると<br>
-**reversi**のexeファイルがdistフォルダ以下に生成されます。
+コマンドプロンプトにて下記を実行すると**reversi**のexeファイルがdistフォルダ以下に生成されます。
 ```
 $ reversi.bat
 ```
