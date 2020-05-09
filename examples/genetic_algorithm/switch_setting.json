@@ -6,5 +6,9 @@
     "board_size": 8,
     "matches": 50,
     "board_type": "bitboard",
-    "processes": 2
+    "processes": 2,
+    "characters": [
+        "Challenger",
+        "Opponent"
+    ]
 }

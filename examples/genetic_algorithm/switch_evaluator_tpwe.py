@@ -2,24 +2,23 @@
 """
 Switch_Evaluator_TPWEのパラメータ調整
 """
-import sys
-sys.path.append('../../')
 
-import os
+if '__file__' in globals():
+    import os, sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
 import json
 from random import randrange, random
 from copy import deepcopy
 
-from chromosome import Chromosome
-from genetic_algorithm import GeneticAlgorithm
-
-from strategies.randomopening import RandomOpening, MinMax2F9Ro_TPWE
-from strategies.fullreading import FullReading
-from strategies.switch import Switch
-from strategies.minmax import MinMax2_TPWE
-from strategies.coordinator import Evaluator_TPWE
-from player import Player
-from simulator import Simulator
+from reversi import Player, Simulator
+from reversi.strategies.randomopening import RandomOpening, MinMax2F9Ro_TPWE
+from reversi.strategies.fullreading import FullReading
+from reversi.strategies.switch import Switch
+from reversi.strategies.minmax import MinMax2_TPWE
+from reversi.strategies.coordinator import Evaluator_TPWE
+from reversi.genetic_algorithm.chromosome import Chromosome
+from reversi.genetic_algorithm.genetic_algorithm import GeneticAlgorithm
 
 
 class Switch_Evaluator_TPWE(Chromosome):
@@ -99,19 +98,12 @@ class Switch_Evaluator_TPWE(Chromosome):
         opponent = MinMax2F9Ro_TPWE()
 
         # シミュレータ準備
-        strategy_list = {
-            'Challenger': challenger,
-            'Opponent': opponent,
-        }
-        black_players = [Player('black', c, strategy_list[c]) for c in ['Challenger', 'Opponent']]
-        white_players = [Player('white', c, strategy_list[c]) for c in ['Challenger', 'Opponent']]
         simulator = Simulator(
-            black_players,
-            white_players,
-            self.setting['matches'],
-            self.setting['board_size'],
-            self.setting['board_type'],
-            self.setting['processes']
+            {
+                'Challenger': challenger,
+                'Opponent': opponent,
+            },
+            './switch_setting.json',
         )
 
         # 2手読みのEdgeと対戦させ勝率を返す
