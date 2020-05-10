@@ -250,6 +250,16 @@ $ py -3.7 -m pip install wheel
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
 
+## reversiのexe化
+**reversi**をWindows10上で実行可能なexe形式にするには下記の手順(1～2)を実施してください。
+
+### 1. ボード処理のビルド
+コマンドプロンプトにてrecersi/BitBoardMethodsに移動後、下記を実行すると高速化版のボード処理がビルドされます。
+```
+$ build.bat
+```
+
+### 2. exeファイルの生成
 コマンドプロンプトにて下記を実行すると**reversi**のexeファイルがdistフォルダ以下に生成されます。
 ```
 $ reversi.bat
