@@ -7,12 +7,6 @@
 
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
 
-### 実行方法
-examplesフォルダに移動し下記を実行してください。
-```
-$ py -3.7 gui_app.py
-```
-
 Windows版は下記よりexe(ダブルクリックで起動)をダウンロード可能です。<br>
 [ダウンロード](https://github.com/y-tetsu/reversi/releases)
 
