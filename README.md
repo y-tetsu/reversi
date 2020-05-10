@@ -254,7 +254,7 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 **reversi**をWindows10上で実行可能なexe形式にするには下記の手順(1～2)を実施してください。
 
 ### 1. ボード処理のビルド
-コマンドプロンプトにてrecersi/BitBoardMethodsに移動後、下記を実行すると高速化版のボード処理がビルドされます。
+コマンドプロンプトにてreversi/BitBoardMethodsに移動後、下記を実行すると高速化版のボード処理がビルドされます。
 ```
 $ build.bat
 ```
