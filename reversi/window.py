@@ -12,6 +12,7 @@ import re
 
 import reversi.board as board
 from reversi.board import Board
+import reversi.BitBoardMethods as BitBoardMethods
 import reversi.strategies as strategies
 
 
@@ -61,9 +62,13 @@ ASSIST_OFFSET_X = 20   # アシストのXオフセット
 ASSIST_OFFSET_Y = 40   # アシストのYオフセット
 ASSIST_FONT_SIZE = 12  # アシストのフォントサイズ
 
-CPUTIME_OFFSET_X = 20  # CPUの持ち時間のXオフセット
+CPUTIME_OFFSET_X = 20   # CPUの持ち時間のXオフセット
 CPUTIME_OFFSET_Y = 20   # CPUの持ち時間のYオフセット
 CPUTIME_FONT_SIZE = 12  # CPUの持ち時間のフォントサイズ
+
+SLOWMODE_OFFSET_X = 1290  # 低速モード表示のXオフセット
+SLOWMODE_OFFSET_Y = 20    # 低速モード表示のYオフセット
+SLOWMODE_FONT_SIZE = 12   # 低速モード表示のフォントサイズ
 
 SQUAREHEADER_OFFSET_XY = 15  # マス目の列見出しのXYオフセット
 SQUAREHEADER_FONT_SIZE = 20  # マス目の列見出しのフォントサイズ
@@ -365,6 +370,18 @@ class ScreenBoard:
             anchor='w',
             fill=COLOR_WHITE
         )
+
+        # 低速モードの表示
+        slowmode_text = '■'
+        if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2:
+            self.text = canvas.create_text(
+                SLOWMODE_OFFSET_X,
+                SLOWMODE_OFFSET_Y,
+                text=slowmode_text,
+                font=('', SLOWMODE_FONT_SIZE),
+                anchor='w',
+                fill=COLOR_TOMATO
+            )
 
         # ボードの描画
         self._draw_squares()
