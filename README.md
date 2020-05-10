@@ -140,18 +140,6 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 }
 ```
 
-## その他
-### コンソール版
-コマンドプロンプトなどコンソール上で遊べるタイプです。<br>
-
-![console](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
-
-#### 実行方法
-examplesフォルダに移動し下記を実行してください。
-```
-$ py -3.7 console_app.py
-```
-
 ---
 ## 動作確認環境
 - Windows10 64bit<br>
@@ -259,6 +247,7 @@ $ build.bat
 $ reversi.bat
 ```
 
+---
 ## 参考書籍
 - 「実践Python3」 Mark Summerfield著 斎藤 康毅訳 株式会社オライリー・ジャパン [ISBN978-4-87311-739-3](https://www.oreilly.co.jp/books/9784873117393/)
 - 「Java言語で学ぶデザインパターン入門」 結城 浩著 ソフトバンククリエイティブ株式会社 [ISBN4-7973-2703-0](https://www.hyuki.com/dp/)
@@ -270,3 +259,17 @@ $ reversi.bat
 - 「オセロ･リバーシの勝ち方、必勝法」https://bassy84.net/
 - 「強いオセロプログラムの内部動作」http://www.amy.hi-ho.ne.jp/okuhara/howtoj.htm
 - 「オセロAI入門」https://qiita.com/na-o-ys/items/10d894635c2a6c07ac70
+
+---
+## その他
+### コンソール版
+コマンドプロンプトなどコンソール上で遊べるタイプです。<br>
+
+![console](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
+
+#### 実行方法
+examplesフォルダに移動し下記を実行してください。
+```
+$ py -3.7 console_app.py
+```
+
