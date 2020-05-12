@@ -22,7 +22,7 @@ class Reversi:
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, s=None):
+    def __init__(self, s={}):
         root = tk.Tk()
         root.withdraw()  # 表示が整うまで隠す
 
