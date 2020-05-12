@@ -266,7 +266,7 @@ class Reversic:
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
-    def __init__(self, s=None):
+    def __init__(self, s={}):
         self.board_size = 8
         self.player_names = {'black': 'User1', 'white': 'User2'}
         self.state = Reversic.START
