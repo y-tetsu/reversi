@@ -53,10 +53,9 @@ INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
     'move':     32,
 }
 
-START_OFFSET_X = WINDOW_WIDTH//2  # スタートのXオフセット
-START_OFFSET_Y = 610              # スタートのYオフセット
-START_FONT_SIZE = 32              # スタートのフォントサイズ
-START_TEXT = 'クリックでスタート' # スタートのテキスト
+START_OFFSET_X = WINDOW_WIDTH//2                # スタートのXオフセット
+START_OFFSET_Y = 610                            # スタートのYオフセット
+START_FONT_SIZE = 32                            # スタートのフォントサイズ
 
 ASSIST_OFFSET_X = 20   # アシストのXオフセット
 ASSIST_OFFSET_Y = 40   # アシストのYオフセット
@@ -82,8 +81,9 @@ TURN_BLACK_PATTERN = [('white', 'turnwhite'), ('turnwhite', 'black')]  # 黒の�
 TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の石をひっくり返すパターン
 TURN_DISC_WAIT = 0.1                                                   # 石をひっくり返す待ち時間(s)
 
-ASSIST_MENU = ['ON', 'OFF']  # 打てる場所のハイライト表示の有無
-CANCEL_MENU = ['OK']         # ゲームのキャンセル
+ASSIST_MENU = ['ON', 'OFF']              # 打てる場所のハイライト表示の有無
+LANGUAGE_MENU = ['English', 'Japanese']  # 表示言語
+CANCEL_MENU = ['OK']                     # ゲームのキャンセル
 
 CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
 CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
@@ -112,6 +112,21 @@ EXTRA_DIALOG_WIDTH = 700      # 幅
 EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
 
+TEXTS = {
+    'English': {
+        'START_TEXT':'Click to start', # スタートのテキスト
+        'TURN_ON':'Your turn',         # 手番の表示ON
+        'TURN_OFF':'',                 # 手番の表示OFF
+    },
+    'Japanese' : {
+        'START_TEXT':'クリックでスタート', # スタートのテキスト
+        'TURN_ON':'手番です',              # 手番の表示ON
+        'TURN_OFF':'',                     # 手番の表示OFF
+    },
+}
+START_TEXT = TEXTS[LANGUAGE_MENU[0]]['START_TEXT']  # スタートのテキスト
+
+
 class Window(tk.Frame):
     """
     ウィンドウ
@@ -125,6 +140,7 @@ class Window(tk.Frame):
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.assist = ASSIST_MENU[0]
+        self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
         self.extra_file = ''
@@ -147,7 +163,7 @@ class Window(tk.Frame):
         """
         self.canvas.delete('all')                                                    # 全オブジェクト削除
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player)                             # 情報表示テキスト配置
+        self.info = ScreenInfo(self.canvas, self.player, self.language)              # 情報表示テキスト配置
         self.start = ScreenStart(self.canvas)                                        # スタートテキスト配置
 
     def set_state(self, state):
@@ -170,6 +186,7 @@ class Menu(tk.Menu):
         self.black_player = black_players[0]
         self.white_player = white_players[0]
         self.assist = ASSIST_MENU[0]
+        self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
 
@@ -183,6 +200,7 @@ class Menu(tk.Menu):
         self.menu_items['cputime'] = CPUTIME_MENU
         self.menu_items['extra'] = EXTRA_MENU
         self.menu_items['assist'] = ASSIST_MENU
+        self.menu_items['language'] = LANGUAGE_MENU
         self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
 
@@ -604,9 +622,10 @@ class ScreenInfo:
     """
     情報表示テキスト
     """
-    def __init__(self, canvas, player):
+    def __init__(self, canvas, player, language):
         self.canvas = canvas
         self.player = player
+        self.language = language
         self.text = {}
 
         # テキスト作成
@@ -632,6 +651,20 @@ class ScreenInfo:
         """
         text_id = self.text[color + '_' + name]
         self.canvas.itemconfigure(text_id, text=text)
+
+    def set_turn_text_on(self, color):
+        """
+        手番を表示
+        """
+        text_id = self.text[color + '_' + 'turn']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['TURN_ON'])
+
+    def set_turn_text_off(self, color):
+        """
+        手番を表示
+        """
+        text_id = self.text[color + '_' + 'turn']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['TURN_OFF'])
 
 
 class ScreenStart:

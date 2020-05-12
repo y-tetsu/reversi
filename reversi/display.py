@@ -132,8 +132,8 @@ class WindowDisplay(AbstractDisplay):
         """
         手番の表示
         """
-        self.info.set_text(player.color, 'turn', '手番です')  # 手番の表示
-        self.board.enable_moves(legal_moves)  # 打てる候補を表示
+        self.info.set_turn_text_on(player.color)  # 手番の表示
+        self.board.enable_moves(legal_moves)      # 打てる候補を表示
         time.sleep(0.3)
 
     def move(self, player, legal_moves):
@@ -144,7 +144,7 @@ class WindowDisplay(AbstractDisplay):
         y = str(player.move[1] + 1)
 
         for color in PLAYER_COLORS:
-            self.info.set_text(color, 'turn', '')  # 手番の表示を消す
+            self.info.set_turn_text_off(color)     # 手番の表示を消す
             self.info.set_text(color, 'move', '')  # 打った手の表示を消す
 
         self.board.disable_moves(legal_moves)  # 打てる候補のハイライトをなくす
