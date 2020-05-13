@@ -111,7 +111,6 @@ EXTRA_DIALOG_TITLE = 'Extra'  # タイトル
 EXTRA_DIALOG_WIDTH = 700      # 幅
 EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
-
 TEXTS = {
     'English': {
         'START_TEXT':'Click to start', # スタートのテキスト
@@ -124,7 +123,6 @@ TEXTS = {
         'TURN_OFF':'',                     # 手番の表示OFF
     },
 }
-START_TEXT = TEXTS[LANGUAGE_MENU[0]]['START_TEXT']  # スタートのテキスト
 
 
 class Window(tk.Frame):
@@ -164,7 +162,7 @@ class Window(tk.Frame):
         self.canvas.delete('all')                                                    # 全オブジェクト削除
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist)  # ボード配置
         self.info = ScreenInfo(self.canvas, self.player, self.language)              # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas)                                        # スタートテキスト配置
+        self.start = ScreenStart(self.canvas, self.language)                         # スタートテキスト配置
 
     def set_state(self, state):
         """
@@ -236,6 +234,7 @@ class Menu(tk.Menu):
                     ExtraDialog(window=self.window, event=self.event)
 
                 self.assist= item if name == 'assist' else self.assist
+                self.language= item if name == 'language' else self.language
                 self.cancel= item if name == 'cancel' else self.cancel
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
 
@@ -671,14 +670,15 @@ class ScreenStart:
     """
     スタートテキスト
     """
-    def __init__(self, canvas):
+    def __init__(self, canvas, language):
         self.canvas = canvas
+        self.language = language
 
         # テキスト作成
         self.text = canvas.create_text(
             START_OFFSET_X,
             START_OFFSET_Y,
-            text=START_TEXT,
+            text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
             fill=COLOR_GOLD
         )
@@ -714,7 +714,7 @@ class ScreenStart:
         """
         スタートを有効化/無効化
         """
-        text = START_TEXT if state == 'normal' else ''
+        text = TEXTS[self.language]['START_TEXT'] if state == 'normal' else ''
         self.canvas.itemconfigure(self.text, text=text, state=state)
 
 
