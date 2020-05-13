@@ -1,0 +1,11 @@
+{
+    "board_size": 8,
+    "board_type": "bitboard",
+    "matches": 50,
+    "processes": 2,
+    "characters": [
+        "Unselfish",
+        "Random",
+        "Greedy"
+    ]
+}
