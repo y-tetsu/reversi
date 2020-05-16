@@ -112,33 +112,41 @@ EXTRA_DIALOG_WIDTH = 700      # 幅
 EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
 TEXTS = {
-    LANGUAGE_MENU[0]: {                                # Engulish
-        'START_TEXT': 'Click to start',                # Start Text
-        'TURN_ON': 'Your turn',                        # Turn Display ON
-        'TURN_OFF': '',                                # Turn Display OFF
-        'MOVE_ON': '',                                 # Move Display ON
-        'MOVE_OFF': '',                                # Move Display OFF
-        'FOUL_ON': 'Foul',                             # Foul Display ON
-        'WIN_ON': 'Win',                               # Win Display ON
-        'LOSE_ON': 'Lose',                             # Lose Display ON
-        'DRAW_ON': 'Draw',                             # Draw Display ON
-        'CPU_WAIT_TEXT': 'Please set CPU wait time.',  # CPU wait time
-        'CPU_SECOND_TEXT': '(sec)',                    # CPU wait time unit
-        'CPU_SETTING_TEXT': 'Set',                     # CPU wait time setting
+    LANGUAGE_MENU[0]: {                                                                # Engulish
+        'START_TEXT': 'Click to start',                                                # Start Text
+        'TURN_ON': 'Your turn',                                                        # Turn Display ON
+        'TURN_OFF': '',                                                                # Turn Display OFF
+        'MOVE_ON': '',                                                                 # Move Display ON
+        'MOVE_OFF': '',                                                                # Move Display OFF
+        'FOUL_ON': 'Foul',                                                             # Foul Display ON
+        'WIN_ON': 'Win',                                                               # Win Display ON
+        'LOSE_ON': 'Lose',                                                             # Lose Display ON
+        'DRAW_ON': 'Draw',                                                             # Draw Display ON
+        'CPU_WAIT_TEXT': 'Please set CPU wait time.',                                  # CPU wait time
+        'CPU_SECOND_TEXT': '(sec)',                                                    # CPU wait time unit
+        'CPU_SETTING_TEXT': 'Set',                                                     # CPU wait time setting
+        'EXTRA_PLAYER_TEXT': 'Please add extra player by loading registration file.',  # Extra player
+        'EXTRA_FILE_TEXT': 'Registration file',                                        # Registration file for Extra player
+        'EXTRA_REF_TEXT': 'Reference',                                                 # Reference
+        'EXTRA_LOAD_TEXT': 'Load',                                                     # Load
     },
-    LANGUAGE_MENU[1] : {                                     # Japanese
-        'START_TEXT':'クリックでスタート',                   # スタートのテキスト
-        'TURN_ON':'手番です',                                # 手番の表示ON
-        'TURN_OFF':'',                                       # 手番の表示OFF
-        'MOVE_ON': ' に置きました',                          # 手の表示ON
-        'MOVE_OFF': '',                                      # 手の表示OFF
-        'FOUL_ON': '反則',                                   # 反則負けの表示ON
-        'WIN_ON': '勝ち',                                    # 勝ちの表示ON
-        'LOSE_ON': '負け',                                   # 負けの表示ON
-        'DRAW_ON': '引き分け',                               # 引き分けの表示ON
-        'CPU_WAIT_TEXT': 'CPUの持ち時間を設定してください',  # CPU待ち時間
-        'CPU_SECOND_TEXT': '(秒)',                           # CPU待ち時間の単位
-        'CPU_SETTING_TEXT': '設定',                          # CPU待ち時間の設定
+    LANGUAGE_MENU[1] : {                                                          # Japanese
+        'START_TEXT':'クリックでスタート',                                        # スタートのテキスト
+        'TURN_ON':'手番です',                                                     # 手番の表示ON
+        'TURN_OFF':'',                                                            # 手番の表示OFF
+        'MOVE_ON': ' に置きました',                                               # 手の表示ON
+        'MOVE_OFF': '',                                                           # 手の表示OFF
+        'FOUL_ON': '反則',                                                        # 反則負けの表示ON
+        'WIN_ON': '勝ち',                                                         # 勝ちの表示ON
+        'LOSE_ON': '負け',                                                        # 負けの表示ON
+        'DRAW_ON': '引き分け',                                                    # 引き分けの表示ON
+        'CPU_WAIT_TEXT': 'CPUの持ち時間を設定してください',                       # CPU待ち時間
+        'CPU_SECOND_TEXT': '(秒)',                                                # CPU待ち時間の単位
+        'CPU_SETTING_TEXT': '設定',                                               # CPU待ち時間の設定
+        'EXTRA_PLAYER_TEXT': '登録ファイルを読み込むとプレイヤーを追加できます',  # 外部プレイヤー
+        'EXTRA_FILE_TEXT': '登録ファイル',                                        # 登録ファイル
+        'EXTRA_REF_TEXT': '参照',                                                 # 参照
+        'EXTRA_LOAD_TEXT': '読み込む',                                            # 読み込む
     },
 }
 
@@ -249,7 +257,7 @@ class Menu(tk.Menu):
                     CpuTimeDialog(window=self.window, event=self.event, language=self.language)
 
                 if name == 'extra':
-                    ExtraDialog(window=self.window, event=self.event)
+                    ExtraDialog(window=self.window, event=self.event, language=self.language)
 
                 self.assist= item if name == 'assist' else self.assist
                 self.language= item if name == 'language' else self.language
@@ -319,7 +327,7 @@ class ExtraDialog:
     """
     Extra設定ダイアログ
     """
-    def __init__(self, window=None, event=None):
+    def __init__(self, window=None, event=None, language=None):
         self.window = window
         self.event = event
         self.dialog = tk.Toplevel(master=self.window.root)
@@ -330,21 +338,21 @@ class ExtraDialog:
 
         self.extra_file = tk.StringVar()
         self.extra_file.set(self.window.extra_file)
-        label = tk.Label(self.dialog, text='登録ファイルを読み込むとプレイヤーを追加できます')
+        label = tk.Label(self.dialog, text=TEXTS[language]['EXTRA_PLAYER_TEXT'])
         label.pack(anchor='w', padx='5')
 
         frame = tk.Frame(self.dialog)
         frame.pack(fill='x', pady='5')
-        label = tk.Label(frame, text='登録ファイル')
+        label = tk.Label(frame, text=TEXTS[language]['EXTRA_FILE_TEXT'])
         label.pack(side='left', padx='5')
 
         entry = tk.Entry(frame, textvariable=self.extra_file)
         entry.pack(side='left', expand=1, fill='x', pady='5')
 
-        button = tk.Button(frame, text="参照", command=self.select_extra_file)
+        button = tk.Button(frame, text=TEXTS[language]['EXTRA_REF_TEXT'], command=self.select_extra_file)
         button.pack(side='right', padx='5')
 
-        button = tk.Button(self.dialog, text="読み込む", command=self.set_parameter)
+        button = tk.Button(self.dialog, text=TEXTS[language]['EXTRA_LOAD_TEXT'], command=self.set_parameter)
         button.pack()
 
     def select_extra_file(self):
