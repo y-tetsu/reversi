@@ -55,7 +55,7 @@ class ConsoleDisplay(AbstractDisplay):
         手番の表示
         """
         time.sleep(1)
-        print(player, 'の番です')
+        print(str(player) + "'s turn")
 
         for index, value in enumerate(legal_moves, 1):
             coordinate = (chr(value[0] + 97), str(value[1] + 1))
@@ -68,26 +68,26 @@ class ConsoleDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print((x, y), 'に置きました\n')
+        print('putted on', (x, y), '\n')
         time.sleep(1)
 
     def foul(self, player):
         """
         反則プレイヤーの表示
         """
-        print(player, 'の反則')
+        print(player, 'foul')
 
     def win(self, player):
         """
         勝ちプレイヤーの表示
         """
-        print(player, 'の勝ちです')
+        print(player, 'win')
 
     def draw(self):
         """
         引き分けの表示
         """
-        print('引き分けです')
+        print('draw')
 
 
 class NoneDisplay(AbstractDisplay):
