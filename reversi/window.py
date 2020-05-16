@@ -113,14 +113,26 @@ EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
 TEXTS = {
     'English': {
-        'START_TEXT':'Click to start', # スタートのテキスト
-        'TURN_ON':'Your turn',         # 手番の表示ON
-        'TURN_OFF':'',                 # 手番の表示OFF
+        'START_TEXT': 'Click to start', # スタートのテキスト
+        'TURN_ON': 'Your turn',         # 手番の表示ON
+        'TURN_OFF': '',                 # 手番の表示OFF
+        'MOVE_ON': '',                  # 手の表示ON
+        'MOVE_OFF': '',                 # 手の表示OFF
+        'FOUL_ON': 'Foul',              # 反則負けの表示ON
+        'WIN_ON': 'Win',                # 勝ちの表示ON
+        'LOSE_ON': 'Lose',              # 負けの表示ON
+        'DRAW_ON': 'Draw',              # 引き分けの表示ON
     },
     'Japanese' : {
         'START_TEXT':'クリックでスタート', # スタートのテキスト
         'TURN_ON':'手番です',              # 手番の表示ON
         'TURN_OFF':'',                     # 手番の表示OFF
+        'MOVE_ON': ' に置きました',        # 手の表示ON
+        'MOVE_OFF': '',                    # 手の表示OFF
+        'FOUL_ON': '反則',                 # 反則負けの表示ON
+        'WIN_ON': '勝ち',                  # 勝ちの表示ON
+        'LOSE_ON': '負け',                 # 負けの表示ON
+        'DRAW_ON': '引き分け',             # 引き分けの表示ON
     },
 }
 
@@ -664,6 +676,48 @@ class ScreenInfo:
         """
         text_id = self.text[color + '_' + 'turn']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['TURN_OFF'])
+
+    def set_move_text_on(self, color, x, y):
+        """
+        手を表示
+        """
+        text_id = self.text[color + '_' + 'move']
+        self.canvas.itemconfigure(text_id, text=f'({x}, {y})' + TEXTS[self.language]['MOVE_ON'])
+
+    def set_move_text_off(self, color):
+        """
+        手を表示
+        """
+        text_id = self.text[color + '_' + 'move']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['MOVE_OFF'])
+
+    def set_foul_text_on(self, color):
+        """
+        反則負けを表示
+        """
+        text_id = self.text[color + '_' + 'winlose']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['FOUL_ON'])
+
+    def set_win_text_on(self, color):
+        """
+        勝ちを表示
+        """
+        text_id = self.text[color + '_' + 'winlose']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['WIN_ON'])
+
+    def set_lose_text_on(self, color):
+        """
+        負けを表示
+        """
+        text_id = self.text[color + '_' + 'winlose']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['LOSE_ON'])
+
+    def set_draw_text_on(self, color):
+        """
+        引き分けを表示
+        """
+        text_id = self.text[color + '_' + 'winlose']
+        self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['DRAW_ON'])
 
 
 class ScreenStart:
