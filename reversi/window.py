@@ -112,27 +112,33 @@ EXTRA_DIALOG_WIDTH = 700      # 幅
 EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
 TEXTS = {
-    'English': {
-        'START_TEXT': 'Click to start', # スタートのテキスト
-        'TURN_ON': 'Your turn',         # 手番の表示ON
-        'TURN_OFF': '',                 # 手番の表示OFF
-        'MOVE_ON': '',                  # 手の表示ON
-        'MOVE_OFF': '',                 # 手の表示OFF
-        'FOUL_ON': 'Foul',              # 反則負けの表示ON
-        'WIN_ON': 'Win',                # 勝ちの表示ON
-        'LOSE_ON': 'Lose',              # 負けの表示ON
-        'DRAW_ON': 'Draw',              # 引き分けの表示ON
+    LANGUAGE_MENU[0]: {                                # Engulish
+        'START_TEXT': 'Click to start',                # Start Text
+        'TURN_ON': 'Your turn',                        # Turn Display ON
+        'TURN_OFF': '',                                # Turn Display OFF
+        'MOVE_ON': '',                                 # Move Display ON
+        'MOVE_OFF': '',                                # Move Display OFF
+        'FOUL_ON': 'Foul',                             # Foul Display ON
+        'WIN_ON': 'Win',                               # Win Display ON
+        'LOSE_ON': 'Lose',                             # Lose Display ON
+        'DRAW_ON': 'Draw',                             # Draw Display ON
+        'CPU_WAIT_TEXT': 'Please set CPU wait time.',  # CPU wait time
+        'CPU_SECOND_TEXT': '(sec)',                    # CPU wait time unit
+        'CPU_SETTING_TEXT': 'Set',                     # CPU wait time setting
     },
-    'Japanese' : {
-        'START_TEXT':'クリックでスタート', # スタートのテキスト
-        'TURN_ON':'手番です',              # 手番の表示ON
-        'TURN_OFF':'',                     # 手番の表示OFF
-        'MOVE_ON': ' に置きました',        # 手の表示ON
-        'MOVE_OFF': '',                    # 手の表示OFF
-        'FOUL_ON': '反則',                 # 反則負けの表示ON
-        'WIN_ON': '勝ち',                  # 勝ちの表示ON
-        'LOSE_ON': '負け',                 # 負けの表示ON
-        'DRAW_ON': '引き分け',             # 引き分けの表示ON
+    LANGUAGE_MENU[1] : {                                     # Japanese
+        'START_TEXT':'クリックでスタート',                   # スタートのテキスト
+        'TURN_ON':'手番です',                                # 手番の表示ON
+        'TURN_OFF':'',                                       # 手番の表示OFF
+        'MOVE_ON': ' に置きました',                          # 手の表示ON
+        'MOVE_OFF': '',                                      # 手の表示OFF
+        'FOUL_ON': '反則',                                   # 反則負けの表示ON
+        'WIN_ON': '勝ち',                                    # 勝ちの表示ON
+        'LOSE_ON': '負け',                                   # 負けの表示ON
+        'DRAW_ON': '引き分け',                               # 引き分けの表示ON
+        'CPU_WAIT_TEXT': 'CPUの持ち時間を設定してください',  # CPU待ち時間
+        'CPU_SECOND_TEXT': '(秒)',                           # CPU待ち時間の単位
+        'CPU_SETTING_TEXT': '設定',                          # CPU待ち時間の設定
     },
 }
 
@@ -240,7 +246,7 @@ class Menu(tk.Menu):
                 self.white_player= item if name == 'white' else self.white_player
 
                 if name == 'cputime':
-                    CpuTimeDialog(window=self.window, event=self.event)
+                    CpuTimeDialog(window=self.window, event=self.event, language=self.language)
 
                 if name == 'extra':
                     ExtraDialog(window=self.window, event=self.event)
@@ -266,7 +272,7 @@ class CpuTimeDialog:
     """
     CPUの持ち時間設定ダイアログ
     """
-    def __init__(self, window=None, event=None):
+    def __init__(self, window=None, event=None, language=None):
         self.window = window
         self.event = event
         self.dialog = tk.Toplevel(master=self.window.root)
@@ -277,7 +283,7 @@ class CpuTimeDialog:
 
         self.parameter = tk.StringVar()
         self.parameter.set(self.window.cputime)
-        label = tk.Label(self.dialog, text='CPUの持ち時間を設定してください')
+        label = tk.Label(self.dialog, text=TEXTS[language]['CPU_WAIT_TEXT'])
         label.pack(anchor='w')
 
         frame = tk.Frame(self.dialog)
@@ -286,10 +292,10 @@ class CpuTimeDialog:
         label.pack(side='left', padx='5')
         entry = tk.Entry(frame, textvariable=self.parameter)
         entry.pack(side='left', expand=1, fill='x', pady='5')
-        label = tk.Label(frame, text='(秒)')
+        label = tk.Label(frame, text=TEXTS[language]['CPU_SECOND_TEXT'])
         label.pack(side='right', padx='5')
 
-        button = tk.Button(self.dialog, text="設定", command=self.set_parameter)
+        button = tk.Button(self.dialog, text=TEXTS[language]['CPU_SETTING_TEXT'], command=self.set_parameter)
         button.pack()
 
     def set_parameter(self):
