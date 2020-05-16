@@ -6,7 +6,7 @@
 ## Introduction
 A reversi library for Python.<br>
 
-![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
+![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi_en.gif?raw=true)
 
 For Windows OS, you can download the executable file from the following.<br>
 [Download](https://github.com/y-tetsu/reversi/releases)
