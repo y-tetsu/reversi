@@ -8,7 +8,7 @@ A reversi library for Python.<br>
 
 ![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
 
-For Windows version, you can download the exe (double click to start) from the following.<br>
+For Windows OS, you can download the executable file from the following.<br>
 [Download](https://github.com/y-tetsu/reversi/releases)
 
 ## Environment
