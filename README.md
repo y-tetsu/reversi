@@ -11,7 +11,7 @@ A reversi library for Python.<br>
 For Windows OS, you can download the executable file from the following.<br>
 [Download](https://github.com/y-tetsu/reversi/releases)
 
-## Environment
+## Requirement
 - Windows10 64bit<br>
 - Display size 1366x768
 - Processe 1.6GHz
