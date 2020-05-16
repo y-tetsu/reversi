@@ -1,5 +1,6 @@
 # reversi
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+<br>
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.ja.md)]<br>
 
 ## ゲーム紹介
