@@ -1,4 +1,5 @@
 from setuptools import setup
+from distutils.extension import Extension
 from reversi import __version__
 
 setup(
