@@ -31,7 +31,7 @@ For Windows OS, you can download the executable application from the following.<
 ```
 $ py -3.7 -m pip install --upgrade pip
 ```
-4. install reversi(run the following)
+4. install **reversi**(run the following)
 ```
 $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 ```
