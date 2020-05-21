@@ -10,4 +10,5 @@ setup(
     author='y-tetsu',
     url='',
     packages=['reversi', 'reversi.BitBoardMethods', 'reversi.strategies', 'reversi.strategies.common', 'reversi.strategies.coordinator', 'reversi.genetic_algorithm'],
+    ext_modules=[Extension('reversi.BitBoardMethods', ['GetBoardInfoFast.pyx', 'GetLegalMovesFast.pyx'])],
 )
