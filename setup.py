@@ -10,5 +10,5 @@ setup(
     author='y-tetsu',
     url='',
     packages=['reversi', 'reversi.BitBoardMethods', 'reversi.strategies', 'reversi.strategies.common', 'reversi.strategies.coordinator', 'reversi.genetic_algorithm'],
-    data_files=[('reversi.BitBoardMethods', ['reversi.BitBoardMethods.GetBoardInfoFast.pyx'])],
+    data_files=[('reversi/BitBoardMethods', ['reversi/BitBoardMethods/GetBoardInfoFast.pyx'])],
 )
