@@ -24,7 +24,7 @@ For Windows OS, you can download the executable application from the following.<
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ## How to Install
-1. install [Python 3.7.6 or higher](https://www.python.org/downloads/release/python-376/)<br>
+1. install [Python 3.7.6](https://www.python.org/downloads/release/python-376/) or higher<br>
 2. install [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 3. install **reversi**(run the following)
 ```
@@ -45,7 +45,7 @@ The examples to be copied are below.
 - [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - A battle simulator that displays the results of playing Reversi AI against each other
 - [05_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_genetic_algorithm.py) - A example for discovering the parameters of a reversi strategy using a genetic algorithm
 
-You can run the sample below.
+You can run a example below.
 ```
 $ cd reversi_examples
 $ py -3.7 01_gui_app.py
