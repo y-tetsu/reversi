@@ -1,0 +1,5 @@
+{
+    "name": "BottomRight",
+    "cmd": "perl ./extra/perl/bottomright/bottomright.pl",
+    "timeouttime": 60
+}

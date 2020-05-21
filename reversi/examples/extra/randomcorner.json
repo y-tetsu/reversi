@@ -1,0 +1,5 @@
+{
+    "name": "RandomCorner",
+    "cmd": "cscript //Nologo ./extra/vbscript/randomcorner/randomcorner.vbs",
+    "timeouttime": 60
+}
