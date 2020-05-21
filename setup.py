@@ -12,7 +12,7 @@ setup(
     url='',
     packages=['reversi', 'reversi.BitBoardMethods', 'reversi.strategies', 'reversi.strategies.common', 'reversi.strategies.coordinator', 'reversi.genetic_algorithm'],
     ext_modules=[
-        Extension('reversi.BitBoardMethods.GetBoardInfoFast', ['reversi/BitBoardMethods/GetBoardInfoFast.pyx']),
-        Extension('reversi.BitBoardMethods.GetLegalMovesFast', ['reversi/BitBoardMethods/GetLegalMovesFast.pyx']),
+        Extension('reversi.BitBoardMethods.GetBoardInfoFast', ['reversi/BitBoardMethods/GetBoardInfoFast.c']),
+        Extension('reversi.BitBoardMethods.GetLegalMovesFast', ['reversi/BitBoardMethods/GetLegalMovesFast.c']),
     ],
 )
