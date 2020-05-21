@@ -15,7 +15,7 @@ For Windows OS, you can download the executable application from the following.<
 ## Requirement
 - Windows10 64bit<br>
 - Display size 1366x768
-- Processe 1.6GHz
+- Processor 1.6GHz
 - Memory 4.00GB
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
     - cython 0.29.15<br>
