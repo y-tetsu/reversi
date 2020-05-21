@@ -8,5 +8,3 @@ from reversi.app import Reversi, Reversic
 from reversi.simulator import Simulator
 import reversi.strategies
 import reversi.genetic_algorithm
-
-__version__ = '0.0.13'

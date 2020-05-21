@@ -1,10 +1,9 @@
 from setuptools import setup
 from distutils.extension import Extension
-from reversi import __version__
 
 setup(
     name='reversi',
-    version=__version__,
+    version='0.0.13',
     license='MIT License',
     install_requires=['cython', 'numpy', 'pyinstaller'],
     description='A reversi library for Python',
