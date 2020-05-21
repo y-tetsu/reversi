@@ -1,4 +1,5 @@
 from setuptools import setup
+from distutils.extension import Extension
 from reversi import __version__
 
 setup(
@@ -10,5 +11,8 @@ setup(
     author='y-tetsu',
     url='',
     packages=['reversi', 'reversi.BitBoardMethods', 'reversi.strategies', 'reversi.strategies.common', 'reversi.strategies.coordinator', 'reversi.genetic_algorithm'],
-    data_files=[('reversi/BitBoardMethods', ['reversi/BitBoardMethods/GetBoardInfoFast.pyx'])],
+    ext_modules=[
+        Extension('reversi.BitBoardMethods.GetBoardInfoFast', ['reversi/BitBoardMethods/GetBoardInfoFast.pyx']),
+        Extension('reversi.BitBoardMethods.GetLegalMovesFast', ['reversi/BitBoardMethods/GetLegalMovesFast.pyx']),
+    ],
 )
