@@ -8,7 +8,7 @@ setup(
     install_requires=[
         'cython',
         'numpy',
-        'pyinstaller'
+        'pyinstaller',
     ],
     description='A reversi library for Python',
     author='y-tetsu',
@@ -19,8 +19,17 @@ setup(
         'reversi.strategies',
         'reversi.strategies.common',
         'reversi.strategies.coordinator',
-        'reversi.genetic_algorithm'
+        'reversi.genetic_algorithm',
+        'reversi.examples',
+        'reversi.examples.extra',
+        'reversi.examples.extra.perl.bottomright',
+        'reversi.examples.extra.python.topleft',
+        'reversi.examples.extra.vbscript.randomcorner',
+        'reversi.examples.extra.sample_input',
     ],
+    package_data={
+        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt"]
+    },
     ext_modules=[
         Extension(
             'reversi.BitBoardMethods.GetBoardInfoFast',
