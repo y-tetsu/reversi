@@ -9,5 +9,5 @@ setup(
     description='A reversi library for Python',
     author='y-tetsu',
     url='',
-    packages=['reversi'],
+    packages=['reversi', 'reversi.BitBoardMethods', 'reversi.strategies', 'reversi.genetic_algorithm'],
 )
