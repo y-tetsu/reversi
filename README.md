@@ -31,6 +31,12 @@ For Windows OS, you can download the executable application from the following.<
 $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 ```
 
+## How to Uninstall
+uninstall **reversi**(run the following)
+```
+$ py -3.7 -m pip uninstall reversi
+```
+
 ## Examples
 Run the following in any folder to copy the examples.
 ```
