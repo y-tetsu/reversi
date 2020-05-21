@@ -32,7 +32,7 @@ $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 ```
 
 ## Examples
-Execute the following in any folder to copy the examples.
+Run the following in any folder to copy the examples.
 ```
 $ install_reversi_examples
 ```
