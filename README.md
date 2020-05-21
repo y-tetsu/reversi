@@ -21,3 +21,11 @@ For Windows OS, you can download the executable file from the following.<br>
     - numpy 1.18.1<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+## How to install
+1. install [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
+2. install [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+3. install reversi(run the following)
+```
+$ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
+```
