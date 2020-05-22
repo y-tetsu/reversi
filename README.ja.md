@@ -1,16 +1,17 @@
-# reversi
-[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-<br>
-[ [English](https://github.com/y-tetsu/reversi/blob/master/README.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.ja.md)]<br>
+<p align="center">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="800px">
+</p>
 
-## ゲーム紹介
+# reversi
+[ [English](https://github.com/y-tetsu/reversi/blob/master/README.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.ja.md)]<br>
 盤面のサイズや対戦プレイヤーをいろいろ選べるリバーシです。<br>
 自分でプログラミングしたAIをゲームに追加して遊べる特長があります。<br>
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+<br>
 
-![gui](https://github.com/y-tetsu/reversi/blob/master/image/reversi2.gif?raw=true)
-
+## ダウンロード
 Windows版は下記よりexe(ダブルクリックで起動)をダウンロード可能です。<br>
-[ダウンロード](https://github.com/y-tetsu/reversi/releases)
+[reversi.zip](https://github.com/y-tetsu/reversi/releases)(リンク先でAssetsをクリックしてください)
 
 ### メニュー一覧
 ゲームで選べるメニューの一覧です。<br>
@@ -72,13 +73,13 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 4. **reversi**を起動する
 5. Extraメニューより登録ファイルを読み込ませる
 
-![gui](https://github.com/y-tetsu/reversi/blob/master/image/extra.gif?raw=true)
+![extra](https://raw.githubusercontent.com/y-tetsu/reversi/images/extra_ja.gif)
 
 #### 追加プレイヤーの実行
 追加プレイヤーを**reversi**に登録すると外部プログラムとして実行されるようになります。<br>
 以下に処理の流れを示します。
 
-![external](https://github.com/y-tetsu/reversi/blob/master/image/external.png?raw=true)
+![external](https://raw.githubusercontent.com/y-tetsu/reversi/images/external_ja.png)
 
 1. ゲーム開始後、追加プレイヤーの手番になると**reversi**は対応するプログラムのコマンドを実行します。<br>その際、標準入力に盤面情報を渡し、追加プレイヤーのプログラムの応答を待ちます。
 
@@ -95,7 +96,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 ```
 
 下記に白の手番、盤面サイズ8x8の例を示します。<br>
-![stdin](https://github.com/y-tetsu/reversi/blob/master/image/stdin2.png?raw=true)
+![stdin](https://raw.githubusercontent.com/y-tetsu/reversi/images/stdin.png)
 ```
 -1
 8
@@ -116,7 +117,7 @@ Windows版は下記よりexe(ダブルクリックで起動)をダウンロー�
 ```
 
 下記にc5へ打つ場合の例を示します。<br>
-![stdout](https://github.com/y-tetsu/reversi/blob/master/image/stdout2.png?raw=true)
+![stdout](https://raw.githubusercontent.com/y-tetsu/reversi/images/stdout.png)
 ```
 2 4
 ```
@@ -234,21 +235,6 @@ $ py -3.7 -m pip install wheel
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
 
-## reversiのexe化
-**reversi**をWindows10上で実行可能なexe形式にするには下記の手順(1～2)を実施してください。
-
-### 1. ボード処理のビルド
-コマンドプロンプトにてreversi/BitBoardMethodsに移動後、下記を実行すると高速化版のボード処理がビルドされます。
-```
-$ build.bat
-```
-
-### 2. exeファイルの生成
-コマンドプロンプトにて下記を実行すると**reversi**のexeファイルがdistフォルダ以下に生成されます。
-```
-$ reversi.bat
-```
-
 ---
 ## 参考書籍
 - 「実践Python3」 Mark Summerfield著 斎藤 康毅訳 株式会社オライリー・ジャパン [ISBN978-4-87311-739-3](https://www.oreilly.co.jp/books/9784873117393/)
@@ -261,17 +247,3 @@ $ reversi.bat
 - 「オセロ･リバーシの勝ち方、必勝法」https://bassy84.net/
 - 「強いオセロプログラムの内部動作」http://www.amy.hi-ho.ne.jp/okuhara/howtoj.htm
 - 「オセロAI入門」https://qiita.com/na-o-ys/items/10d894635c2a6c07ac70
-
----
-## その他
-### コンソール版
-コマンドプロンプトなどコンソール上で遊べるタイプです。<br>
-
-![console](https://github.com/y-tetsu/reversi/blob/master/image/console2.gif?raw=true)
-
-#### 実行方法
-examplesフォルダに移動し下記を実行してください。
-```
-$ py -3.7 console_app.py
-```
-
