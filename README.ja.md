@@ -13,7 +13,7 @@
 Windows版は下記よりexe(ダブルクリックで起動)をダウンロード可能です。<br>
 [reversi.zip](https://github.com/y-tetsu/reversi/releases)(リンク先でAssetsをクリックしてください)
 
-### メニュー一覧
+## メニュー一覧
 ゲームで選べるメニューの一覧です。<br>
 
  |名前|内容|
