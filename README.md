@@ -65,7 +65,7 @@ $ 06_create_exe.bat
 ```
 
 ### Deomo
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="500">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="500">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="500">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="600px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="600px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="600px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
