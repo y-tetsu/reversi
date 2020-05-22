@@ -28,7 +28,7 @@ setup(
         'reversi.examples.extra.sample_input',
     ],
     package_data={
-        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt", "*.pyx"]
+        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt", "*.pyx", "*.pyd"]
     },
     entry_points={
         "console_scripts": [
