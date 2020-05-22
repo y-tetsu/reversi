@@ -12,7 +12,7 @@ You can feel free to enjoy programming Reversi (Othello) AI.<br>
 
 ## Download
 For Windows OS, you can download the Reversi Application(using tkinter) from the following.<br>
-[Download Reversi Application](https://github.com/y-tetsu/reversi/releases)
+[Download reversi.zip](https://github.com/y-tetsu/reversi/releases)(Click Assets)
 
 ## Requirement
 - Windows10 64bit<br>
@@ -64,8 +64,8 @@ $ py -3.7 05_genetic_algorithm.py
 $ 06_create_exe.bat
 ```
 
-### Deomo
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="600px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="600px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="600px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
+### Demo
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
