@@ -28,18 +28,8 @@ setup(
         'reversi.examples.extra.sample_input',
     ],
     package_data={
-        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt"]
+        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt", "*.pyx"]
     },
-    ext_modules=[
-        Extension(
-            'reversi.BitBoardMethods.GetBoardInfoFast',
-            ['reversi/BitBoardMethods/GetBoardInfoFast.c']
-        ),
-        Extension(
-            'reversi.BitBoardMethods.GetLegalMovesFast',
-            ['reversi/BitBoardMethods/GetLegalMovesFast.c']
-        ),
-    ],
     entry_points={
         "console_scripts": [
             "install_reversi_examples=reversi.examples:install",
