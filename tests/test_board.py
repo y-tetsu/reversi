@@ -31,6 +31,16 @@ class TestBoard(unittest.TestCase):
 
         self.assertTrue(err)
 
+    def test_board_size_28(self):
+        err = False
+
+        try:
+            board2 = Board(28)
+        except BoardSizeError as e:
+            err = True
+
+        self.assertTrue(err)
+
 #if __name__ == '__main__':
 #    # ========== #
 #    # 通常ボード #
