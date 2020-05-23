@@ -38,7 +38,6 @@
     ---------------------------------------------------------
 """
 
-import random
 from reversi import Reversi, strategies
 
 
