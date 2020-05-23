@@ -2,17 +2,17 @@
 """Reversi Simulator
 
     This is a reversi simulator.
-    This simulator simulates AI-plyaers matches and displays the results.
+    This simulator simulates AI-players matches and displays the results.
 
     Args:
-        strategies (hash)  : pair of plyaer name and strategy
+        players (hash)     : all of pair of plyaer names and strategies
         setting file(json) : json file for simulator setting
 
     setting(json) file format:
         board_size : select board size (even number from 4 to 26)
         board_type : bitboard or board (bitboard is faster than board)
-        matches : number of matches
-        processes : number of distributed processing
+        matches    : number of matches
+        processes  : number of distributed processing
         characters : array of player names to play against
 """
 
