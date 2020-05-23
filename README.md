@@ -48,20 +48,26 @@ The examples to be copied are below.
 
 - [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - GUI Reversi Application(using tkinter)
 - [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - Console Reversi Application
-- [03_strategy_customization.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_strategy_customization.py) - Base script for programming Reversi AI strategy
+- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - A example for creating portable GUI Reversi Application file
 - [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - A battle simulator that displays the results of playing Reversi AI against each other
-- [05_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_genetic_algorithm.py) - A example for discovering the parameters of a reversi strategy using a genetic algorithm
-- [06_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_create_exe.bat) - A example for creating portable GUI Reversi Application file
+- [05_easy_strategy.py.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_easy_strategy.py.py) - A example of Reversi easy AI strategy
+- [06_table_strategy.py.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py.py) - A example of Reversi table AI strategy
+- [07_minmax_strategy.py.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py.py) - A example of Reversi minmax  strategy
+- [08_alphabeta_strategy.py.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py.py) - A example of Reversi alpha beta AI strategy
+- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - A example for discovering the parameters of a reversi strategy using a genetic algorithm
 
 You can run examples below.
 ```
 $ cd reversi_examples
 $ py -3.7 01_tkinter_app.py
 $ py -3.7 02_console_app.py
-$ py -3.7 03_strategy_customization.py
+$ 03_create_exe.bat
 $ py -3.7 04_reversi_simulator.py
-$ py -3.7 05_genetic_algorithm.py
-$ 06_create_exe.bat
+$ py -3.7 05_easy_strategy.py
+$ py -3.7 06_table_strategy.py
+$ py -3.7 07_minmax_strategy.py
+$ py -3.7 08_alphabeta_strategy.py
+$ py -3.7 09_genetic_algorithm.py
 ```
 
 ### Demo
