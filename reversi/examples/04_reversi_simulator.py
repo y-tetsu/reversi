@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """Reversi Simulator
 
-    This is a reversi simulator.
     This simulator simulates AI-players matches and displays the results.
 
     Args:
@@ -23,6 +22,7 @@ from reversi import Simulator, strategies
 if __name__ == '__main__':
     simulator = Simulator(
         {
+            # ↓↓↓↓↓ Add players here ↓↓↓↓↓
             'Unselfish': strategies.Unselfish(),
             'Random': strategies.Random(),
             'Greedy': strategies.Greedy(),
@@ -36,6 +36,7 @@ if __name__ == '__main__':
             'FullReading': strategies.AlphaBeta4F9JRo_TPW(),
             'Iterative': strategies.AbIF9JRo_B_TPW(),
             'Edge': strategies.AbIF9JRo_B_TPWE(),
+            # ↑↑↑↑↑ Add players here ↑↑↑↑↑
         },
         './simulator_setting.json',
     )
