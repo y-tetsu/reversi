@@ -45,12 +45,12 @@ if __name__ == '__main__':
     Reversi(
         {
             'Table': strategies.Table(
-                corner=100,
+                corner=50,
                 c=-20,
-                a1=5,
-                a2=10,
-                b=3,
-                x=-30,
+                a1=0,
+                a2=-1,
+                b=-1,
+                x=-25,
                 o=-5,
             ),
         }
