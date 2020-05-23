@@ -59,7 +59,8 @@ class Easy(strategies.common.AbstractStrategy):
 
 
 if __name__ == '__main__':
-    s = {
-        'Easy': Easy(),
-    }
-    Reversi(s).start()
+    Reversi(
+        {
+            'Easy': Easy(),
+        }
+    ).start()
