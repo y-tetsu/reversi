@@ -1,31 +1,61 @@
 #!/usr/bin/env python
-"""
-Sample of Genetic Algorithm
+"""A example of Genetic Algorithm for reversi
+
+    This sample uses a genetic algorithm to discover the optimal weights for a Table-strategy.
+    This is achieved by implementing GeneticTable, which inherits from the Chromosome class.
+
+    genetic algorithm flow:
+        1. Randomly select two parents from the population
+        2. Crossovering between the selected parents to generate a specified number of offspring.
+        3. Find the fitness of all parent and offspring individuals
+           and select the two best fitted individuals to replace them.
+        4. Mutations occur in each individual at a certain rate.
+        5. In the case of certain generations, they generate large mutations.
+        6. Repeat 1-5 a certain number of times.
+
+    Inheritance of Chromosome class:
+        You need to implement the following methods.
+            fitness         : return fitness value
+            reset_fitness   : clear fitness_value if you need
+            is_optimal      : check if it is opptimal
+            random_instance : initialize instance randomly
+            crossover       : implement crossover
+            mutate          : implement mutate
+            large_mutate    : implement large mutate
+
+    ga_setting.json format:
+        population_num  : Number of populations.
+        offspring_num   : Number of offsprings.
+        max_generation  : Maximum number of generations to run the simulation
+        mutation_chance : The probability of a mutation occurring (1=100%)
+        large_mutation  : Number of generations in which a large mutation always occurs
+
+    chromosome_setting.json format:
+        threshold            : Fitness threshold for completion of the calculation
+        mutatin_value        : The size of the parameter to vary in case of a mutation
+        large_mutation_value : The size of the parameter to vary in case of a large mutation
+        board_size           : select board size (even number from 4 to 26)
+        board_type           : bitboard or board (bitboard is faster than board)
+        matches              : number of matches for estimating fitness
+        process              : number of distributed processing
+        characters           : select array "Challenger" and "Opponent"
 """
 
-if '__file__' in globals():
-    import os, sys
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-
+import os
 import json
 from random import randrange, random
 from copy import deepcopy
 
-from reversi import Player, Simulator
-from reversi.strategies.randomopening import RandomOpening, MinMax2F9Ro_TPWE
-from reversi.strategies.fullreading import FullReading
-from reversi.strategies.switch import Switch
-from reversi.strategies.minmax import MinMax2_TPWE
-from reversi.strategies.coordinator import Evaluator_TPWE
-from reversi.genetic_algorithm.chromosome import Chromosome
 from reversi.genetic_algorithm.genetic_algorithm import GeneticAlgorithm
+from reversi.genetic_algorithm.chromosome import Chromosome
+from reversi import Simulator
+from reversi.strategies.table import Table
 
 
-class Switch_Evaluator_TPWE(Chromosome):
+class GeneticTable(Chromosome):
+    """Discover parameter for Table-strategy
     """
-    Fit parameter for Switch_Evaluator_TPWE
-    """
-    def __init__(self, corner=None, c=None, a1=None, a2=None, b=None, x=None, o=None, wp=None, ww=None, we=None):
+    def __init__(self, corner=None, c=None, a1=None, a2=None, b=None, x=None, o=None):
         self.setting = self._load_setting('./chromosome_setting.json')
         self.corner = corner
         self.c = c
@@ -34,24 +64,23 @@ class Switch_Evaluator_TPWE(Chromosome):
         self.b = b
         self.x = x
         self.o = o
-        self.wp = wp
-        self.ww = ww
-        self.we = we
         self.fitness_value = None
 
     def _load_setting(self, setting_json):
-        """
-        Load Settign
+        """load setting
         """
         setting = {
-            "turns": [36, 48, 60],
-            "threshold": 60,
-            "mutation_value": 1,
-            "large_mutation_value": 10,
+            "threshold": 75,
+            "mutation_value": 3,
+            "large_mutation_value": 25,
             "board_size": 8,
-            "matches": 5,
+            "matches": 100,
             "board_type": "bitboard",
-            "processes": 2
+            "processes": 2,
+            "characters": [
+                "Challenger",
+                "Opponent"
+            ]
         }
 
         if setting_json is not None and os.path.isfile(setting_json):
@@ -61,39 +90,22 @@ class Switch_Evaluator_TPWE(Chromosome):
         return setting
 
     def fitness(self):
-        """
-        Fitness
+        """fitness
         """
         if self.fitness_value is not None:
             return self.fitness_value
 
-        challenger = RandomOpening(
-            depth=8,
-            base = FullReading(
-                remain=9,
-                base=Switch(
-                    turns=self.setting['turns'],
-                    strategies=[
-                        MinMax2_TPWE(
-                            evaluator=Evaluator_TPWE(
-                                corner=self.corner[i],
-                                c=self.c[i],
-                                a1=self.a1[i],
-                                a2=self.a2[i],
-                                b=self.b[i],
-                                o=self.o[i],
-                                x=self.x[i],
-                                wp=self.wp[i],
-                                ww=self.ww[i],
-                                we=self.we[i]
-                            )
-                        ) for i in range(len(self.setting['turns']))
-                    ]
-                )
-            )
+        challenger = Table(
+            corner=self.corner,
+            c=self.c,
+            a1=self.a1,
+            a2=self.a2,
+            b=self.b,
+            o=self.o,
+            x=self.x,
         )
 
-        opponent = MinMax2F9Ro_TPWE()
+        opponent = Table()
 
         simulator = Simulator(
             {
@@ -110,45 +122,36 @@ class Switch_Evaluator_TPWE(Chromosome):
         return self.fitness_value
 
     def reset_fitness(self):
-        """
-        Reset Fitness
+        """reset fitness
         """
         self.fitness_value = None
 
     def is_optimal(self):
-        """
-        Check Optimal
+        """check optimal
         """
         return self.fitness() >= self.setting['threshold']
 
     @classmethod
     def random_instance(cls):
+        """initial instance
         """
-        Inital instance
-        """
-        switch_num = len(Switch_Evaluator_TPWE().setting['turns'])
+        max_range = 200
 
-        corner = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        c = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        a1 = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        a2 = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        b = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        x = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        o = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        wp = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
-        ww = [10000 for _ in range(switch_num)]
-        we = [randrange(200) * (1 if random() > 0.5 else -1) for _ in range(switch_num)]
+        corner = randrange(max_range) * (1 if random() > 0.5 else -1)
+        c = randrange(max_range) * (1 if random() > 0.5 else -1)
+        a1 = randrange(max_range) * (1 if random() > 0.5 else -1)
+        a2 = randrange(max_range) * (1 if random() > 0.5 else -1)
+        b = randrange(max_range) * (1 if random() > 0.5 else -1)
+        x = randrange(max_range) * (1 if random() > 0.5 else -1)
+        o = randrange(max_range) * (1 if random() > 0.5 else -1)
 
-        return Switch_Evaluator_TPWE(corner, c, a1, a2, b, x, o, wp, ww, we)
+        return GeneticTable(corner, c, a1, a2, b, x, o)
 
     def crossover(self, other):
+        """crossover
         """
-        Crossover
-        """
-        num1, num2 = randrange(9), randrange(9)
+        num1, num2 = randrange(7), randrange(7)
         (num1, num2) = (num1, num2) if num1 < num2 else (num2, num1)
-
-        switch_num = len(self.corner)
 
         child1 = deepcopy(self)
         child1.reset_fitness()
@@ -157,118 +160,79 @@ class Switch_Evaluator_TPWE(Chromosome):
         child2.reset_fitness()
 
         if num1 <= 0 and num2 >= 0:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.corner[num3:num4+1] = other.corner[num3:num4+1]
-            child2.corner[num3:num4+1] = self.corner[num3:num4+1]
+            child1.corner = other.corner
+            child2.corner = self.corner
         if num1 <= 1 and num2 >= 1:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.c[num3:num4+1] = other.c[num3:num4+1]
-            child2.c[num3:num4+1] = self.c[num3:num4+1]
+            child1.c = other.c
+            child2.c = self.c
         if num1 <= 2 and num2 >= 2:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.a1[num3:num4+1] = other.a1[num3:num4+1]
-            child2.a1[num3:num4+1] = self.a1[num3:num4+1]
+            child1.a1 = other.a1
+            child2.a1 = self.a1
         if num1 <= 3 and num2 >= 3:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.a2[num3:num4+1] = other.a2[num3:num4+1]
-            child2.a2[num3:num4+1] = self.a2[num3:num4+1]
+            child1.a2 = other.a2
+            child2.a2 = self.a2
         if num1 <= 4 and num2 >= 4:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.b[num3:num4+1] = other.b[num3:num4+1]
-            child2.b[num3:num4+1] = self.b[num3:num4+1]
+            child1.b = other.b
+            child2.b = self.b
         if num1 <= 5 and num2 >= 5:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.x[num3:num4+1] = other.x[num3:num4+1]
-            child2.x[num3:num4+1] = self.x[num3:num4+1]
+            child1.x = other.x
+            child2.x = self.x
         if num1 <= 6 and num2 >= 6:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.o[num3:num4+1] = other.o[num3:num4+1]
-            child2.o[num3:num4+1] = self.o[num3:num4+1]
-        if num1 <= 7 and num2 >= 7:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.wp[num3:num4+1] = other.wp[num3:num4+1]
-            child2.wp[num3:num4+1] = self.wp[num3:num4+1]
-        if num1 <= 8 and num2 >= 8:
-            num3, num4 = randrange(switch_num), randrange(switch_num)
-            (num3, num4) = (num3, num4) if num3 < num4 else (num3, num4)
-            child1.we[num3:num4+1] = other.we[num3:num4+1]
-            child2.we[num3:num4+1] = self.we[num3:num4+1]
+            child1.o = other.o
+            child2.o = self.o
 
         return child1 if random() > 0.5 else child2
 
     def mutate(self):
+        """mutate
         """
-        Mutate
-        """
-        parameter_index = randrange(9)
-        switch_num = len(self.setting['turns'])
-        stage_index = randrange(switch_num)
+        parameter_index = randrange(7)
         sign = 1 if random() > 0.5 else -1
         mutation_value = self.setting['mutation_value']
 
         if parameter_index == 0:
-            self.corner[stage_index] += mutation_value * sign
+            self.corner += mutation_value * sign
         elif parameter_index == 1:
-            self.c[stage_index] += mutation_value * sign
+            self.c += mutation_value * sign
         elif parameter_index == 2:
-            self.a1[stage_index] += mutation_value * sign
+            self.a1 += mutation_value * sign
         elif parameter_index == 3:
-            self.a2[stage_index] += mutation_value * sign
+            self.a2 += mutation_value * sign
         elif parameter_index == 4:
-            self.b[stage_index] += mutation_value * sign
+            self.b += mutation_value * sign
         elif parameter_index == 5:
-            self.o[stage_index] += mutation_value * sign
+            self.o += mutation_value * sign
         elif parameter_index == 6:
-            self.x[stage_index] += mutation_value * sign
-        elif parameter_index == 7:
-            self.wp[stage_index] += mutation_value * sign
-        elif parameter_index == 8:
-            self.we[stage_index] += mutation_value * sign
+            self.x += mutation_value * sign
 
     def large_mutate(self):
+        """large mutate
         """
-        Large Mutate
-        """
-        parameter_index = randrange(9)
-        switch_num = len(self.setting['turns'])
-        stage_index = randrange(switch_num)
+        parameter_index = randrange(7)
         sign = 1 if random() > 0.5 else -1
         large_mutation_value = self.setting['large_mutation_value']
 
         if parameter_index == 0:
-            self.corner[stage_index] += large_mutation_value * sign
+            self.corner += large_mutation_value * sign
         elif parameter_index == 1:
-            self.c[stage_index] += large_mutation_value * sign
+            self.c += large_mutation_value * sign
         elif parameter_index == 2:
-            self.a1[stage_index] += large_mutation_value * sign
+            self.a1 += large_mutation_value * sign
         elif parameter_index == 3:
-            self.a2[stage_index] += large_mutation_value * sign
+            self.a2 += large_mutation_value * sign
         elif parameter_index == 4:
-            self.b[stage_index] += large_mutation_value * sign
+            self.b += large_mutation_value * sign
         elif parameter_index == 5:
-            self.o[stage_index] += large_mutation_value * sign
+            self.o += large_mutation_value * sign
         elif parameter_index == 6:
-            self.x[stage_index] += large_mutation_value * sign
-        elif parameter_index == 7:
-            self.wp[stage_index] += large_mutation_value * sign
-        elif parameter_index == 8:
-            self.we[stage_index] += large_mutation_value * sign
+            self.x += large_mutation_value * sign
 
     def __str__(self):
-        return f"corner: {self.corner}\nc: {self.c}\na1: {self.a1}\na2: {self.a2}\nb: {self.b}\no: {self.o}\nx: {self.x}\nwp: {self.wp}\nww: {self.ww}\nwe: {self.we}\nFitness: {self.fitness()}"
+        return f"corner: {self.corner}\nc: {self.c}\na1: {self.a1}\na2: {self.a2}\nb: {self.b}\no: {self.o}\nx: {self.x}\nFitness: {self.fitness()}"
 
     @classmethod
     def load_population(cls, json_file):
-        """
-        Load Population
+        """load population
         """
         generation, population = 0, {}
 
@@ -288,14 +252,13 @@ class Switch_Evaluator_TPWE(Chromosome):
                 ww = json_setting["ww"]
                 we = json_setting["we"]
 
-                population = [Switch_Evaluator_TPWE(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(len(corner))]
+                population = [GeneticTable(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(len(corner))]
 
         return generation, population
 
     @classmethod
     def save_population(cls, ga, json_file):
-        """
-        Save Population
+        """save population
         """
         generation = ga._generation
         population = ga._population
@@ -309,9 +272,6 @@ class Switch_Evaluator_TPWE(Chromosome):
             "b": [individual.b for individual in population],
             "o": [individual.o for individual in population],
             "x": [individual.x for individual in population],
-            "wp": [individual.wp for individual in population],
-            "ww": [individual.ww for individual in population],
-            "we": [individual.we for individual in population],
             "fitness": [individual.fitness() for individual in population],
         }
 
@@ -322,7 +282,7 @@ class Switch_Evaluator_TPWE(Chromosome):
 if __name__ == '__main__':
     import timeit
 
-    ga = GeneticAlgorithm('./ga_setting.json', Switch_Evaluator_TPWE)
+    ga = GeneticAlgorithm('./ga_setting.json', GeneticTable)
     elapsed_time = timeit.timeit('ga.run()', globals=globals(), number=1)
 
     print('>>>>>>>>>>>>>>>>>>>>>>>>>')
