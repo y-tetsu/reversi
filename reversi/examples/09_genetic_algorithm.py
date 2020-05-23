@@ -5,14 +5,15 @@
     This is achieved by implementing GeneticTable, which inherits from the Chromosome class.
 
     genetic algorithm flow:
-        1. Prepare a population that generated individuals with random parameters
-        2. Randomly select two parents from the population
-        3. Crossovering between the selected parents to generate a specified number of offspring.
-        4. Find the fitness of all parent and offspring individuals
+        1. Prepare a population that generated individuals with random parameters.
+        2. Check the fitness of all individuals, and exit when the fitness reaches threshold.
+        3. Randomly select two parents from the population.
+        4. Crossovering between the selected parents to generate a specified number of offspring.
+        5. Find the fitness of all parent and offspring individuals.
            and select the two best fitted individuals to replace them.
-        5. Mutations occur in each individual at a certain rate.
-        6. In the case of certain generations, they generate large mutations.
-        7. Repeat 2-6 a certain number of times.
+        6. Mutations occur in each individual at a certain rate.
+        7. In the case of certain generations, they generate large mutations.
+        8. Repeat 2-7 a certain number of times.
 
     Inheritance of Chromosome class:
         You need to implement the following methods.
