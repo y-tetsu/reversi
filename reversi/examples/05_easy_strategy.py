@@ -50,10 +50,7 @@ class Easy(strategies.common.AbstractStrategy):
                     next_moves.remove(near_corner)
 
             # Random choice
-            if next_moves:
-                move = random.choice(next_moves)
-            else:
-                move = random.choice(legal_moves)
+            move = random.choice(next_moves if next_moves else legal_moves)
 
         return move
 
