@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-"""
-Reversi Console Application
+"""Reversi Console Application
+
+    This is a reversi Console Application.
 """
 
 from reversi import Reversic, strategies
