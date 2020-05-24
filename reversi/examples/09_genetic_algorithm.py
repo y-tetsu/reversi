@@ -80,6 +80,7 @@ class GeneticTable(Chromosome):
             "matches": 100,
             "board_type": "bitboard",
             "processes": 2,
+            "random_opening": 8,
             "characters": [
                 "Challenger",
                 "Opponent"
