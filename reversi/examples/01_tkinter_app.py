@@ -23,7 +23,7 @@
                 Take as little as possible, aim at the corners and avoid near the corners.
 
             MonteCarlo
-                This player chooses his moves using the Monte Carlo method.
+                This player chooses a move in the monte-carlo method.
 
             MinMax
                 This player chooses a move by reading 2 moves ahead in the minmax method.
@@ -36,16 +36,17 @@
                 This player chooses a move by reading 4 moves ahead for as long as time in the alpha-beta method.
 
             Joseki
-                In addition to AlphaBeta, this player chooses a move according to standard tactics.
+                In addition to AlphaBeta, this player chooses a move according to standard tactics in the early stages.
 
             FullReading
-                In addition to Joseki, this player chooses a move by reading the stone difference
+                In addition to Joseki, this player chooses a move by reading the difference in the number of discs
                 from the last 9 moves to the final phase of the game.
 
         (Level 4)
             Iterative
-                This player applies the iterative deepening method to FullReading
+                This player applies the iterative-deepening method to FullReading
                 and reads moves gradually and deeply for as long as it takes.
+                When deepening the reading, this plyer is increasing efficiency by reading the last best move first.
 
             Edge
                 In addition to Iterative, this player chooses a move that increases the definite disc
