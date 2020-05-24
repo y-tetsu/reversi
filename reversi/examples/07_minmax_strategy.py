@@ -7,7 +7,7 @@
     the minmax method is used to select the best move by reading the board
     up to the specified depth according to the specified evaluation method.
 
-    This is an example of reading two moves ahead and selecting a move
+    This is an example of reading 2 moves ahead and selecting a move
     using the Table strategy's board parameters.
 
     Arg:
