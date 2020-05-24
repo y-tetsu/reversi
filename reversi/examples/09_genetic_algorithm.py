@@ -40,6 +40,7 @@
         board_type           : bitboard or board (bitboard is faster than board)
         matches              : number of matches for estimating fitness
         process              : number of distributed processing
+        random_opening       : number of turns in the early stages of random moves
         characters           : select array "Challenger" and "Opponent"
 """
 
