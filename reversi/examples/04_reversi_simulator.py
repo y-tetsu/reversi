@@ -7,12 +7,13 @@
         players (hash)     : all of pair of plyaer names and strategies
         setting file(json) : json file for simulator setting
 
-    setting(json) file format:
-        board_size : select board size (even number from 4 to 26)
-        board_type : bitboard or board (bitboard is faster than board)
-        matches    : number of matches
-        processes  : number of distributed processing
-        characters : array of player names to play against
+    simulator_setting.json format:
+        board_size     : select board size (even number from 4 to 26)
+        board_type     : bitboard or board (bitboard is faster than board)
+        matches        : number of matches
+        processes      : number of distributed processing
+        random_opening : number of turns in the early stages of random moves
+        characters     : array of player names to play against
 """
 
 import timeit
