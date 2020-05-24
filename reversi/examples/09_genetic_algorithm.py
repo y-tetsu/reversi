@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """A example of Genetic Algorithm for reversi
 
-    This sample uses a genetic algorithm to discover the optimal weights for a Table-strategy.
+    This example uses a genetic algorithm to discover the optimal weights for a Table-strategy.
     This is achieved by implementing GeneticTable, which inherits from the Chromosome class.
 
     genetic algorithm flow:
