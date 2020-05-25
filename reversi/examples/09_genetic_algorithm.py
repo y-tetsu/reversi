@@ -252,11 +252,8 @@ class GeneticTable(Chromosome):
                 b = json_setting["b"]
                 o = json_setting["o"]
                 x = json_setting["x"]
-                wp = json_setting["wp"]
-                ww = json_setting["ww"]
-                we = json_setting["we"]
 
-                population = [GeneticTable(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i], wp[i], ww[i], we[i]) for i in range(len(corner))]
+                population = [GeneticTable(corner[i], c[i], a1[i], a2[i], b[i], x[i], o[i]) for i in range(len(corner))]
 
         return generation, population
 
