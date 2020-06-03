@@ -7,8 +7,8 @@
     "large_mutation": 100,
     "large_mutation_value": 25,
     "board_size": 8,
-    "matches": 250,
-    "threshold": 80,
+    "matches": 50,
+    "threshold": 75,
     "random_opening": 6,
     "processes": 2
 }
