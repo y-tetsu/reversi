@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi.png" width="650px">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi.png" width="500px">
 </p>
 
 # reversi
