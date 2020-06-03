@@ -15,9 +15,9 @@
 
 ## 動作環境
 - Windows10 64bit<br>
-- Display size 1366x768
-- Processor 1.6GHz
-- Memory 4.00GB
+- ディスプレイサイズ 1366x768 以上
+- プロセッサ 1.6GHz 以上
+- メモリ 4.00GB 以上
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
     - cython 0.29.15<br>
     - numpy 1.18.1<br>
