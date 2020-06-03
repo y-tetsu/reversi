@@ -11,7 +11,7 @@
 
 ## ダウンロード
 本ライブラリで作ったWindows版のアプリケーション(exe)を下記よりダウンロードできます。<br>
-[reversi.zip](https://github.com/y-tetsu/reversi/releases)(リンク先でAssetsをクリックしてください)
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases)(リンク先でAssetsをクリックしてください)
 
 ## 動作環境
 - Windows10 64bit<br>
