@@ -38,12 +38,22 @@ class Simulator:
 
         self.matches = setting['matches']
         self.board_size = setting['board_size']
-        self.board_type = setting['board_type']
+
+        if 'board_type' in setting:
+            self.board_type = setting['board_type']
+        else:
+            self.board_type = "bitboard"
+
         self.processes = setting['processes']
         self.random_opening = setting['random_opening']
 
-        black_players = [Player('black', c, strategies[c]) for c in setting['characters']]
-        white_players = [Player('white', c, strategies[c]) for c in setting['characters']]
+        if 'characters' in setting:
+            black_players = [Player('black', c, strategies[c]) for c in setting['characters']]
+            white_players = [Player('white', c, strategies[c]) for c in setting['characters']]
+        else:
+            black_players = [Player('black', c, strategies[c]) for c in strategies.keys()]
+            white_players = [Player('white', c, strategies[c]) for c in strategies.keys()]
+
         self.black_players = black_players
         self.white_players = white_players
 
