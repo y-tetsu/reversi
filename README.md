@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="800px">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi.png" width="800px">
 </p>
 
 # reversi
