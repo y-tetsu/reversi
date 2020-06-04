@@ -138,11 +138,11 @@ class GeneticTable(Chromosome):
     def mutate(self):
         """mutate
         """
-        self.param[randrange(7)] += self.setting['mutation_value'] * 1 if random() > 0.5 else -1
+        self.param[randrange(7)] += self.setting['mutation_value'] * (1 if random() > 0.5 else -1)
 
     def large_mutate(self):
         """large mutate"""
-        self.param[randrange(7)] += self.setting['large_mutation_value'] * 1 if random() > 0.5 else -1
+        self.param[randrange(7)] += self.setting['large_mutation_value'] * (1 if random() > 0.5 else -1)
 
     def __str__(self):
         return f"corner: {self.param[0]}\nc: {self.param[1]}\na1: {self.param[2]}\na2: {self.param[3]}\nb: {self.param[4]}\no: {self.param[5]}\nx: {self.param[6]}\nFitness: {self.fitness()}"
