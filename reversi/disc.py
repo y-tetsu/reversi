@@ -1,14 +1,10 @@
-#!/usr/bin/env python
-"""
-石の管理
+"""Disc
 """
 
 
 class Disc(str):
-    """
-    石の基底クラス
-    """
-    __slots__ = ()  # データを持たない
+    """Disc"""
+    __slots__ = ()
 
 
 class Black(Disc):
@@ -24,13 +20,9 @@ class Blank(Disc):
 
 
 class DiscFactory:
-    """
-    石ファクトリ
-    """
+    """Disc Factory"""
     def create(self, color):
-        """
-        石オブジェクトを生成する
-        """
+        """create disc object"""
         ret = ''
 
         if color == 'black':
