@@ -34,7 +34,7 @@ class RandomOpening(AbstractStrategy):
         depth = board.score['black'] + board.score['white'] - 4
 
         # 現在の手数が閾値以下
-        if depth <= self.depth:
+        if depth < self.depth:
             return self.random.next_move(color, board)
 
         return self.base.next_move(color, board)

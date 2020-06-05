@@ -9,6 +9,7 @@ import itertools
 from multiprocessing import Pool
 
 from reversi import Board, BitBoard, Player, NoneDisplay, Game
+from reversi.strategies import RandomOpening
 
 
 class Simulator:
@@ -25,6 +26,7 @@ class Simulator:
                 "board_type": "bitboard",
                 "matches": 10,
                 "processes": 1,
+                "random_opening": 8,
                 "characters": [
                     "Unselfish",
                     "Random",
@@ -36,11 +38,22 @@ class Simulator:
 
         self.matches = setting['matches']
         self.board_size = setting['board_size']
-        self.board_type = setting['board_type']
-        self.processes = setting['processes']
 
-        black_players = [Player('black', c, strategies[c]) for c in setting['characters']]
-        white_players = [Player('white', c, strategies[c]) for c in setting['characters']]
+        if 'board_type' in setting:
+            self.board_type = setting['board_type']
+        else:
+            self.board_type = "bitboard"
+
+        self.processes = setting['processes']
+        self.random_opening = setting['random_opening']
+
+        if 'characters' in setting:
+            black_players = [Player('black', c, strategies[c]) for c in setting['characters']]
+            white_players = [Player('white', c, strategies[c]) for c in setting['characters']]
+        else:
+            black_players = [Player('black', c, strategies[c]) for c in strategies.keys()]
+            white_players = [Player('white', c, strategies[c]) for c in strategies.keys()]
+
         self.black_players = black_players
         self.white_players = white_players
 
@@ -133,6 +146,11 @@ class Simulator:
                 print("    -", black.name, white.name, i + 1)
 
             board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
+
+            # Adapt Random Opening
+            if self.random_opening:
+                black.strategy = RandomOpening(depth=self.random_opening, base=black.strategy)
+                white.strategy = RandomOpening(depth=self.random_opening, base=white.strategy)
 
             game = Game(board, black, white, NoneDisplay())
             game.play()
