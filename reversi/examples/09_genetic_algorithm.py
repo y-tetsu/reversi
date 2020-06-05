@@ -136,8 +136,7 @@ class GeneticTable(Chromosome):
         return child
 
     def mutate(self):
-        """mutate
-        """
+        """mutate"""
         self.param[randrange(7)] += self.setting['mutation_value'] * (1 if random() > 0.5 else -1)
 
     def large_mutate(self):
