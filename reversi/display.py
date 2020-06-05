@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-"""
-表示の管理
+"""Display
 """
 
 import time
@@ -37,13 +35,9 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
 
 
 class ConsoleDisplay(AbstractDisplay):
-    """
-    コンソールへの表示
-    """
+    """Console Display"""
     def progress(self, board, black_player, white_player):
-        """
-        ゲームの進行の表示(スコア、ボード状態)
-        """
+        """display progress"""
         score_b = str(black_player) + ':' + str(board.score['black'])
         score_w = str(white_player) + ':' + str(board.score['white'])
 
@@ -51,9 +45,7 @@ class ConsoleDisplay(AbstractDisplay):
         print(board)
 
     def turn(self, player, legal_moves):
-        """
-        手番の表示
-        """
+        """display turn"""
         time.sleep(1)
         print(str(player) + "'s turn")
 
@@ -62,9 +54,7 @@ class ConsoleDisplay(AbstractDisplay):
             print(f'{index:2d}:', coordinate)
 
     def move(self, player, legal_moves):
-        """
-        手の表示
-        """
+        """display move"""
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
@@ -72,28 +62,20 @@ class ConsoleDisplay(AbstractDisplay):
         time.sleep(1)
 
     def foul(self, player):
-        """
-        反則プレイヤーの表示
-        """
+        """display foul player"""
         print(player, 'foul')
 
     def win(self, player):
-        """
-        勝ちプレイヤーの表示
-        """
+        """display win player"""
         print(player, 'win')
 
     def draw(self):
-        """
-        引き分けの表示
-        """
+        """display draw"""
         print('draw')
 
 
 class NoneDisplay(AbstractDisplay):
-    """
-    表示なし
-    """
+    """None Display"""
     def progress(self, board, black_player, white_player):
         pass
 
@@ -114,32 +96,24 @@ class NoneDisplay(AbstractDisplay):
 
 
 class WindowDisplay(AbstractDisplay):
-    """
-    GUIへの表示
-    """
+    """GUI Window Display"""
     def __init__(self, window):
         self.info = window.info
         self.board = window.board
 
     def progress(self, board, black_player, white_player):
-        """
-        ゲームの進行の表示(スコア)
-        """
+        """display progress"""
         for color in PLAYER_COLORS:
             self.info.set_text(color, 'score', str(board.score[color]))
 
     def turn(self, player, legal_moves):
-        """
-        手番の表示
-        """
+        """display turn"""
         self.info.set_turn_text_on(player.color)  # 手番の表示
         self.board.enable_moves(legal_moves)      # 打てる候補を表示
         time.sleep(0.3)
 
     def move(self, player, legal_moves):
-        """
-        手の表示
-        """
+        """display move"""
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
@@ -156,46 +130,16 @@ class WindowDisplay(AbstractDisplay):
         self.board.disable_move(*player.move)
 
     def foul(self, player):
-        """
-        反則プレイヤーの表示
-        """
+        """display foul player"""
         self.info.set_foul_text_on(player.color)
 
     def win(self, player):
-        """
-        勝ちプレイヤーの表示
-        """
+        """display win player"""
         winner, loser = ('black', 'white') if player.color == 'black' else ('white', 'black')
         self.info.set_win_text_on(winner)
         self.info.set_lose_text_on(loser)
 
     def draw(self):
-        """
-        引き分けの表示
-        """
+        """display draw"""
         for color in PLAYER_COLORS:
             self.info.set_draw_text_on(color)
-
-
-if __name__ == '__main__':
-    from board import Board
-    from player import Player
-    import strategies
-
-    board8x8 = Board()
-    black_player = Player('black', 'Random', strategies.Random())
-    white_player = Player('white', 'User', strategies.ConsoleUserInput())
-
-    display = ConsoleDisplay()
-    display.progress(board8x8, black_player, white_player)
-
-    legal_moves = board8x8.get_legal_moves('black')
-    display.turn(black_player, legal_moves)
-
-    black_player.put_disc(board8x8)
-    display.move(black_player, legal_moves)
-    display.progress(board8x8, black_player, white_player)
-
-    display.foul(black_player)
-    display.win(black_player)
-    display.draw()
