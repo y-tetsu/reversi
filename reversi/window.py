@@ -477,6 +477,15 @@ class ScreenBoard:
                 line = self.canvas.create_line(square_x1, square_y1, square_x2, square_y2, fill=COLOR_WHITE)
                 line_append(line)
 
+            # 目印の描画
+            if size > 4 and num == size//2 + 2:
+                mark_w = int(w * OVAL_SIZE_RATIO * 0.2)
+                for x_offset in [w * (num - 4), w * num]:
+                    for y_offset in [w * (num - 4), w * num]:
+                        mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
+                        mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
+                        self.canvas.create_oval(mark_x1, mark_y1, mark_x2, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
+
         # 初期位置に石を置く
         center = size // 2
         self.put_disc('black', center, center-1)
@@ -568,6 +577,7 @@ class ScreenBoard:
                 self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GOLD, outline=COLOR_WHITE, tag='moves')
             else:
                 self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
+        self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
         """
@@ -584,6 +594,7 @@ class ScreenBoard:
         y1 = self.square_y_ini + self.square_w * y
         y2 = y1 + self.square_w
         self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
+        self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
         """
