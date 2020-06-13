@@ -25,6 +25,7 @@ COLOR_BLACK = 'black'          # 黒
 COLOR_WHITE = 'white'          # 白
 COLOR_LIGHTPINK = 'lightpink'  # ライトピンク
 COLOR_GOLD = 'gold'            # ゴールド
+COLOR_KHAKI = 'khaki2'         # カーキ
 COLOR_TOMATO = 'tomato'        # トマト
 
 INFO_OFFSET_X = {  # 表示テキストのXオフセット
@@ -574,7 +575,7 @@ class ScreenBoard:
             y1 = self.square_y_ini + self.square_w * y
             y2 = y1 + self.square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GOLD, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
             else:
                 self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
         self.canvas.tag_raise('mark', 'moves')
@@ -638,7 +639,7 @@ class ScreenBoard:
         """
         def _leave(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_GOLD)
+                self.canvas.itemconfigure(square, fill=COLOR_KHAKI)
 
         return _leave
 
