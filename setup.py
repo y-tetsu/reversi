@@ -3,7 +3,7 @@ from distutils.extension import Extension
 
 setup(
     name='reversi',
-    version='0.0.13',
+    version='0.0.15',
     license='MIT License',
     install_requires=[
         'cython',
