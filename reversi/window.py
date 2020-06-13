@@ -163,7 +163,7 @@ class Window(tk.Frame):
         self.root = root
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
-        self.assist = ASSIST_MENU[0]
+        self.assist = ASSIST_MENU[1]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
@@ -209,7 +209,7 @@ class Menu(tk.Menu):
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = black_players[0]
         self.white_player = white_players[0]
-        self.assist = ASSIST_MENU[0]
+        self.assist = ASSIST_MENU[1]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
