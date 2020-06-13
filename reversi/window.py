@@ -404,7 +404,7 @@ class ScreenBoard:
         )
 
         # アシスト表示
-        assist_text = 'Assist Off' if self.assist == 'OFF' else ''
+        assist_text = 'Assist On' if self.assist == 'ON' else ''
         self.text = canvas.create_text(
             ASSIST_OFFSET_X,
             ASSIST_OFFSET_Y,
