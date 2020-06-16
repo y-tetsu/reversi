@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi.png" width="500px">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_v0_0_15.png" width="500px">
 </p>
 
 # reversi
@@ -71,7 +71,7 @@ $ py -3.7 09_genetic_algorithm.py
 
 ### デモ
 #### 01_tkinter_app.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
 #### 02_console_app.py
 [<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
 #### 04_reversi_simulator.py
@@ -140,7 +140,7 @@ $ py -3.7 09_genetic_algorithm.py
 4. アプリケーションを起動する
 5. Extraメニューより登録ファイルを読み込ませる
 
-![extra](https://raw.githubusercontent.com/y-tetsu/reversi/images/extra_ja.gif)
+![extra](https://raw.githubusercontent.com/y-tetsu/reversi/images/extra_en_v0_0_15.gif)
 
 ##### 追加プレイヤーの実行
 追加プレイヤーをアプリケーションに登録すると外部プログラムとして実行されるようになります。<br>
