@@ -15,7 +15,7 @@ class TestBoard(unittest.TestCase):
         err = False
 
         try:
-            board2 = Board(2)
+            board = Board(2)
         except BoardSizeError as e:
             err = True
 
@@ -25,7 +25,7 @@ class TestBoard(unittest.TestCase):
         err = False
 
         try:
-            board2 = Board(3)
+            board = Board(3)
         except BoardSizeError as e:
             err = True
 
@@ -35,90 +35,102 @@ class TestBoard(unittest.TestCase):
         err = False
 
         try:
-            board2 = Board(28)
+            board = Board(28)
         except BoardSizeError as e:
             err = True
 
         self.assertTrue(err)
 
+    def test_bitboard_size_2(self):
+        err = False
+
+        try:
+            board = BitBoard(2)
+        except BoardSizeError as e:
+            err = True
+
+        self.assertTrue(err)
+
+    def test_bitboard_size_3(self):
+        err = False
+
+        try:
+            board = BitBoard(3)
+        except BoardSizeError as e:
+            err = True
+
+        self.assertTrue(err)
+
+    def test_bitboard_size_28(self):
+        err = False
+
+        try:
+            board = BitBoard(28)
+        except BoardSizeError as e:
+            err = True
+
+        self.assertTrue(err)
+
+    def test_board_size_4_initial(self):
+        board = Board(4)
+
+        board_ini = [[board.disc['blank'] for _ in range(4)] for _ in range(4)]
+        board_ini[2][1] = board.disc['black']
+        board_ini[1][2] = board.disc['black']
+        board_ini[1][1] = board.disc['white']
+        board_ini[2][2] = board.disc['white']
+
+        self.assertEqual(board._board, board_ini)
+
+    def test_board_size_6_initial(self):
+        board = Board(6)
+
+        board_ini = [[board.disc['blank'] for _ in range(6)] for _ in range(6)]
+        board_ini[3][2] = board.disc['black']
+        board_ini[2][3] = board.disc['black']
+        board_ini[2][2] = board.disc['white']
+        board_ini[3][3] = board.disc['white']
+
+        self.assertEqual(board._board, board_ini)
+
+    def test_board_size_8_initial(self):
+        board = Board()
+
+        board_ini = [[board.disc['blank'] for _ in range(8)] for _ in range(8)]
+        board_ini[4][3] = board.disc['black']
+        board_ini[3][4] = board.disc['black']
+        board_ini[3][3] = board.disc['white']
+        board_ini[4][4] = board.disc['white']
+
+        self.assertEqual(board._board, board_ini)
+
+    def test_board_size_10_initial(self):
+        board = Board(10)
+
+        board_ini = [[board.disc['blank'] for _ in range(10)] for _ in range(10)]
+        board_ini[5][4] = board.disc['black']
+        board_ini[4][5] = board.disc['black']
+        board_ini[4][4] = board.disc['white']
+        board_ini[5][5] = board.disc['white']
+
+        self.assertEqual(board._board, board_ini)
+
+    def test_board_size_26_initial(self):
+        board = Board(26)
+
+        board_ini = [[board.disc['blank'] for _ in range(26)] for _ in range(26)]
+        board_ini[13][12] = board.disc['black']
+        board_ini[12][13] = board.disc['black']
+        board_ini[12][12] = board.disc['white']
+        board_ini[13][13] = board.disc['white']
+
+        self.assertEqual(board._board, board_ini)
+
+
 #if __name__ == '__main__':
 #    # ========== #
 #    # 通常ボード #
 #    # ========== #
-#    # サイズ異常
-#    invalid2 = False
-#    try:
-#        board2 = Board(2)
-#    except BoardSizeError as e:
-#        print(e)
-#        invalid2 = True
-#
-#    assert invalid2
-#
-#    invalid3 = False
-#    try:
-#        board3 = Board(3)
-#    except BoardSizeError as e:
-#        print(e)
-#        invalid3 = True
-#
-#    assert invalid3
-#
-#    invalid28 = False
-#    try:
-#        board28 = Board(28)
-#    except BoardSizeError as e:
-#        print(e)
-#        invalid28 = True
-#
-#    assert invalid28
-#
-#    # 初期値
-#    board4 = Board(4)
-#    board6 = Board(6)
-#    board8 = Board()
-#    board10 = Board(10)
-#    board26 = Board(26)
-#
-#    print(board4)
-#    board4_ini = [[board4.disc['blank'] for _ in range(4)] for _ in range(4)]
-#    board4_ini[2][1] = board4.disc['black']
-#    board4_ini[1][2] = board4.disc['black']
-#    board4_ini[1][1] = board4.disc['white']
-#    board4_ini[2][2] = board4.disc['white']
-#    assert board4._board == board4_ini
-#
-#    print(board6)
-#    board6_ini = [[board6.disc['blank'] for _ in range(6)] for _ in range(6)]
-#    board6_ini[3][2] = board6.disc['black']
-#    board6_ini[2][3] = board6.disc['black']
-#    board6_ini[2][2] = board6.disc['white']
-#    board6_ini[3][3] = board6.disc['white']
-#    assert board6._board == board6_ini
-#
-#    print(board8)
-#    board8_ini = [[board8.disc['blank'] for _ in range(8)] for _ in range(8)]
-#    board8_ini[4][3] = board8.disc['black']
-#    board8_ini[3][4] = board8.disc['black']
-#    board8_ini[3][3] = board8.disc['white']
-#    board8_ini[4][4] = board8.disc['white']
-#    assert board8._board == board8_ini
-#
-#    print(board10)
-#    board10_ini = [[board10.disc['blank'] for _ in range(10)] for _ in range(10)]
-#    board10_ini[5][4] = board10.disc['black']
-#    board10_ini[4][5] = board10.disc['black']
-#    board10_ini[4][4] = board10.disc['white']
-#    board10_ini[5][5] = board10.disc['white']
-#    assert board10._board == board10_ini
-#
-#    print(board26)
-#    board26_ini = [[board26.disc['blank'] for _ in range(26)] for _ in range(26)]
-#    board26_ini[13][12] = board26.disc['black']
-#    board26_ini[12][13] = board26.disc['black']
-#    board26_ini[12][12] = board26.disc['white']
-#    board26_ini[13][13] = board26.disc['white']
-#    assert board26._board == board26_ini
 #
 #    # 石を置く
 #    assert board4.put_disc('black', 0, 0) == []
