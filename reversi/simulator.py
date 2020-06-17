@@ -54,6 +54,14 @@ class Simulator:
             black_players = [Player('black', c, strategies[c]) for c in strategies.keys()]
             white_players = [Player('white', c, strategies[c]) for c in strategies.keys()]
 
+        # Adapt Random Opening
+        if self.random_opening:
+            for black_player in black_players:
+                black_player.strategy = RandomOpening(depth=self.random_opening, base=black_player.strategy)
+
+            for white_player in white_players:
+                white_player.strategy = RandomOpening(depth=self.random_opening, base=white_player.strategy)
+
         self.black_players = black_players
         self.white_players = white_players
 
@@ -140,18 +148,11 @@ class Simulator:
         print(black.name, white.name)
 
         ret = []
-
         for i in range(self.matches):
             if (i + 1) % 5 == 0:
                 print("    -", black.name, white.name, i + 1)
 
             board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
-
-            # Adapt Random Opening
-            if self.random_opening:
-                black.strategy = RandomOpening(depth=self.random_opening, base=black.strategy)
-                white.strategy = RandomOpening(depth=self.random_opening, base=white.strategy)
-
             game = Game(board, black, white, NoneDisplay())
             game.play()
 

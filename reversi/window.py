@@ -25,6 +25,7 @@ COLOR_BLACK = 'black'          # 黒
 COLOR_WHITE = 'white'          # 白
 COLOR_LIGHTPINK = 'lightpink'  # ライトピンク
 COLOR_GOLD = 'gold'            # ゴールド
+COLOR_KHAKI = 'khaki2'         # カーキ
 COLOR_TOMATO = 'tomato'        # トマト
 
 INFO_OFFSET_X = {  # 表示テキストのXオフセット
@@ -163,7 +164,7 @@ class Window(tk.Frame):
         self.root = root
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
-        self.assist = ASSIST_MENU[0]
+        self.assist = ASSIST_MENU[1]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
@@ -209,7 +210,7 @@ class Menu(tk.Menu):
         self.size = DEFAULT_BOARD_SIZE
         self.black_player = black_players[0]
         self.white_player = white_players[0]
-        self.assist = ASSIST_MENU[0]
+        self.assist = ASSIST_MENU[1]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
@@ -404,7 +405,7 @@ class ScreenBoard:
         )
 
         # アシスト表示
-        assist_text = 'Assist Off' if self.assist == 'OFF' else ''
+        assist_text = 'Assist On' if self.assist == 'ON' else ''
         self.text = canvas.create_text(
             ASSIST_OFFSET_X,
             ASSIST_OFFSET_Y,
@@ -476,6 +477,15 @@ class ScreenBoard:
                 # マス目の線
                 line = self.canvas.create_line(square_x1, square_y1, square_x2, square_y2, fill=COLOR_WHITE)
                 line_append(line)
+
+            # 目印の描画
+            if size > 4 and num == size//2 + 2:
+                mark_w = int(w * OVAL_SIZE_RATIO * 0.2)
+                for x_offset in [w * (num - 4), w * num]:
+                    for y_offset in [w * (num - 4), w * num]:
+                        mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
+                        mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
+                        self.canvas.create_oval(mark_x1, mark_y1, mark_x2, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
 
         # 初期位置に石を置く
         center = size // 2
@@ -565,9 +575,10 @@ class ScreenBoard:
             y1 = self.square_y_ini + self.square_w * y
             y2 = y1 + self.square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_GOLD, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
             else:
                 self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
+        self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
         """
@@ -584,6 +595,7 @@ class ScreenBoard:
         y1 = self.square_y_ini + self.square_w * y
         y2 = y1 + self.square_w
         self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
+        self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
         """
@@ -627,7 +639,7 @@ class ScreenBoard:
         """
         def _leave(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_GOLD)
+                self.canvas.itemconfigure(square, fill=COLOR_KHAKI)
 
         return _leave
 
