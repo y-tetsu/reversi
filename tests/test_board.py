@@ -162,35 +162,91 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.put_disc('white', 3, 3), [(2, 2)])
         self.assertEqual(board.get_bitboard_info(), (4366, 61169))
 
+    def test_board_size_8_play_result(self):
+        board = Board()
+        board.put_disc('black', 5, 4)
+        board.put_disc('white', 5, 5)
+        board.put_disc('black', 4, 5)
+        board.put_disc('white', 3, 5)
+        board.put_disc('black', 2, 6)
+        board.put_disc('white', 5, 3)
+        board.put_disc('black', 6, 2)
+        board.put_disc('white', 3, 6)
+        board.put_disc('black', 2, 2)
+
+        board_ret = [[board.disc['blank'] for _ in range(8)] for _ in range(8)]
+        board_ret[2][2] = board.disc['black']
+        board_ret[2][6] = board.disc['black']
+        board_ret[3][3] = board.disc['black']
+        board_ret[3][4] = board.disc['white']
+        board_ret[3][5] = board.disc['black']
+        board_ret[4][3] = board.disc['white']
+        board_ret[4][4] = board.disc['black']
+        board_ret[4][5] = board.disc['white']
+        board_ret[5][3] = board.disc['white']
+        board_ret[5][4] = board.disc['white']
+        board_ret[5][5] = board.disc['white']
+        board_ret[6][2] = board.disc['black']
+        board_ret[6][3] = board.disc['white']
+
+        board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
+        board_info_ret[2][2] = 1
+        board_info_ret[2][6] = 1
+        board_info_ret[3][3] = 1
+        board_info_ret[3][4] = -1
+        board_info_ret[3][5] = 1
+        board_info_ret[4][3] = -1
+        board_info_ret[4][4] = 1
+        board_info_ret[4][5] = -1
+        board_info_ret[5][3] = -1
+        board_info_ret[5][4] = -1
+        board_info_ret[5][5] = -1
+        board_info_ret[6][2] = 1
+        board_info_ret[6][3] = -1
+
+        self.assertEqual(board._board, board_ret)
+        self.assertEqual(board.get_board_info(), board_info_ret)
+        self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
+        self.assertEqual(board.score['black'], 6)
+        self.assertEqual(board.score['white'], 7)
+
+    def test_bitboard_size_8_play_result(self):
+        board = BitBoard()
+        board.put_disc('black', 5, 4)
+        board.put_disc('white', 5, 5)
+        board.put_disc('black', 4, 5)
+        board.put_disc('white', 3, 5)
+        board.put_disc('black', 2, 6)
+        board.put_disc('white', 5, 3)
+        board.put_disc('black', 6, 2)
+        board.put_disc('white', 3, 6)
+        board.put_disc('black', 2, 2)
+
+        board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
+        board_info_ret[2][2] = 1
+        board_info_ret[2][6] = 1
+        board_info_ret[3][3] = 1
+        board_info_ret[3][4] = -1
+        board_info_ret[3][5] = 1
+        board_info_ret[4][3] = -1
+        board_info_ret[4][4] = 1
+        board_info_ret[4][5] = -1
+        board_info_ret[5][3] = -1
+        board_info_ret[5][4] = -1
+        board_info_ret[5][5] = -1
+        board_info_ret[6][2] = 1
+        board_info_ret[6][3] = -1
+
+        self.assertEqual(board.get_board_info(), board_info_ret)
+        self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
+        self.assertEqual(board.score['black'], 6)
+        self.assertEqual(board.score['white'], 7)
+
+
 #if __name__ == '__main__':
 #    # ========== #
 #    # 通常ボード #
 #    # ========== #
-#
-#    # プレイ結果
-#    print(board4)
-#    board4_ret = [[board4.disc['blank'] for _ in range(4)] for _ in range(4)]
-#    board4_ret[0][0] = board4.disc['white']
-#    board4_ret[0][1] = board4.disc['white']
-#    board4_ret[0][2] = board4.disc['white']
-#    board4_ret[0][3] = board4.disc['black']
-#    board4_ret[1][0] = board4.disc['white']
-#    board4_ret[1][1] = board4.disc['white']
-#    board4_ret[1][2] = board4.disc['white']
-#    board4_ret[1][3] = board4.disc['black']
-#    board4_ret[2][0] = board4.disc['white']
-#    board4_ret[2][1] = board4.disc['white']
-#    board4_ret[2][2] = board4.disc['white']
-#    board4_ret[2][3] = board4.disc['white']
-#    board4_ret[3][0] = board4.disc['black']
-#    board4_ret[3][1] = board4.disc['black']
-#    board4_ret[3][2] = board4.disc['black']
-#    board4_ret[3][3] = board4.disc['white']
-#    assert board4._board == board4_ret
-#    assert board4.score['black'] == 5
-#    assert board4.score['white'] == 11
-#
-#    print(board4.get_board_info())
 #
 #    # やり直し
 #    board4 = Board(4)
