@@ -126,29 +126,46 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(board._board, board_ini)
 
+    def test_board_size_4_put_disc(self):
+        board = Board(4)
+        self.assertEqual(board.put_disc('black', 0, 0), [])
+        self.assertEqual(board.put_disc('black', 3, 5), [])
+        self.assertEqual(board.put_disc('black', 1, 0), [(1, 1)])
+        self.assertEqual(board.put_disc('white', 0, 0), [(1, 1)])
+        self.assertEqual(board.put_disc('black', 0, 1), [(1, 1)])
+        self.assertEqual(board.put_disc('white', 2, 0), [(2, 1), (1, 0)])
+        self.assertEqual(board.put_disc('black', 3, 0), [(2, 1)])
+        self.assertEqual(board.put_disc('white', 1, 3), [(1, 2), (1, 1)])
+        self.assertEqual(board.put_disc('black', 0, 3), [(1, 2)])
+        self.assertEqual(board.put_disc('white', 0, 2), [(1, 2), (0, 1)])
+        self.assertEqual(board.put_disc('black', 2, 3), [(1, 3), (2, 2)])
+        self.assertEqual(board.put_disc('white', 3, 2), [(2, 2), (2, 1)])
+        self.assertEqual(board.put_disc('black', 3, 1), [(2, 2)])
+        self.assertEqual(board.put_disc('white', 3, 3), [(2, 2)])
+        self.assertEqual(board.get_bitboard_info(), (4366, 61169))
+
+    def test_bitboard_size_4_put_disc(self):
+        board = BitBoard(4)
+        self.assertEqual(board.put_disc('black', 0, 0), [])
+        self.assertEqual(board.put_disc('black', 3, 5), [])
+        self.assertEqual(board.put_disc('black', 1, 0), [(1, 1)])
+        self.assertEqual(board.put_disc('white', 0, 0), [(1, 1)])
+        self.assertEqual(board.put_disc('black', 0, 1), [(1, 1)])
+        self.assertEqual(board.put_disc('white', 2, 0), [(1, 0), (2, 1)])
+        self.assertEqual(board.put_disc('black', 3, 0), [(2, 1)])
+        self.assertEqual(board.put_disc('white', 1, 3), [(1, 1), (1, 2)])
+        self.assertEqual(board.put_disc('black', 0, 3), [(1, 2)])
+        self.assertEqual(board.put_disc('white', 0, 2), [(0, 1), (1, 2)])
+        self.assertEqual(board.put_disc('black', 2, 3), [(2, 2), (1, 3)])
+        self.assertEqual(board.put_disc('white', 3, 2), [(2, 1), (2, 2)])
+        self.assertEqual(board.put_disc('black', 3, 1), [(2, 2)])
+        self.assertEqual(board.put_disc('white', 3, 3), [(2, 2)])
+        self.assertEqual(board.get_bitboard_info(), (4366, 61169))
 
 #if __name__ == '__main__':
 #    # ========== #
 #    # 通常ボード #
 #    # ========== #
-#
-#    # 石を置く
-#    assert board4.put_disc('black', 0, 0) == []
-#    assert board4.put_disc('black', 3, 5) == []
-#    assert board4.put_disc('black', 1, 0) == [(1, 1)]
-#    assert board4.put_disc('white', 0, 0) == [(1, 1)]
-#    assert board4.put_disc('black', 0, 1) == [(1, 1)]
-#    assert board4.put_disc('white', 2, 0) == [(2, 1), (1, 0)]
-#    assert board4.put_disc('black', 3, 0) == [(2, 1)]
-#    assert board4.put_disc('white', 1, 3) == [(1, 2), (1, 1)]
-#    assert board4.put_disc('black', 0, 3) == [(1, 2)]
-#    assert board4.put_disc('white', 0, 2) == [(1, 2), (0, 1)]
-#    assert board4.put_disc('black', 2, 3) == [(1, 3), (2, 2)]
-#    assert board4.put_disc('white', 3, 2) == [(2, 2), (2, 1)]
-#    assert board4.put_disc('black', 3, 1) == [(2, 2)]
-#    assert board4.put_disc('white', 3, 3) == [(2, 2)]
-#
-#    assert board4.get_bitboard_info() == (4366, 61169)
 #
 #    # プレイ結果
 #    print(board4)
