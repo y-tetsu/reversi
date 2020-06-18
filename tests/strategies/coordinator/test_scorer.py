@@ -3,8 +3,8 @@
 
 import unittest
 
-from reversi.board import BitBoard
-from reversi.strategies.coordinator import TableScorer
+from reversi.board import Board, BitBoard
+from reversi.strategies.coordinator import TableScorer, PossibilityScorer
 
 
 class TestScorer(unittest.TestCase):
@@ -60,3 +60,23 @@ class TestScorer(unittest.TestCase):
         board.put_disc('white', 5, 7)
         self.assertEqual(scorer.get_score('black', board), -40)
         self.assertEqual(scorer.get_score('white', board), -40)
+
+    def test_possibility_scorer(self):
+        board = Board()
+        scorer = PossibilityScorer()
+
+        # initial value
+        self.assertEqual(scorer._W, 5)
+        black_moves = board.get_legal_moves('black', force=True)
+        white_moves = board.get_legal_moves('white', force=True)
+        self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
+
+        board.put_disc('black', 5, 4)
+        print(board)
+
+        black_moves = board.get_legal_moves('black', force=True)
+        white_moves = board.get_legal_moves('white', force=True)
+        print('black', black_moves)
+        print('white', white_moves)
+        self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
+
