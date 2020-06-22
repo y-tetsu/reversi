@@ -3,8 +3,6 @@
 
 import unittest
 
-import numpy as np
-
 from reversi.board import Board
 from reversi.strategies import Table
 
@@ -21,7 +19,7 @@ class TestTable(unittest.TestCase):
             [0, -1, -1, 0],
         ]
 
-        self.assertTrue((table.table == np.array(init)).all())
+        self.assertEqual(table.table, init)
 
         table = Table(8)
         init = [
@@ -35,7 +33,7 @@ class TestTable(unittest.TestCase):
             [ 50, -20, -1, -1, -1, -1, -20,  50],
         ]
 
-        self.assertTrue((table.table == np.array(init)).all())
+        self.assertEqual(table.table, init)
 
         table = Table(16)
         init = [
@@ -57,7 +55,7 @@ class TestTable(unittest.TestCase):
             [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
         ]
 
-        self.assertTrue((table.table == np.array(init)).all())
+        self.assertEqual(table.table, init)
 
     def test_table8_score(self):
         table = Table(8)
@@ -82,4 +80,4 @@ class TestTable(unittest.TestCase):
             [0, -1, -1, 0],
         ]
 
-        self.assertTrue((table.table == np.array(init)).all())
+        self.assertEqual(table.table, init)

@@ -3,11 +3,10 @@ from distutils.extension import Extension
 
 setup(
     name='reversi',
-    version='0.0.15',
+    version='0.0.16',
     license='MIT License',
     install_requires=[
         'cython',
-        'numpy',
         'pyinstaller',
     ],
     description='A reversi library for Python',

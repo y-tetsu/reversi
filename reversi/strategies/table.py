@@ -8,8 +8,6 @@ sys.path.append('../')
 import random
 import itertools
 
-import numpy as np
-
 from reversi.strategies.common import AbstractStrategy
 
 
@@ -69,15 +67,19 @@ class Table(AbstractStrategy):
                         table[y+(1*y_sign)][x] = self._C
                         table[y+(2*y_sign)][x] = self._A2
 
-        self.table = np.array(table)
+        self.table = table
 
     def get_score(self, color, board):
         """
         評価値を取得する
         """
         sign = 1 if color == 'black' else -1
-        board_info = np.array(board.get_board_info())
-        score = (board_info * self.table * sign).sum()
+        board_info = board.get_board_info()
+        score = 0
+
+        for y in range(self.size):
+            for x in range(self.size):
+                score += self.table[y][x] * board_info[y][x] * sign
 
         return score
 
@@ -106,75 +108,3 @@ class Table(AbstractStrategy):
             board.undo()
 
         return random.choice(moves[max_score])
-
-
-if __name__ == '__main__':
-    from board import Board
-
-    table4 = Table(4)
-    table4_ret = [
-        [0, -1, -1, 0],
-        [-1, -1, -1, -1],
-        [-1, -1, -1, -1],
-        [0, -1, -1, 0],
-    ]
-    assert (table4.table == np.array(table4_ret)).all()
-
-    table8 = Table(8)
-    table8_ret = [
-        [ 50, -20, -1, -1, -1, -1, -20,  50],
-        [-20, -25, -5, -5, -5, -5, -25, -20],
-        [ -1,  -5,  0, -1, -1,  0,  -5,  -1],
-        [ -1,  -5, -1, -1, -1, -1,  -5,  -1],
-        [ -1,  -5, -1, -1, -1, -1,  -5,  -1],
-        [ -1,  -5,  0, -1, -1,  0,  -5,  -1],
-        [-20, -25, -5, -5, -5, -5, -25, -20],
-        [ 50, -20, -1, -1, -1, -1, -20,  50],
-    ]
-    print(table8.table)
-    assert (table8.table == np.array(table8_ret)).all()
-
-    table16 = Table(16)
-    table16_ret = [
-        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
-        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
-        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
-        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
-        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, -1, -1, -1, -1, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -5, 0, -1, -1, 0, -5, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, -1, -25, -5, -5, -5, -5, -25, -1, -5, -1, -5, -1],
-        [-1, -5, -1, -5, 0, -1, -1, -1, -1, -1, -1, 0, -5, -1, -5, -1],
-        [-1, -5, -1, -25, -5, -5, -5, -5, -5, -5, -5, -5, -25, -1, -5, -1],
-        [-1, -5, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -5, -1],
-        [-20, -25, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -25, -20],
-        [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
-    ]
-    assert (table16.table == np.array(table16_ret)).all()
-
-    board8 = Board(8)
-    board8.put_disc('black', 3, 2)
-    board8.put_disc('white', 2, 2)
-    board8.put_disc('black', 2, 3)
-    board8.put_disc('white', 4, 2)
-    board8.put_disc('black', 1, 1)
-    board8.put_disc('white', 0, 0)
-    print(board8)
-    for row in table8.table:
-        print(row)
-    print('black score', table8.get_score('black', board8))
-    print('white score', table8.get_score('white', board8))
-    assert table8.get_score('black', board8) == -22
-    assert table8.get_score('white', board8) == 22
-    print('next black', table8.next_move('black', board8))
-    print('next white', table8.next_move('white', board8))
-    assert table8.next_move('black', board8) == (5, 2)
-    assert table8.next_move('white', board8) == (2, 5)
-
-    print("pre", table8.table)
-    table8.next_move('black', Board(4))
-    print("aft", table8.table)
-    assert (table8.table == np.array(table4_ret)).all
