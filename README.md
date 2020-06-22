@@ -20,7 +20,6 @@
 - メモリ 4.00GB 以上
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
     - cython 0.29.15<br>
-    - numpy 1.18.1<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing)<br>
 
@@ -259,15 +258,6 @@ $ py -3.7 -m pip install -r requirements.txt
 $ py -3.7 -m pip install cython
  :
 Successfully installed cython-0.29.15
-```
-
-#### numpyパッケージのインストール
-**reversi**を実行するためにはnumpyという外部パッケージが必要となります。<br>
-下記を実行してインストールして下さい。
-```
-$ py -3.7 -m pip install numpy
- :
-Successfully installed numpy-1.18.1
 ```
 
 #### pyinstallerパッケージのインストール
