@@ -72,11 +72,8 @@ class TestScorer(unittest.TestCase):
         self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
 
         board.put_disc('black', 5, 4)
-        print(board)
 
         black_moves = board.get_legal_moves('black', force=True)
         white_moves = board.get_legal_moves('white', force=True)
-        print('black', black_moves)
-        print('white', white_moves)
         self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
 
