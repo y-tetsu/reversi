@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-簡易戦略集
+"""Table
 """
 
 import sys
