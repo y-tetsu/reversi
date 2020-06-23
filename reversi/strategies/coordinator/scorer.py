@@ -16,8 +16,8 @@ class TableScorer(AbstractScorer):
     """
     盤面の評価値をTableで算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5):
-        self.table = Table(size, corner, c, a1, a2, b, x, o)  # Table戦略を利用する
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5):
+        self.table = Table(size, corner, c, a1, a2, b1, b2, b3, x, o)  # Table戦略を利用する
 
     def get_score(self, color, board):
         """

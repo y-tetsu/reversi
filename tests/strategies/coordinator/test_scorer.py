@@ -20,7 +20,9 @@ class TestScorer(unittest.TestCase):
         self.assertEqual(scorer.table._C, -20)
         self.assertEqual(scorer.table._A1, 0)
         self.assertEqual(scorer.table._A2, -1)
-        self.assertEqual(scorer.table._B, -1)
+        self.assertEqual(scorer.table._B1, -1)
+        self.assertEqual(scorer.table._B2, -1)
+        self.assertEqual(scorer.table._B3, -1)
         self.assertEqual(scorer.table._X, -25)
         self.assertEqual(scorer.table._O, -5)
         self.assertEqual(scorer.get_score('black', board), 0)
@@ -76,4 +78,3 @@ class TestScorer(unittest.TestCase):
         black_moves = board.get_legal_moves('black', force=True)
         white_moves = board.get_legal_moves('white', force=True)
         self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
-

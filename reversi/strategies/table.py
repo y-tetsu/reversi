@@ -3,24 +3,26 @@
 """
 
 import sys
-sys.path.append('../')
-
 import random
 import itertools
 
 from reversi.strategies.common import AbstractStrategy
+
+sys.path.append('../')
 
 
 class Table(AbstractStrategy):
     """
     評価テーブルで手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5):
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5):
         self._CORNER = corner
         self._C = c
         self._A1 = a1
         self._A2 = a2
-        self._B = b
+        self._B1 = b1
+        self._B2 = b2
+        self._B3 = b3
         self._X = x
         self._O = o
         self.set_table(size)
@@ -30,27 +32,44 @@ class Table(AbstractStrategy):
         評価テーブル設定
         """
         self.size = size
-        table = [[self._B for _ in range(size)] for _ in range(size)]
+        table = [[self._B3 for _ in range(size)] for _ in range(size)]
 
-        # 中
+        # B1
+        table[size//2-1][size//2-1] = self._B1
+        table[size//2-1][size//2] = self._B1
+        table[size//2][size//2-1] = self._B1
+        table[size//2][size//2] = self._B1
+
+        # A1
         for num in range(0, size//2, 2):
             if num != size//2 - 1:
                 for y, x in itertools.product((num, size-num-1), repeat=2):
                     table[y][x] = self._A1
 
+        # B2
+        for y in range(2, size//2-2, 2):
+            for x in range(y+1, size-y-1):
+                for tmp_y, tmp_x in ((y, x), (size-y-1, x)):
+                    table[tmp_y][tmp_x] = self._B2
+                    table[tmp_x][tmp_y] = self._B2
+
+        # X
         for y in range(1, size//2-1, 2):
             for x in range(1, size//2-1, 2):
                 if x == y:
-                    for tmp_y, tmp_x in itertools.product((y, size-y-1), (x, size-x-1)):
+                    x2 = size - x - 1
+                    y2 = size - y - 1
+                    for tmp_y, tmp_x in itertools.product((y, y2), (x, x2)):
                         table[tmp_y][tmp_x] = self._X
 
+        # O
         for y in range(1, size//2-2, 2):
             for x in range(y+1, size-y-1):
                 for tmp_y, tmp_x in ((y, x), (size-y-1, x)):
                     table[tmp_y][tmp_x] = self._O
                     table[tmp_x][tmp_y] = self._O
 
-        # 端
+        # CORNER、A2、C
         x_min, y_min, x_max, y_max = 0, 0, size - 1, size - 1
 
         if size >= 6:
@@ -64,6 +83,7 @@ class Table(AbstractStrategy):
 
                         table[y][x+(1*x_sign)] = self._C
                         table[y][x+(2*x_sign)] = self._A2
+                        table[y][x+(3*x_sign)] = self._A2
                         table[y+(1*y_sign)][x] = self._C
                         table[y+(2*y_sign)][x] = self._A2
 

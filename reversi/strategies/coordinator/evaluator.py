@@ -14,8 +14,8 @@ class Evaluator_T(AbstractEvaluator):
     """
     盤面の評価値をTableで算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5):
-        self.scorer = TableScorer(size, corner, c, a1, a2, b, x, o)  # Tableによる評価値算出
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5):
+        self.scorer = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o)  # Tableによる評価値算出
 
     def evaluate(self, *args, **kwargs):
         """
@@ -112,8 +112,8 @@ class Evaluator_TP(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数で算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5):
-        self.t = Evaluator_T(size,corner, c, a1, a2, b, x, o)
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5, wp=5):
+        self.t = Evaluator_T(size,corner, c, a1, a2, b1, b2, b3, x, o)
         self.p = Evaluator_P(wp)
 
     def evaluate(self, *args, **kwargs):
@@ -130,8 +130,8 @@ class Evaluator_TPO(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数+開放度で算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, wo=-0.75):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5, wp=5, wo=-0.75):
+        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o)
         self.p = Evaluator_P(wp)
         self.o = Evaluator_O(wo)
 
@@ -196,8 +196,8 @@ class Evaluator_TPW(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数+勝敗で算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5, wp=5, ww=10000):
+        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o)
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
 
@@ -221,8 +221,8 @@ class Evaluator_TPOW(Evaluator_TPO):
     """
     盤面の評価値をTable+配置可能数+開放度+勝敗で算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, wo=-0.75, ww=10000):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5, wp=5, wo=-0.75, ww=10000):
+        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o)
         self.p = Evaluator_P(wp)
         self.o = Evaluator_O(wo)
         self.w = Evaluator_W(ww)
@@ -248,8 +248,8 @@ class Evaluator_TPWE(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数+勝敗+辺のパターンで算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, we=100):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5, wp=5, ww=10000, we=100):
+        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o)
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
         self.e = Evaluator_E(we)
@@ -275,8 +275,8 @@ class Evaluator_TPWEC(AbstractEvaluator):
     """
     盤面の評価値をTable+配置可能数+勝敗+辺のパターン+隅のパターンで算出
     """
-    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b=-1, x=-25, o=-5, wp=5, ww=10000, we=100, wc=120):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b, x, o)
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o=-5, wp=5, ww=10000, we=100, wc=120):
+        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o)
         self.p = Evaluator_P(wp)
         self.w = Evaluator_W(ww)
         self.e = Evaluator_E(we)
