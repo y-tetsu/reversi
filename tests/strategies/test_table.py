@@ -13,10 +13,10 @@ class TestTable(unittest.TestCase):
     def test_table_init(self):
         table = Table(4)
         init = [
-            [0, -1, -1, 0],
-            [-1, -1, -1, -1],
-            [-1, -1, -1, -1],
-            [0, -1, -1, 0],
+            [50, -20, -20, 50],
+            [-20, -1, -1, -20],
+            [-20, -1, -1, -20],
+            [50, -20, -20, 50],
         ]
 
         self.assertEqual(table.table, init)
@@ -56,24 +56,38 @@ class TestTable(unittest.TestCase):
         ]
 
     def test_table_init_general(self):
-        table = Table(4, corner=1, c=2, a1=3, a2=4, b1=5, b2=6, b3=7, x=8, o=9)
+        table = Table(4, corner=0, c=1, a1=2, a2=3, b1=4, b2=5, b3=6, x=7, o1=8, o2=9)
         init = [
-            [3, 7, 7, 3],
-            [7, 5, 5, 7],
-            [7, 5, 5, 7],
-            [3, 7, 7, 3],
+            [0, 1, 1, 0],
+            [1, 4, 4, 1],
+            [1, 4, 4, 1],
+            [0, 1, 1, 0],
         ]
 
         self.assertEqual(table.table, init)
 
-        table = Table(6, corner=1, c=2, a1=3, a2=4, b1=5, b2=6, b3=7, x=8, o=9)
+        table = Table(6, corner=0, c=1, a1=2, a2=3, b1=4, b2=5, b3=6, x=7, o1=8, o2=9)
         init = [
-            [1, 2, 4, 4, 2, 1],
-            [2, 8, 7, 7, 8, 2],
-            [4, 7, 5, 5, 7, 4],
-            [4, 7, 5, 5, 7, 4],
-            [2, 8, 7, 7, 8, 2],
-            [1, 2, 4, 4, 2, 1],
+            [0, 1, 3, 3, 1, 0],
+            [1, 7, 8, 8, 7, 1],
+            [3, 8, 4, 4, 8, 3],
+            [3, 8, 4, 4, 8, 3],
+            [1, 7, 8, 8, 7, 1],
+            [0, 1, 3, 3, 1, 0],
+        ]
+
+        self.assertEqual(table.table, init)
+
+        table = Table(8, corner=0, c=1, a1=2, a2=3, b1=4, b2=5, b3=6, x=7, o1=8, o2=9)
+        init = [
+            [0, 1, 3, 6, 6, 3, 1, 0],
+            [1, 7, 8, 9, 9, 8, 7, 1],
+            [3, 8, 2, 5, 5, 2, 8, 3],
+            [6, 9, 5, 4, 4, 5, 9, 6],
+            [6, 9, 5, 4, 4, 5, 9, 6],
+            [3, 8, 2, 5, 5, 2, 8, 3],
+            [1, 7, 8, 9, 9, 8, 7, 1],
+            [0, 1, 3, 6, 6, 3, 1, 0],
         ]
 
         self.assertEqual(table.table, init)
@@ -95,10 +109,10 @@ class TestTable(unittest.TestCase):
 
         table.next_move('black', Board(4))
         init = [
-            [0, -1, -1, 0],
-            [-1, -1, -1, -1],
-            [-1, -1, -1, -1],
-            [0, -1, -1, 0],
+            [50, -20, -20, 50],
+            [-20, -1, -1, -20],
+            [-20, -1, -1, -20],
+            [50, -20, -20, 50],
         ]
 
         self.assertEqual(table.table, init)

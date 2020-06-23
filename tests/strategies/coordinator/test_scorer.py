@@ -24,7 +24,8 @@ class TestScorer(unittest.TestCase):
         self.assertEqual(scorer.table._B2, -1)
         self.assertEqual(scorer.table._B3, -1)
         self.assertEqual(scorer.table._X, -25)
-        self.assertEqual(scorer.table._O, -5)
+        self.assertEqual(scorer.table._O1, -5)
+        self.assertEqual(scorer.table._O2, -5)
         self.assertEqual(scorer.get_score('black', board), 0)
         self.assertEqual(scorer.get_score('white', board), 0)
 

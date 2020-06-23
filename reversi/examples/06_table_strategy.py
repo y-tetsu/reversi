@@ -12,46 +12,53 @@
         c      : c weight
         a1     : a1 weight
         a2     : a2 weight
-        b      : b weight
+        b1     : b1 weight
+        b2     : b2 weight
+        b3     : b3 weight
         x      : x weight
-        o      : o weight
+        o1     : o1 weight
+        o2     : o2 weight
 
     Table position is below.
 
     (size=8)
     ---------------------------------------------------------
-    |corner|  c   |  a2  |  b   |  b   |  a2  |  c   |corner|
+    |corner|  c   |  a2  |  b3  |  b3  |  a2  |  c   |corner|
     ---------------------------------------------------------
-    |  c   |  x   |  o   |  o   |  o   |  o   |  x   |  c   |
+    |  c   |  x   |  o1  |  o2  |  o2  |  o1  |  x   |  c   |
     ---------------------------------------------------------
-    |  a2  |  o   |  a1  |  b   |  b   |  a1  |  o   |  a2  |
+    |  a2  |  o1  |  a1  |  b2  |  b2  |  a1  |  o1  |  a2  |
     ---------------------------------------------------------
-    |  b   |  o   |  b   |  b   |  b   |  b   |  o   |  b   |
+    |  b3  |  o2  |  b2  |  b1  |  b1  |  b2  |  o2  |  b3  |
     ---------------------------------------------------------
-    |  b   |  o   |  b   |  b   |  b   |  b   |  o   |  b   |
+    |  b3  |  o2  |  b2  |  b1  |  b1  |  b2  |  o2  |  b3  |
     ---------------------------------------------------------
-    |  a2  |  o   |  a1  |  b   |  b   |  a1  |  o   |  a2  |
+    |  a2  |  o1  |  a1  |  b2  |  b2  |  a1  |  o1  |  a2  |
     ---------------------------------------------------------
-    |  c   |  x   |  o   |  o   |  o   |  o   |  x   |  c   |
+    |  c   |  x   |  o1  |  o2  |  o2  |  o1  |  x   |  c   |
     ---------------------------------------------------------
-    |corner|  c   |  a2  |  b   |  b   |  a2  |  c   |corner|
+    |corner|  c   |  a2  |  b3  |  b3  |  a2  |  c   |corner|
     ---------------------------------------------------------
 """
 
-from reversi import Reversi, strategies
+from reversi import Reversi
+from reversi.strategies import Table
 
 
 if __name__ == '__main__':
     Reversi(
         {
-            'Table': strategies.Table(
+            'Table': Table(
                 corner=50,
                 c=-20,
                 a1=0,
                 a2=-1,
-                b=-1,
+                b1=-1,
+                b2=-1,
+                b3=-1,
                 x=-25,
-                o=-5,
+                o1=-5,
+                o2=-5,
             ),
         }
     ).start()
