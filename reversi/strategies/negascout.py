@@ -78,7 +78,7 @@ class NegaScout_TPW2(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める
     """
-    def __init__(self, evaluator=Evaluator_TPW(corner=50, c=-20, a1=0, a2=22, b1=-1, b2=-1, b3=-1, x=-35, o=-5, wp=5, ww=10000)):
+    def __init__(self, evaluator=Evaluator_TPW(corner=50, c=-20, a1=0, a2=22, b1=-1, b2=-1, b3=-1, x=-35, o1=-5, o2=-5, wp=5, ww=10000)):
         super().__init__(evaluator=evaluator)
 
 
