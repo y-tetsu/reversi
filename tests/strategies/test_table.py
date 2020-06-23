@@ -55,6 +55,27 @@ class TestTable(unittest.TestCase):
             [50, -20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -20, 50],
         ]
 
+    def test_table_init_general(self):
+        table = Table(4, corner=1, c=2, a1=3, a2=4, b1=5, b2=6, b3=7, x=8, o=9)
+        init = [
+            [3, 7, 7, 3],
+            [7, 5, 5, 7],
+            [7, 5, 5, 7],
+            [3, 7, 7, 3],
+        ]
+
+        self.assertEqual(table.table, init)
+
+        table = Table(6, corner=1, c=2, a1=3, a2=4, b1=5, b2=6, b3=7, x=8, o=9)
+        init = [
+            [1, 2, 4, 4, 2, 1],
+            [2, 8, 7, 7, 8, 2],
+            [4, 7, 5, 5, 7, 4],
+            [4, 7, 5, 5, 7, 4],
+            [2, 8, 7, 7, 8, 2],
+            [1, 2, 4, 4, 2, 1],
+        ]
+
         self.assertEqual(table.table, init)
 
     def test_table8_score(self):
