@@ -22,28 +22,35 @@
             c      : c weight
             a1     : a1 weight
             a2     : a2 weight
-            b      : b weight
+            b1     : b1 weight
+            b2     : b2 weight
+            b3     : b3 weight
             x      : x weight
-            o      : o weight
+            o1     : o1 weight
+            o2     : o2 weight
 """
 
-from reversi import Reversi, strategies
+from reversi import Reversi
+from reversi.strategies import MinMax
 from reversi.strategies.coordinator import Evaluator_T
 
 
 if __name__ == '__main__':
     Reversi(
         {
-            'MinMax': strategies.MinMax(
+            'MinMax': MinMax(
                 depth=2,
                 evaluator=Evaluator_T(
                     corner=50,
                     c=-20,
                     a1=0,
                     a2=-1,
-                    b=-1,
+                    b1=-1,
+                    b2=-1,
+                    b3=-1,
                     x=-25,
-                    o=-5,
+                    o1=-5,
+                    o2=-5,
                 ),
             ),
         }
