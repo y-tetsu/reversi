@@ -1,4 +1,4 @@
-"""Tests of display.py
+"""Tests of scorer.py
 """
 
 import unittest
