@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-"""test board.py
+"""Tests of board.py
 """
 
 import unittest
