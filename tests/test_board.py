@@ -3,6 +3,10 @@
 
 import unittest
 from reversi.board import BoardSizeError, Board, BitBoard
+from reversi.game import Game
+from reversi.player import Player
+from reversi.strategies import Random
+from reversi.display import NoneDisplay
 
 
 class TestBoard(unittest.TestCase):
@@ -617,3 +621,72 @@ class TestBoard(unittest.TestCase):
         board._white_bitboard = 0x0000001C1C140000
         legal_moves = board.get_legal_moves('black', force=True)
         self.assertEqual(legal_moves, {(3, 2): [(3, 3), (3, 4), (3, 5)], (4, 2): [(4, 3), (4, 4)], (2, 3): [(3, 4)], (6, 3): [(5, 4)], (2, 5): [(3, 5)], (6, 5): [(5, 5)]})
+
+    def test_board_random_play(self):
+        class TestPlayer(Player):
+            def put_disc(self, board, bitboard):
+                self.move = self.strategy.next_move(self.color, board)
+                self.captures =  board.put_disc(self.color, *self.move)
+                self.captures =  bitboard.put_disc(self.color, *self.move)
+
+        class TestGame(Game):
+            def __init__(self, unittest, board, bitboard, black_player, white_player, display, color='black', cancel=None):
+                self.unittest = unittest
+                self.board = board
+                self.bitboard = bitboard
+                self.black_player = black_player
+                self.white_player = white_player
+                self.players = [self.black_player, self.white_player] if color == 'black' else [self.white_player, self.black_player]
+                self.display = display
+                self.cancel = cancel
+                self.result = []
+
+            def play(self):
+                if not self.result:
+                    self.display.progress(self.board, self.black_player, self.white_player)
+
+                    while True:
+                        playable, foul_player = 0, None
+
+                        for player in self.players:
+                            # キャンセル許可時
+                            if self.cancel:
+                                if self.cancel.event.is_set():
+                                    # キャンセルメニュー設定時は中断
+                                    break
+
+                            legal_moves1 = list(self.board.get_legal_moves(player.color, force=True).keys())
+                            legal_moves2 = list(self.bitboard.get_legal_moves(player.color, force=True).keys())
+                            self.unittest.assertEqual(legal_moves1, legal_moves2)
+
+                            if not legal_moves1:
+                                continue
+
+                            self.display.turn(player, legal_moves1)
+
+                            player.put_disc(self.board, self.bitboard)
+
+                            self.display.move(player, legal_moves1)
+                            self.display.progress(self.board, self.black_player, self.white_player)
+
+                            if not player.captures:
+                                foul_player = player
+                                break
+
+                            playable += 1
+
+                        if foul_player:
+                            self._foul(foul_player)
+                            break
+
+                        if not playable:
+                            self._judge()
+                            break
+
+        for _ in range(5):
+            board = Board()
+            bitboard = BitBoard()
+            black_player = TestPlayer('black', 'Random1', Random())
+            white_player = TestPlayer('white', 'Random2', Random())
+            game = TestGame(self, board, bitboard, black_player, white_player, NoneDisplay())
+            game.play()
