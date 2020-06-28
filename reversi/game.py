@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-"""
-ゲームの管理
+"""Game
 """
 
 
 class Game:
-    """
-    ゲームを管理する
+    """Game
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
@@ -20,8 +17,7 @@ class Game:
         self.result = []
 
     def play(self):
-        """
-        ゲームを開始する
+        """play
         """
         if not self.result:
             self.display.progress(self.board, self.black_player, self.white_player)
@@ -30,10 +26,8 @@ class Game:
                 playable, foul_player = 0, None
 
                 for player in self.players:
-                    # キャンセル許可時
                     if self.cancel:
                         if self.cancel.event.is_set():
-                            # キャンセルメニュー設定時は中断
                             break
 
                     legal_moves = list(self.board.get_legal_moves(player.color).keys())
@@ -63,16 +57,14 @@ class Game:
                     break
 
     def _foul(self, player):
-        """
-        反則負け
+        """foul
         """
         self.display.foul(player)
         winner = self.white_player if player.color == self.black_player.color else self.black_player
         self._win(winner)
 
     def _judge(self):
-        """
-        結果判定
+        """judge
         """
         black_num, white_num = self.board.score['black'], self.board.score['white']
 
@@ -83,23 +75,20 @@ class Game:
             self._win(winner)
 
     def _win(self, player):
-        """
-        勝ち
+        """win
         """
         self.display.win(player)
         winlose = Game.BLACK_WIN if player.color == self.black_player.color else Game.WHITE_WIN
         self._store_result(winlose)
 
     def _draw(self):
-        """
-        引き分け
+        """draw
         """
         self.display.draw()
         self._store_result(Game.DRAW)
 
     def _store_result(self, winlose):
-        """
-        結果を格納する
+        """store_result
         """
         self.result = GameResult(
             winlose,
@@ -109,8 +98,7 @@ class Game:
 
 
 class GameResult:
-    """
-    ゲームの結果
+    """GameResult
     """
     def __init__(self, winlose, black_name, white_name, black_num, white_num):
         self.winlose = winlose
@@ -118,41 +106,3 @@ class GameResult:
         self.white_name = white_name
         self.black_num = black_num
         self.white_num = white_num
-
-
-if __name__ == '__main__':
-    from board import Board
-    from player import Player
-    from display import ConsoleDisplay
-    import strategies
-
-    class Foul():
-        def next_move(self, disc, board):
-            return (1, 1)
-
-    board4x4 = Board(4)
-    black_player = Player('black', 'Random', strategies.Random())
-    white_player = Player('white', 'Foul', Foul())
-
-    game = Game(board4x4, black_player, white_player, ConsoleDisplay())
-    game.play()
-
-    print()
-    print(game.result.winlose)
-    print(game.result.black_name, game.result.black_num)
-    print(game.result.white_name, game.result.white_num)
-    print()
-
-    black_player = Player('black', 'Random', strategies.Random())
-    white_player = Player('white', 'Table', strategies.Table(4))
-
-    board4x4 = Board(4)
-    board4x4.put_disc('black', 1, 0)
-    print(board4x4)
-    game = Game(board4x4, black_player, white_player, ConsoleDisplay(), 'white')
-    game.play()
-
-    print()
-    print(game.result.winlose)
-    print(game.result.black_name, game.result.black_num)
-    print(game.result.white_name, game.result.white_num)
