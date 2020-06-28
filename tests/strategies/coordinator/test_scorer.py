@@ -4,7 +4,7 @@
 import unittest
 
 from reversi.board import Board, BitBoard
-from reversi.strategies.coordinator import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer, EdgeScorer, CornerScorer
+import reversi.strategies.coordinator as coord
 
 
 class TestScorer(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestScorer(unittest.TestCase):
     """
     def test_table_scorer(self):
         board = BitBoard()
-        scorer = TableScorer()
+        scorer = coord.TableScorer()
 
         # initial value
         self.assertEqual(scorer.table.size, 8)
@@ -66,7 +66,7 @@ class TestScorer(unittest.TestCase):
 
     def test_possibility_scorer(self):
         board = Board()
-        scorer = PossibilityScorer()
+        scorer = coord.PossibilityScorer()
 
         # initial value
         self.assertEqual(scorer._W, 5)
@@ -101,7 +101,7 @@ class TestScorer(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        scorer = OpeningScorer()
+        scorer = coord.OpeningScorer()
         self.assertEqual(scorer.get_score(board), -8.25)
 
     def test_winlose_scorer(self):
@@ -113,7 +113,7 @@ class TestScorer(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        scorer = WinLoseScorer()
+        scorer = coord.WinLoseScorer()
         self.assertEqual(scorer.get_score(board, [], []), -10006)
 
         black_moves = board.get_legal_moves('black', force=True)
@@ -129,12 +129,12 @@ class TestScorer(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        scorer = NumberScorer()
+        scorer = coord.NumberScorer()
         self.assertEqual(scorer.get_score(board), -6)
 
     def test_edge_scorer(self):
         board = BitBoard()
-        scorer = EdgeScorer()
+        scorer = coord.EdgeScorer()
 
         # stable disc
         board._black_bitboard = 0xC000000000000000
@@ -169,7 +169,7 @@ class TestScorer(unittest.TestCase):
 
     def test_corner_scorer(self):
         board = BitBoard(8)
-        scorer = CornerScorer()
+        scorer = coord.CornerScorer()
 
         # Level1
         board._black_bitboard = 0x0000000000000000
