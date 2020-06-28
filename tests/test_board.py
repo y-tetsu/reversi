@@ -2,6 +2,7 @@
 """
 
 import unittest
+
 from reversi.board import BoardSizeError, Board, BitBoard
 from reversi.game import Game
 from reversi.player import Player

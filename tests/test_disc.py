@@ -2,6 +2,7 @@
 """
 
 import unittest
+
 from reversi.disc import Black, White, Blank, DiscFactory
 
 
