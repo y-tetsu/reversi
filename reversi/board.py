@@ -261,7 +261,7 @@ class Board(AbstractBoard):
                     white_bitboard |= put
                 put >>= 1
 
-        return  black_bitboard, white_bitboard
+        return black_bitboard, white_bitboard
 
 
 class BitBoard(AbstractBoard):
@@ -425,4 +425,4 @@ class BitBoard(AbstractBoard):
         """
         ビットボードの情報を返す
         """
-        return  self._black_bitboard, self._white_bitboard
+        return self._black_bitboard, self._white_bitboard
