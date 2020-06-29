@@ -22,5 +22,5 @@ class Player:
     def put_disc(self, board):
         """put_disc
         """
-        self.move = self.strategy.next_move(self.color, board)   # decide next move by strategy
-        self.captures =  board.put_disc(self.color, *self.move)  # put disc on board
+        self.move = self.strategy.next_move(self.color, board)  # decide next move by strategy
+        self.captures = board.put_disc(self.color, *self.move)  # put disc on board
