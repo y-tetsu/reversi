@@ -3,13 +3,7 @@
 """
 
 
-def get_score(color, table, board):
-    """get_score
-    """
-    return _get_score(color, table, board)
-
-
-cdef _get_score(color, table, board):
+cpdef inline signed int get_score(color, table, board):
     """_get_score
     """
     cdef:
