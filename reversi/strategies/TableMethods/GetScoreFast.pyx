@@ -4,7 +4,7 @@
 
 
 cpdef inline signed int get_score(color, table, board):
-    """_get_score
+    """get_score
     """
     cdef:
         unsigned int x, y, size
