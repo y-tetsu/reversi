@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Table
 """
 
@@ -7,13 +6,13 @@ import random
 import itertools
 
 from reversi.strategies.common import AbstractStrategy
+import reversi.strategies.TableMethods as TableMethods
 
 sys.path.append('../')
 
 
 class Table(AbstractStrategy):
-    """
-    評価テーブルで手を決める(なるべく少なく取る、角を狙う、角のそばは避ける)
+    """select move by evaluation table
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5):
         self._CORNER = corner
@@ -29,8 +28,7 @@ class Table(AbstractStrategy):
         self.set_table(size)
 
     def set_table(self, size):
-        """
-        評価テーブル設定
+        """set_table
         """
         self.size = size
         table = [[self._B3 for _ in range(size)] for _ in range(size)]
@@ -94,22 +92,12 @@ class Table(AbstractStrategy):
         self.table = table
 
     def get_score(self, color, board):
+        """get_score
         """
-        評価値を取得する
-        """
-        sign = 1 if color == 'black' else -1
-        board_info = board.get_board_info()
-        score = 0
-
-        for y in range(self.size):
-            for x in range(self.size):
-                score += self.table[y][x] * board_info[y][x] * sign
-
-        return score
+        return TableMethods.get_score(color, self.table, board)
 
     def next_move(self, color, board):
-        """
-        次の一手
+        """next move
         """
         if self.size != board.size:
             self.set_table(board.size)
