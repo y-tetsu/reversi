@@ -12,6 +12,10 @@ def get_score(color, table, board):
 cdef _get_score(color, table, board):
     """_get_score
     """
+    cdef:
+        unsigned int x, y, size
+        signed int sign, score
+
     sign = 1 if color == 'black' else -1
     board_info = board.get_board_info()
     size = board.size
