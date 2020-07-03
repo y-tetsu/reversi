@@ -14,6 +14,7 @@ import reversi.board as board
 from reversi.board import Board
 import reversi.BitBoardMethods as BitBoardMethods
 import reversi.strategies as strategies
+import reversi.strategies.TableMethods as TableMethods
 
 
 WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
@@ -417,7 +418,7 @@ class ScreenBoard:
 
         # 低速モードの表示
         slowmode_text = '■'
-        if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2:
+        if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2 or TableMethods.SLOW_MODE:
             self.text = canvas.create_text(
                 SLOWMODE_OFFSET_X,
                 SLOWMODE_OFFSET_Y,
