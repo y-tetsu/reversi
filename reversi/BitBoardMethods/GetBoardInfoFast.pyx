@@ -1,22 +1,49 @@
-#!/usr/bin/env python
 #cython: language_level=3
-"""
-ビットボードの情報取得処理
+"""GetBoardInfoFast
 """
 
+import sys
+
+
+MAXSIZE64 = 2**63 - 1
+
+
 def get_board_info(size, b, w):
-    """
-    ボードの情報(黒:1、白:-1、空き:0)を返す
+    """get_board_info
+          return list of board information(black:1, white:-1, blank:0)
     """
     if size == 8:
+        if sys.maxsize == MAXSIZE64:
+            return _get_board_info_size8_64bit(b, w)
+
         return _get_board_info_size8(b, w)
 
     return _get_board_info(size, b, w)
 
 
-cdef _get_board_info_size8(b, w):
+cdef _get_board_info_size8_64bit(unsigned long long b, unsigned long long w):
+    """_get_board_info_size8_64bit
     """
-    ボードの情報(サイズ8限定)
+    cdef:
+        unsigned int x, y
+        unsigned long long mask = 0x8000000000000000
+        signed int board_info[8][8]
+
+    for y in range(8):
+        for x in range(8):
+            if b & mask:
+                board_info[y][x] = 1
+            elif w & mask:
+                board_info[y][x] = -1
+            else:
+                board_info[y][x] = 0
+            mask >>= 1
+
+    return board_info
+
+
+cdef _get_board_info_size8(b, w):
+    """_get_board_info_size8
     """
     cdef:
         unsigned int x, y
@@ -59,8 +86,7 @@ cdef _get_board_info_size8(b, w):
 
 
 cdef _get_board_info(size, b, w):
-    """
-    ボードの情報(サイズ8以外)
+    """_get_board_info
     """
     board_info = []
     mask = 1 << (size * size - 1)
