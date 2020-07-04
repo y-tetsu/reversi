@@ -126,21 +126,24 @@ cdef _get_flippable_discs_size8_64bit(unsigned long long player, unsigned long l
     """_get_flippable_discs_size8_64bit
     """
     cdef:
-        unsigned int direction
+        unsigned int direction1, direction2
         unsigned long long buff, next_put
         unsigned long long move = 0
         unsigned long long flippable_discs = 0
 
     move = <unsigned long long>1 << (63-(y*8+x))
 
-    for direction in range(8):
+    for direction1 in range(8):
         buff = 0
-        next_put = _get_next_put_size8_64bit(move, direction)
+        next_put = _get_next_put_size8_64bit(move, direction1)
 
         # get discs of consecutive opponents
-        while next_put & opponent:
-            buff |= next_put
-            next_put = _get_next_put_size8_64bit(next_put, direction)
+        for direction2 in range(8):
+            if next_put & opponent:
+                buff |= next_put
+                next_put = _get_next_put_size8_64bit(next_put, direction1)
+            else:
+                break
 
         # store result if surrounded by own disc
         if next_put & player:
