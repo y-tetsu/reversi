@@ -16,3 +16,5 @@ try:
     SLOW_MODE2 = False
 except ImportError:
     from reversi.BitBoardMethods.GetBoardInfo import get_board_info
+
+from reversi.BitBoardMethods.Undo import undo
