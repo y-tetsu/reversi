@@ -23,3 +23,5 @@ try:
     SLOW_MODE3 = False
 except ImportError:
     from reversi.BitBoardMethods.Undo import undo
+
+from reversi.BitBoardMethods.PutDisc import put_disc

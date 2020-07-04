@@ -357,43 +357,12 @@ class BitBoard(AbstractBoard):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        legal_moves = self.get_legal_moves(color)
-
-        if (x, y) in legal_moves:
-            # 配置位置を整数に変換
-            size = self.size
-            put = 1 << ((size*size-1)-(y*size+x))
-
-            # 反転位置を整数に変換
-            reversibles_list = legal_moves[(x, y)]
-            flippable_discs = 0
-            for tmp_x, tmp_y in reversibles_list:
-                flippable_discs |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
-
-            # 自分の石を置いて相手の石をひっくり返す
-            if color == 'black':
-                self._black_bitboard ^= put | flippable_discs
-                self._white_bitboard ^= flippable_discs
-                self.score['black'] += 1 + len(reversibles_list)
-                self.score['white'] -= len(reversibles_list)
-            else:
-                self._white_bitboard ^= put | flippable_discs
-                self._black_bitboard ^= flippable_discs
-                self.score['black'] -= len(reversibles_list)
-                self.score['white'] += 1 + len(reversibles_list)
-
-            # 打った手の記録
-            self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs, 'disc_num': len(reversibles_list)})
-
-            return reversibles_list
-
-        return []
+        return BitBoardMethods.put_disc(self, color, x, y)
 
     def get_board_info(self):
         """
         ボードの情報を返す
         """
-
         return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
 
     def undo(self):
