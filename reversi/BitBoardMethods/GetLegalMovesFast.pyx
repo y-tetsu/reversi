@@ -108,13 +108,11 @@ cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long lon
     tmp |= diagonal & (tmp >> 9)
     legal_moves |= blank & (tmp >> 9)
 
-    # 石が置ける場所を格納
-    ret = {}
-
+    # prepare result
     cdef:
         unsigned int x, y
         unsigned long long mask = 0x8000000000000000
-
+    ret = {}
     for y in range(8):
         for x in range(8):
             if legal_moves & mask:
@@ -161,13 +159,13 @@ cdef _get_flippable_discs_size8_64bit(unsigned long long player, unsigned long l
     return ret
 
 
-cdef _get_next_put_size8_64bit(unsigned long long put, unsigned int direction):
+cdef inline unsigned long long _get_next_put_size8_64bit(unsigned long long put, unsigned int direction):
     """_get_next_put_size8_64bit
     """
     cdef:
         unsigned long long next_put
 
-    if direction == 0:     # 上
+    if direction == 0:
         next_put = 0xFFFFFFFFFFFFFF00 & (put << 8)  # top
     elif direction == 1:
         next_put = 0x7F7F7F7F7F7F7F00 & (put << 7)  # right-top
