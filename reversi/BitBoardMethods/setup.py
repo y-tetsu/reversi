@@ -19,3 +19,12 @@ setup(
   cmdclass = {'build_ext': build_ext},
   ext_modules = ext_modules
 )
+
+# UndoFast
+ext_modules = [Extension("UndoFast", ["UndoFast.pyx"])]
+
+setup(
+  name = 'UndoFast',
+  cmdclass = {'build_ext': build_ext},
+  ext_modules = ext_modules
+)
