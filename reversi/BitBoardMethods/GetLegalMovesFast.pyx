@@ -14,172 +14,179 @@ def get_legal_moves(color, size, b, w, mask):
     """
     if size == 8:
         if sys.maxsize == MAXSIZE64:
-            return _get_legal_moves_size8_64bit(b, w)
+            return _get_legal_moves_size8_64bit(color, b, w)
 
         return _get_legal_moves_size8(color, b, w)
 
     return _get_legal_moves(color, size, b, w, mask)
 
 
-cdef _get_legal_moves_size8_64bit(color, b, w):
+cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long long w):
     """_get_legal_moves_size8_64bit
     """
-    # 前準備
-    player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
+    cdef:
+        unsigned long long player, opponent
 
-    """
-     a b c d e f g h
-    1■■■■■■■■ … 上位(0)
-    2■■■■■■■■
-    3■■■■■■■■
-    4■■■■■■■■
-    5□□□□□□□□ … 下位(1)
-    6□□□□□□□□
-    7□□□□□□□□
-    8□□□□□□□□
-    """
-    player |= 0x10000000000000000    # 32bit以下でもシフトできるよう対策
-    opponent |= 0x10000000000000000
+    player, opponent = (b, w) if color == 'black' else (w, b)
 
     cdef:
-        unsigned int x, y, tmp0, tmp1
-        unsigned int p0 = (player >> 32) & 0xFFFFFFFF    # プレイヤー石(上位)
-        unsigned int p1 = player & 0xFFFFFFFF            # プレイヤー石(下位)
-        unsigned int o0 = (opponent >> 32) & 0xFFFFFFFF  # 相手石(上位)
-        unsigned int o1 = opponent & 0xFFFFFFFF          # 相手石(上位)
-        unsigned int blank0 = ~(p0 | o0)                 # 空き(上位)
-        unsigned int blank1 = ~(p1 | o1)                 # 空き(下位)
-        unsigned int horizontal0 = o0 & 0x7E7E7E7E       # 水平方向のマスク値(上位)
-        unsigned int horizontal1 = o1 & 0x7E7E7E7E       # 水平方向のマスク値(下位)
-        unsigned int vertical0 = o0 & 0x00FFFFFF         # 垂直方向のマスク値(上位)
-        unsigned int vertical1 = o1 & 0xFFFFFF00         # 垂直方向のマスク値(下位)
-        unsigned int diagonal0 = o0 & 0x007E7E7E         # 斜め方向のマスク値(上位)
-        unsigned int diagonal1 = o1 & 0x7E7E7E00         # 斜め方向のマスク値(下位)
-        unsigned int legal_moves0 = 0                    # 石を置ける場所(上位)
-        unsigned int legal_moves1 = 0                    # 石を置ける場所(下位)
+        unsigned long long blank = ~(player | opponent)
+        unsigned long long horizontal = opponent & 0x7E7E7E7E7E7E7E7E  # horizontal mask value
+        unsigned long long vertical = opponent & 0x00FFFFFFFFFFFF00    # vertical mask value
+        unsigned long long diagonal = opponent & 0x007E7E7E7E7E7E00    # diagonal mask value
+        unsigned long long tmp, legal_moves = 0
 
-    # 左方向に石を置ける場所を探す
-    tmp0 = horizontal0 & (p0 << 1)
-    tmp0 |= horizontal0 & (tmp0 << 1)
-    tmp0 |= horizontal0 & (tmp0 << 1)
-    tmp0 |= horizontal0 & (tmp0 << 1)
-    tmp0 |= horizontal0 & (tmp0 << 1)
-    tmp0 |= horizontal0 & (tmp0 << 1)
-    legal_moves0 |= blank0 & (tmp0 << 1)
+    # left
+    tmp = horizontal & (player << 1)
+    tmp |= horizontal & (tmp << 1)
+    tmp |= horizontal & (tmp << 1)
+    tmp |= horizontal & (tmp << 1)
+    tmp |= horizontal & (tmp << 1)
+    tmp |= horizontal & (tmp << 1)
+    legal_moves |= blank & (tmp << 1)
 
-    tmp1 = horizontal1 & (p1 << 1)
-    tmp1 |= horizontal1 & (tmp1 << 1)
-    tmp1 |= horizontal1 & (tmp1 << 1)
-    tmp1 |= horizontal1 & (tmp1 << 1)
-    tmp1 |= horizontal1 & (tmp1 << 1)
-    tmp1 |= horizontal1 & (tmp1 << 1)
-    legal_moves1 |= blank1 & (tmp1 << 1)
+    # right
+    tmp = horizontal & (player >> 1)
+    tmp |= horizontal & (tmp >> 1)
+    tmp |= horizontal & (tmp >> 1)
+    tmp |= horizontal & (tmp >> 1)
+    tmp |= horizontal & (tmp >> 1)
+    tmp |= horizontal & (tmp >> 1)
+    legal_moves |= blank & (tmp >> 1)
 
-    # 右方向に石を置ける場所を探す
-    tmp0 = horizontal0 & (p0 >> 1)
-    tmp0 |= horizontal0 & (tmp0 >> 1)
-    tmp0 |= horizontal0 & (tmp0 >> 1)
-    tmp0 |= horizontal0 & (tmp0 >> 1)
-    tmp0 |= horizontal0 & (tmp0 >> 1)
-    tmp0 |= horizontal0 & (tmp0 >> 1)
-    legal_moves0 |= blank0 & (tmp0 >> 1)
+    # top
+    tmp = vertical & (player << 8)
+    tmp |= vertical & (tmp << 8)
+    tmp |= vertical & (tmp << 8)
+    tmp |= vertical & (tmp << 8)
+    tmp |= vertical & (tmp << 8)
+    tmp |= vertical & (tmp << 8)
+    legal_moves |= blank & (tmp << 8)
 
-    tmp1 = horizontal1 & (p1 >> 1)
-    tmp1 |= horizontal1 & (tmp1 >> 1)
-    tmp1 |= horizontal1 & (tmp1 >> 1)
-    tmp1 |= horizontal1 & (tmp1 >> 1)
-    tmp1 |= horizontal1 & (tmp1 >> 1)
-    tmp1 |= horizontal1 & (tmp1 >> 1)
-    legal_moves1 |= blank1 & (tmp1 >> 1)
+    # bottom
+    tmp = vertical & (player >> 8)
+    tmp |= vertical & (tmp >> 8)
+    tmp |= vertical & (tmp >> 8)
+    tmp |= vertical & (tmp >> 8)
+    tmp |= vertical & (tmp >> 8)
+    tmp |= vertical & (tmp >> 8)
+    legal_moves |= blank & (tmp >> 8)
 
-    # 上方向に石を置ける場所を探す
-    tmp1 = vertical1 & (p1 << 8)  # 下位のシフト
-    tmp1 |= vertical1 & (tmp1 << 8)
-    tmp1 |= vertical1 & (tmp1 << 8)
-    legal_moves1 |= blank1 & (tmp1 << 8)
+    # left-top
+    tmp = diagonal & (player << 9)
+    tmp |= diagonal & (tmp << 9)
+    tmp |= diagonal & (tmp << 9)
+    tmp |= diagonal & (tmp << 9)
+    tmp |= diagonal & (tmp << 9)
+    tmp |= diagonal & (tmp << 9)
+    legal_moves |= blank & (tmp << 9)
 
-    tmp0 = vertical0 & ((p0 << 8) | ((tmp1 | p1) >> 24))   # 上位のシフト+下位続き+上位直下にプレイヤー
-    tmp0 |= vertical0 & (tmp0 << 8)
-    tmp0 |= vertical0 & (tmp0 << 8)
-    legal_moves0 |= blank0 & ((tmp0 << 8) | (tmp1 >> 24))  # 上位のシフト+下位直上で置く場合
+    # left-bottom
+    tmp = diagonal & (player >> 7)
+    tmp |= diagonal & (tmp >> 7)
+    tmp |= diagonal & (tmp >> 7)
+    tmp |= diagonal & (tmp >> 7)
+    tmp |= diagonal & (tmp >> 7)
+    tmp |= diagonal & (tmp >> 7)
+    legal_moves |= blank & (tmp >> 7)
 
-    # 下方向に石を置ける場所を探す
-    tmp0 = vertical0 & (p0 >> 8)  # 上位のシフト
-    tmp0 |= vertical0 & (tmp0 >> 8)
-    tmp0 |= vertical0 & (tmp0 >> 8)
-    legal_moves0 |= blank0 & (tmp0 >> 8)
+    # right-top
+    tmp = diagonal & (player << 7)
+    tmp |= diagonal & (tmp << 7)
+    tmp |= diagonal & (tmp << 7)
+    tmp |= diagonal & (tmp << 7)
+    tmp |= diagonal & (tmp << 7)
+    tmp |= diagonal & (tmp << 7)
+    legal_moves |= blank & (tmp << 7)
 
-    tmp1 = vertical1 & ((p1 >> 8) | ((tmp0 | p0) << 24))   # 下位のシフト+上位続き+下位直上にプレイヤー
-    tmp1 |= vertical1 & (tmp1 >> 8)
-    tmp1 |= vertical1 & (tmp1 >> 8)
-    legal_moves1 |= blank1 & ((tmp1 >> 8) | (tmp0 << 24))  # 下位のシフト+上位直下で置く場合
-
-    # 左斜め上方向に石を置ける場所を探す
-    tmp1 = diagonal1 & (p1 << 9)  # 下位のシフト
-    tmp1 |= diagonal1 & (tmp1 << 9)
-    tmp1 |= diagonal1 & (tmp1 << 9)
-    legal_moves1 |= blank1 & (tmp1 << 9)
-
-    tmp0 = diagonal0 & ((p0 << 9) | ((tmp1 | p1) >> 23))   # 上位のシフト+下位続き+上位直下にプレイヤー
-    tmp0 |= diagonal0 & (tmp0 << 9)
-    tmp0 |= diagonal0 & (tmp0 << 9)
-    legal_moves0 |= blank0 & ((tmp0 << 9) | (tmp1 >> 23))  # 上位のシフト+下位直上で置く場合
-
-    # 左斜め下方向に石を置ける場所を探す
-    tmp0 = diagonal0 & (p0 >> 7)  # 上位のシフト
-    tmp0 |= diagonal0 & (tmp0 >> 7)
-    tmp0 |= diagonal0 & (tmp0 >> 7)
-    legal_moves0 |= blank0 & (tmp0 >> 7)
-
-    tmp1 = diagonal1 & ((p1 >> 7) | ((tmp0 | p0) << 25))   # 下位のシフト+上位続き+下位直上にプレイヤー
-    tmp1 |= diagonal1 & (tmp1 >> 7)
-    tmp1 |= diagonal1 & (tmp1 >> 7)
-    legal_moves1 |= blank1 & ((tmp1 >> 7) | (tmp0 << 25))  # 下位のシフト+上位直下で置く場合
-
-    # 右斜め上方向に石を置ける場所を探す
-    tmp1 = diagonal1 & (p1 << 7)  # 下位のシフト
-    tmp1 |= diagonal1 & (tmp1 << 7)
-    tmp1 |= diagonal1 & (tmp1 << 7)
-    legal_moves1 |= blank1 & (tmp1 << 7)
-
-    tmp0 = diagonal0 & ((p0 << 7) | ((tmp1 | p1) >> 25))   # 上位のシフト+下位続き+上位直下にプレイヤー
-    tmp0 |= diagonal0 & (tmp0 << 7)
-    tmp0 |= diagonal0 & (tmp0 << 7)
-    legal_moves0 |= blank0 & ((tmp0 << 7) | (tmp1 >> 25))  # 上位のシフト+下位直上で置く場合
-
-    # 右斜め下方向に石を置ける場所を探す
-    tmp0 = diagonal0 & (p0 >> 9)  # 上位のシフト
-    tmp0 |= diagonal0 & (tmp0 >> 9)
-    tmp0 |= diagonal0 & (tmp0 >> 9)
-    legal_moves0 |= blank0 & (tmp0 >> 9)
-
-    tmp1 = diagonal1 & ((p1 >> 9) | ((tmp0 | p0) << 23))   # 下位のシフト+上位続き+下位直上にプレイヤー
-    tmp1 |= diagonal1 & (tmp1 >> 9)
-    tmp1 |= diagonal1 & (tmp1 >> 9)
-    legal_moves1 |= blank1 & ((tmp1 >> 9) | (tmp0 << 23))  # 下位のシフト+上位直下で置く場合
+    # right-bottom
+    tmp = diagonal & (player >> 9)
+    tmp |= diagonal & (tmp >> 9)
+    tmp |= diagonal & (tmp >> 9)
+    tmp |= diagonal & (tmp >> 9)
+    tmp |= diagonal & (tmp >> 9)
+    tmp |= diagonal & (tmp >> 9)
+    legal_moves |= blank & (tmp >> 9)
 
     # 石が置ける場所を格納
     ret = {}
 
     cdef:
-        unsigned int mask0 = 0x80000000
-        unsigned int mask1 = 0x80000000
+        unsigned int x, y
+        unsigned long long mask = 0x8000000000000000
 
     for y in range(8):
-        # ビットボード上位32bit
-        if y < 4:
-            for x in range(8):
-                if legal_moves0 & mask0:
-                    ret[(x, y)] = _get_flippable_discs_size8(p0, p1, o0, o1, x, y)
-                mask0 >>= 1
-        # ビットボード下位32bit
-        else:
-            for x in range(8):
-                if legal_moves1 & mask1:
-                    ret[(x, y)] = _get_flippable_discs_size8(p0, p1, o0, o1, x, y)
-                mask1 >>= 1
+        for x in range(8):
+            if legal_moves & mask:
+                ret[(x, y)] = _get_flippable_discs_size8_64bit(player, opponent, x, y)
+            mask >>= 1
 
     return ret
+
+
+cdef _get_flippable_discs_size8_64bit(unsigned long long player, unsigned long long opponent, unsigned int x, unsigned int y):
+    """_get_flippable_discs_size8_64bit
+    """
+    cdef:
+        unsigned int direction
+        unsigned long long buff, next_put
+        unsigned long long move = 0
+        unsigned long long flippable_discs = 0
+
+    move = <unsigned long long>1 << (63-(y*8+x))
+
+    for direction in range(8):
+        buff = 0
+        next_put = _get_next_put_size8_64bit(move, direction)
+
+        # get discs of consecutive opponents
+        while next_put & opponent:
+            buff |= next_put
+            next_put = _get_next_put_size8_64bit(next_put, direction)
+
+        # store result if surrounded by own disc
+        if next_put & player:
+            flippable_discs |= buff
+
+    # prepare result
+    cdef:
+        unsigned long long mask = 0x8000000000000000
+    ret = []
+    for y in range(8):
+        for x in range(8):
+            if flippable_discs & mask:
+                ret += [(x, y)]
+            mask >>= 1
+
+    return ret
+
+
+cdef _get_next_put_size8_64bit(unsigned long long put, unsigned int direction):
+    """_get_next_put_size8_64bit
+    """
+    cdef:
+        unsigned long long next_put
+
+    if direction == 0:     # 上
+        next_put = 0xFFFFFFFFFFFFFF00 & (put << 8)  # top
+    elif direction == 1:
+        next_put = 0x7F7F7F7F7F7F7F00 & (put << 7)  # right-top
+    elif direction == 2:
+        next_put = 0x7F7F7F7F7F7F7F7F & (put >> 1)  # right
+    elif direction == 3:
+        next_put = 0x007F7F7F7F7F7F7F & (put >> 9)  # right-bottom
+    elif direction == 4:
+        next_put = 0x00FFFFFFFFFFFFFF & (put >> 8)  # bottom
+    elif direction == 5:
+        next_put = 0x00FEFEFEFEFEFEFE & (put >> 7)  # left-bottom
+    elif direction == 6:
+        next_put = 0xFEFEFEFEFEFEFEFE & (put << 1)  # left
+    elif direction == 7:
+        next_put = 0xFEFEFEFEFEFEFE00 & (put << 9)  # left-top
+    else:
+        next_put = 0                                # unexpected
+
+    return next_put
 
 
 cdef _get_legal_moves_size8(color, b, w):
