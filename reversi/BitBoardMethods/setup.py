@@ -28,3 +28,12 @@ setup(
   cmdclass = {'build_ext': build_ext},
   ext_modules = ext_modules
 )
+
+# PutDiscFast
+ext_modules = [Extension("PutDiscFast", ["PutDiscFast.pyx"])]
+
+setup(
+  name = 'PutDiscFast',
+  cmdclass = {'build_ext': build_ext},
+  ext_modules = ext_modules
+)
