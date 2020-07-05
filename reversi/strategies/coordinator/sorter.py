@@ -20,7 +20,7 @@ class Sorter(AbstractSorter):
         color, board, moves = kwargs['color'], kwargs['board'], kwargs['moves']
 
         if moves is None:
-            return list(board.get_legal_moves(color).keys())
+            return list(board.get_legal_moves(color, cache=True).keys())
 
         return moves
 

@@ -403,9 +403,9 @@ class TestBoard(unittest.TestCase):
             [blank, black, white, blank],
             [blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(3, 2): [(2, 2)], (2, 3): [(2, 2)], (3, 3): [(2, 2)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (0, 2): [(1, 2)]})
 
         board._board = [
@@ -414,9 +414,9 @@ class TestBoard(unittest.TestCase):
             [blank, black, white, blank],
             [blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(1, 0): [(1, 1)], (3, 0): [(2, 1)], (3, 2): [(2, 2)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(0, 2): [(1, 2)], (0, 3): [(1, 2)], (1, 3): [(1, 2)]})
 
         board._board = [
@@ -425,9 +425,9 @@ class TestBoard(unittest.TestCase):
             [blank, black, black, blank],
             [blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1)], (1, 0): [(1, 1)], (0, 1): [(1, 1)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(3, 1): [(2, 1)], (1, 3): [(1, 2)], (3, 3): [(2, 2)]})
 
         board._board = [
@@ -436,15 +436,15 @@ class TestBoard(unittest.TestCase):
             [blank, white, white, blank],
             [blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 1): [(1, 1)], (0, 3): [(1, 2)], (2, 3): [(2, 2)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(2, 0): [(2, 1)], (3, 0): [(2, 1)], (3, 1): [(2, 1)]})
 
     def test_board_size_8_get_legal_moves(self):
         board = Board(8)
         blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]})
 
         # pattern1
@@ -458,7 +458,7 @@ class TestBoard(unittest.TestCase):
             [blank, white, white, white, white, white, white, blank],
             [blank, blank, blank, blank, blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (3, 0): [(4, 1)], (4, 0): [(3, 1)], (5, 0): [(5, 1)], (7, 0): [(6, 1)], (0, 2): [(1, 2)], (7, 2): [(6, 2)], (0, 3): [(1, 4)], (5, 3): [(5, 4)], (7, 3): [(6, 4)], (0, 4): [(1, 3)], (2, 4): [(2, 3)], (7, 4): [(6, 3)], (0, 5): [(1, 5)], (7, 5): [(6, 5)], (0, 7): [(1, 6)], (2, 7): [(2, 6)], (3, 7): [(4, 6)], (4, 7): [(3, 6)], (5, 7): [(5, 6)], (7, 7): [(6, 6)]})  # noqa: E501
 
         # pattern2
@@ -472,7 +472,7 @@ class TestBoard(unittest.TestCase):
             [blank, white, white, white, white, white, white, white],
             [black, blank, black, black, black, black, black, black],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (2, 0): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 0): [(5, 1), (6, 2)], (7, 0): [(7, 1), (7, 2)], (0, 1): [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)], (3, 1): [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)], (0, 2): [(1, 3), (2, 4), (3, 5), (4, 6)], (4, 2): [(4, 3), (4, 4), (4, 5), (4, 6)], (5, 2): [(4, 3), (3, 4), (2, 5), (1, 6)], (0, 3): [(1, 4), (2, 5), (3, 6)], (5, 3): [(5, 4), (5, 5), (5, 6)], (6, 3): [(5, 4), (4, 5), (3, 6)], (0, 4): [(1, 5), (2, 6)], (6, 4): [(5, 5), (4, 6), (6, 5), (6, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(1, 6)], (7, 5): [(6, 6), (7, 6)]})  # noqa: E501
 
         # pattern3
@@ -486,7 +486,7 @@ class TestBoard(unittest.TestCase):
             [black, black, black, black, black, black, black, blank],
             [white, white, white, white, white, white, blank, white],
         ]
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(0, 0): [(0, 1), (0, 2)], (3, 0): [(2, 1), (1, 2)], (5, 0): [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (4, 1): [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)], (7, 1): [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)], (2, 2): [(3, 3), (4, 4), (5, 5), (6, 6)], (3, 2): [(3, 3), (3, 4), (3, 5), (3, 6)], (7, 2): [(6, 3), (5, 4), (4, 5), (3, 6)], (1, 3): [(2, 4), (3, 5), (4, 6)], (2, 3): [(2, 4), (2, 5), (2, 6)], (7, 3): [(6, 4), (5, 5), (4, 6)], (0, 4): [(1, 5), (2, 6)], (1, 4): [(1, 5), (1, 6), (2, 5), (3, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(0, 6), (1, 6)], (7, 5): [(6, 6)]})  # noqa: E501
 
         # pattern4
@@ -500,7 +500,7 @@ class TestBoard(unittest.TestCase):
             [blank, blank, white, blank, blank, white, white, black],
             [blank, white, white, black, blank, blank, white, black],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (1, 0): [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)], (2, 0): [(3, 1), (4, 2), (5, 3), (6, 4)], (3, 0): [(4, 1), (5, 2), (6, 3)], (4, 0): [(5, 1), (6, 2)], (5, 0): [(6, 1)], (0, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (1, 3): [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)], (0, 4): [(1, 5), (2, 6)], (2, 4): [(3, 4), (4, 4), (5, 4), (6, 4)], (2, 5): [(3, 4), (4, 3), (5, 2), (6, 1)], (3, 5): [(4, 5), (5, 5), (6, 5)], (3, 6): [(4, 5), (5, 4), (6, 3)], (4, 6): [(5, 6), (6, 6), (5, 5), (6, 4)], (0, 7): [(1, 7), (2, 7)], (4, 7): [(5, 6), (6, 5)], (5, 7): [(6, 7), (6, 6)]})  # noqa: E501
 
         # pattern5
@@ -514,7 +514,7 @@ class TestBoard(unittest.TestCase):
             [blank, white, white, blank, blank, white, blank, white],
             [blank, blank, blank, blank, blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 2): [(1, 1)], (7, 2): [(6, 1), (7, 1)], (0, 3): [(1, 2), (2, 1)], (6, 3): [(5, 2), (4, 1), (6, 2), (6, 1)], (7, 3): [(6, 2), (5, 1)], (0, 4): [(1, 3), (2, 2), (3, 1)], (5, 4): [(5, 3), (5, 2), (5, 1)], (6, 4): [(5, 3), (4, 2), (3, 1)], (0, 5): [(1, 4), (2, 3), (3, 2), (4, 1)], (4, 5): [(4, 4), (4, 3), (4, 2), (4, 1)], (5, 5): [(4, 4), (3, 3), (2, 2), (1, 1)], (0, 6): [(1, 5), (2, 4), (3, 3), (4, 2), (5, 1)], (3, 6): [(3, 5), (3, 4), (3, 3), (3, 2), (3, 1)], (0, 7): [(1, 6), (2, 5), (3, 4), (4, 3), (5, 2), (6, 1)], (2, 7): [(2, 6), (2, 5), (2, 4), (2, 3), (2, 2), (2, 1)], (4, 7): [(5, 6), (6, 5)], (7, 7): [(7, 6), (7, 5)]})  # noqa: E501
 
         # pattern6
@@ -528,7 +528,7 @@ class TestBoard(unittest.TestCase):
             [black, white, white, blank, blank, white, blank, blank],
             [black, white, blank, blank, black, white, white, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(2, 0): [(1, 1)], (3, 0): [(2, 1), (1, 2)], (4, 0): [(3, 1), (2, 2), (1, 3)], (5, 0): [(4, 1), (3, 2), (2, 3), (1, 4)], (6, 0): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (7, 2): [(6, 2), (5, 2), (4, 2), (3, 2), (2, 2), (1, 2)], (6, 3): [(5, 3), (4, 3), (3, 3), (2, 3), (1, 3)], (5, 4): [(4, 4), (3, 4), (2, 4), (1, 4)], (7, 4): [(6, 5), (5, 6)], (4, 5): [(3, 5), (2, 5), (1, 5)], (5, 5): [(4, 4), (3, 3), (2, 2), (1, 1)], (3, 6): [(2, 6), (1, 6), (2, 5), (1, 4)], (4, 6): [(3, 5), (2, 4), (1, 3)], (2, 7): [(1, 7), (1, 6)], (3, 7): [(2, 6), (1, 5)], (7, 7): [(6, 7), (5, 7)]})  # noqa: E501
 
         # pattern7
@@ -542,7 +542,7 @@ class TestBoard(unittest.TestCase):
             [blank, blank, blank, black, blank, blank, blank, blank],
             [blank, blank, blank, blank, blank, blank, blank, blank],
         ]
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(3, 2): [(3, 3), (3, 4), (3, 5)], (4, 2): [(4, 3), (4, 4)], (2, 3): [(3, 4)], (6, 3): [(5, 4)], (2, 5): [(3, 5)], (6, 5): [(5, 5)]})  # noqa: E501
 
     def test_bitboard_size_4_get_legal_moves(self):
@@ -550,77 +550,77 @@ class TestBoard(unittest.TestCase):
 
         board._black_bitboard = 0x640
         board._white_bitboard = 0x020
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(3, 2): [(2, 2)], (2, 3): [(2, 2)], (3, 3): [(2, 2)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (0, 2): [(1, 2)]})
 
         board._black_bitboard = 0x040
         board._white_bitboard = 0x620
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(1, 0): [(1, 1)], (3, 0): [(2, 1)], (3, 2): [(2, 2)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(0, 2): [(1, 2)], (0, 3): [(1, 2)], (1, 3): [(1, 2)]})
 
         board._black_bitboard = 0x260
         board._white_bitboard = 0x400
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1)], (1, 0): [(1, 1)], (0, 1): [(1, 1)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(3, 1): [(2, 1)], (1, 3): [(1, 2)], (3, 3): [(2, 2)]})
 
         board._black_bitboard = 0x200
         board._white_bitboard = 0x460
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 1): [(1, 1)], (0, 3): [(1, 2)], (2, 3): [(2, 2)]})
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(2, 0): [(2, 1)], (3, 0): [(2, 1)], (3, 1): [(2, 1)]})
 
     def test_bitboard_size_8_get_legal_moves(self):
         board = BitBoard(8)
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]})
 
         # pattern1
         board._black_bitboard = 0x0000240000240000
         board._white_bitboard = 0x007E5A7A5E5A7E00
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1)], (2, 0): [(2, 1)], (3, 0): [(4, 1)], (4, 0): [(3, 1)], (5, 0): [(5, 1)], (7, 0): [(6, 1)], (0, 2): [(1, 2)], (7, 2): [(6, 2)], (0, 3): [(1, 4)], (5, 3): [(5, 4)], (7, 3): [(6, 4)], (0, 4): [(1, 3)], (2, 4): [(2, 3)], (7, 4): [(6, 3)], (0, 5): [(1, 5)], (7, 5): [(6, 5)], (0, 7): [(1, 6)], (2, 7): [(2, 6)], (3, 7): [(4, 6)], (4, 7): [(3, 6)], (5, 7): [(5, 6)], (7, 7): [(6, 6)]})  # noqa: E501
 
         # pattern2
         board._black_bitboard = 0x00000001000000BF
         board._white_bitboard = 0x006573787C7E7F00
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (2, 0): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 0): [(5, 1), (6, 2)], (7, 0): [(7, 1), (7, 2)], (0, 1): [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)], (3, 1): [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)], (0, 2): [(1, 3), (2, 4), (3, 5), (4, 6)], (4, 2): [(4, 3), (4, 4), (4, 5), (4, 6)], (5, 2): [(4, 3), (3, 4), (2, 5), (1, 6)], (0, 3): [(1, 4), (2, 5), (3, 6)], (5, 3): [(5, 4), (5, 5), (5, 6)], (6, 3): [(5, 4), (4, 5), (3, 6)], (0, 4): [(1, 5), (2, 6)], (6, 4): [(5, 5), (6, 5), (4, 6), (6, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(1, 6)], (7, 5): [(6, 6), (7, 6)]})  # noqa: E501
 
         # pattern3
         board._black_bitboard = 0x00A6CE1E3E7EFE00
         board._white_bitboard = 0x00000080000000FD
-        legal_moves = board.get_legal_moves('white', force=True)
+        legal_moves = board.get_legal_moves('white')
         self.assertEqual(legal_moves, {(0, 0): [(0, 1), (0, 2)], (3, 0): [(2, 1), (1, 2)], (5, 0): [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (4, 1): [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)], (7, 1): [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)], (2, 2): [(3, 3), (4, 4), (5, 5), (6, 6)], (3, 2): [(3, 3), (3, 4), (3, 5), (3, 6)], (7, 2): [(6, 3), (5, 4), (4, 5), (3, 6)], (1, 3): [(2, 4), (3, 5), (4, 6)], (2, 3): [(2, 4), (2, 5), (2, 6)], (7, 3): [(6, 4), (5, 5), (4, 6)], (0, 4): [(1, 5), (2, 6)], (1, 4): [(1, 5), (2, 5), (1, 6), (3, 6)], (7, 4): [(6, 5), (5, 6)], (0, 5): [(0, 6), (1, 6)], (7, 5): [(6, 6)]})  # noqa: E501
 
         # pattern4
         board._black_bitboard = 0x0100010101010111
         board._white_bitboard = 0x007E7E3E1E4E2662
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 0): [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], (1, 0): [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)], (2, 0): [(3, 1), (4, 2), (5, 3), (6, 4)], (3, 0): [(4, 1), (5, 2), (6, 3)], (4, 0): [(5, 1), (6, 2)], (5, 0): [(6, 1)], (0, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (1, 3): [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)], (0, 4): [(1, 5), (2, 6)], (2, 4): [(3, 4), (4, 4), (5, 4), (6, 4)], (2, 5): [(6, 1), (5, 2), (4, 3), (3, 4)], (3, 5): [(4, 5), (5, 5), (6, 5)], (3, 6): [(6, 3), (5, 4), (4, 5)], (4, 6): [(6, 4), (5, 5), (5, 6), (6, 6)], (0, 7): [(1, 7), (2, 7)], (4, 7): [(6, 5), (5, 6)], (5, 7): [(6, 6), (6, 7)]})  # noqa: E501
 
         # pattern5
         board._black_bitboard = 0xBF00000001000000
         board._white_bitboard = 0x007F7E7C78736500
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(0, 2): [(1, 1)], (7, 2): [(6, 1), (7, 1)], (0, 3): [(2, 1), (1, 2)], (6, 3): [(4, 1), (6, 1), (5, 2), (6, 2)], (7, 3): [(5, 1), (6, 2)], (0, 4): [(3, 1), (2, 2), (1, 3)], (5, 4): [(5, 1), (5, 2), (5, 3)], (6, 4): [(3, 1), (4, 2), (5, 3)], (0, 5): [(4, 1), (3, 2), (2, 3), (1, 4)], (4, 5): [(4, 1), (4, 2), (4, 3), (4, 4)], (5, 5): [(1, 1), (2, 2), (3, 3), (4, 4)], (0, 6): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (3, 6): [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5)], (0, 7): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (2, 7): [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)], (4, 7): [(6, 5), (5, 6)], (7, 7): [(7, 5), (7, 6)]})  # noqa: E501
 
         # pattern6
         board._black_bitboard = 0x8000808080808088
         board._white_bitboard = 0x007E7E7C78726446
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(2, 0): [(1, 1)], (3, 0): [(2, 1), (1, 2)], (4, 0): [(3, 1), (2, 2), (1, 3)], (5, 0): [(4, 1), (3, 2), (2, 3), (1, 4)], (6, 0): [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)], (7, 0): [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)], (7, 2): [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)], (6, 3): [(1, 3), (2, 3), (3, 3), (4, 3), (5, 3)], (5, 4): [(1, 4), (2, 4), (3, 4), (4, 4)], (7, 4): [(6, 5), (5, 6)], (4, 5): [(1, 5), (2, 5), (3, 5)], (5, 5): [(1, 1), (2, 2), (3, 3), (4, 4)], (3, 6): [(1, 4), (2, 5), (1, 6), (2, 6)], (4, 6): [(1, 3), (2, 4), (3, 5)], (2, 7): [(1, 6), (1, 7)], (3, 7): [(1, 5), (2, 6)], (7, 7): [(5, 7), (6, 7)]})  # noqa: E501
 
         # pattern7
         board._black_bitboard = 0x0000000000081000
         board._white_bitboard = 0x0000001C1C140000
-        legal_moves = board.get_legal_moves('black', force=True)
+        legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, {(3, 2): [(3, 3), (3, 4), (3, 5)], (4, 2): [(4, 3), (4, 4)], (2, 3): [(3, 4)], (6, 3): [(5, 4)], (2, 5): [(3, 5)], (6, 5): [(5, 5)]})  # noqa: E501
 
     def test_board_random_play(self):
@@ -656,8 +656,8 @@ class TestBoard(unittest.TestCase):
                                     # キャンセルメニュー設定時は中断
                                     break
 
-                            legal_moves1 = list(self.board.get_legal_moves(player.color, force=True).keys())
-                            legal_moves2 = list(self.bitboard.get_legal_moves(player.color, force=True).keys())
+                            legal_moves1 = list(self.board.get_legal_moves(player.color).keys())
+                            legal_moves2 = list(self.bitboard.get_legal_moves(player.color).keys())
                             self.unittest.assertEqual(legal_moves1, legal_moves2)
 
                             if not legal_moves1:

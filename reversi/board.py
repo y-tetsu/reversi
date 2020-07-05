@@ -87,12 +87,18 @@ class Board(AbstractBoard):
 
         return header + body
 
-    def get_legal_moves(self, color, force=False):
+    def get_legal_moves(self, color, cache=False):
+        """get_legal_moves
+
+        Args:
+            color : player's color
+            cache : True if cache use
+
+        Returns:
+            legal_moves
         """
-        石が置ける場所をすべて返す
-        """
-        # キャッシュが存在する場合
-        if not force and color in self._legal_moves_cache:
+        # if cache option is True and cache available, return cache
+        if cache and color in self._legal_moves_cache:
             return self._legal_moves_cache[color]
 
         self._legal_moves_cache.clear()
@@ -177,7 +183,7 @@ class Board(AbstractBoard):
         """
         指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        legal_moves = self.get_legal_moves(color)
+        legal_moves = self.get_legal_moves(color, cache=True)
 
         if (x, y) in legal_moves:
             self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
@@ -338,12 +344,18 @@ class BitBoard(AbstractBoard):
 
         return header + body
 
-    def get_legal_moves(self, color, force=False):
+    def get_legal_moves(self, color, cache=False):
+        """get_legal_moves
+
+        Args:
+            color : player's color
+            cache : True if cache use
+
+        Returns:
+            legal_moves
         """
-        石が置ける場所をすべて返す
-        """
-        # キャッシュが存在する場合
-        if not force and color in self._legal_moves_cache:
+        # if cache option is True and cache available, return cache
+        if cache and color in self._legal_moves_cache:
             return self._legal_moves_cache[color]
 
         self._legal_moves_cache.clear()

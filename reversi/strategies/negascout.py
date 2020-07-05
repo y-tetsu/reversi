@@ -22,8 +22,8 @@ class NegaScout(AlphaBeta):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        legal_moves_b = board.get_legal_moves('black', True)
-        legal_moves_w = board.get_legal_moves('white', True)
+        legal_moves_b = board.get_legal_moves('black')
+        legal_moves_w = board.get_legal_moves('white')
         is_game_end =  True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
@@ -38,7 +38,7 @@ class NegaScout(AlphaBeta):
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 手の候補
-        moves = list(board.get_legal_moves(color).keys())
+        moves = list(board.get_legal_moves(color, cache=True).keys())
 
         # NegaScout法
         tmp, null_window = None, beta

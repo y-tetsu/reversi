@@ -23,7 +23,7 @@ class ConsoleUserInput(AbstractStrategy):
         """
         次の一手
         """
-        legal_moves = list(board.get_legal_moves(color).keys())
+        legal_moves = list(board.get_legal_moves(color, cache=True).keys())
         select = None
 
         while True:
@@ -55,7 +55,7 @@ class WindowUserInput(AbstractStrategy):
         """
         次の一手
         """
-        moves = list(board.get_legal_moves(color).keys())
+        moves = list(board.get_legal_moves(color, cache=True).keys())
         self.window.board.selectable_moves(moves)
 
         while True:

@@ -20,7 +20,7 @@ class Random(AbstractStrategy):
         """
         次の一手
         """
-        moves = list(board.get_legal_moves(color).keys())
+        moves = list(board.get_legal_moves(color, cache=True).keys())
 
         return random.choice(moves)
 
@@ -33,7 +33,7 @@ class Greedy(AbstractStrategy):
         """
         次の一手
         """
-        legal_moves = board.get_legal_moves(color)
+        legal_moves = board.get_legal_moves(color, cache=True)
         max_count = max([len(value) for value in legal_moves.values()])
         moves = [key for key, value in legal_moves.items() if len(value) == max_count]
 
@@ -48,7 +48,7 @@ class Unselfish(AbstractStrategy):
         """
         次の一手
         """
-        legal_moves = board.get_legal_moves(color)
+        legal_moves = board.get_legal_moves(color, cache=True)
         min_count = min([len(value) for value in legal_moves.values()])
         moves = [key for key, value in legal_moves.items() if len(value) == min_count]
 

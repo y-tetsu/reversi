@@ -70,12 +70,12 @@ class TestScorer(unittest.TestCase):
 
         # initial value
         self.assertEqual(scorer._W, 5)
-        black_moves = board.get_legal_moves('black', force=True)
-        white_moves = board.get_legal_moves('white', force=True)
+        black_moves = board.get_legal_moves('black')
+        white_moves = board.get_legal_moves('white')
         self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
         board.put_disc('black', 5, 4)
-        black_moves = board.get_legal_moves('black', force=True)
-        white_moves = board.get_legal_moves('white', force=True)
+        black_moves = board.get_legal_moves('black')
+        white_moves = board.get_legal_moves('white')
         self.assertEqual(scorer.get_score(black_moves, white_moves), 0)
 
         # check
@@ -87,8 +87,8 @@ class TestScorer(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        black_moves = board.get_legal_moves('black', True)
-        white_moves = board.get_legal_moves('white', True)
+        black_moves = board.get_legal_moves('black')
+        white_moves = board.get_legal_moves('white')
 
         self.assertEqual(scorer.get_score(black_moves, white_moves), 5)
 
@@ -116,8 +116,8 @@ class TestScorer(unittest.TestCase):
         scorer = coord.WinLoseScorer()
         self.assertEqual(scorer.get_score(board, [], []), -10006)
 
-        black_moves = board.get_legal_moves('black', force=True)
-        white_moves = board.get_legal_moves('white', force=True)
+        black_moves = board.get_legal_moves('black')
+        white_moves = board.get_legal_moves('white')
         self.assertEqual(scorer.get_score(board, black_moves, white_moves), None)
 
     def test_number_scorer(self):

@@ -26,7 +26,7 @@ class Easy(strategies.common.AbstractStrategy):
             board (obj) : Board(BitBoard) object
         """
         move = None
-        legal_moves = list(board.get_legal_moves(color).keys())
+        legal_moves = list(board.get_legal_moves(color, cache=True).keys())
         size = board.size
 
         # Preferentially get corners

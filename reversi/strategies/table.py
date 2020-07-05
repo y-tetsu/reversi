@@ -102,7 +102,7 @@ class Table(AbstractStrategy):
         if self.size != board.size:
             self.set_table(board.size)
 
-        legal_moves = board.get_legal_moves(color)
+        legal_moves = board.get_legal_moves(color, cache=True)
         max_score = None
         moves = {}
 

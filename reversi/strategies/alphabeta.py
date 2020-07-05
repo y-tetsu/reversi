@@ -27,7 +27,7 @@ class _AlphaBeta(AbstractStrategy):
         """
         次の一手
         """
-        moves = board.get_legal_moves(color).keys()  # 手の候補
+        moves = board.get_legal_moves(color, cache=True).keys()  # 手の候補
         best_move, _ = self.get_best_move(color, board, moves, self.depth)
 
         return best_move
@@ -70,8 +70,8 @@ class _AlphaBeta(AbstractStrategy):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        legal_moves_b = board.get_legal_moves('black', True)
-        legal_moves_w = board.get_legal_moves('white', True)
+        legal_moves_b = board.get_legal_moves('black')
+        legal_moves_w = board.get_legal_moves('white')
         is_game_end =  True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:

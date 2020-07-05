@@ -31,7 +31,7 @@ class _NegaMax(AbstractStrategy):
         moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
-        for move in board.get_legal_moves(color).keys():
+        for move in board.get_legal_moves(color, cache=True).keys():
             board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                              # 打った手を戻す
@@ -54,8 +54,8 @@ class _NegaMax(AbstractStrategy):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        legal_moves_b = board.get_legal_moves('black', True)
-        legal_moves_w = board.get_legal_moves('white', True)
+        legal_moves_b = board.get_legal_moves('black')
+        legal_moves_w = board.get_legal_moves('white')
         is_game_end =  True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:

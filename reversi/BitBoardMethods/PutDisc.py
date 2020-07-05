@@ -5,7 +5,7 @@
 def put_disc(board, color, x, y):
     """put_disc
     """
-    legal_moves = board.get_legal_moves(color)
+    legal_moves = board.get_legal_moves(color, cache=True)
 
     if (x, y) in legal_moves:
         # 配置位置を整数に変換

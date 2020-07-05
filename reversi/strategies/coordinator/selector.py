@@ -18,7 +18,7 @@ class Selector(AbstractSelector):
         手の候補を決める
         """
         if moves is None:
-            return list(board.get_legal_moves(color).keys())
+            return list(board.get_legal_moves(color, cache=True).keys())
 
         return moves
 

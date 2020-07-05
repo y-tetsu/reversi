@@ -24,7 +24,7 @@ cdef inline _put_disc_64bit(board, color, unsigned int x, unsigned int y):
         unsigned long long put, flippable_discs
         unsigned int size, tmp_x, tmp_y
 
-    legal_moves = board.get_legal_moves(color)
+    legal_moves = board.get_legal_moves(color, cache=True)
 
     if (x, y) in legal_moves:
         # 配置位置を整数に変換
@@ -63,7 +63,7 @@ cdef inline _put_disc(board, color, unsigned int x, unsigned int y):
     cdef:
         unsigned int tmp_x, tmp_y
 
-    legal_moves = board.get_legal_moves(color)
+    legal_moves = board.get_legal_moves(color, cache=True)
 
     if (x, y) in legal_moves:
         # 配置位置を整数に変換
