@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-"""
-ミニマックス法
+"""MinMax
 """
 
 import sys
@@ -13,8 +11,7 @@ from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_
 
 
 class MinMax(AbstractStrategy):
-    """
-    MinMax法で次の手を決める
+    """decide next move by MinMax method
     """
     def __init__(self, depth=3, evaluator=None):
         self._MIN = -10000000
@@ -25,57 +22,47 @@ class MinMax(AbstractStrategy):
 
     @Measure.time
     def next_move(self, color, board):
+        """next_move
         """
-        次の一手
-        """
+        # select best move
         next_color = 'white' if color == 'black' else 'black'
         next_moves = {}
         best_score = self._MIN if color == 'black' else self._MAX
-
-        # 打てる手の中から評価値の最も良い手を選ぶ
         for move in board.get_legal_moves(color, cache=True).keys():
-            board.put_disc(color, *move)                             # 一手打つ
-            score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
-            board.undo()                                             # 打った手を戻す
-
-            # ベストスコア取得
+            board.put_disc(color, *move)
+            score = self.get_score(next_color, board, self.depth-1)
+            board.undo()
             best_score = max(best_score, score) if color == 'black' else min(best_score, score)
 
-            # 次の手の候補を記憶
+            # memorize next moves
             if score not in next_moves:
                 next_moves[score] = []
             next_moves[score].append(move)
 
-        return random.choice(next_moves[best_score])  # 複数候補がある場合はランダムに選ぶ
+        return random.choice(next_moves[best_score])  # random choice if many best scores
 
     def get_score(self, color, board, depth):
+        """get_score
         """
-        評価値の取得
-        """
-        # ゲーム終了 or 最大深さに到達
-        legal_moves_b = board.get_legal_moves('black')  # 黒の打てる場所
-        legal_moves_w = board.get_legal_moves('white')  # 白の打てる場所
+        # game finish or max-depth
+        legal_moves_b = board.get_legal_moves('black')
+        legal_moves_w = board.get_legal_moves('white')
         is_game_end = True if not legal_moves_b and not legal_moves_w else False
-
         if is_game_end or depth <= 0:
             return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
-        # パスの場合
+        # in case of pass
         legal_moves = legal_moves_b if color == 'black' else legal_moves_w
         next_color = 'white' if color == 'black' else 'black'
-
         if not legal_moves:
             return self.get_score(next_color, board, depth)
 
-        # 評価値を算出
+        # get best score
         best_score = self._MIN if color == 'black' else self._MAX
-
         for move in legal_moves.keys():
             board.put_disc(color, *move)
             score = self.get_score(next_color, board, depth-1)
             board.undo()
-
-            # ベストスコア取得
             best_score = max(best_score, score) if color == 'black' else min(best_score, score)
 
         return best_score
@@ -287,32 +274,3 @@ class MinMax4_TPOW(MinMax):
     """
     def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
         super().__init__(depth, evaluator)
-
-
-if __name__ == '__main__':
-    from board import BitBoard
-    bitboard8 = BitBoard(8)
-    print(bitboard8)
-
-    print('--- Test For MinMax Strategy ---')
-    minmax = MinMax3_TPOW()
-
-    assert minmax.depth == 3
-
-    bitboard8.put_disc('black', 3, 2)
-    print( minmax.get_score('white', bitboard8, 2) )
-    assert minmax.get_score('white', bitboard8, 2) == 10.75
-    print( minmax.get_score('white', bitboard8, 3) )
-    assert minmax.get_score('white', bitboard8, 3) == -6.25
-
-    print(bitboard8)
-    print( minmax.next_move('white', bitboard8) )
-    assert minmax.next_move('white', bitboard8) == (2, 4)
-    bitboard8.put_disc('white', 2, 4)
-    bitboard8.put_disc('black', 5, 5)
-    bitboard8.put_disc('white', 4, 2)
-    bitboard8.put_disc('black', 5, 2)
-    bitboard8.put_disc('white', 5, 4)
-    print(bitboard8)
-    print( minmax.next_move('black', bitboard8) )
-    assert minmax.next_move('black', bitboard8) == (2, 2)
