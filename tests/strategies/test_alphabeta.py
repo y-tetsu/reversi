@@ -140,3 +140,14 @@ class TestAlphaBeta(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+
+    def test_alphabeta_timer_timeout(self):
+        board = BitBoard()
+        board.put_disc('black', 3, 2)
+        alphabeta = AlphaBeta(depth=10, evaluator=Evaluator_TPOW())
+        key = alphabeta.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+
+        alphabeta.next_move('white', board)
+        self.assertTrue(Timer.timeout_flag[key])
+        self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
