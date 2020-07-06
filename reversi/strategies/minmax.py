@@ -41,6 +41,7 @@ class MinMax(AbstractStrategy):
 
         return random.choice(next_moves[best_score])  # random choice if many best scores
 
+    @Measure.countup
     def get_score(self, color, board, depth):
         """get_score
         """
