@@ -92,6 +92,12 @@ class TestNegaMax(unittest.TestCase):
         self.assertEqual(score, 4)
         self.assertEqual(Measure.count[key], 2478)
 
+        print()
+        print(key)
+        print(' min :', Measure.elp_time[key]['min'], '(s)')
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+
         # NegaMax
         negamax = NegaMax(evaluator=Evaluator_TPOW())
         key = negamax.__class__.__name__ + str(os.getpid())
