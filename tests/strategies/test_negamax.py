@@ -68,6 +68,18 @@ class TestNegaMax(unittest.TestCase):
         board = BitBoard()
         board.put_disc('black', 3, 2)
 
+        # NegaMax
+        negamax = NegaMax(evaluator=Evaluator_TPOW())
+        key = negamax.__class__.__name__ + str(os.getpid())
+
+        Measure.count[key] = 0
+        Timer.timeout_flag[key] = False
+        Timer.timeout_value[key] = 0
+        Timer.deadline[key] = time.time() + CPU_TIME
+        score = negamax.get_score('white', board, 4)  # depth 4
+        self.assertEqual(score, -8.25)
+        self.assertEqual(Measure.count[key], 428)
+
         # _NegaMax
         negamax = _NegaMax(evaluator=Evaluator_TPOW())
         key = negamax.__class__.__name__ + str(os.getpid())
@@ -92,20 +104,17 @@ class TestNegaMax(unittest.TestCase):
         self.assertEqual(score, 4)
         self.assertEqual(Measure.count[key], 2478)
 
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 5, 5)
+        board.put_disc('white', 4, 2)
+        board.put_disc('black', 5, 2)
+        board.put_disc('white', 5, 4)
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        for _ in range(5):
+            negamax.next_move('white', board)
+
         print()
         print(key)
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-
-        # NegaMax
-        negamax = NegaMax(evaluator=Evaluator_TPOW())
-        key = negamax.__class__.__name__ + str(os.getpid())
-
-        Measure.count[key] = 0
-        Timer.timeout_flag[key] = False
-        Timer.timeout_value[key] = 0
-        Timer.deadline[key] = time.time() + CPU_TIME
-        score = negamax.get_score('white', board, 4)  # depth 4
-        self.assertEqual(score, -8.25)
-        self.assertEqual(Measure.count[key], 428)

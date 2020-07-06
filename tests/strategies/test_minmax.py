@@ -82,6 +82,15 @@ class TestMinMax(unittest.TestCase):
         self.assertEqual(score, -4)
         self.assertEqual(Measure.count[key], 2478)
 
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 5, 5)
+        board.put_disc('white', 4, 2)
+        board.put_disc('black', 5, 2)
+        board.put_disc('white', 5, 4)
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        for _ in range(5):
+            minmax.next_move('white', board)
+
         print()
         print(key)
         print(' min :', Measure.elp_time[key]['min'], '(s)')

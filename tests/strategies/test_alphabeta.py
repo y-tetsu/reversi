@@ -84,6 +84,18 @@ class TestAlphaBeta(unittest.TestCase):
         board = BitBoard()
         board.put_disc('black', 3, 2)
 
+        # AlphaBeta
+        alphabeta = AlphaBeta(evaluator=Evaluator_TPOW())
+        key = alphabeta.__class__.__name__ + str(os.getpid())
+
+        Measure.count[key] = 0
+        Timer.timeout_flag[key] = False
+        Timer.timeout_value[key] = 0
+        Timer.deadline[key] = time.time() + CPU_TIME
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 5)  # depth 5
+        self.assertEqual(score, 4)
+        self.assertEqual(Measure.count[key], 703)
+
         # _AlphaBeta
         alphabeta = _AlphaBeta(evaluator=Evaluator_TPOW())
         key = alphabeta.__class__.__name__ + str(os.getpid())
@@ -113,6 +125,12 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(score, -3.5)
         self.assertEqual(Measure.count[key], 2696)
 
+        board.put_disc('black', 3, 2)
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 5, 5)
+        board.put_disc('white', 4, 2)
+        board.put_disc('black', 5, 2)
+        board.put_disc('white', 5, 4)
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(5):
             alphabeta.next_move('white', board)
@@ -122,15 +140,3 @@ class TestAlphaBeta(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-
-        # AlphaBeta
-        alphabeta = AlphaBeta(evaluator=Evaluator_TPOW())
-        key = alphabeta.__class__.__name__ + str(os.getpid())
-
-        Measure.count[key] = 0
-        Timer.timeout_flag[key] = False
-        Timer.timeout_value[key] = 0
-        Timer.deadline[key] = time.time() + CPU_TIME
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 5)  # depth 5
-        self.assertEqual(score, 4)
-        self.assertEqual(Measure.count[key], 703)
