@@ -92,7 +92,7 @@ class TestMinMax(unittest.TestCase):
             minmax.next_move('white', board)
 
         print()
-        print(key)
+        print(key, 'depth = 3')
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
