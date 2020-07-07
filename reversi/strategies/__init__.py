@@ -6,7 +6,7 @@ from reversi.strategies.table import Table
 from reversi.strategies.minmax import MinMax, MinMax1_T, MinMax2_T, MinMax3_T, MinMax4_T, MinMax1_TP, MinMax2_TP, MinMax3_TP, MinMax4_TP, MinMax1_TPO, MinMax2_TPO, MinMax3_TPO, MinMax4_TPO, MinMax2_TPW, MinMax3_TPW, MinMax4_TPW, MinMax1_TPOW, MinMax2_TPOW, MinMax3_TPOW, MinMax4_TPOW
 from reversi.strategies.negamax import _NegaMax, NegaMax, NegaMax1_TPOW, NegaMax2_TPOW, NegaMax3_TPW, NegaMax3_TPOW, NegaMax4_TPOW
 from reversi.strategies.alphabeta import _AlphaBeta, AlphaBeta, AlphaBeta3_TPW, AlphaBeta4_TPW
-from reversi.strategies.negascout import NegaScout, NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW
+from reversi.strategies.negascout import _NegaScout, NegaScout, NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW
 from reversi.strategies.iterative import IterativeDeepning, AbI_B_TPW, NsI_B_TPW
 from reversi.strategies.fullreading import _FullReading, FullReading, AlphaBeta4F9_TPW, AbIF9_B_TPW, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, RandomF11
 from reversi.strategies.joseki import Usagi, Tora, Ushi, Nezumi, Neko, Hitsuji, AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPWE, SwitchNsIF9J_B_TPW, SwitchNsIF9J_B_TPWE
