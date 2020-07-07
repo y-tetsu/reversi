@@ -36,12 +36,9 @@ class _NegaScout(_AlphaBeta):
         if not legal_moves:
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
-        # 手の候補
-        moves = list(board.get_legal_moves(color, cache=True).keys())
-
         # NegaScout法
         tmp, null_window = None, beta
-        for i, move in enumerate(moves):
+        for i, move in enumerate(legal_moves.keys()):
             if alpha < beta:
                 board.put_disc(color, *move)
                 tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1)
