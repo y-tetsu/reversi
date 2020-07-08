@@ -2,6 +2,7 @@
 """
 
 import unittest
+from test.support import captured_stdout
 
 from reversi.board import BoardSizeError, Board, BitBoard
 from reversi.game import Game
@@ -691,3 +692,132 @@ class TestBoard(unittest.TestCase):
             white_player = TestPlayer('white', 'Random2', Random())
             game = TestGame(self, board, bitboard, black_player, white_player, NoneDisplay())
             game.play()
+
+    def test_board_cache(self):
+        # Board
+        class BoardCacheTest(Board):
+            def get_legal_moves(self, color, cache=False):
+                if cache and color in self._legal_moves_cache:
+                    print('    OOO use cache')
+                else:
+                    print('    XXX not use cache')
+
+                return super().get_legal_moves(color, cache)
+
+        with captured_stdout() as stdout:
+            board = BoardCacheTest()
+            board.put_disc('black', 5, 4)
+            board.put_disc('white', 5, 5)
+            board.put_disc('black', 4, 5)
+            board.put_disc('white', 3, 5)
+            board.put_disc('black', 2, 6)
+            board.put_disc('white', 5, 3)
+            board.put_disc('black', 6, 2)
+            board.put_disc('white', 3, 6)
+
+            print('> black')
+            legal_moves_b = board.get_legal_moves('black')
+            print('> white')
+            legal_moves_w = board.get_legal_moves('white')
+
+            color = 'black'
+            legal_moves = legal_moves_b if color == 'black' else legal_moves_w
+            for move in legal_moves.keys():
+                board._legal_moves_cache[color] = legal_moves
+                print('> put_disc')
+                board.put_disc(color, *move)
+                board.undo()
+
+            lines = stdout.getvalue().splitlines()
+            self.assertEqual(lines[0], "    XXX not use cache")
+            self.assertEqual(lines[1], "    XXX not use cache")
+            self.assertEqual(lines[2], "    XXX not use cache")
+            self.assertEqual(lines[3], "    XXX not use cache")
+            self.assertEqual(lines[4], "    XXX not use cache")
+            self.assertEqual(lines[5], "    XXX not use cache")
+            self.assertEqual(lines[6], "    XXX not use cache")
+            self.assertEqual(lines[7], "    XXX not use cache")
+            self.assertEqual(lines[8], "> black")
+            self.assertEqual(lines[9], "    XXX not use cache")
+            self.assertEqual(lines[10], "> white")
+            self.assertEqual(lines[11], "    XXX not use cache")
+            self.assertEqual(lines[12], "> put_disc")
+            self.assertEqual(lines[13], "    OOO use cache")
+            self.assertEqual(lines[14], "> put_disc")
+            self.assertEqual(lines[15], "    OOO use cache")
+            self.assertEqual(lines[16], "> put_disc")
+            self.assertEqual(lines[17], "    OOO use cache")
+            self.assertEqual(lines[18], "> put_disc")
+            self.assertEqual(lines[19], "    OOO use cache")
+            self.assertEqual(lines[20], "> put_disc")
+            self.assertEqual(lines[21], "    OOO use cache")
+            self.assertEqual(lines[22], "> put_disc")
+            self.assertEqual(lines[23], "    OOO use cache")
+            self.assertEqual(lines[24], "> put_disc")
+            self.assertEqual(lines[25], "    OOO use cache")
+            self.assertEqual(lines[26], "> put_disc")
+            self.assertEqual(lines[27], "    OOO use cache")
+
+        # BitBoard
+        class BitBoardCacheTest(BitBoard):
+            def get_legal_moves(self, color, cache=False):
+                if cache and color in self._legal_moves_cache:
+                    print('    OOO use cache')
+                else:
+                    print('    XXX not use cache')
+
+                return super().get_legal_moves(color, cache)
+
+        with captured_stdout() as stdout:
+            board = BitBoardCacheTest()
+            board.put_disc('black', 5, 4)
+            board.put_disc('white', 5, 5)
+            board.put_disc('black', 4, 5)
+            board.put_disc('white', 3, 5)
+            board.put_disc('black', 2, 6)
+            board.put_disc('white', 5, 3)
+            board.put_disc('black', 6, 2)
+            board.put_disc('white', 3, 6)
+
+            print('> black')
+            legal_moves_b = board.get_legal_moves('black')
+            print('> white')
+            legal_moves_w = board.get_legal_moves('white')
+
+            color = 'black'
+            legal_moves = legal_moves_b if color == 'black' else legal_moves_w
+            for move in legal_moves.keys():
+                board._legal_moves_cache[color] = legal_moves
+                print('> put_disc')
+                board.put_disc(color, *move)
+                board.undo()
+
+            lines = stdout.getvalue().splitlines()
+            self.assertEqual(lines[0], "    XXX not use cache")
+            self.assertEqual(lines[1], "    XXX not use cache")
+            self.assertEqual(lines[2], "    XXX not use cache")
+            self.assertEqual(lines[3], "    XXX not use cache")
+            self.assertEqual(lines[4], "    XXX not use cache")
+            self.assertEqual(lines[5], "    XXX not use cache")
+            self.assertEqual(lines[6], "    XXX not use cache")
+            self.assertEqual(lines[7], "    XXX not use cache")
+            self.assertEqual(lines[8], "> black")
+            self.assertEqual(lines[9], "    XXX not use cache")
+            self.assertEqual(lines[10], "> white")
+            self.assertEqual(lines[11], "    XXX not use cache")
+            self.assertEqual(lines[12], "> put_disc")
+            self.assertEqual(lines[13], "    OOO use cache")
+            self.assertEqual(lines[14], "> put_disc")
+            self.assertEqual(lines[15], "    OOO use cache")
+            self.assertEqual(lines[16], "> put_disc")
+            self.assertEqual(lines[17], "    OOO use cache")
+            self.assertEqual(lines[18], "> put_disc")
+            self.assertEqual(lines[19], "    OOO use cache")
+            self.assertEqual(lines[20], "> put_disc")
+            self.assertEqual(lines[21], "    OOO use cache")
+            self.assertEqual(lines[22], "> put_disc")
+            self.assertEqual(lines[23], "    OOO use cache")
+            self.assertEqual(lines[24], "> put_disc")
+            self.assertEqual(lines[25], "    OOO use cache")
+            self.assertEqual(lines[26], "> put_disc")
+            self.assertEqual(lines[27], "    OOO use cache")
