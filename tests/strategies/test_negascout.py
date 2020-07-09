@@ -160,7 +160,6 @@ class TestNegaScout(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        #self.assertEqual(negascout.get_best_move('white', board, moves, 4), ((5, 3), {(3, 1): -14.75, (5, 1): -14.75, (6, 1): -14.75, (5, 3): -3.25, (5, 4): -3.25, (6, 6): -3.25}))
         self.assertEqual(negascout.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))
 
         moves = Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
