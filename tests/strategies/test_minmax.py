@@ -89,7 +89,7 @@ class TestMinMax(unittest.TestCase):
         board.put_disc('white', 5, 4)
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(5):
-            minmax.next_move('white', board)
+            minmax.next_move('black', board)
 
         print()
         print(key, 'depth = 3')

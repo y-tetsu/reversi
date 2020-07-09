@@ -126,7 +126,6 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(score, -3.5)
         self.assertEqual(Measure.count[key], 2696)
 
-        board.put_disc('black', 3, 2)
         board.put_disc('white', 2, 4)
         board.put_disc('black', 5, 5)
         board.put_disc('white', 4, 2)
@@ -134,7 +133,7 @@ class TestAlphaBeta(unittest.TestCase):
         board.put_disc('white', 5, 4)
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(5):
-            alphabeta.next_move('white', board)
+            alphabeta.next_move('black', board)
 
         print()
         print(key, 'depth = 3')
@@ -151,22 +150,22 @@ class TestAlphaBeta(unittest.TestCase):
         alphabeta = _AlphaBetaTest(evaluator=Evaluator_TPOW())
         key = alphabeta.__class__.__name__ + str(os.getpid())
 
-        moves = list(board.get_legal_moves('white', cache=True).keys())
+        moves = list(board.get_legal_moves('black').keys())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
-            alphabeta.get_best_move('white', board, moves, 4)
+            alphabeta.get_best_move('black', board, moves, 4)
 
         print()
         print(key, 'depth = 4')
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        self.assertEqual(alphabeta.get_best_move('white', board, moves, 4), ((5, 3), {(3, 1): -14.75, (5, 1): -14.75, (6, 1): -14.75, (5, 3): -3.25, (5, 4): -3.25, (6, 6): -3.25}))
+        self.assertEqual(alphabeta.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))
 
-        moves = Sorter_B().sort_moves(color='white', board=board, moves=moves, best_move=(5, 3))
+        moves = Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
-            alphabeta.get_best_move('white', board, moves, 4)
+            alphabeta.get_best_move('black', board, moves, 4)
 
         print()
         print(key, 'depth = 4 Sorter_B')
