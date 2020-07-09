@@ -40,12 +40,14 @@ class _NegaScout(_AlphaBeta):
         tmp, null_window = None, beta
         for i, move in enumerate(legal_moves.keys()):
             if alpha < beta:
+                board._legal_moves_cache[color] = legal_moves  # recover cache
                 board.put_disc(color, *move)
                 tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1)
                 board.undo()
 
                 if alpha < tmp:
                     if tmp <= null_window and i:
+                        board._legal_moves_cache[color] = legal_moves  # recover cache
                         board.put_disc(color, *move)
                         alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1)
                         board.undo()
