@@ -179,7 +179,9 @@ class TestAlphaBeta(unittest.TestCase):
         alphabeta = AlphaBeta(depth=10, evaluator=Evaluator_TPOW())
         key = alphabeta.__class__.__name__ + str(os.getpid())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.count[key] = 0
 
         alphabeta.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[key])
         self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
+        print('(2600)', Measure.count[key])
