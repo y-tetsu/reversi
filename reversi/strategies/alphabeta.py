@@ -57,10 +57,12 @@ class _AlphaBeta(AbstractStrategy):
         """
         手を打った時の評価値を取得
         """
+        legal_moves_backup = board.get_legal_moves(color, cache=True)        # 手の候補
         board.put_disc(color, *move)                                         # 一手打つ
         next_color = 'white' if color == 'black' else 'black'                # 相手の色
         score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
         board.undo()                                                         # 打った手を戻す
+        board._legal_moves_cache[color] = legal_moves_backup                 # recover cache
 
         return score
 
@@ -87,6 +89,7 @@ class _AlphaBeta(AbstractStrategy):
 
         # 評価値を算出
         for move in legal_moves.keys():
+            board._legal_moves_cache[color] = legal_moves  # recover cache
             board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
