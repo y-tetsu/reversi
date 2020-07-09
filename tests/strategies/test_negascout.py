@@ -173,14 +173,15 @@ class TestNegaScout(unittest.TestCase):
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
 
-
     def test_negascout_timer_timeout(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
         negascout = NegaScout(depth=10, evaluator=Evaluator_TPOW())
         key = negascout.__class__.__name__ + str(os.getpid())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.count[key] = 0
 
         negascout.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[key])
         self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
+        print('(2400)', Measure.count[key])
