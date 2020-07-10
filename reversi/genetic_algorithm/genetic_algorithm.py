@@ -1,7 +1,6 @@
-#!/usr/bin/env python
+"""Genetic Algorithm
 """
-遺伝的アルゴリズム
-"""
+
 import os
 import json
 import random
@@ -10,8 +9,7 @@ from statistics import mean
 
 
 class GeneticAlgorithm:
-    """
-    遺伝的アルゴリズム
+    """GeneticAlgorithm
     """
     def __init__(self, setting_json, chromosome_cls):
         self._setting = self._load_setting(setting_json)
@@ -139,55 +137,3 @@ class GeneticAlgorithm:
         self.best = best
 
         return best
-
-if __name__ == '__main__':
-    from random import randrange
-    from copy import deepcopy
-
-    from chromosome import Chromosome
-
-    class Test(Chromosome):
-        """
-        乱数を足しながら77にする
-        """
-        def __init__(self, parameter):
-            self.parameter = parameter
-            self.name = str(parameter)
-
-        def fitness(self):
-            return 100 - abs(77 - self.parameter)
-
-        def reset_fitness(self):
-            pass
-
-        def is_optimal(self):
-            return self.parameter == 77
-
-        @classmethod
-        def random_instance(cls):
-            return Test(randrange(100))
-
-        def crossover(self, other):
-            child = deepcopy(self)
-
-            parent1 = 0 if self.parameter == 0 else randrange(self.parameter)
-            parent2 = 0 if other.parameter == 0 else randrange(other.parameter)
-
-            child.parameter = (parent1 + parent2) % 100
-            child.name = '(' + self.name + '&' + other.name + ')'
-
-            return child
-
-        def mutate(self):
-            self.parameter = (self.parameter + 1) % 100
-
-        def large_mutate(self):
-            self.parameter = randrange(100)
-            self.name = str(self.parameter)
-
-        def __str__(self):
-            return 'name=' + self.name + " parameter=" + str(self.parameter)
-
-    ga = GeneticAlgorithm('./ga_setting.json', Test)
-    result = ga.run()
-    print('result:', result)

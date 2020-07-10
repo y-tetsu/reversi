@@ -46,8 +46,7 @@ import json
 from random import randrange, random, randint
 from copy import deepcopy
 
-from reversi.genetic_algorithm.genetic_algorithm import GeneticAlgorithm
-from reversi.genetic_algorithm.chromosome import Chromosome
+from reversi.genetic_algorithm import GeneticAlgorithm, Chromosome
 from reversi import Simulator
 from reversi.strategies.table import Table
 
