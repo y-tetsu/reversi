@@ -21,7 +21,7 @@
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing)<br>
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(開発時に使用)<br>
 
 ## インストール方法
 1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールしてください。<br>
