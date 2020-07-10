@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-"""
-序盤はランダムに手を選ぶ
+"""RandomOpening strategy
 """
 
-import sys
-sys.path.append('../')
-
-from reversi.strategies.common import Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.common import Measure, AbstractStrategy
 from reversi.strategies.easy import Random
 from reversi.strategies.proto import AB_TI
 from reversi.strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_TPWEC, MinMax1_PWE, MinMax2_T, MinMax2_TPW, MinMax2_TPWE, MinMax2_TPWEC, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
@@ -18,8 +13,7 @@ from reversi.strategies.joseki import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AbIF9J
 
 
 class RandomOpening(AbstractStrategy):
-    """
-    序盤はランダムに手を選ぶ
+    """RandomOpening
     """
     def __init__(self, depth=None, base=None):
         self.depth = depth
@@ -28,12 +22,10 @@ class RandomOpening(AbstractStrategy):
 
     @Measure.time
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         depth = board.score['black'] + board.score['white'] - 4
 
-        # 現在の手数が閾値以下
         if depth < self.depth:
             return self.random.next_move(color, board)
 
@@ -318,35 +310,3 @@ class SwitchNsIF9JRo_B_TPWE(RandomOpening):
     """
     def __init__(self, depth=8, base=SwitchNsIF9J_B_TPWE()):
         super().__init__(depth, base)
-
-
-if __name__ == '__main__':
-    import time
-    import os
-    from board import BitBoard
-
-    bitboard8 = BitBoard()
-    bitboard8.put_disc('black', 3, 2)
-    bitboard8.put_disc('white', 2, 4)
-    bitboard8.put_disc('black', 5, 5)
-    bitboard8.put_disc('white', 4, 2)
-    bitboard8.put_disc('black', 5, 2)
-    bitboard8.put_disc('white', 5, 4)
-    bitboard8.put_disc('black', 4, 5)
-    bitboard8.put_disc('white', 5, 6)
-    bitboard8.put_disc('black', 4, 6)
-    print(bitboard8)
-
-    randomopening = AbIF9JRo_B_TPW()
-    move = randomopening.next_move('white', bitboard8)
-    print(move)
-
-    bitboard8.put_disc('white', 3, 7)
-
-    move = randomopening.next_move('white', bitboard8)
-    print(move)
-
-    bitboard8.put_disc('black', 4, 7)
-
-    move = randomopening.next_move('white', bitboard8)
-    print(move)
