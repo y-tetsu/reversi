@@ -34,7 +34,6 @@ class TestRandomOpening(unittest.TestCase):
                 move = randomopening.next_move(color, board)
                 self.assertNotEqual(move, (0, 0))
                 board.put_disc(color, *move)
-                print(board)
 
         # depth = 7
         move = randomopening.next_move('black', board)
