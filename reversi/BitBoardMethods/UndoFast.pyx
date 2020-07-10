@@ -12,9 +12,9 @@ def undo(board):
     """undo
     """
     if sys.maxsize == MAXSIZE64:
-        _undo_64bit(board)
-    else:
-        _undo(board)
+        return _undo_64bit(board)
+
+    return _undo(board)
 
 
 cdef inline _undo_64bit(board):
@@ -45,6 +45,8 @@ cdef inline _undo_64bit(board):
 
     board._legal_moves_cache.clear()
 
+    return prev
+
 
 cdef inline _undo(board):
     """_undo
@@ -72,3 +74,5 @@ cdef inline _undo(board):
             board.score['white'] -= 1 + disc_num
 
     board._legal_moves_cache.clear()
+
+    return prev

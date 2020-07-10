@@ -236,6 +236,8 @@ class Board(AbstractBoard):
 
         self._legal_moves_cache.clear()
 
+        return prev
+
     def get_bitboard_info(self):
         """get_bitboard_info
         """
@@ -356,7 +358,7 @@ class BitBoard(AbstractBoard):
     def undo(self):
         """undo
         """
-        BitBoardMethods.undo(self)
+        return BitBoardMethods.undo(self)
 
     def get_bitboard_info(self):
         """get_bitboard_info
