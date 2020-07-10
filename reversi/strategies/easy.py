@@ -1,24 +1,16 @@
-#!/usr/bin/env python
+"""Easy strategy
 """
-簡単な戦略
-"""
-
-import sys
-sys.path.append('../')
 
 import random
-import itertools
 
 from reversi.strategies.common import AbstractStrategy
 
 
 class Random(AbstractStrategy):
-    """
-    ランダム
+    """Random
     """
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         moves = list(board.get_legal_moves(color, cache=True).keys())
 
@@ -26,12 +18,11 @@ class Random(AbstractStrategy):
 
 
 class Greedy(AbstractStrategy):
-    """
-    なるべく多くとり、複数ある場合はランダム
+    """Greedy
+           Take as many as possible, random if multiple
     """
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         legal_moves = board.get_legal_moves(color, cache=True)
         max_count = max([len(value) for value in legal_moves.values()])
@@ -41,12 +32,11 @@ class Greedy(AbstractStrategy):
 
 
 class Unselfish(AbstractStrategy):
-    """
-    Greedyの逆
+    """Unselfish
+           Take as little as possible, random if multiple
     """
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         legal_moves = board.get_legal_moves(color, cache=True)
         min_count = min([len(value) for value in legal_moves.values()])
@@ -56,50 +46,22 @@ class Unselfish(AbstractStrategy):
 
 
 class SlowStarter(AbstractStrategy):
-    """
-    15%未満:Unselfish、15%以上:Greedy
+    """SlowStarter
+           Unselfish if the stage is less than 15%, Greedy otherwise
     """
     def __init__(self):
         self.unselfish = Unselfish()
         self.greedy = Greedy()
 
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        # 序盤
+        # stage is less than 15%
         if (squares-blanks)/squares < 0.15:
             return self.unselfish.next_move(color, board)
 
-        # 序盤以降
+        # otherwise
         return self.greedy.next_move(color, board)
-
-
-if __name__ == '__main__':
-    from board import Board
-    from player import Player
-
-    board4x4 = Board(4)
-    print(board4x4)
-
-    p1 = Player('black', 'Random', Random())
-    p2 = Player('white', 'SlowStarter', SlowStarter())
-
-    while True:
-        cnt = 0
-
-        for player in [p1, p2]:
-            if board4x4.get_legal_moves(player.color):
-                print(player, 'の番です')
-                player.put_disc(board4x4)
-                move = '(' + chr(player.move[0] + 97) + ', ' + str(player.move[1] + 1) + ')'
-                print(move + 'に置きました\n')
-                print(board4x4)
-                cnt += 1
-
-        if not cnt:
-            print('\n終了')
-            break
