@@ -183,7 +183,7 @@ class Board(AbstractBoard):
             for tmp_x, tmp_y, in flippable_discs:
                 self._board[tmp_y][tmp_x] = self.disc[color]
 
-            self._update_score()
+            self.update_score()
 
             # 打った手の記録
             self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
@@ -192,8 +192,8 @@ class Board(AbstractBoard):
 
         return []
 
-    def _update_score(self):
-        """_update_score
+    def update_score(self):
+        """update_score
         """
         for color in ('black', 'white'):
             self.score[color] = sum([row.count(self.disc[color]) for row in self._board])
@@ -232,7 +232,7 @@ class Board(AbstractBoard):
             for prev_x, prev_y in flippable_discs:
                 self._board[prev_y][prev_x] = self.disc[prev_color]
 
-            self._update_score()
+            self.update_score()
 
         self._legal_moves_cache.clear()
 
@@ -364,3 +364,17 @@ class BitBoard(AbstractBoard):
         """get_bitboard_info
         """
         return self._black_bitboard, self._white_bitboard
+
+    def update_score(self):
+        """update_score
+        """
+        self.score['black'], self.score['white'] = 0, 0
+        size = self.size
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            for x in range(size):
+                if self._black_bitboard & mask:
+                    self.score['black'] += 1
+                elif self._white_bitboard & mask:
+                    self.score['white'] += 1
+                mask >>= 1

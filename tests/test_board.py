@@ -250,6 +250,78 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.score['black'], 6)
         self.assertEqual(board.score['white'], 7)
 
+    def test_board_size_4_update_score(self):
+        board = Board(4)
+
+        board.score['black'] = 0
+        board.score['white'] = 0
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 2})
+
+        board._board[0][0] = board.disc['white']
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 3})
+
+    def test_board_size_8_update_score(self):
+        board = Board(8)
+
+        board.score['black'] = 0
+        board.score['white'] = 0
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 2})
+
+        board._board[0][0] = board.disc['white']
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 3})
+
+    def test_board_size_26_update_score(self):
+        board = Board(26)
+
+        board.score['black'] = 0
+        board.score['white'] = 0
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 2})
+
+        board._board[0][0] = board.disc['white']
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 3})
+
+    def test_bitboard_size_4_update_score(self):
+        board = BitBoard(4)
+
+        board.score['black'] = 0
+        board.score['white'] = 0
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 2})
+
+        board._white_bitboard |= 1
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 3})
+
+    def test_bitboard_size_8_update_score(self):
+        board = BitBoard(8)
+
+        board.score['black'] = 0
+        board.score['white'] = 0
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 2})
+
+        board._white_bitboard |= 1
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 3})
+
+    def test_bitboard_size_26_update_score(self):
+        board = BitBoard(26)
+
+        board.score['black'] = 0
+        board.score['white'] = 0
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 2})
+
+        board._white_bitboard |= 1
+        board.update_score()
+        self.assertEqual(board.score, {'black': 2, 'white': 3})
+
     def test_bitboard_size_8_play_result(self):
         board = BitBoard()
         board.put_disc('black', 5, 4)
