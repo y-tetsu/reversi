@@ -8,7 +8,7 @@ from reversi.strategies import Table
 
 
 class TestTable(unittest.TestCase):
-    """scorer
+    """table
     """
     def test_table_init(self):
         table = Table(4)
