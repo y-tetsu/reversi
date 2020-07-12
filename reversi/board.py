@@ -22,7 +22,15 @@ class AbstractBoard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def update_score(self):
+        pass
+
+    @abc.abstractmethod
     def get_board_info(self):
+        pass
+
+    @abc.abstractmethod
+    def get_bitboard_info(self):
         pass
 
     @abc.abstractmethod
@@ -217,6 +225,22 @@ class Board(AbstractBoard):
 
         return board_info
 
+    def get_bitboard_info(self):
+        """get_bitboard_info
+        """
+        size = self.size
+        black_bitboard, white_bitboard = 0, 0
+        put = 1 << size * size - 1
+        for y in range(self.size):
+            for x in range(self.size):
+                if self._board[y][x] == self.disc['black']:
+                    black_bitboard |= put
+                if self._board[y][x] == self.disc['white']:
+                    white_bitboard |= put
+                put >>= 1
+
+        return black_bitboard, white_bitboard
+
     def undo(self):
         """undo
         """
@@ -237,22 +261,6 @@ class Board(AbstractBoard):
         self._legal_moves_cache.clear()
 
         return prev
-
-    def get_bitboard_info(self):
-        """get_bitboard_info
-        """
-        size = self.size
-        black_bitboard, white_bitboard = 0, 0
-        put = 1 << size * size - 1
-        for y in range(self.size):
-            for x in range(self.size):
-                if self._board[y][x] == self.disc['black']:
-                    black_bitboard |= put
-                if self._board[y][x] == self.disc['white']:
-                    white_bitboard |= put
-                put >>= 1
-
-        return black_bitboard, white_bitboard
 
 
 class BitBoard(AbstractBoard):
@@ -350,21 +358,6 @@ class BitBoard(AbstractBoard):
         """
         return BitBoardMethods.put_disc(self, color, x, y)
 
-    def get_board_info(self):
-        """get_board_info
-        """
-        return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
-
-    def undo(self):
-        """undo
-        """
-        return BitBoardMethods.undo(self)
-
-    def get_bitboard_info(self):
-        """get_bitboard_info
-        """
-        return self._black_bitboard, self._white_bitboard
-
     def update_score(self):
         """update_score
         """
@@ -378,3 +371,18 @@ class BitBoard(AbstractBoard):
                 elif self._white_bitboard & mask:
                     self.score['white'] += 1
                 mask >>= 1
+
+    def get_board_info(self):
+        """get_board_info
+        """
+        return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
+
+    def get_bitboard_info(self):
+        """get_bitboard_info
+        """
+        return self._black_bitboard, self._white_bitboard
+
+    def undo(self):
+        """undo
+        """
+        return BitBoardMethods.undo(self)

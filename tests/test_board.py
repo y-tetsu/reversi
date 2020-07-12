@@ -4,7 +4,7 @@
 import unittest
 from test.support import captured_stdout
 
-from reversi.board import BoardSizeError, Board, BitBoard
+from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard
 from reversi.game import Game
 from reversi.player import Player
 from reversi.strategies import Random
@@ -801,3 +801,145 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(lines[25], "    OOO use cache")
             self.assertEqual(lines[26], "> put_disc")
             self.assertEqual(lines[27], "    OOO use cache")
+
+    def test_board_abstract(self):
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                pass
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+            test = Test()
+
+        class Test(AbstractBoard):
+            def get_legal_moves(self, color):
+                pass
+
+            def put_disc(self, color, x, y):
+                pass
+
+            def update_score(self):
+                pass
+
+            def get_board_info(self):
+                pass
+
+            def get_bitboard_info(self):
+                pass
+
+            def undo(self):
+                pass
+
+        test = Test()
+        self.assertIsInstance(test, Test)
