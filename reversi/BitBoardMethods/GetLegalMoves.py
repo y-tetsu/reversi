@@ -2,6 +2,7 @@
 ビットボードの配置可能位置取得処理
 """
 
+
 def get_legal_moves(color, size, b, w, mask):
     """
     石が置ける場所をすべて返す
@@ -37,6 +38,7 @@ def get_legal_moves(color, size, b, w, mask):
 
     return ret
 
+
 def get_flippable_discs(size, player, opponent, x, y, mask):
     """
     指定座標のひっくり返せる石の場所をすべて返す
@@ -71,6 +73,7 @@ def get_flippable_discs(size, player, opponent, x, y, mask):
 
     return ret
 
+
 def get_next_put(size, put, direction, mask):
     """
     指定位置から指定方向に1マス分移動した場所を返す
@@ -94,6 +97,7 @@ def get_next_put(size, put, direction, mask):
     else:
         return 0
 
+
 def get_legal_moves_lshift(size, mask, player, blank, shift_size):
     """
     左シフトで石が置ける場所を取得
@@ -101,7 +105,9 @@ def get_legal_moves_lshift(size, mask, player, blank, shift_size):
     tmp = mask & (player << shift_size)
     for _ in range(size-3):
         tmp |= mask & (tmp << shift_size)
+
     return blank & (tmp << shift_size)
+
 
 def get_legal_moves_rshift(size, mask, player, blank, shift_size):
     """
@@ -110,4 +116,5 @@ def get_legal_moves_rshift(size, mask, player, blank, shift_size):
     tmp = mask & (player >> shift_size)
     for _ in range(size-3):
         tmp |= mask & (tmp >> shift_size)
+
     return blank & (tmp >> shift_size)

@@ -1,32 +1,41 @@
-#!/usr/bin/env python
 import pyximport
 pyximport.install()
+
 
 SLOW_MODE1 = True
 SLOW_MODE2 = True
 SLOW_MODE3 = True
 SLOW_MODE4 = True
 
+
 try:
-    from reversi.BitBoardMethods.GetLegalMovesFast import get_legal_moves
+    from ..BitBoardMethods.GetLegalMovesFast import get_legal_moves
     SLOW_MODE1 = False
 except ImportError:
-    from reversi.BitBoardMethods.GetLegalMoves import get_legal_moves
+    from ..BitBoardMethods.GetLegalMoves import get_legal_moves
 
 try:
     from reversi.BitBoardMethods.GetBoardInfoFast import get_board_info
     SLOW_MODE2 = False
 except ImportError:
-    from reversi.BitBoardMethods.GetBoardInfo import get_board_info
+    from ..BitBoardMethods.GetBoardInfo import get_board_info
 
 try:
-    from reversi.BitBoardMethods.UndoFast import undo
+    from ..BitBoardMethods.UndoFast import undo
     SLOW_MODE3 = False
 except ImportError:
-    from reversi.BitBoardMethods.Undo import undo
+    from ..BitBoardMethods.Undo import undo
 
 try:
-    from reversi.BitBoardMethods.PutDiscFast import put_disc
+    from ..BitBoardMethods.PutDiscFast import put_disc
     SLOW_MODE4 = False
 except ImportError:
-    from reversi.BitBoardMethods.PutDisc import put_disc
+    from ..BitBoardMethods.PutDisc import put_disc
+
+
+__all__ = [
+    'get_legal_moves',
+    'get_board_info',
+    'undo',
+    'put_disc',
+]
