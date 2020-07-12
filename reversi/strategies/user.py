@@ -3,9 +3,6 @@
 ユーザ入力
 """
 
-import sys
-sys.path.append('../')
-
 import re
 import time
 
