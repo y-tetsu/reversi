@@ -3,11 +3,7 @@
 アルファベータ法(ネガアルファ法)
 """
 
-import sys
-sys.path.append('../')
-
 from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from reversi.strategies.negamax import NegaMax
 from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_N
 
 
@@ -74,7 +70,7 @@ class _AlphaBeta(AbstractStrategy):
         # ゲーム終了 or 最大深さに到達
         legal_moves_b = board.get_legal_moves('black')
         legal_moves_w = board.get_legal_moves('white')
-        is_game_end =  True if not legal_moves_b and not legal_moves_w else False
+        is_game_end = True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
