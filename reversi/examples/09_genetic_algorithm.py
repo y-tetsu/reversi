@@ -149,7 +149,7 @@ class GeneticTable(Chromosome):
         self.param[randrange(10)] += self.setting['large_mutation_value'] * (1 if random() > 0.5 else -1)
 
     def __str__(self):
-        return f"corner: {self.param[0]}\nc: {self.param[1]}\na1: {self.param[2]}\na2: {self.param[3]}\nb1: {self.param[4]}\nb2: {self.param[5]}\nb3: {self.param[6]}\nx: {self.param[7]}\no1: {self.param[8]}\no2: {self.param[9]}\nFitness: {self.fitness()}"
+        return f"corner: {self.param[0]}\nc: {self.param[1]}\na1: {self.param[2]}\na2: {self.param[3]}\nb1: {self.param[4]}\nb2: {self.param[5]}\nb3: {self.param[6]}\nx: {self.param[7]}\no1: {self.param[8]}\no2: {self.param[9]}\nFitness: {self.fitness()}"  # noqa: E501
 
     @classmethod
     def load_population(cls, json_file):
@@ -172,7 +172,7 @@ class GeneticTable(Chromosome):
                 o1 = json_setting["o1"]
                 o2 = json_setting["o2"]
 
-                population = [GeneticTable(corner=corner[i], c=c[i], a1=a1[i], a2=a2[i], b1=b1[i], b2=b2[i], b3=b3[i], x=x[i], o1=o1[i], o2=o2[i]) for i in range(len(corner))]
+                population = [GeneticTable(corner=corner[i], c=c[i], a1=a1[i], a2=a2[i], b1=b1[i], b2=b2[i], b3=b3[i], x=x[i], o1=o1[i], o2=o2[i]) for i in range(len(corner))]  # noqa: E501
 
         return generation, population
 

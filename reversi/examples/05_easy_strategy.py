@@ -40,7 +40,7 @@ class Easy(strategies.common.AbstractStrategy):
             next_moves = [i for i in legal_moves]
             near_corners = [
                              (1, 0),         (size-2, 0),
-                (0, 1),      (1, 1),         (size-2, 1),      (size-1, 1),
+                (0, 1),      (1, 1),         (size-2, 1),      (size-1, 1),  # noqa: E131
 
                 (0, size-2), (1, size-2),    (size-2, size-2), (size-1, size-2),
                              (1, size-1),    (size-2, size-1),
