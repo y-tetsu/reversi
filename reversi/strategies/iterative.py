@@ -1,9 +1,6 @@
 """IterativeDeepning strategy
 """
 
-import sys
-sys.path.append('../')
-
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.alphabeta import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWEC
 from reversi.strategies.negascout import NegaScout_TPW, NegaScout_TPW2, NegaScout_TPWE
