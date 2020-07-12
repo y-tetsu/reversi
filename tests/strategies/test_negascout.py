@@ -79,7 +79,7 @@ class TestNegaScout(unittest.TestCase):
         board.put_disc('black', 5, 2)
         board.put_disc('white', 5, 4)
         moves = board.get_legal_moves('black').keys()
-        self.assertEqual(negascout.get_best_move('black', board, moves, 5), ((2, 2), {(2, 2): 8, (2, 3): 8, (5, 3): 8, (1, 5): 8, (2, 5): 8, (3, 5): 8, (4, 5): 8, (6, 5): 8}))
+        self.assertEqual(negascout.get_best_move('black', board, moves, 5), ((2, 2), {(2, 2): 8, (2, 3): 8, (5, 3): 8, (1, 5): 8, (2, 5): 8, (3, 5): 8, (4, 5): 8, (6, 5): 8}))  # noqa: E501
 
     def test_negascout_performance_of_get_score(self):
         board = BitBoard()
@@ -160,7 +160,7 @@ class TestNegaScout(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        self.assertEqual(negascout.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))
+        self.assertEqual(negascout.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))  # noqa: E501
 
         moves = Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}

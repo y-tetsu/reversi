@@ -7,7 +7,7 @@ import os
 from reversi.board import BitBoard
 from reversi.strategies import MinMax
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TPOW
-from reversi.strategies.common import Timer, Measure, CPU_TIME
+from reversi.strategies.common import Measure
 
 
 class TestMinMax(unittest.TestCase):
