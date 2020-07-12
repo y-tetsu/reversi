@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-"""
-反復深化法
+"""IterativeDeepning strategy
 """
 
 import sys
@@ -13,8 +11,7 @@ from reversi.strategies.coordinator import Selector, Sorter_B
 
 
 class IterativeDeepning(AbstractStrategy):
-    """
-    反復深化法
+    """IterativeDeepning
     """
     def __init__(self, depth=None, selector=None, sorter=None, search=None):
         self.depth = depth
@@ -25,8 +22,7 @@ class IterativeDeepning(AbstractStrategy):
 
     @Measure.time
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         depth, moves, best_move, scores, = self.depth, None, None, {}
 
@@ -93,30 +89,3 @@ class NsI_B_TPW2(IterativeDeepning):
     """
     def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPW2()):
         super().__init__(depth, selector, sorter, search)
-
-
-if __name__ == '__main__':
-    import time
-    import os
-    from board import BitBoard
-
-    bitboard8 = BitBoard()
-    bitboard8.put_disc('black', 3, 2)
-    bitboard8.put_disc('white', 2, 4)
-    bitboard8.put_disc('black', 5, 5)
-    bitboard8.put_disc('white', 4, 2)
-    bitboard8.put_disc('black', 5, 2)
-    bitboard8.put_disc('white', 5, 4)
-    print(bitboard8)
-
-    print('--- Test For AbI_B_TPW Strategy ---')
-    key = 'AlphaBeta_TPW' + str(os.getpid())
-    iterative = AbI_B_TPW()
-    assert iterative.depth == 2
-
-    Measure.count[key] = 0
-    print( iterative.next_move('black', bitboard8) )
-    print( 'max_depth :', iterative.max_depth )
-    assert iterative.max_depth >= 5
-    print( 'count     :', Measure.count[key] )
-    assert Measure.count[key] >= 1000
