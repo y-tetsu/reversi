@@ -14,69 +14,38 @@ from reversi.display import NoneDisplay
 class TestBoard(unittest.TestCase):
     """board
     """
-    def test_board_size_2(self):
-        err = False
+    def test_board_size(self):
+        with self.assertRaises(BoardSizeError):
+            Board(-1)
 
-        try:
-            Board(2)
-        except BoardSizeError:
-            err = True
+        for num in range(4):
+            with self.assertRaises(BoardSizeError):
+                Board(num)
 
-        self.assertTrue(err)
+        for num in range(5, 28, 2):
+            with self.assertRaises(BoardSizeError):
+                Board(num)
 
-    def test_board_size_3(self):
-        err = False
-
-        try:
-            Board(3)
-        except BoardSizeError:
-            err = True
-
-        self.assertTrue(err)
-
-    def test_board_size_28(self):
-        err = False
-
-        try:
+        with self.assertRaises(BoardSizeError):
             Board(28)
-        except BoardSizeError:
-            err = True
 
-        self.assertTrue(err)
+    def test_bitboard_size(self):
+        with self.assertRaises(BoardSizeError):
+            BitBoard(-1)
 
-    def test_bitboard_size_2(self):
-        err = False
+        for num in range(4):
+            with self.assertRaises(BoardSizeError):
+                BitBoard(num)
 
-        try:
-            BitBoard(2)
-        except BoardSizeError:
-            err = True
+        for num in range(5, 28, 2):
+            with self.assertRaises(BoardSizeError):
+                BitBoard(num)
 
-        self.assertTrue(err)
-
-    def test_bitboard_size_3(self):
-        err = False
-
-        try:
-            BitBoard(3)
-        except BoardSizeError:
-            err = True
-
-        self.assertTrue(err)
-
-    def test_bitboard_size_28(self):
-        err = False
-
-        try:
+        with self.assertRaises(BoardSizeError):
             BitBoard(28)
-        except BoardSizeError:
-            err = True
 
-        self.assertTrue(err)
-
-    def test_board_size_4_initial(self):
+    def test_board_initial(self):
         board = Board(4)
-
         board_ini = [[board.disc['blank'] for _ in range(4)] for _ in range(4)]
         board_ini[2][1] = board.disc['black']
         board_ini[1][2] = board.disc['black']
@@ -85,9 +54,7 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(board._board, board_ini)
 
-    def test_board_size_6_initial(self):
         board = Board(6)
-
         board_ini = [[board.disc['blank'] for _ in range(6)] for _ in range(6)]
         board_ini[3][2] = board.disc['black']
         board_ini[2][3] = board.disc['black']
@@ -96,9 +63,7 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(board._board, board_ini)
 
-    def test_board_size_8_initial(self):
         board = Board()
-
         board_ini = [[board.disc['blank'] for _ in range(8)] for _ in range(8)]
         board_ini[4][3] = board.disc['black']
         board_ini[3][4] = board.disc['black']
@@ -107,9 +72,7 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(board._board, board_ini)
 
-    def test_board_size_10_initial(self):
         board = Board(10)
-
         board_ini = [[board.disc['blank'] for _ in range(10)] for _ in range(10)]
         board_ini[5][4] = board.disc['black']
         board_ini[4][5] = board.disc['black']
@@ -118,9 +81,7 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(board._board, board_ini)
 
-    def test_board_size_26_initial(self):
         board = Board(26)
-
         board_ini = [[board.disc['blank'] for _ in range(26)] for _ in range(26)]
         board_ini[13][12] = board.disc['black']
         board_ini[12][13] = board.disc['black']
@@ -129,27 +90,23 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(board._board, board_ini)
 
-    def test_bitboard_size_4_initial(self):
+    def test_bitboard_initial(self):
         board = BitBoard(4)
         self.assertEqual(board._black_bitboard, 0x240)
         self.assertEqual(board._white_bitboard, 0x420)
 
-    def test_bitboard_size_6_initial(self):
         board = BitBoard(6)
         self.assertEqual(board._black_bitboard, 0x108000)
         self.assertEqual(board._white_bitboard, 0x204000)
 
-    def test_bitboard_size_8_initial(self):
         board = BitBoard(8)
         self.assertEqual(board._black_bitboard, 0x810000000)
         self.assertEqual(board._white_bitboard, 0x1008000000)
 
-    def test_bitboard_size_10_initial(self):
         board = BitBoard(10)
         self.assertEqual(board._black_bitboard, 0x40200000000000)
         self.assertEqual(board._white_bitboard, 0x80100000000000)
 
-    def test_bitboard_size_26_initial(self):
         board = BitBoard(26)
         self.assertEqual(board._black_bitboard, 0x4000002000000000000000000000000000000000000000000000000000000000000000000000000000000000)
         self.assertEqual(board._white_bitboard, 0x8000001000000000000000000000000000000000000000000000000000000000000000000000000000000000)
@@ -250,9 +207,8 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.score['black'], 6)
         self.assertEqual(board.score['white'], 7)
 
-    def test_board_size_4_update_score(self):
+    def test_board_size_update_score(self):
         board = Board(4)
-
         board.score['black'] = 0
         board.score['white'] = 0
         board.update_score()
@@ -262,9 +218,7 @@ class TestBoard(unittest.TestCase):
         board.update_score()
         self.assertEqual(board.score, {'black': 2, 'white': 3})
 
-    def test_board_size_8_update_score(self):
         board = Board(8)
-
         board.score['black'] = 0
         board.score['white'] = 0
         board.update_score()
@@ -274,9 +228,7 @@ class TestBoard(unittest.TestCase):
         board.update_score()
         self.assertEqual(board.score, {'black': 2, 'white': 3})
 
-    def test_board_size_26_update_score(self):
         board = Board(26)
-
         board.score['black'] = 0
         board.score['white'] = 0
         board.update_score()
@@ -286,9 +238,8 @@ class TestBoard(unittest.TestCase):
         board.update_score()
         self.assertEqual(board.score, {'black': 2, 'white': 3})
 
-    def test_bitboard_size_4_update_score(self):
+    def test_bitboard_update_score(self):
         board = BitBoard(4)
-
         board.score['black'] = 0
         board.score['white'] = 0
         board.update_score()
@@ -298,9 +249,7 @@ class TestBoard(unittest.TestCase):
         board.update_score()
         self.assertEqual(board.score, {'black': 2, 'white': 3})
 
-    def test_bitboard_size_8_update_score(self):
         board = BitBoard(8)
-
         board.score['black'] = 0
         board.score['white'] = 0
         board.update_score()
@@ -310,9 +259,7 @@ class TestBoard(unittest.TestCase):
         board.update_score()
         self.assertEqual(board.score, {'black': 2, 'white': 3})
 
-    def test_bitboard_size_26_update_score(self):
         board = BitBoard(26)
-
         board.score['black'] = 0
         board.score['white'] = 0
         board.update_score()
