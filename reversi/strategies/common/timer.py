@@ -1,15 +1,11 @@
-#!/usr/bin/env python
+"""Timer
 """
-タイマー
-"""
-
-import sys
-sys.path.append('../../')
 
 import time
 import os
 
 from reversi.strategies.common import CPU_TIME
+
 
 class Timer:
     """
