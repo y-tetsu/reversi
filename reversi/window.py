@@ -11,7 +11,6 @@ import threading
 import re
 
 import reversi.board as board
-from reversi.board import Board
 import reversi.BitBoardMethods as BitBoardMethods
 import reversi.strategies as strategies
 import reversi.strategies.TableMethods as TableMethods
@@ -99,10 +98,10 @@ DEFAULT_BLACK_NUM = '2'  # 黒の石の数初期値
 DEFAULT_WHITE_NUM = '2'  # 白の石の数初期値
 DEFAULT_INFO_TEXT = {    # 表示テキストのテキスト初期値
     'name':    {'black': lambda s: DISC_MARK + s.player['black'], 'white': lambda s: DISC_MARK + s.player['white']},
-    'score':   {'black': lambda s: '2',                           'white': lambda s: '2'                          },
-    'winlose': {'black': lambda s: '',                            'white': lambda s: ''                           },
-    'turn':    {'black': lambda s: '',                            'white': lambda s: ''                           },
-    'move':    {'black': lambda s: '',                            'white': lambda s: ''                           },
+    'score':   {'black': lambda s: '2',                           'white': lambda s: '2'},
+    'winlose': {'black': lambda s: '',                            'white': lambda s: ''},
+    'turn':    {'black': lambda s: '',                            'white': lambda s: ''},
+    'move':    {'black': lambda s: '',                            'white': lambda s: ''},
 }
 
 CPUTIME_DIALOG_TITLE = 'CPU_TIME'  # タイトル
@@ -132,10 +131,10 @@ TEXTS = {
         'EXTRA_REF_TEXT': 'Reference',                                                 # Reference
         'EXTRA_LOAD_TEXT': 'Load',                                                     # Load
     },
-    LANGUAGE_MENU[1] : {                                                          # Japanese
-        'START_TEXT':'クリックでスタート',                                        # スタートのテキスト
-        'TURN_ON':'手番です',                                                     # 手番の表示ON
-        'TURN_OFF':'',                                                            # 手番の表示OFF
+    LANGUAGE_MENU[1]: {                                                           # Japanese
+        'START_TEXT': 'クリックでスタート',                                       # スタートのテキスト
+        'TURN_ON': '手番です',                                                    # 手番の表示ON
+        'TURN_OFF': '',                                                           # 手番の表示OFF
         'MOVE_ON': ' に置きました',                                               # 手の表示ON
         'MOVE_OFF': '',                                                           # 手の表示OFF
         'FOUL_ON': '反則',                                                        # 反則負けの表示ON
@@ -253,7 +252,7 @@ class Menu(tk.Menu):
             if not self.event.is_set():
                 self.size = item if name == 'size' else self.size
                 self.black_player = item if name == 'black' else self.black_player
-                self.white_player= item if name == 'white' else self.white_player
+                self.white_player = item if name == 'white' else self.white_player
 
                 if name == 'cputime':
                     CpuTimeDialog(window=self.window, event=self.event, language=self.language)
@@ -261,9 +260,9 @@ class Menu(tk.Menu):
                 if name == 'extra':
                     ExtraDialog(window=self.window, event=self.event, language=self.language)
 
-                self.assist= item if name == 'assist' else self.assist
-                self.language= item if name == 'language' else self.language
-                self.cancel= item if name == 'cancel' else self.cancel
+                self.assist = item if name == 'assist' else self.assist
+                self.language = item if name == 'language' else self.language
+                self.cancel = item if name == 'cancel' else self.cancel
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
 
         return change_menu_selection
@@ -797,179 +796,3 @@ class ScreenStart:
         """
         text = TEXTS[self.language]['START_TEXT'] if state == 'normal' else ''
         self.canvas.itemconfigure(self.text, text=text, state=state)
-
-
-if __name__ == '__main__':
-    import time
-    from player import Player
-
-    state = 'INIT'
-
-    def resize_board(window):
-        global state
-
-        if window.menu.event.is_set():
-            # メニューからの通知を取得
-            window.size = window.menu.size
-            window.player['black'] = window.menu.black_player
-            window.player['white'] = window.menu.white_player
-            window.assist = window.menu.assist
-
-            state = 'INIT'  # ウィンドウ初期化
-            window.menu.event.clear()   # イベントをクリア
-
-            return True
-
-        return False
-
-    def demo_animation(window):
-        center = window.board.size // 2
-
-        target = [
-            ('black', center, center-1),
-            ('black', center-1, center),
-            ('white', center-1, center-1),
-            ('white', center, center),
-        ]
-
-        ptn = {
-            'black': [
-                ('black', 'turnblack'),
-                ('turnblack', 'white'),
-                ('white', 'turnwhite'),
-                ('turnwhite', 'black'),
-            ],
-            'white': [
-                ('white', 'turnwhite'),
-                ('turnwhite', 'black'),
-                ('black', 'turnblack'),
-                ('turnblack', 'white'),
-            ],
-        }
-
-        for color, x, y in target:
-            for remove_color, put_color in ptn[color]:
-                # メニュー設定変更時
-                if resize_board(window):
-                    return False
-
-                # アニメーション処理
-                time.sleep(TURN_DISC_WAIT)
-                window.board.remove_disc(remove_color, x, y)
-                window.board.put_disc(put_color, x, y)
-
-        return True
-
-    def test_play(window, game_strategies):
-        global state
-
-        demo = False
-
-        while True:
-            resize_board(window)
-
-            if state == 'INIT':
-                demo = False
-                window.init_screen()
-                window.set_state('normal')
-                state = 'DEMO'
-
-            if state == 'DEMO':
-                demo = True
-
-                if window.start.event.is_set():
-                    window.set_state('disable')  # メニューを無効化
-                    window.start.event.clear()
-                    state = 'START'
-                else:
-                    demo_animation(window)
-
-            if state == 'START':
-                if not demo:
-                    window.init_screen()
-                    window.set_state('disable')
-
-                demo = False
-                print('start', window.board.size, window.info.player['black'], window.info.player['white'])
-
-                board = Board(window.board.size)
-                black_player = Player('black', window.info.player['black'], game_strategies[window.info.player['black']])
-                white_player = Player('white', window.info.player['white'], game_strategies[window.info.player['white']])
-
-                while True:
-                    playable = 0
-
-                    moves = list(board.get_legal_moves('black').keys())
-
-                    if moves:
-                        window.board.enable_moves(moves)
-                        window.board.selectable_moves(moves)
-
-                        time.sleep(0.3)
-                        black_player.put_disc(board)
-
-                        window.board.disable_moves(moves)
-                        window.board.enable_move(*black_player.move)
-
-                        window.board.put_disc('black', *black_player.move)
-
-                        time.sleep(0.3)
-                        window.board.turn_disc('black', black_player.captures)
-
-                        window.board.disable_move(*black_player.move)
-
-                        playable += 1
-
-                    moves = list(board.get_legal_moves('white').keys())
-
-                    if moves:
-                        window.board.enable_moves(moves)
-
-                        time.sleep(0.3)
-                        white_player.put_disc(board)
-
-                        window.board.disable_moves(moves)
-                        window.board.enable_move(*white_player.move)
-
-                        window.board.put_disc('white', *white_player.move)
-
-                        time.sleep(0.3)
-                        window.board.turn_disc('white', white_player.captures)
-                        window.board.disable_move(*white_player.move)
-
-                        playable += 1
-
-                    if not playable:
-                        state = 'END'
-                        window.set_state('normal')
-                        break
-
-            if state == 'END':
-                demo = False
-
-                if window.start.event.is_set():
-                    window.set_state('disable')
-                    window.start.event.clear()
-                    state = 'START'
-
-    root = tk.Tk()
-    root.withdraw()  # 表示が整うまで隠す
-
-    b = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
-    w = ['ユーザ', 'かんたん', 'ふつう', 'むずかしい']
-
-    window = Window(root=root, black_players=b, white_players=w)
-
-    game_strategies = {
-        'ユーザ': strategies.WindowUserInput(window),
-        'かんたん': strategies.Unselfish(),
-        'ふつう': strategies.Random(),
-        'むずかしい': strategies.Greedy(),
-    }
-
-    game = threading.Thread(target=test_play, args=([window, game_strategies]))
-    game.daemon = True
-    game.start()
-
-    root.deiconify()  # 表示する
-    root.mainloop()
