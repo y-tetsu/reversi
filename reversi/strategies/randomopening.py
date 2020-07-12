@@ -4,12 +4,12 @@
 from reversi.strategies.common import Measure, AbstractStrategy
 from reversi.strategies.easy import Random
 from reversi.strategies.proto import AB_TI
-from reversi.strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_TPWEC, MinMax1_PWE, MinMax2_T, MinMax2_TPW, MinMax2_TPWE, MinMax2_TPWEC, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW
+from reversi.strategies.minmax import MinMax1_TPW, MinMax1_TPW2, MinMax1_TPWE, MinMax1_TPWEC, MinMax1_PWE, MinMax2_T, MinMax2_TPW, MinMax2_TPWE, MinMax2_TPWEC, MinMax3_T, MinMax3_TP, MinMax3_TPW, MinMax3_TPOW  # noqa: E501
 from reversi.strategies.negamax import _NegaMax3_TPW, NegaMax3_TPW, NegaMax3_TPOW
 from reversi.strategies.alphabeta import AlphaBeta4_TPW, AlphaBeta4_TPWE
 from reversi.strategies.negascout import NegaScout3_TPW, NegaScout3_TPOW, NegaScout4_TPW, NegaScout4_TPWE
 from reversi.strategies.fullreading import MinMax2F9_TPWE, AlphaBeta4F9_TPW
-from reversi.strategies.joseki import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPW2, NsIF9J_B_TPWE, SwitchNsIF9J_B_TPW, SwitchNsIF9J_B_TPWE
+from reversi.strategies.joseki import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPW2, NsIF9J_B_TPWE, SwitchNsIF9J_B_TPW, SwitchNsIF9J_B_TPWE  # noqa: E501
 
 
 class RandomOpening(AbstractStrategy):
