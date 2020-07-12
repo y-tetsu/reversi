@@ -1,13 +1,10 @@
 """MinMax
 """
 
-import sys
-sys.path.append('../')
-
 import random
 
 from reversi.strategies.common import Measure, AbstractStrategy
-from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE
+from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
 class MinMax(AbstractStrategy):

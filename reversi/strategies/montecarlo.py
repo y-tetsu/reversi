@@ -3,9 +3,6 @@
 モンテカルロ法
 """
 
-import sys
-sys.path.append('../')
-
 import random
 import copy
 
@@ -105,7 +102,6 @@ class MonteCarlo1000(MonteCarlo):
 
 
 if __name__ == '__main__':
-    import time
     from board import BitBoard
 
     # MonteCarlo
