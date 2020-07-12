@@ -14,11 +14,11 @@ class TestApp(unittest.TestCase):
         app = Reversi()
 
         self.assertEqual(app.state, app.INIT)
-        self.assertTrue(isinstance(app.window, Window))
+        self.assertIsInstance(app.window, Window)
         self.assertTrue('User1' in app.strategies)
-        self.assertTrue(isinstance(app.strategies['User1'], WindowUserInput))
+        self.assertIsInstance(app.strategies['User1'], WindowUserInput)
         self.assertTrue('User2' in app.strategies)
-        self.assertTrue(isinstance(app.strategies['User2'], WindowUserInput))
+        self.assertIsInstance(app.strategies['User2'], WindowUserInput)
 
     def test_reversic_init(self):
         app = Reversic()
@@ -27,6 +27,6 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.player_names, {'black': 'User1', 'white': 'User2'})
         self.assertEqual(app.state, app.START)
         self.assertTrue('User1' in app.strategies['black'])
-        self.assertTrue(isinstance(app.strategies['black']['User1'], ConsoleUserInput))
+        self.assertIsInstance(app.strategies['black']['User1'], ConsoleUserInput)
         self.assertTrue('User2' in app.strategies['white'])
-        self.assertTrue(isinstance(app.strategies['white']['User2'], ConsoleUserInput))
+        self.assertIsInstance(app.strategies['white']['User2'], ConsoleUserInput)
