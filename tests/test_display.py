@@ -150,8 +150,8 @@ class TestDisplay(unittest.TestCase):
         display = WindowDisplay(TestWindow())
 
         # init
-        self.assertTrue(isinstance(display.info, TestInfo))
-        self.assertTrue(isinstance(display.board, TestBoard))
+        self.assertIsInstance(display.info, TestInfo)
+        self.assertIsInstance(display.board, TestBoard)
 
         # progress
         with captured_stdout() as stdout:

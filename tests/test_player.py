@@ -22,7 +22,7 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(p.color, 'black')
         self.assertEqual(p.disc, board.disc[p.color])
         self.assertEqual(p.name, 'TestPlayer')
-        self.assertTrue(isinstance(p.strategy, TestStrategy))
+        self.assertIsInstance(p.strategy, TestStrategy)
         self.assertEqual(p.move, (None, None))
         self.assertEqual(p.captures, [])
 

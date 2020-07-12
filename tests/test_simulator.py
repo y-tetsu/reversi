@@ -33,13 +33,13 @@ class TestSimulator(unittest.TestCase):
 
         for index, strategy in enumerate(strategies.keys()):
             self.assertEqual(simulator.black_players[index].name, strategy)
-            self.assertTrue(isinstance(simulator.black_players[index].strategy, RandomOpening))
+            self.assertIsInstance(simulator.black_players[index].strategy, RandomOpening)
             self.assertEqual(simulator.black_players[index].strategy.depth, 8)
-            self.assertTrue(isinstance(simulator.black_players[index].strategy.base, type(strategies[strategy])))
+            self.assertIsInstance(simulator.black_players[index].strategy.base, type(strategies[strategy]))
             self.assertEqual(simulator.white_players[index].name, strategy)
-            self.assertTrue(isinstance(simulator.white_players[index].strategy, RandomOpening))
+            self.assertIsInstance(simulator.white_players[index].strategy, RandomOpening)
             self.assertEqual(simulator.white_players[index].strategy.depth, 8)
-            self.assertTrue(isinstance(simulator.white_players[index].strategy.base, type(strategies[strategy])))
+            self.assertIsInstance(simulator.white_players[index].strategy.base, type(strategies[strategy]))
 
         self.assertEqual(simulator.game_results, [])
         self.assertEqual(simulator.total, [])
@@ -72,9 +72,9 @@ class TestSimulator(unittest.TestCase):
 
         for index, strategy in enumerate(strategies.keys()):
             self.assertEqual(simulator.black_players[index].name, strategy)
-            self.assertTrue(isinstance(simulator.black_players[index].strategy, type(strategies[strategy])))
+            self.assertIsInstance(simulator.black_players[index].strategy, type(strategies[strategy]))
             self.assertEqual(simulator.white_players[index].name, strategy)
-            self.assertTrue(isinstance(simulator.white_players[index].strategy, type(strategies[strategy])))
+            self.assertIsInstance(simulator.white_players[index].strategy, type(strategies[strategy]))
 
         self.assertEqual(simulator.game_results, [])
         self.assertEqual(simulator.total, [])

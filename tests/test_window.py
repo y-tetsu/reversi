@@ -26,5 +26,5 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.cancel, 'OK')
         self.assertEqual(window.cputime, reversi.window.CPU_TIME)
         self.assertEqual(window.extra_file, '')
-        self.assertTrue(isinstance(window.menu, reversi.window.Menu))
-        self.assertTrue(isinstance(window.canvas, tk.Canvas))
+        self.assertIsInstance(window.menu, reversi.window.Menu)
+        self.assertIsInstance(window.canvas, tk.Canvas)
