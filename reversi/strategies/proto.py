@@ -3,9 +3,6 @@
 リバーシの戦略初期版(デバッグ時の対戦相手)
 """
 
-import sys
-sys.path.append('../')
-
 import random
 
 from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
@@ -56,7 +53,7 @@ class MinMax_(AbstractStrategy):
         # ゲーム終了 or 最大深さに到達
         legal_moves_b = board.get_legal_moves('black')  # 黒の打てる場所
         legal_moves_w = board.get_legal_moves('white')  # 白の打てる場所
-        is_game_end =  True if not legal_moves_b and not legal_moves_w else False
+        is_game_end = True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
             return self.evaluate(board, legal_moves_b, legal_moves_w)
@@ -156,7 +153,7 @@ class NegaMax_(MinMax_):
         # ゲーム終了 or 最大深さに到達
         legal_moves_b = board.get_legal_moves('black')
         legal_moves_w = board.get_legal_moves('white')
-        is_game_end =  True if not legal_moves_b and not legal_moves_w else False
+        is_game_end = True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
             return self.evaluate(color, board, legal_moves_b, legal_moves_w)
@@ -246,7 +243,7 @@ class AlphaBeta_(NegaMax_):
         # ゲーム終了 or 最大深さに到達
         legal_moves_b = board.get_legal_moves('black')
         legal_moves_w = board.get_legal_moves('white')
-        is_game_end =  True if not legal_moves_b and not legal_moves_w else False
+        is_game_end = True if not legal_moves_b and not legal_moves_w else False
 
         if is_game_end or depth <= 0:
             return self.evaluate(color, board, legal_moves_b, legal_moves_w)
