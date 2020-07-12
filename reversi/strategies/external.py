@@ -3,9 +3,6 @@
 外部コマンド実行用
 """
 
-import sys
-sys.path.append('../')
-
 import subprocess
 from subprocess import PIPE, TimeoutExpired
 import re
@@ -75,7 +72,7 @@ class External(AbstractStrategy):
                     else:
                         out = out.rstrip()
                         self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
-                except:
+                except:  # noqa: E722
                     self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
             else:
                 self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')' + '\n(標準エラー出力)\n' + str(err))
@@ -98,8 +95,6 @@ class External(AbstractStrategy):
 
 
 if __name__ == '__main__':
-    import time
-    import os
     from board import BitBoard
 
     bitboard8 = BitBoard()

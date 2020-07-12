@@ -3,10 +3,7 @@
 終盤完全読み
 """
 
-import sys
-sys.path.append('../')
-
-from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.common import Measure, AbstractStrategy
 from reversi.strategies.easy import Random
 from reversi.strategies.minmax import MinMax2_TPWE
 from reversi.strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N, AlphaBeta4_TPW
