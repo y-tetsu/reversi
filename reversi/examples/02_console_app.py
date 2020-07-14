@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Reversi Console Application
 
     This is a reversi Console Application.

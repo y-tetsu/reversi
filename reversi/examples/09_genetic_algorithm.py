@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """A example of Genetic Algorithm for reversi
 
     This example uses a genetic algorithm to discover the optimal weights for a Table-strategy.

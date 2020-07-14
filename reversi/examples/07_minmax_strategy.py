@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """MinMax Strategy
 
     This is a example of minmax reversi strategy.

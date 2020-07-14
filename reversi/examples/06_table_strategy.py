@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Table Strategy
 
     This is a example of table reversi strategy.

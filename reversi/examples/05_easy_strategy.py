@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Easy Strategy
 
     This is a example of easy reversi strategy.

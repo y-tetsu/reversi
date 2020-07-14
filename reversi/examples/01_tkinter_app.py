@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Reversi GUI Application using tkinter
 
     This is a reversi GUI Application using tkinter.

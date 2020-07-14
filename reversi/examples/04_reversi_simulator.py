@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 """Reversi Simulator
 
     This simulator simulates AI-players matches and displays the results.
 
     Args:
-        players (hash)     : all of pair of plyaer names and strategies
-        setting file(json) : json file for simulator setting
+        players_list (hash) : all of pair of player names and strategies
+        setting file(json)  : json file for simulator setting
 
     simulator_setting.json format:
         board_size     : select board size (even number from 4 to 26)

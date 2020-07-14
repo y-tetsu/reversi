@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """AlphaBeta Strategy
 
     This is a example of alpha beta reversi strategy.
