@@ -16,14 +16,14 @@ class TestSimulator(unittest.TestCase):
     """
     def test_simulator_init(self):
         # No Setting File
-        strategies = {
+        players_list = {
             'Unselfish': Unselfish(),
             'Random': Random(),
             'Greedy': Greedy(),
             'SlowStarter': SlowStarter(),
             'Table': Table(),
         }
-        simulator = Simulator(strategies, 'No Setting File')
+        simulator = Simulator(players_list, 'No Setting File')
 
         self.assertEqual(simulator.matches, 10)
         self.assertEqual(simulator.board_size, 8)
@@ -31,15 +31,15 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(simulator.processes, 1)
         self.assertEqual(simulator.random_opening, 8)
 
-        for index, strategy in enumerate(strategies.keys()):
+        for index, strategy in enumerate(players_list.keys()):
             self.assertEqual(simulator.black_players[index].name, strategy)
             self.assertIsInstance(simulator.black_players[index].strategy, RandomOpening)
             self.assertEqual(simulator.black_players[index].strategy.depth, 8)
-            self.assertIsInstance(simulator.black_players[index].strategy.base, type(strategies[strategy]))
+            self.assertIsInstance(simulator.black_players[index].strategy.base, type(players_list[strategy]))
             self.assertEqual(simulator.white_players[index].name, strategy)
             self.assertIsInstance(simulator.white_players[index].strategy, RandomOpening)
             self.assertEqual(simulator.white_players[index].strategy.depth, 8)
-            self.assertIsInstance(simulator.white_players[index].strategy.base, type(strategies[strategy]))
+            self.assertIsInstance(simulator.white_players[index].strategy.base, type(players_list[strategy]))
 
         self.assertEqual(simulator.game_results, [])
         self.assertEqual(simulator.total, [])
@@ -56,11 +56,11 @@ class TestSimulator(unittest.TestCase):
         with open(json_file, 'w') as f:
             json.dump(simulator_setting, f)
 
-        strategies = {
+        players_list = {
             'Unselfish': Unselfish(),
             'Random': Random(),
         }
-        simulator = Simulator(strategies, json_file)
+        simulator = Simulator(players_list, json_file)
 
         os.remove(json_file)
 
@@ -70,11 +70,11 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(simulator.processes, 2)
         self.assertEqual(simulator.random_opening, 0)
 
-        for index, strategy in enumerate(strategies.keys()):
+        for index, strategy in enumerate(players_list.keys()):
             self.assertEqual(simulator.black_players[index].name, strategy)
-            self.assertIsInstance(simulator.black_players[index].strategy, type(strategies[strategy]))
+            self.assertIsInstance(simulator.black_players[index].strategy, type(players_list[strategy]))
             self.assertEqual(simulator.white_players[index].name, strategy)
-            self.assertIsInstance(simulator.white_players[index].strategy, type(strategies[strategy]))
+            self.assertIsInstance(simulator.white_players[index].strategy, type(players_list[strategy]))
 
         self.assertEqual(simulator.game_results, [])
         self.assertEqual(simulator.total, [])
@@ -91,11 +91,11 @@ class TestSimulator(unittest.TestCase):
         with open(json_file, 'w') as f:
             json.dump(simulator_setting, f)
 
-        strategies = {
+        players_list = {
             'AlphaBeta1': _AlphaBeta(depth=2, evaluator=Evaluator_TPW()),
             'AlphaBeta2': _AlphaBeta(depth=2, evaluator=Evaluator_TPW()),
         }
-        simulator = Simulator(strategies, json_file)
+        simulator = Simulator(players_list, json_file)
         os.remove(json_file)
 
         with captured_stdout() as stdout:
