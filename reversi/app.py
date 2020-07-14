@@ -10,7 +10,8 @@ import tkinter as tk
 import json
 import threading
 
-from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, strategies
+from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game
+import reversi.strategies as s
 
 
 TURN_DISC_WAIT = 0.1
@@ -22,19 +23,19 @@ class Reversi:
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, s={}):
+    def __init__(self, strategies={}):
         root = tk.Tk()
         root.withdraw()  # 表示が整うまで隠す
 
         self.state = Reversi.INIT
 
-        b = ['User1'] + list(s.keys())
-        w = ['User2'] + list(s.keys())
+        b = ['User1'] + list(strategies.keys())
+        w = ['User2'] + list(strategies.keys())
         self.window = Window(root=root, black_players=b, white_players=w)
 
-        s['User1'] = strategies.WindowUserInput(self.window)
-        s['User2'] = strategies.WindowUserInput(self.window)
-        self.strategies = s
+        strategies['User1'] = s.WindowUserInput(self.window)
+        strategies['User2'] = s.WindowUserInput(self.window)
+        self.strategies = strategies
 
     @property
     def state(self):
@@ -123,7 +124,7 @@ class Reversi:
 
                 # 戦略を追加
                 if name not in self.strategies:
-                    self.strategies[name] = strategies.External(cmd, timeouttime)
+                    self.strategies[name] = s.External(cmd, timeouttime)
                 else:
                     self.strategies[name].cmd = cmd
                     self.strategies[name].timeouttime = timeouttime
@@ -211,7 +212,7 @@ class Reversi:
             players[color] = Player(color, name, self.strategies[name])
 
         # ウィンドウの設定をゲームに反映
-        strategies.common.Timer.time_limit = self.window.cputime
+        s.common.Timer.time_limit = self.window.cputime
 
         game = Game(board, players['black'], players['white'], WindowDisplay(self.window), cancel=self.window.menu)
         game.play()
@@ -267,16 +268,16 @@ class Reversic:
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
-    def __init__(self, s={}):
+    def __init__(self, strategies={}):
         self.board_size = 8
         self.player_names = {'black': 'User1', 'white': 'User2'}
         self.state = Reversic.START
 
         b, w = {}, {}
-        b['User1'] = strategies.ConsoleUserInput()
-        b.update(s)
-        w['User2'] = strategies.ConsoleUserInput()
-        w.update(s)
+        b['User1'] = s.ConsoleUserInput()
+        b.update(strategies)
+        w['User2'] = s.ConsoleUserInput()
+        w.update(strategies)
         self.strategies = {'black': b, 'white': w}
 
     @property
