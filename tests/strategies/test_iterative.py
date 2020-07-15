@@ -6,7 +6,7 @@ import os
 
 from reversi.board import BitBoard
 from reversi.strategies import IterativeDeepning
-from reversi.strategies.alphabeta import AlphaBeta
+from reversi.strategies.alphabeta import _AlphaBeta, AlphaBeta
 from reversi.strategies.coordinator import Evaluator_TPOW, Selector, Sorter_B
 from reversi.strategies.common import Measure
 
@@ -32,13 +32,16 @@ class TestIterativeDeepning(unittest.TestCase):
 
     def test_iterative_next_move_depth2(self):
         board = BitBoard()
+
+        # limit
         iterative = IterativeDeepning(
             depth=2,
             selector=Selector(),
             sorter=Sorter_B(),
-            search=AlphaBeta(
+            search=_AlphaBeta(
                 evaluator=Evaluator_TPOW(),
-            )
+            ),
+            limit=4,
         )
 
         key = iterative.__class__.__name__ + str(os.getpid())
@@ -53,11 +56,28 @@ class TestIterativeDeepning(unittest.TestCase):
         board.put_disc('black', 5, 2)
         board.put_disc('white', 5, 4)
         self.assertEqual(iterative.next_move('black', board), (5, 3))
-        self.assertGreaterEqual(iterative.max_depth, 5)
+        self.assertGreaterEqual(iterative.max_depth, 4)
+
+        # performance
+        iterative = IterativeDeepning(
+            depth=2,
+            selector=Selector(),
+            sorter=Sorter_B(),
+            search=AlphaBeta(
+                evaluator=Evaluator_TPOW(),
+            ),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
 
         print()
-        print(key, 'remain = 9')
+        print(key)
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
         print('(2000)', Measure.count[key2])
+        print('(max_depth=5)', iterative.max_depth)
