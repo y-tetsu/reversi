@@ -76,6 +76,16 @@ $ py -3.7 09_genetic_algorithm.py
 #### 04_reversi_simulator.py
 [<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
+##使い方
+###アプリケーションの起動
+Pythonコード内で`reversi`モジュールより`Reversi`クラスをインポートし
+`start`メソッドを呼び出すとGUIアプリケーションを起動することができます。
+```Python
+from reversi import Reversi
+
+Reversi().start()
+```
+
 ---
 ## GUIアプリケーションの説明
 ### メニュー一覧
