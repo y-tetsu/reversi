@@ -139,7 +139,7 @@ class OriginalAI(AbstractStrategy):
 `board`オブジェクトはリバーシの盤面情報を持ったオブジェクトです。
 ここでは配置可能な位置を返す`get_legal_moves`メソッドと、盤面のサイズを取得する`size`のみ取り上げます。
 
-`next_move`の戻り値には、手番と盤面の情報を元に決定した"次に打つ手の座標"を指定してください。
+`next_move`の戻り値には、手番と盤面の情報を元に決定した"次に打つ手の座標"(オセロの盤面左上を(0, 0)としたxとyのタプル)を指定してください。
 
 #### 配置可能な座標の取得方法
 ある盤面の配置可能な座標は`board`オブジェクトの`get_legal_moves`メソッドにより取得することができます。
@@ -149,7 +149,7 @@ class OriginalAI(AbstractStrategy):
 legal_moves = board.get_legal_moves(color)
 ```
 
-`get_legal_moves`の戻り値は、`dict`(辞書)型でキーが配置可能な座標(オセロの盤面左上を(0, 0)としたタプル)、
+`get_legal_moves`の戻り値は、`dict`(辞書)型でキーが配置可能な座標、
 値がひっくり返せる石の座標のリストとなっております。
 
 初期状態(盤面サイズ8)の黒手番の結果は下記のとおりです。
@@ -158,7 +158,7 @@ legal_moves = board.get_legal_moves(color)
 {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}
 ```
 
-配置可能な座標のみを取得する場合は下記を実行してください。
+配置可能な座標のみのリストを取得する場合は下記を実行してください。
 
 ```Python
 legal_moves = list(board.get_legal_moves(color).keys())
