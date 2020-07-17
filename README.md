@@ -91,7 +91,7 @@ from reversi import Reversi
 Reversi().start()
 ```
 上記のコードを実行すると、GUIのアプリケーションで遊ぶ事ができます。
-ただし、選択できるプレイヤーはユーザ操作のみとなっております。
+ただしこの場合、選択できるプレイヤーはユーザ操作のみとなっております。
 
 ### アプリケーションにAIを追加する
 次はGUIアプリケーションにAIを追加する方法を示します。
@@ -116,6 +116,91 @@ Reversi(
 ```
 上記を実行すると、ユーザ操作に加えてRANDOMとGREEDYをプレイヤーとして選択できるようになります。
 
+### AI戦略を自作する
+つづいてAIを自作してアプリケーションに追加する方法を示します。
+
+#### 戦略クラスの作り方
+まず`reversi.strategy`より`AbstractStrategy`をインポートしてください。
+そしてAI戦略として、`AbstractStrategy`を継承した任意の名前のクラスを作成してください。
+このクラスに`next_move`という、"次の一手"を打つためのメソッドを実装することでAI戦略が完成します。
+
+```Python
+from reversi.strategies import AbstractStrategy
+
+class OriginalAI(AbstractStrategy):
+    def next_move(self, color, board):
+        return ### next_move ###
+```
+
+`next_move`メソッドは`color`と`board`オブジェクトを引数として受け取ります。
+`color`は黒の手番の時は`black`、白の手番の時は`white`の`str`型の文字列が入ります。
+
+`board`オブジェクトはリバーシの盤面情報を持ったオブジェクトです。
+ここでは配置可能な位置を返す`get_legal_moves`メソッドと、盤面のサイズを取得するsizeのみ取り上げます。
+
+`next_move`の戻り値には、これらの手番と盤面の情報を元に決定した、"次に打つ手の座標"を指定する必要があります。
+
+#### 配置可能な座標の取得方法
+ある特定の盤面の時の配置可能な座標は`board`オブジェクトの`get_legal_moves`メソッドにより取得することができます。
+`get_legal_moves`の引数には黒白どちらかの手番(`color`)を与えてください。
+
+```Python
+legal_moves = board.get_legal_moves(color)
+```
+
+`get_legal_moves`の戻り値は、`dict`(辞書)型でキーが配置可能な座標(オセロの盤面左上を(0, 0)としたタプル)、
+値がひっくり返せる石の座標のリストとなっております。
+
+初期状態(盤面サイズ8)の黒手番の結果は下記のとおりです。
+
+```
+{(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}
+```
+
+配置可能な座標のみを取得する場合は下記を実行してください。
+
+```Python
+legal_moves = list(board.get_legal_moves(color).keys())
+```
+
+#### 盤面のサイズ
+本アプリケーションは盤面のサイズが4～26まで選べる仕様となっております。
+必要に応じて、いずれの盤面サイズでも動作するよう盤面のサイズを考慮するようにしてください。
+
+盤面のサイズは下記で取得できます。
+
+```Python
+size = board.size
+```
+
+#### 4隅が取れる時は必ず取る戦略の実装
+AIの作成例として、4隅が取れる時は必ずとる"CORNER"という戦略を実装します。
+
+```Python
+import random
+
+from reversi import Reversi
+from reversi.strategies import AbstractStrategy
+
+class Corner(AbstractStrategy):
+    def next_move(self, color, board):
+        move = None
+
+        size = board.size
+        legal_moves = list(board.get_legal_moves(color).keys())
+
+        corners = [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]
+        for corner in corners:
+            if corner in legal_moves:
+                move = corner
+                break
+        else:
+            move = random.choice(legal_moves)
+
+        return move
+
+Reversi({'CORNER': Corner()}).start()
+```
 
 ---
 ## GUIアプリケーション(01_tkinter_app.py)の説明
