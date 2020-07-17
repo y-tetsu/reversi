@@ -101,6 +101,7 @@ Reversi().start()
 指定する"AIの戦略"は"AIの名前(任意)"と"AIの戦略オブジェクト"をペアにした、`dict`(辞書)型としてください。
 
 ライブラリにあらかじめ組み込まれているランダムな手を打つ`Random`戦略と、できるだけ多く取ろうとする`Greedy`戦略をアプリケーションに追加する例を下記に示します。
+組み込みのAI戦略は`reversi.strategies`よりインポートすることができます。
 
 ```Python
 from reversi import Reversi
