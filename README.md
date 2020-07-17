@@ -77,14 +77,34 @@ $ py -3.7 09_genetic_algorithm.py
 [<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
 ## 使い方
+ライブラリの使い方をコーディング例を元に説明します。
+
 ### アプリケーションの起動
-Pythonコード内で`reversi`モジュールより`Reversi`クラスをインポートし
-`start`メソッドを呼び出すとGUIアプリケーションを起動することができます。
+Pythonコード内で`reversi`モジュールより`Reversi`クラスをインポートし`start`メソッドを呼び出すと、GUIアプリケーションを起動することができます。
 ```Python
 from reversi import Reversi
 
 Reversi().start()
 ```
+
+### アプリケーションにAIを追加する
+`Reversi`クラスの引数にAIの戦略を指定することで、アプリケーションにAIを追加することができます。
+指定するAIの戦略は"AIの名前(任意)"と"AIの戦略オブジェクト"をペアにした`dict`(辞書)型としてください。
+
+ライブラリにあらかじめ組み込まれているランダムな手を打つ`Random`戦略と、できるだけ多く取ろうとする`Greedy`戦略をアプリケーションに追加する例を下記に示します。
+
+```Python
+from reversi import Reversi
+from reversi.strategies import Random, Greedy
+
+Reversi(
+    {
+        'RANDOM': Random(),
+        'GREEDY': Greedy(),
+    }
+).start()
+```
+
 
 ---
 ## GUIアプリケーションの説明
