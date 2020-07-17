@@ -48,7 +48,7 @@ $ install_reversi_examples
 - [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション
 - [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
 - [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
-- [05_easy_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_easy_strategy.py) - 単純な戦略のAIを実装するサンプル
+- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
 - [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) - テーブルによる重みづけで手を選ぶAIを実装するサンプル
 - [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
 - [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
@@ -61,7 +61,7 @@ $ py -3.7 01_tkinter_app.py
 $ py -3.7 02_console_app.py
 $ 03_create_exe.bat
 $ py -3.7 04_reversi_simulator.py
-$ py -3.7 05_easy_strategy.py
+$ py -3.7 05_manual_strategy.py
 $ py -3.7 06_table_strategy.py
 $ py -3.7 07_minmax_strategy.py
 $ py -3.7 08_alphabeta_strategy.py

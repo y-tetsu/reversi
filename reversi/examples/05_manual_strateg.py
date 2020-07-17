@@ -1,16 +1,16 @@
-"""Easy Strategy
+"""Manual Strategy
 
-    This is a example of easy reversi strategy.
+    This is a example of manual reversi strategy.
 """
 
 import random
 from reversi import Reversi, strategies
 
 
-class Easy(strategies.common.AbstractStrategy):
-    """Easy
+class Manual(strategies.common.AbstractStrategy):
+    """Manual
 
-     This is a easy reversi strategy.
+     This is a simple reversi strategy made manually.
      The specification is as following.
         - Preferentially get corners
         - Avoid near corners
@@ -57,6 +57,6 @@ class Easy(strategies.common.AbstractStrategy):
 if __name__ == '__main__':
     Reversi(
         {
-            'Easy': Easy(),
+            'Manual': Manual(),
         }
     ).start()
