@@ -187,9 +187,7 @@ class Corner(AbstractStrategy):
     def next_move(self, color, board):
         size = board.size
         legal_moves = list(board.get_legal_moves(color).keys())
-
-        corners = [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]
-        for corner in corners:
+        for corner in [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]:
             if corner in legal_moves:
                 return corner
 
@@ -199,6 +197,122 @@ Reversi({'CORNER': Corner()}).start()
 ```
 
 上記を実行すると、対戦プレイヤーにCORNERが選択可能となります。
+
+### AI対戦をシミュレーションする
+本ライブラリのシミュレータを使うとAI対戦をシミュレートし結果を確認することができます。
+ここではシミュレータの使い方を示します。
+
+シミュレータを使う場合は下記で`Simulator`をインポートしてください。
+
+```Python
+from reversi import Simulator
+```
+
+実行例として、これまでに登場したRANDOM、GREEDY、CORNERを総当たりで対戦させ結果を確認します。
+
+#### シミュレータの実行
+シミュレータは必ずメインモジュール(__main__)内で実行してください。
+Simulatorの引数は"AIの戦略"とシミュレータ設定ファイル名の2つ必要です。
+"AIの戦略"はアプリケーションと同様です。シミュレータの設定ファイルについては後述します。
+`start`メソッドを呼ぶとシミュレーションを開始します。
+
+```Python
+if __name__ == '__main__':
+    simulator = Simulator(
+        {
+            'RANDOM': Random(),
+            'GREEDY': Greedy(),
+            'CORNER': Corner(),
+        },
+        './simulator_setting.json',
+    )
+    simulator.start()
+```
+
+#### シミュレータの設定ファイル
+シミュレータの設定ファイル(JSON形式)の作成例は下記のとおりです。
+Simulatorの第二引数に指定したファイル名で作成してください。
+
+```JSON
+{
+    "board_size": 8,
+    "board_type": "bitboard",
+    "matches": 100,
+    "processes": 1,
+    "random_opening": 0,
+    "characters": [
+        "RANDOM",
+        "GREEDY",
+        "CORNER"
+    ]
+}
+```
+`board_size`には盤面のサイズを指定してください。<br>
+`board_typ`には盤面の種類(board or bitboard)を選択してください。bitboardの方が高速で通常は変更不要です。<br>
+`matches`にはAI同士の対戦回数を指定してください。100を指定した場合、先手と後手で100試合ずつ対戦します。<br>
+`processes`には並列実行数を指定してください。対戦組み合わせ別に並列実行します。並列単位はAIの組み合わせ毎となります。お使いのPCのコア数に合わせて必要に応じて設定してください。<br>
+`random_opening`には対戦開始からランダムに打つ手の数を指定してください。指定された手の数まではランダムに試合を進行します。<br>
+'characters'には対戦させたいAI名をリストアップして下さい。指定する場合は第一引数の"AI戦略"に含まれるものの中から選択してください。省略すると第一引数の"AI戦略"と同一と扱います。リストアップされたAIの総当たり戦を行います。<br>
+
+#### 実行結果
+実行結果はシミュレータを`print`することで確認できます。
+
+```Python
+print(simulator)
+```
+
+#### 実行例
+シミュレータ実行例のコード全体を下記に示します。
+
+```Python
+import random
+
+from reversi import Simulator
+from reversi.strategies import AbstractStrategy, Random, Greedy
+
+class Corner(AbstractStrategy):
+    def next_move(self, color, board):
+        size = board.size
+        legal_moves = list(board.get_legal_moves(color).keys())
+        for corner in [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]:
+            if corner in legal_moves:
+                return corner
+
+        return random.choice(legal_moves)
+
+if __name__ == '__main__':
+    simulator = Simulator(
+        {
+            'RANDOM': Random(),
+            'GREEDY': Greedy(),
+            'CORNER': Corner(),
+        },
+        './simulator_setting.json',
+    )
+    simulator.start()
+
+    print(simulator)
+```
+
+RANDOM、GREEDY、CORNERを総当たりで先手/後手それぞれ100回ずつ対戦した結果は下記のようになりました。
+```
+Size : 8
+                          | RANDOM                    GREEDY                    CORNER
+---------------------------------------------------------------------------------------------------------
+RANDOM                    | ------                     32.5%                     21.5%
+GREEDY                    |  66.0%                    ------                     29.5%
+CORNER                    |  76.0%                     68.5%                    ------
+---------------------------------------------------------------------------------------------------------
+
+                          | Total  | Win   Lose  Draw  Match
+------------------------------------------------------------
+RANDOM                    |  27.0% |   108   284     8   400
+GREEDY                    |  47.8% |   191   202     7   400
+CORNER                    |  72.2% |   289   102     9   400
+------------------------------------------------------------
+```
+
+ランダムに打つよりは多めに取る方が、さらにそれより角を狙った方が、より有利な事が確認できました。
 
 ---
 ## GUIアプリケーション(01_tkinter_app.py)の説明
