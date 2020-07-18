@@ -165,7 +165,7 @@ class OriginalAI(AbstractStrategy):
 
 なお、座標は盤面左上を(0, 0)とした時の(x, y)のタプルとしてください。
 参考のため、盤面サイズが8の場合の各マス目の座標を下図に示します。
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/corrdinate.png">
+![coordinate](https://raw.githubusercontent.com/y-tetsu/reversi/images/coordinate.png)
 
 `board`オブジェクトについては簡単のため、
 石が置ける位置を取得する`get_legal_moves`メソッドと、盤面のサイズを取得する`size`パラメータの、2つを取り上げます。
