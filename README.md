@@ -83,7 +83,7 @@ $ py -3.7 09_genetic_algorithm.py
 
 
 ### アプリケーションの起動
-まず最初に、リバーシを遊べるGUIアプリケーションの起動方法を示します。
+まず最初に、リバーシのGUIアプリケーションの起動方法を示します。
 
 Pythonコード内で`reversi`ライブラリより`Reversi`クラスをインポートしてください。
 `Reversi`クラスのインスタンスを作成し、`start`メソッドを呼び出すとアプリケーションが起動します。
@@ -93,8 +93,8 @@ from reversi import Reversi
 
 Reversi().start()
 ```
-上記のコードを実行すると、アプリケーションが起動し、そのまま遊ぶ事ができます。
-ただしこの場合、選択できるプレイヤーはユーザ操作のみ、となります。
+上記のコードを実行すると、アプリケーションが起動しそのまま遊ぶ事ができます。
+ただしこの場合、選択できるプレイヤーはユーザ操作のみとなります。
 
 
 ### アプリケーションにAIを追加する
@@ -139,7 +139,7 @@ Reversi(
 #### 戦略クラスの作り方
 まず、`reversi.strategy`より`AbstractStrategy`をインポートしてください。
 次に、`AbstractStrategy`を継承した任意の名前のクラスを作成してください。
-このクラスに`next_move`という、"次の一手"を打つためのメソッドを、1つ実装してください。
+このクラスに`next_move`という、"次の一手"を打つためのメソッドを実装してください。
 
 ```Python
 from reversi.strategies import AbstractStrategy
@@ -165,9 +165,9 @@ class OriginalAI(AbstractStrategy):
 
 なお、座標は盤面左上を(0, 0)とした時の(x, y)のタプルとしてください。
 参考のため、盤面サイズが8の場合の各マス目の座標を下図に示します。
-![corrdinate](https://raw.githubusercontent.com/y-tetsu/reversi/images/corrdinate.png)
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/corrdinate.png">
 
-`board`オブジェクトについて、ここでは簡単のため、
+`board`オブジェクトについては簡単のため、
 石が置ける位置を取得する`get_legal_moves`メソッドと、盤面のサイズを取得する`size`パラメータの、2つを取り上げます。
 
 
@@ -206,7 +206,7 @@ size = board.size
 
 #### 「角が取れる時は必ず取る」戦略の実装
 それでは、AIの作成例として4角が取れる時は必ず取り、
-そうでない時はランダムに打つ、"CORNER"という戦略を実装する例を示します。
+そうでない時はランダムに打つ、`Corner`という戦略を実装する例を示します。
 
 ```Python
 import random
@@ -303,7 +303,7 @@ print(simulator)
 #### 実行例
 ライブラリ組み込みのAI戦略を用いたプレイヤー"RANDOM"、"GREEDY"と、
 自作のAI戦略による"CORNER"の、それぞれを対戦させるようシミュレータを実行して、
-結果を出力するまでのコード例を、下記に示します。
+結果を出力するまでのコード例を下記に示します。
 
 ```Python
 import random
