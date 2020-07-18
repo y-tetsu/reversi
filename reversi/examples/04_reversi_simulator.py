@@ -3,7 +3,7 @@
     This simulator simulates AI-players matches and displays the results.
 
     Args:
-        players_list (hash) : all of pair of player names and strategies
+        players_info (hash) : all of pair of player names and strategies
         setting file(json)  : json file for simulator setting
 
     simulator_setting.json format:
