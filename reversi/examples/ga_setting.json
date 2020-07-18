@@ -1,14 +1,14 @@
 {
     "max_generations": 200,
-    "population_num": 12,
-    "offspring_num": 6,
+    "population_num": 5,
+    "offspring_num": 2,
     "mutation_chance": 1,
     "mutation_value": 6,
     "large_mutation": 100,
     "large_mutation_value": 25,
     "board_size": 8,
-    "matches": 50,
+    "matches": 5,
     "threshold": 65,
-    "random_opening": 6,
+    "random_opening": 8,
     "processes": 2
 }
