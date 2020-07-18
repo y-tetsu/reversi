@@ -173,7 +173,7 @@ class OriginalAI(AbstractStrategy):
 
 
 #### 石が置ける位置の取得方法
-ある盤面で石が置ける位置(座標)は`board`オブジェクトの`get_legal_moves`メソッドで取得できます。
+ある盤面の石が置ける位置(座標)は`board`オブジェクトの`get_legal_moves`メソッドで取得できます。
 `get_legal_moves`呼び出し時の引数には、黒か白のどちらかの手番(`color`変数)を与えてください。
 
 ```Python
@@ -207,7 +207,7 @@ size = board.size
 
 #### 「角が取れる時は必ず取る」戦略の実装
 それでは、AIの作成例として4角が取れる時は必ず取り、
-そうでない時はランダムに打つ、`Corner`という戦略を実装する例を示します。
+そうでない時はランダムに打つ、`Corner`という戦略(プレイヤー名は"CORNER"とします)を実装する例を示します。
 
 ```Python
 import random
