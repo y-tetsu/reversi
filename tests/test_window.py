@@ -9,7 +9,7 @@ import reversi
 from reversi import Window
 
 
-os.environ['DISPLAY'] = '127.0.0.1:0.0'
+os.environ['DISPLAY'] = ':99.0'
 
 
 class TestWindow(unittest.TestCase):

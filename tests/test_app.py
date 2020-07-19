@@ -8,7 +8,7 @@ from reversi import Reversi, Reversic, Window
 from reversi.strategies import WindowUserInput, ConsoleUserInput
 
 
-os.environ['DISPLAY'] = '127.0.0.1:0.0'
+os.environ['DISPLAY'] = ':99.0'
 
 
 class TestApp(unittest.TestCase):
