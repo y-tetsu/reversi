@@ -1,15 +1,11 @@
 """Tests of window.py
 """
 
-import os
 import unittest
 import tkinter as tk
 
 import reversi
 from reversi import Window
-
-
-os.environ['DISPLAY'] = ':99.0'
 
 
 class TestWindow(unittest.TestCase):
