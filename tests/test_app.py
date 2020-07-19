@@ -1,14 +1,10 @@
 """Tests of app.py
 """
 
-import os
 import unittest
 
 from reversi import Reversi, Reversic, Window
 from reversi.strategies import WindowUserInput, ConsoleUserInput
-
-
-os.environ['DISPLAY'] = ':99.0'
 
 
 class TestApp(unittest.TestCase):
