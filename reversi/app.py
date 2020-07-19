@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-"""
-アプリケーション
+"""Application
 """
 
 import sys
