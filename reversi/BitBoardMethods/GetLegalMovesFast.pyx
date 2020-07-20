@@ -68,7 +68,7 @@ cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long lon
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
 
-    legal_moves |= blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
+    legal_moves = blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
     # prepare result
     cdef:
