@@ -34,79 +34,41 @@ cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long lon
         unsigned long long horizontal = opponent & 0x7E7E7E7E7E7E7E7E  # horizontal mask value
         unsigned long long vertical = opponent & 0x00FFFFFFFFFFFF00    # vertical mask value
         unsigned long long diagonal = opponent & 0x007E7E7E7E7E7E00    # diagonal mask value
-        unsigned long long tmp, legal_moves = 0
+        unsigned long long tmp_h, tmp_v, tmp_d1, tmp_d2, legal_moves = 0
 
-    # left
-    tmp = horizontal & (player << 1)
-    tmp |= horizontal & (tmp << 1)
-    tmp |= horizontal & (tmp << 1)
-    tmp |= horizontal & (tmp << 1)
-    tmp |= horizontal & (tmp << 1)
-    tmp |= horizontal & (tmp << 1)
-    legal_moves |= blank & (tmp << 1)
+    # left/right
+    tmp_h = horizontal & ((player << 1) | (player >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
 
-    # right
-    tmp = horizontal & (player >> 1)
-    tmp |= horizontal & (tmp >> 1)
-    tmp |= horizontal & (tmp >> 1)
-    tmp |= horizontal & (tmp >> 1)
-    tmp |= horizontal & (tmp >> 1)
-    tmp |= horizontal & (tmp >> 1)
-    legal_moves |= blank & (tmp >> 1)
+    # top/bottom
+    tmp_v = vertical & ((player << 8) | (player >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
 
-    # top
-    tmp = vertical & (player << 8)
-    tmp |= vertical & (tmp << 8)
-    tmp |= vertical & (tmp << 8)
-    tmp |= vertical & (tmp << 8)
-    tmp |= vertical & (tmp << 8)
-    tmp |= vertical & (tmp << 8)
-    legal_moves |= blank & (tmp << 8)
+    # left-top/right-bottom
+    tmp_d1 = diagonal & ((player << 9) | (player >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
 
-    # bottom
-    tmp = vertical & (player >> 8)
-    tmp |= vertical & (tmp >> 8)
-    tmp |= vertical & (tmp >> 8)
-    tmp |= vertical & (tmp >> 8)
-    tmp |= vertical & (tmp >> 8)
-    tmp |= vertical & (tmp >> 8)
-    legal_moves |= blank & (tmp >> 8)
+    # right-top/left-bottom
+    tmp_d2 = diagonal & ((player << 7) | (player >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
 
-    # left-top
-    tmp = diagonal & (player << 9)
-    tmp |= diagonal & (tmp << 9)
-    tmp |= diagonal & (tmp << 9)
-    tmp |= diagonal & (tmp << 9)
-    tmp |= diagonal & (tmp << 9)
-    tmp |= diagonal & (tmp << 9)
-    legal_moves |= blank & (tmp << 9)
-
-    # left-bottom
-    tmp = diagonal & (player >> 7)
-    tmp |= diagonal & (tmp >> 7)
-    tmp |= diagonal & (tmp >> 7)
-    tmp |= diagonal & (tmp >> 7)
-    tmp |= diagonal & (tmp >> 7)
-    tmp |= diagonal & (tmp >> 7)
-    legal_moves |= blank & (tmp >> 7)
-
-    # right-top
-    tmp = diagonal & (player << 7)
-    tmp |= diagonal & (tmp << 7)
-    tmp |= diagonal & (tmp << 7)
-    tmp |= diagonal & (tmp << 7)
-    tmp |= diagonal & (tmp << 7)
-    tmp |= diagonal & (tmp << 7)
-    legal_moves |= blank & (tmp << 7)
-
-    # right-bottom
-    tmp = diagonal & (player >> 9)
-    tmp |= diagonal & (tmp >> 9)
-    tmp |= diagonal & (tmp >> 9)
-    tmp |= diagonal & (tmp >> 9)
-    tmp |= diagonal & (tmp >> 9)
-    tmp |= diagonal & (tmp >> 9)
-    legal_moves |= blank & (tmp >> 9)
+    legal_moves |= blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
     # prepare result
     cdef:
