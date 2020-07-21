@@ -109,7 +109,10 @@ class Board(AbstractBoard):
 
         for y in range(self.size):
             for x in range(self.size):
-                legal_moves.append((x, y))
+                flippable_discs = self.get_flippable_discs(color, x, y)
+
+                if flippable_discs:
+                    legal_moves.append((x, y))
 
         self._legal_moves_cache[color] = legal_moves
 
@@ -127,7 +130,7 @@ class Board(AbstractBoard):
         ]
         ret = []
 
-        # 指定座標が範囲内 かつ 石が置いていない
+        ## 指定座標が範囲内 かつ 石が置いていない
         if self._in_range(x, y) and self._board[y][x] == self.disc['blank']:
             # 8方向をチェック
             for direction in directions:
@@ -183,10 +186,15 @@ class Board(AbstractBoard):
 
                指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
+        if not self._in_range(x, y):
+            return []
+
         flippable_discs = self.get_flippable_discs(color, x, y)
 
-        # ひっくり返せる場所に指定した色の石を変更する
+        # 指定座標に石を置く
+        self._board[y][x] = self.disc[color]
+
+        # ひっくり返せる場所に石を置く
         for tmp_x, tmp_y, in flippable_discs:
             self._board[tmp_y][tmp_x] = self.disc[color]
 

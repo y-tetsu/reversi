@@ -7,6 +7,10 @@ def put_disc(board, color, x, y):
     """
     # 配置位置を整数に変換
     size = board.size
+    shift_size = ((size*size-1)-(y*size+x))
+    if shift_size < 0 or shift_size > size**2-1:
+        return []
+
     put = 1 << ((size*size-1)-(y*size+x))
 
     # 反転位置を整数に変換
