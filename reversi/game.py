@@ -30,7 +30,7 @@ class Game:
                         if self.cancel.event.is_set():
                             break
 
-                    legal_moves = list(self.board.get_legal_moves(player.color).keys())
+                    legal_moves = self.board.get_legal_moves(player.color)
 
                     if not legal_moves:
                         continue

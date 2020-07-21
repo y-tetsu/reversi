@@ -18,6 +18,10 @@ class AbstractBoard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def get_flippable_discs(self, color, x, y):
+        pass
+
+    @abc.abstractmethod
     def put_disc(self, color, x, y):
         pass
 
@@ -94,28 +98,25 @@ class Board(AbstractBoard):
             cache : True if cache use
 
         Returns:
-            legal_moves
+            legal_moves list
         """
         # if cache option is True and cache available, return cache
         if cache and color in self._legal_moves_cache:
             return self._legal_moves_cache[color]
 
         self._legal_moves_cache.clear()
-        legal_moves = {}
+        legal_moves = []
 
         for y in range(self.size):
             for x in range(self.size):
-                flippable_discs = self._get_flippable_discs(color, x, y)
-
-                if flippable_discs:
-                    legal_moves[(x, y)] = flippable_discs
+                legal_moves.append((x, y))
 
         self._legal_moves_cache[color] = legal_moves
 
         return legal_moves
 
-    def _get_flippable_discs(self, color, x, y):
-        """_get_flippable_discs
+    def get_flippable_discs(self, color, x, y):
+        """get_flippable_discs
 
                指定座標のひっくり返せる石の場所をすべて返す
         """
@@ -182,23 +183,19 @@ class Board(AbstractBoard):
 
                指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        legal_moves = self.get_legal_moves(color, cache=True)
-        if (x, y) in legal_moves:
-            self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
-            flippable_discs = legal_moves[(x, y)]
+        self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
+        flippable_discs = self.get_flippable_discs(color, x, y)
 
-            # ひっくり返せる場所に指定した色の石を変更する
-            for tmp_x, tmp_y, in flippable_discs:
-                self._board[tmp_y][tmp_x] = self.disc[color]
+        # ひっくり返せる場所に指定した色の石を変更する
+        for tmp_x, tmp_y, in flippable_discs:
+            self._board[tmp_y][tmp_x] = self.disc[color]
 
-            self.update_score()
+        self.update_score()
 
-            # 打った手の記録
-            self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
+        # 打った手の記録
+        self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
 
-            return flippable_discs
-
-        return []
+        return flippable_discs
 
     def update_score(self):
         """update_score
@@ -338,7 +335,7 @@ class BitBoard(AbstractBoard):
             cache : True if cache use
 
         Returns:
-            legal_moves
+            legal_moves list
         """
         # if cache option is True and cache available, return cache
         if cache and color in self._legal_moves_cache:
@@ -350,6 +347,15 @@ class BitBoard(AbstractBoard):
         self._legal_moves_cache[color] = ret
 
         return ret
+
+    def get_flippable_discs(self, color, x, y):
+        """get_flippable_discs
+
+               指定座標のひっくり返せる石の場所をすべて返す
+        """
+        player, opponent = (self._black_bitboard, self._white_bitboard) if color == 'black' else (self._white_bitboard, self._black_bitboard)
+
+        return BitBoardMethods.get_flippable_discs(self.size, player, opponent, x, y, self._mask)
 
     def put_disc(self, color, x, y):
         """put_disc

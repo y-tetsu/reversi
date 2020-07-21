@@ -29,7 +29,7 @@ class _NegaMax(AbstractStrategy):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         legal_moves = board.get_legal_moves(color, cache=True)
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board._legal_moves_cache[color] = legal_moves  # recover cache
             board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
@@ -70,7 +70,7 @@ class _NegaMax(AbstractStrategy):
 
         # 評価値を算出
         max_score = self._MIN
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board._legal_moves_cache[color] = legal_moves  # recover cache
             board.put_disc(color, *move)
             score = -self.get_score(next_color, board, depth-1)

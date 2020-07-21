@@ -106,7 +106,7 @@ class Table(AbstractStrategy):
         max_score = None
         moves = {}
 
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board.put_disc(color, *move)
             score = self.get_score(color, board)
 

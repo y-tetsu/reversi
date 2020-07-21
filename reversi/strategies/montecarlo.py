@@ -30,8 +30,8 @@ class MonteCarlo(AbstractStrategy):
         """
         次の一手
         """
-        moves = list(board.get_legal_moves(color, cache=True).keys())  # 手の候補を取得
-        scores = [0 for _ in range(len(moves))]          # スコアの初期化
+        moves = board.get_legal_moves(color, cache=True)  # 手の候補を取得
+        scores = [0 for _ in range(len(moves))]           # スコアの初期化
 
         for _ in range(self.count):
             for i, move in enumerate(moves):

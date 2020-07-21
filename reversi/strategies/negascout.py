@@ -35,7 +35,7 @@ class _NegaScout(_AlphaBeta):
 
         # NegaScout法
         tmp, null_window = None, beta
-        for i, move in enumerate(legal_moves.keys()):
+        for i, move in enumerate(legal_moves):
             if alpha < beta:
                 board._legal_moves_cache[color] = legal_moves  # recover cache
                 board.put_disc(color, *move)

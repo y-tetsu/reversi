@@ -38,8 +38,8 @@ class PossibilityScorer(AbstractScorer):
         評価値の算出
         """
         # 置ける場所の数に重みを掛ける
-        black_num = len(list(legal_moves_b.keys()))
-        white_num = len(list(legal_moves_w.keys()))
+        black_num = len(legal_moves_b)
+        white_num = len(legal_moves_w)
 
         return (black_num - white_num) * self._W
 

@@ -12,7 +12,7 @@ class Random(AbstractStrategy):
     def next_move(self, color, board):
         """next_move
         """
-        moves = list(board.get_legal_moves(color, cache=True).keys())
+        moves = board.get_legal_moves(color, cache=True)
 
         return random.choice(moves)
 
@@ -25,8 +25,8 @@ class Greedy(AbstractStrategy):
         """next_move
         """
         legal_moves = board.get_legal_moves(color, cache=True)
-        max_count = max([len(value) for value in legal_moves.values()])
-        moves = [key for key, value in legal_moves.items() if len(value) == max_count]
+        max_count = max([len(board.get_flippable_discs(color, *move)) for move in legal_moves])
+        moves = [move for move in legal_moves if len(board.get_flippable_discs(color, *move)) == max_count]
 
         return random.choice(moves)
 
@@ -39,8 +39,8 @@ class Unselfish(AbstractStrategy):
         """next_move
         """
         legal_moves = board.get_legal_moves(color, cache=True)
-        min_count = min([len(value) for value in legal_moves.values()])
-        moves = [key for key, value in legal_moves.items() if len(value) == min_count]
+        min_count = min([len(board.get_flippable_discs(color, *move)) for move in legal_moves])
+        moves = [move for move in legal_moves if len(board.get_flippable_discs(color, *move)) == min_count]
 
         return random.choice(moves)
 

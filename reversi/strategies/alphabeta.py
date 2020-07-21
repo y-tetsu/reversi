@@ -23,7 +23,7 @@ class _AlphaBeta(AbstractStrategy):
         """
         次の一手
         """
-        moves = board.get_legal_moves(color, cache=True).keys()  # 手の候補
+        moves = board.get_legal_moves(color, cache=True)  # 手の候補
         best_move, _ = self.get_best_move(color, board, moves, self.depth)
 
         return best_move
@@ -84,7 +84,7 @@ class _AlphaBeta(AbstractStrategy):
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 評価値を算出
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board._legal_moves_cache[color] = legal_moves  # recover cache
             board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
