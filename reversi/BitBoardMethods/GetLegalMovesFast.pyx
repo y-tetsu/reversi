@@ -12,11 +12,11 @@ def get_legal_moves(color, size, b, w, mask):
     """get_legal_moves
            return all legal moves
     """
-    if size == 8:
-        if sys.maxsize == MAXSIZE64:
-            return _get_legal_moves_size8_64bit(color, b, w)
+    #if size == 8:
+    #    if sys.maxsize == MAXSIZE64:
+    #        return _get_legal_moves_size8_64bit(color, b, w)
 
-        return _get_legal_moves_size8(color, b, w)
+    #    return _get_legal_moves_size8(color, b, w)
 
     return _get_legal_moves(color, size, b, w, mask)
 
@@ -409,8 +409,6 @@ cdef _get_next_put_size8(unsigned int put0, unsigned int put1, unsigned int dire
 cdef _get_legal_moves(color, size, b, w, mask):
     """_get_legal_moves
     """
-    ret = {}
-
     # 前準備
     player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
     legal_moves = 0                                            # 石が置ける場所
@@ -430,73 +428,16 @@ cdef _get_legal_moves(color, size, b, w, mask):
     legal_moves |= _get_legal_moves_rshift(size, diagonal, player, blank, size+1)  # 右斜め下方向
 
     # 石が置ける場所を格納
+    ret = []
     check = 1 << (size * size - 1)
     for y in range(size):
         for x in range(size):
             # 石が置ける場合
             if legal_moves & check:
-                ret[(x, y)] = _get_flippable_discs(size, player, opponent, x, y, mask)
+                ret.append((x, y))
             check >>= 1
 
     return ret
-
-
-cdef _get_flippable_discs(size, player, opponent, x, y, mask):
-    """_get_flippable_discs
-    """
-    ret = []
-    flippable_discs = 0
-
-    # 石を置く場所
-    put = 1 << ((size*size-1)-(y*size+x))
-
-    # 8方向を順番にチェック
-    for direction in ('U', 'UR', 'R', 'BR', 'B', 'BL', 'L', 'UL'):
-        tmp = 0
-        check = _get_next_put(size, put, direction, mask)
-
-        # 相手の石が存在する限り位置を記憶
-        while check & opponent:
-            tmp |= check
-            check = _get_next_put(size, check, direction, mask)
-
-        # 自分の石で囲まれている場合は結果を格納する
-        if check & player:
-            flippable_discs |= tmp
-
-    # 配列に変換
-    check = 1 << (size*size-1)
-    for y in range(size):
-        for x in range(size):
-            if flippable_discs & check:
-                ret += [(x, y)]
-            check >>= 1
-
-    return ret
-
-
-cdef _get_next_put(size, put, direction, mask):
-    """_get_next_put
-           指定位置から指定方向に1マス分移動した場所を返す(ボードサイズ8以外)
-    """
-    if direction == 'U':     # 上
-        return (put << size) & mask.u
-    elif direction == 'UR':  # 右上
-        return (put << (size-1)) & mask.ur
-    elif direction == 'R':   # 右
-        return (put >> 1) & mask.r
-    elif direction == 'BR':  # 右下
-        return (put >> (size+1)) & mask.br
-    elif direction == 'B':   # 下
-        return (put >> size) & mask.b
-    elif direction == 'BL':  # 左下
-        return (put >> (size-1)) & mask.bl
-    elif direction == 'L':   # 左
-        return (put << 1) & mask.l
-    elif direction == 'UL':  # 左上
-        return (put << (size+1)) & mask.ul
-    else:
-        return 0
 
 
 cdef _get_legal_moves_lshift(size, mask, player, blank, shift_size):

@@ -8,12 +8,11 @@ SLOW_MODE3 = True
 SLOW_MODE4 = True
 
 
-#try:
-#    from ..BitBoardMethods.GetLegalMovesFast import get_legal_moves
-#    SLOW_MODE1 = False
-#except ImportError:
-#    from ..BitBoardMethods.GetLegalMoves import get_legal_moves
-from ..BitBoardMethods.GetLegalMoves import get_legal_moves
+try:
+    from ..BitBoardMethods.GetLegalMovesFast import get_legal_moves
+    SLOW_MODE1 = False
+except ImportError:
+    from ..BitBoardMethods.GetLegalMoves import get_legal_moves
 
 from ..BitBoardMethods.GetFlippableDiscs import get_flippable_discs
 
