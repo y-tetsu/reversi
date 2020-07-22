@@ -15,7 +15,11 @@ try:
 except ImportError:
     from ..BitBoardMethods.GetLegalMoves import get_legal_moves
 
-from ..BitBoardMethods.GetFlippableDiscs import get_flippable_discs
+try:
+    from ..BitBoardMethods.GetFlippableDiscsFast import get_flippable_discs
+    SLOW_MODE2 = False
+except ImportError:
+    from ..BitBoardMethods.GetFlippableDiscs import get_flippable_discs
 
 try:
     from reversi.BitBoardMethods.GetBoardInfoFast import get_board_info
