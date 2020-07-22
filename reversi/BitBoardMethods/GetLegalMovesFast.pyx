@@ -13,8 +13,8 @@ def get_legal_moves(color, size, b, w, mask):
            return all legal moves
     """
     if size == 8:
-    #    if sys.maxsize == MAXSIZE64:
-    #        return _get_legal_moves_size8_64bit(color, b, w)
+        if sys.maxsize == MAXSIZE64:
+            return _get_legal_moves_size8_64bit(color, b, w)
 
         return _get_legal_moves_size8(color, b, w)
 
@@ -71,85 +71,17 @@ cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long lon
     legal_moves = blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
     # prepare result
+    ret = []
     cdef:
         unsigned int x, y
         unsigned long long mask = 0x8000000000000000
-    ret = {}
     for y in range(8):
         for x in range(8):
             if legal_moves & mask:
-                ret[(x, y)] = _get_flippable_discs_size8_64bit(player, opponent, x, y)
+                ret.append((x, y))
             mask >>= 1
 
     return ret
-
-
-cdef _get_flippable_discs_size8_64bit(unsigned long long player, unsigned long long opponent, unsigned int x, unsigned int y):
-    """_get_flippable_discs_size8_64bit
-    """
-    cdef:
-        unsigned int direction1, direction2
-        unsigned long long buff, next_put
-        unsigned long long move = 0
-        unsigned long long flippable_discs = 0
-
-    move = <unsigned long long>1 << (63-(y*8+x))
-
-    for direction1 in range(8):
-        buff = 0
-        next_put = _get_next_put_size8_64bit(move, direction1)
-
-        # get discs of consecutive opponents
-        for direction2 in range(8):
-            if next_put & opponent:
-                buff |= next_put
-                next_put = _get_next_put_size8_64bit(next_put, direction1)
-            else:
-                break
-
-        # store result if surrounded by own disc
-        if next_put & player:
-            flippable_discs |= buff
-
-    # prepare result
-    cdef:
-        unsigned long long mask = 0x8000000000000000
-    ret = []
-    for y in range(8):
-        for x in range(8):
-            if flippable_discs & mask:
-                ret += [(x, y)]
-            mask >>= 1
-
-    return ret
-
-
-cdef inline unsigned long long _get_next_put_size8_64bit(unsigned long long put, unsigned int direction):
-    """_get_next_put_size8_64bit
-    """
-    cdef:
-        unsigned long long next_put
-
-    if direction == 0:
-        next_put = 0xFFFFFFFFFFFFFF00 & (put << 8)  # top
-    elif direction == 1:
-        next_put = 0x7F7F7F7F7F7F7F00 & (put << 7)  # right-top
-    elif direction == 2:
-        next_put = 0x7F7F7F7F7F7F7F7F & (put >> 1)  # right
-    elif direction == 3:
-        next_put = 0x007F7F7F7F7F7F7F & (put >> 9)  # right-bottom
-    elif direction == 4:
-        next_put = 0x00FFFFFFFFFFFFFF & (put >> 8)  # bottom
-    elif direction == 5:
-        next_put = 0x00FEFEFEFEFEFEFE & (put >> 7)  # left-bottom
-    elif direction == 6:
-        next_put = 0xFEFEFEFEFEFEFEFE & (put << 1)  # left
-    elif direction == 7:
-        next_put = 0xFEFEFEFEFEFEFE00 & (put << 9)  # left-top
-    else:
-        next_put = 0                                # unexpected
-
-    return next_put
 
 
 cdef _get_legal_moves_size8(color, b, w):
@@ -294,7 +226,6 @@ cdef _get_legal_moves_size8(color, b, w):
     cdef:
         unsigned int mask0 = 0x80000000
         unsigned int mask1 = 0x80000000
-
     for y in range(8):
         # ビットボード上位32bit
         if y < 4:
