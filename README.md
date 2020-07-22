@@ -182,19 +182,12 @@ class OriginalAI(AbstractStrategy):
 legal_moves = board.get_legal_moves(color)
 ```
 
-`get_legal_moves`の戻り値は辞書(`dict`)型です。
-キーが"石が置ける座標"、値が"ひっくり返せる石の座標リスト"となっております。
+`get_legal_moves`の戻り値"石が置ける座標のリスト"となっております。
 
 初期状態(盤面サイズ8)での黒手番の結果は下記のとおりです。
 
 ```
-{(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}
-```
-
-"石が置ける座標"のみのリストを取得する場合は、下記を実行してください。
-
-```Python
-legal_moves = list(board.get_legal_moves(color).keys())
+[(3, 2), (2, 3), (5, 4), (4, 5)]
 ```
 
 #### 盤面のサイズ
@@ -220,7 +213,7 @@ from reversi.strategies import AbstractStrategy
 class Corner(AbstractStrategy):
     def next_move(self, color, board):
         size = board.size
-        legal_moves = list(board.get_legal_moves(color).keys())
+        legal_moves = board.get_legal_moves(color)
         for corner in [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]:
             if corner in legal_moves:
                 return corner
@@ -317,7 +310,7 @@ from reversi.strategies import AbstractStrategy, Random, Greedy
 class Corner(AbstractStrategy):
     def next_move(self, color, board):
         size = board.size
-        legal_moves = list(board.get_legal_moves(color).keys())
+        legal_moves = board.get_legal_moves(color)
         for corner in [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]:
             if corner in legal_moves:
                 return corner
