@@ -11,7 +11,7 @@ class Selector(AbstractSelector):
         """select_moves
         """
         if moves is None:
-            return get_legal_moves(color, cache=True)
+            return board.get_legal_moves(color, cache=True)
 
         return moves
 

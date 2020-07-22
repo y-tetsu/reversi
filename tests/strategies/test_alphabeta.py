@@ -78,7 +78,7 @@ class TestAlphaBeta(unittest.TestCase):
         board.put_disc('white', 4, 2)
         board.put_disc('black', 5, 2)
         board.put_disc('white', 5, 4)
-        moves = board.get_legal_moves('black').keys()
+        moves = board.get_legal_moves('black')
         self.assertEqual(alphabeta.get_best_move('black', board, moves, 5), ((2, 2), {(2, 2): 8, (2, 3): 8, (5, 3): 8, (1, 5): 8, (2, 5): 8, (3, 5): 8, (4, 5): 8, (6, 5): 8}))  # noqa: E501
 
     def test_alphabeta_performance_of_get_score(self):
@@ -150,7 +150,7 @@ class TestAlphaBeta(unittest.TestCase):
         alphabeta = _AlphaBetaTest(evaluator=Evaluator_TPOW())
         key = alphabeta.__class__.__name__ + str(os.getpid())
 
-        moves = list(board.get_legal_moves('black').keys())
+        moves = board.get_legal_moves('black')
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
             alphabeta.get_best_move('black', board, moves, 4)
