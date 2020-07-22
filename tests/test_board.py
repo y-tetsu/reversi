@@ -2,7 +2,6 @@
 """
 
 import unittest
-from test.support import captured_stdout
 
 from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard
 from reversi.game import Game

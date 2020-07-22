@@ -130,7 +130,7 @@ class Board(AbstractBoard):
         ]
         ret = []
 
-        ## 指定座標が範囲内 かつ 石が置いていない
+        # 指定座標が範囲内 かつ 石が置いていない
         if self._in_range(x, y) and self._board[y][x] == self.disc['blank']:
             # 8方向をチェック
             for direction in directions:
