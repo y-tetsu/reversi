@@ -10,12 +10,7 @@ class Sorter(AbstractSorter):
     def sort_moves(self, *args, **kwargs):
         """sort_moves
         """
-        color, board, moves = kwargs['color'], kwargs['board'], kwargs['moves']
-
-        if moves is None:
-            return board.get_legal_moves(color, cache=True)
-
-        return moves
+        return kwargs['moves']
 
 
 class Sorter_B(Sorter):

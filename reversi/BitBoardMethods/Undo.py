@@ -24,6 +24,4 @@ def undo(board):
             board.score['black'] += disc_num
             board.score['white'] -= 1 + disc_num
 
-    board._legal_moves_cache.clear()
-
     return prev

@@ -43,8 +43,6 @@ cdef inline _undo_64bit(board):
             board.score['black'] += disc_num
             board.score['white'] -= 1 + disc_num
 
-    board._legal_moves_cache.clear()
-
     return prev
 
 
@@ -72,7 +70,5 @@ cdef inline _undo(board):
             board._black_bitboard ^= flippable_discs
             board.score['black'] += disc_num
             board.score['white'] -= 1 + disc_num
-
-    board._legal_moves_cache.clear()
 
     return prev

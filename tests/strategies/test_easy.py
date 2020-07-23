@@ -14,7 +14,7 @@ class TestEasy(unittest.TestCase):
         random = Random()
         board = Board()
 
-        legal_moves = board.get_legal_moves('black', board)
+        legal_moves = board.get_legal_moves('black')
         self.assertTrue(random.next_move('black', board) in legal_moves)
 
     def test_greedy(self):

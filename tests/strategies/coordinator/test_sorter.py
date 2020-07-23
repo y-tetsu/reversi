@@ -14,7 +14,7 @@ class TestSorter(unittest.TestCase):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
         sorter = Sorter()
-        moves = sorter.sort_moves(color='white', board=board, moves=None, best_move=None)
+        moves = sorter.sort_moves(color='white', board=board, moves=board.get_legal_moves('white'), best_move=None)
 
         self.assertEqual(moves, [(2, 2), (4, 2), (2, 4)])
 
@@ -23,7 +23,7 @@ class TestSorter(unittest.TestCase):
         board.put_disc('black', 3, 2)
         best_move = (4, 2)
         sorter = Sorter_B()
-        moves = sorter.sort_moves(color='white', board=board, moves=None, best_move=best_move)
+        moves = sorter.sort_moves(color='white', board=board, moves=board.get_legal_moves('white'), best_move=best_move)
 
         self.assertEqual(moves, [(4, 2), (2, 2), (2, 4)])
 
@@ -38,7 +38,7 @@ class TestSorter(unittest.TestCase):
         board.put_disc('black', 1, 6)
         board.put_disc('white', 1, 7)
         sorter = Sorter_C()
-        moves = sorter.sort_moves(color='black', board=board, moves=None, best_move=None)
+        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=None)
 
         self.assertEqual(moves, [(0, 7), (0, 3), (2, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)])
 
@@ -54,7 +54,7 @@ class TestSorter(unittest.TestCase):
         board.put_disc('white', 1, 7)
         best_move = (2, 3)
         sorter = Sorter_BC()
-        moves = sorter.sort_moves(color='black', board=board, moves=None, best_move=best_move)
+        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=best_move)
 
         self.assertEqual(moves, [(0, 7), (2, 3), (0, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)])
 
@@ -70,7 +70,7 @@ class TestSorter(unittest.TestCase):
         board.put_disc('white', 1, 7)
         best_move = (2, 3)
         sorter = Sorter_CB()
-        moves = sorter.sort_moves(color='black', board=board, moves=None, best_move=best_move)
+        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=best_move)
 
         self.assertEqual(moves, [(2, 3), (0, 7), (0, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)])
 
@@ -85,6 +85,6 @@ class TestSorter(unittest.TestCase):
         board.put_disc('black', 1, 6)
         board.put_disc('white', 1, 7)
         sorter = Sorter_O()
-        moves = sorter.sort_moves(color='black', board=board, moves=None, best_move=None)
+        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=None)
 
         self.assertEqual(moves, [(2, 3), (0, 5), (0, 7), (2, 7), (0, 3), (5, 4), (4, 5), (5, 5), (0, 6), (0, 4)])

@@ -79,9 +79,6 @@ class Board(AbstractBoard):
         self._board[center-1][center-1] = self.disc['white']
         self._board[center][center] = self.disc['white']
 
-        # 置ける場所のキャッシュ
-        self._legal_moves_cache = {}
-
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
         body = ''
@@ -90,31 +87,22 @@ class Board(AbstractBoard):
 
         return header + body
 
-    def get_legal_moves(self, color, cache=False):
+    def get_legal_moves(self, color):
         """get_legal_moves
 
         Args:
             color : player's color
-            cache : True if cache use
 
         Returns:
             legal_moves list
         """
-        # if cache option is True and cache available, return cache
-        if cache and color in self._legal_moves_cache:
-            return self._legal_moves_cache[color]
-
-        self._legal_moves_cache.clear()
         legal_moves = []
-
         for y in range(self.size):
             for x in range(self.size):
                 flippable_discs = self.get_flippable_discs(color, x, y)
 
                 if flippable_discs:
                     legal_moves += [(x, y)]
-
-        self._legal_moves_cache[color] = legal_moves
 
         return legal_moves
 
@@ -263,8 +251,6 @@ class Board(AbstractBoard):
 
             self.update_score()
 
-        self._legal_moves_cache.clear()
-
         return prev
 
 
@@ -313,9 +299,6 @@ class BitBoard(AbstractBoard):
             int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
         )
 
-        # 置ける場所のキャッシュ
-        self._legal_moves_cache = {}
-
     def __str__(self):
         size = self.size
         header = '   ' + ' '.join([chr(97 + i) for i in range(size)]) + '\n'
@@ -335,26 +318,16 @@ class BitBoard(AbstractBoard):
 
         return header + body
 
-    def get_legal_moves(self, color, cache=False):
+    def get_legal_moves(self, color):
         """get_legal_moves
 
         Args:
             color : player's color
-            cache : True if cache use
 
         Returns:
             legal_moves list
         """
-        # if cache option is True and cache available, return cache
-        if cache and color in self._legal_moves_cache:
-            return self._legal_moves_cache[color]
-
-        self._legal_moves_cache.clear()
-
-        ret = BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
-        self._legal_moves_cache[color] = ret
-
-        return ret
+        return BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
 
     def get_flippable_discs(self, color, x, y):
         """get_flippable_discs
