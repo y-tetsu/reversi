@@ -31,7 +31,7 @@ def get_legal_moves(color, size, b, w, mask):
         for x in range(size):
             # 石が置ける場合
             if legal_moves & check:
-                ret.append((x, y))
+                ret += [(x, y)]
             check >>= 1
 
     return ret

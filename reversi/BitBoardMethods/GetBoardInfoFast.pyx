@@ -63,24 +63,24 @@ cdef _get_board_info_size8(b, w):
         if y < 4:
             for x in range(8):
                 if b0 & mask0:
-                    tmp.append(1)
+                    tmp += [1]
                 elif w0 & mask0:
-                    tmp.append(-1)
+                    tmp += [-1]
                 else:
-                    tmp.append(0)
+                    tmp += [0]
                 mask0 >>= 1
         # ビットボード下位32bit
         else:
             for x in range(8):
                 if b1 & mask1:
-                    tmp.append(1)
+                    tmp += [1]
                 elif w1 & mask1:
-                    tmp.append(-1)
+                    tmp += [-1]
                 else:
-                    tmp.append(0)
+                    tmp += [0]
                 mask1 >>= 1
 
-        board_info.append(tmp)
+        board_info += [tmp]
 
     return board_info
 
@@ -96,13 +96,13 @@ cdef _get_board_info(size, b, w):
 
         for x in range(size):
             if b & mask:
-                tmp.append(1)
+                tmp += [1]
             elif w & mask:
-                tmp.append(-1)
+                tmp += [-1]
             else:
-                tmp.append(0)
+                tmp += [0]
             mask >>= 1
 
-        board_info.append(tmp)
+        board_info += [tmp]
 
     return board_info

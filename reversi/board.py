@@ -112,7 +112,7 @@ class Board(AbstractBoard):
                 flippable_discs = self.get_flippable_discs(color, x, y)
 
                 if flippable_discs:
-                    legal_moves.append((x, y))
+                    legal_moves += [(x, y)]
 
         self._legal_moves_cache[color] = legal_moves
 
@@ -201,7 +201,7 @@ class Board(AbstractBoard):
         self.update_score()
 
         # 打った手の記録
-        self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
+        self.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs}]
 
         return flippable_discs
 
@@ -220,13 +220,13 @@ class Board(AbstractBoard):
 
             for col in row:
                 if col == self.disc['black']:
-                    tmp.append(1)
+                    tmp += [1]
                 elif col == self.disc['white']:
-                    tmp.append(-1)
+                    tmp += [-1]
                 elif col == self.disc['blank']:
-                    tmp.append(0)
+                    tmp += [0]
 
-            board_info.append(tmp)
+            board_info += [tmp]
 
         return board_info
 

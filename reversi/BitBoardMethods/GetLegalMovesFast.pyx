@@ -78,7 +78,7 @@ cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long lon
     for y in range(8):
         for x in range(8):
             if legal_moves & mask:
-                ret.append((x, y))
+                ret += [(x, y)]
             mask >>= 1
 
     return ret
@@ -231,13 +231,13 @@ cdef _get_legal_moves_size8(color, b, w):
         if y < 4:
             for x in range(8):
                 if legal_moves0 & mask0:
-                    ret.append((x, y))
+                    ret += [(x, y)]
                 mask0 >>= 1
         # ビットボード下位32bit
         else:
             for x in range(8):
                 if legal_moves1 & mask1:
-                    ret.append((x, y))
+                    ret += [(x, y)]
                 mask1 >>= 1
 
     return ret
@@ -271,7 +271,7 @@ cdef _get_legal_moves(color, size, b, w, mask):
         for x in range(size):
             # 石が置ける場合
             if legal_moves & check:
-                ret.append((x, y))
+                ret += [(x, y)]
             check >>= 1
 
     return ret

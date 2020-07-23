@@ -52,7 +52,7 @@ cdef inline _put_disc_64bit(board, color, unsigned int x, unsigned int y):
         board.score['white'] += 1 + len(flippable_discs)
 
     # 打った手の記録
-    board.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)})
+    board.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)}]
 
     return flippable_discs
 
@@ -90,6 +90,6 @@ cdef inline _put_disc(board, color, unsigned int x, unsigned int y):
         board.score['white'] += 1 + len(flippable_discs)
 
     # 打った手の記録
-    board.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)})
+    board.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)}]
 
     return flippable_discs
