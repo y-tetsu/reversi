@@ -11,28 +11,26 @@ MAXSIZE64 = 2**63 - 1
 def undo(board):
     """undo
     """
-    if sys.maxsize == MAXSIZE64:
-        return _undo_64bit(board)
+    size = board.size
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _undo_size8_64bit(board)
 
-    return _undo(board)
+    return _undo(size, board)
 
 
-cdef inline _undo_64bit(board):
-    """_undo_64bit
+cdef inline _undo_size8_64bit(board):
+    """_undo_size8_64bit
     """
     cdef:
-        unsigned int size, disc_num
+        unsigned int x, y, disc_num
         unsigned long long flippable_discs, put
 
-    prev = board.prev.pop()
+    (color, x, y, flippable_discs, disc_num) = board.prev.pop()
 
-    if prev:
-        size = board.size
-        flippable_discs, disc_num = prev['flippable_discs'], prev['disc_num']
+    if color:
+        put = <unsigned long long>1 << (63-(y*8+x))
 
-        put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
-
-        if prev['color'] == 'black':
+        if color == 'black':
             board._black_bitboard ^= put | flippable_discs
             board._white_bitboard ^= flippable_discs
             board.score['black'] -= 1 + disc_num
@@ -43,24 +41,19 @@ cdef inline _undo_64bit(board):
             board.score['black'] += disc_num
             board.score['white'] -= 1 + disc_num
 
-    return prev
+    return (color, x, y, flippable_discs, disc_num)
 
 
-cdef inline _undo(board):
+cdef inline _undo(size, board):
     """_undo
     """
     cdef:
-        unsigned int size, disc_num
+        unsigned int disc_num
+    (color, x, y, flippable_discs, disc_num) = board.prev.pop()
 
-    prev = board.prev.pop()
-
-    if prev:
-        size = board.size
-        flippable_discs, disc_num = prev['flippable_discs'], prev['disc_num']
-
-        put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
-
-        if prev['color'] == 'black':
+    if color:
+        put = 1 << ((size*size-1)-(y*size+x))
+        if color == 'black':
             board._black_bitboard ^= put | flippable_discs
             board._white_bitboard ^= flippable_discs
             board.score['black'] -= 1 + disc_num
@@ -71,4 +64,4 @@ cdef inline _undo(board):
             board.score['black'] += disc_num
             board.score['white'] -= 1 + disc_num
 
-    return prev
+    return (color, x, y, flippable_discs, disc_num)

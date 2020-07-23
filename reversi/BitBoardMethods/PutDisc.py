@@ -32,6 +32,6 @@ def put_disc(board, color, x, y):
         board.score['white'] += 1 + len(flippable_discs)
 
     # 打った手の記録
-    board.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)}]
+    board.prev += [(color, x, y, flippable_discs_num, len(flippable_discs))]
 
     return flippable_discs

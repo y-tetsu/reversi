@@ -5,15 +5,14 @@
 def undo(board):
     """undo
     """
-    prev = board.prev.pop()
+    (color, x, y, flippable_discs, disc_num) = board.prev.pop()
 
-    if prev:
+    if color:
         size = board.size
-        flippable_discs, disc_num = prev['flippable_discs'], prev['disc_num']
 
-        put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
+        put = 1 << ((size*size-1)-(y*size+x))
 
-        if prev['color'] == 'black':
+        if color == 'black':
             board._black_bitboard ^= put | flippable_discs
             board._white_bitboard ^= flippable_discs
             board.score['black'] -= 1 + disc_num
@@ -24,4 +23,4 @@ def undo(board):
             board.score['black'] += disc_num
             board.score['white'] -= 1 + disc_num
 
-    return prev
+    return (color, x, y, flippable_discs, disc_num)

@@ -11,33 +11,34 @@ MAXSIZE64 = 2**63 - 1
 def put_disc(board, color, x, y):
     """put_disc
     """
-    if sys.maxsize == MAXSIZE64:
-        return _put_disc_64bit(board, color, x, y)
+    size = board.size
 
-    return _put_disc(board, color, x, y)
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _put_disc_size8_64bit(board, color, x, y)
+
+    return _put_disc(size, board, color, x, y)
 
 
-cdef inline _put_disc_64bit(board, color, unsigned int x, unsigned int y):
-    """_put_disc_64bit
+cdef inline _put_disc_size8_64bit(board, color, unsigned int x, unsigned int y):
+    """_put_disc_size8_64bit
     """
     cdef:
         unsigned long long put, flippable_discs_num
-        unsigned int size, tmp_x, tmp_y
+        unsigned int tmp_x, tmp_y
         signed int shift_size
 
     # 配置位置を整数に変換
-    size = board.size
-    shift_size = ((size*size-1)-(y*size+x))
-    if shift_size < 0 or shift_size > size**2-1:
+    shift_size = (63-(y*8+x))
+    if shift_size < 0 or shift_size > 63:
         return []
 
-    put = <unsigned long long>1 << ((size*size-1)-(y*size+x))
+    put = <unsigned long long>1 << (63-(y*8+x))
 
     # 反転位置を整数に変換
     flippable_discs = board.get_flippable_discs(color, x, y)
     flippable_discs_num = 0
     for tmp_x, tmp_y in flippable_discs:
-        flippable_discs_num |= <unsigned long long>1 << ((size*size-1)-(tmp_y*size+tmp_x))
+        flippable_discs_num |= <unsigned long long>1 << (63-(tmp_y*8+tmp_x))
 
     # 自分の石を置いて相手の石をひっくり返す
     if color == 'black':
@@ -52,19 +53,15 @@ cdef inline _put_disc_64bit(board, color, unsigned int x, unsigned int y):
         board.score['white'] += 1 + len(flippable_discs)
 
     # 打った手の記録
-    board.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)}]
+    board.prev += [(color, x, y, flippable_discs_num, len(flippable_discs))]
 
     return flippable_discs
 
 
-cdef inline _put_disc(board, color, unsigned int x, unsigned int y):
+cdef inline _put_disc(size, board, color, unsigned int x, unsigned int y):
     """_put_disc
     """
-    cdef:
-        unsigned int tmp_x, tmp_y
-
     # 配置位置を整数に変換
-    size = board.size
     shift_size = ((size*size-1)-(y*size+x))
     if shift_size < 0 or shift_size > size**2-1:
         return []
@@ -74,6 +71,8 @@ cdef inline _put_disc(board, color, unsigned int x, unsigned int y):
     # 反転位置を整数に変換
     flippable_discs = board.get_flippable_discs(color, x, y)
     flippable_discs_num = 0
+    cdef:
+        unsigned int tmp_x, tmp_y
     for tmp_x, tmp_y in flippable_discs:
         flippable_discs_num |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
 
@@ -90,6 +89,6 @@ cdef inline _put_disc(board, color, unsigned int x, unsigned int y):
         board.score['white'] += 1 + len(flippable_discs)
 
     # 打った手の記録
-    board.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs_num, 'disc_num': len(flippable_discs)}]
+    board.prev += [(color, x, y, flippable_discs_num, len(flippable_discs))]
 
     return flippable_discs
