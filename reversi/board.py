@@ -334,9 +334,7 @@ class BitBoard(AbstractBoard):
 
                指定座標のひっくり返せる石の場所をすべて返す
         """
-        player, opponent = (self._black_bitboard, self._white_bitboard) if color == 'black' else (self._white_bitboard, self._black_bitboard)
-
-        return BitBoardMethods.get_flippable_discs(self.size, player, opponent, x, y, self._mask)
+        return BitBoardMethods.get_flippable_discs(color, self.size, self._black_bitboard, self._white_bitboard, x, y, self._mask)
 
     def put_disc(self, color, x, y):
         """put_disc

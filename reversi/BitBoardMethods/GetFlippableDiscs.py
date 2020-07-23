@@ -2,12 +2,13 @@
 """
 
 
-def get_flippable_discs(size, player, opponent, x, y, mask):
+def get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask):
     """
     指定座標のひっくり返せる石の場所をすべて返す
     """
     ret = []
     reversibles = 0
+    player, opponent = (black_bitboard, white_bitboard) if color == 'black' else (white_bitboard, black_bitboard)
 
     # 石を置く場所
     put = 1 << ((size*size-1)-(y*size+x))

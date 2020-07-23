@@ -8,27 +8,28 @@ import sys
 MAXSIZE64 = 2**63 - 1
 
 
-def get_flippable_discs(size, player, opponent, x, y, mask):
+def get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask):
     """get_flippable_discs
     """
     if size == 8:
         if sys.maxsize == MAXSIZE64:
-            return _get_flippable_discs_size8_64bit(player, opponent, x, y)
+            return _get_flippable_discs_size8_64bit(color, black_bitboard, white_bitboard, x, y)
 
-        return _get_flippable_discs_size8(player, opponent, x, y)
+        return _get_flippable_discs_size8(color, black_bitboard, white_bitboard, x, y)
 
-    return _get_flippable_discs(size, player, opponent, x, y, mask)
+    return _get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask)
 
 
-cdef _get_flippable_discs_size8_64bit(unsigned long long player, unsigned long long opponent, unsigned int x, unsigned int y):
+cdef _get_flippable_discs_size8_64bit(color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
     """_get_flippable_discs_size8_64bit
     """
     cdef:
         unsigned int direction1, direction2
         unsigned long long buff, next_put
         unsigned long long move = 0
-        unsigned long long flippable_discs = 0
+        unsigned long long player, opponent, flippable_discs = 0
 
+    player, opponent = (black_bitboard, white_bitboard) if color == 'black' else (white_bitboard, black_bitboard)
     move = <unsigned long long>1 << (63-(y*8+x))
 
     for direction1 in range(8):
@@ -88,9 +89,14 @@ cdef inline unsigned long long _get_next_put_size8_64bit(unsigned long long put,
     return next_put
 
 
-cdef _get_flippable_discs_size8(unsigned long long player, unsigned long long opponent, unsigned int x, unsigned int y):
+cdef _get_flippable_discs_size8(color, black_bitboard, white_bitboard, unsigned int x, unsigned int y):
     """_get_flippable_discs_size8
     """
+
+    player, opponent = (black_bitboard, white_bitboard) if color == 'black' else (white_bitboard, black_bitboard)
+    player |= 0x10000000000000000    # 32bit以下でもシフトできるよう対策
+    opponent |= 0x10000000000000000
+
     cdef:
         unsigned int p0 = (player >> 32) & 0xFFFFFFFF    # プレイヤー石(上位)
         unsigned int p1 = player & 0xFFFFFFFF            # プレイヤー石(下位)
@@ -185,11 +191,12 @@ cdef _get_next_put_size8(unsigned int put0, unsigned int put1, unsigned int dire
     return upper, lower
 
 
-cdef _get_flippable_discs(size, player, opponent, x, y, mask):
+cdef _get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask):
     """_get_flippable_discs
     """
     ret = []
     flippable_discs = 0
+    player, opponent = (black_bitboard, white_bitboard) if color == 'black' else (white_bitboard, black_bitboard)
 
     # 石を置く場所
     put = 1 << ((size*size-1)-(y*size+x))
