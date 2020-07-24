@@ -8,6 +8,7 @@ from reversi.board import BitBoard
 from reversi.strategies.common import Measure
 from reversi.strategies import IterativeDeepning
 from reversi.strategies.alphabeta import _AlphaBeta, AlphaBeta
+from reversi.strategies.negascout import NegaScout
 import reversi.strategies.coordinator as coord
 
 
@@ -62,6 +63,27 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
+            sorter=coord.Sorter(),
+            search=AlphaBeta(
+                evaluator=coord.Evaluator(separated=[coord.NumberScorer()]),
+            ),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
+
+        print()
+        print(key)
+        print('AlphaBeta-N_Scorer : (7000)', Measure.count[key2])
+        print('(max_depth=6)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+
+        iterative = IterativeDeepning(
+            depth=2,
+            selector=coord.Selector(),
             sorter=coord.Sorter_B(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator_TPOW(),
@@ -76,8 +98,78 @@ class TestIterativeDeepning(unittest.TestCase):
 
         print()
         print(key)
-        print(' min :', Measure.elp_time[key]['min'], '(s)')
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        print('(3500)', Measure.count[key2])
+        print('AlphaBeta-Evaluator_TPOW : (3500)', Measure.count[key2])
         print('(max_depth=5)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+
+        iterative = IterativeDeepning(
+            depth=2,
+            selector=coord.Selector(),
+            sorter=coord.Sorter_B(),
+            search=AlphaBeta(
+                evaluator=coord.Evaluator(
+                    separated=[coord.WinLoseScorer()],
+                    combined=[coord.TableScorer(), coord.PossibilityScorer(), coord.OpeningScorer()],
+                ),
+            ),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
+
+        print()
+        print(key)
+        print('AlphaBeta-TPOW_Scorer : (3500)', Measure.count[key2])
+        print('(max_depth=5)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+
+        iterative = IterativeDeepning(
+            depth=2,
+            selector=coord.Selector(),
+            sorter=coord.Sorter_B(),
+            search=AlphaBeta(
+                evaluator=coord.Evaluator(
+                    separated=[coord.WinLoseScorer()],
+                    combined=[coord.TableScorer(), coord.PossibilityScorer(), coord.EdgeScorer()],
+                ),
+            ),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
+
+        print()
+        print(key)
+        print('AlphaBeta-TPWE_Scorer : (4000)', Measure.count[key2])
+        print('(max_depth=5)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+
+        iterative = IterativeDeepning(
+            depth=2,
+            selector=coord.Selector(),
+            sorter=coord.Sorter_B(),
+            search=NegaScout(
+                evaluator=coord.Evaluator(
+                    separated=[coord.WinLoseScorer()],
+                    combined=[coord.TableScorer(), coord.PossibilityScorer(), coord.EdgeScorer()],
+                ),
+            ),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
+
+        print()
+        print(key)
+        print('NegaScout-TPWE_Scorer : (4200)', Measure.count[key2])
+        print('(max_depth=5)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
