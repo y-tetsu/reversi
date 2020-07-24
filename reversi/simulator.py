@@ -25,7 +25,7 @@ class Simulator:
                 "matches": 10,
                 "processes": 1,
                 "random_opening": 8,
-                "characters": [
+                "player_names": [
                     "Unselfish",
                     "Random",
                     "Greedy",
@@ -45,9 +45,9 @@ class Simulator:
         self.processes = setting['processes']
         self.random_opening = setting['random_opening']
 
-        if 'characters' in setting:
-            black_players = [Player('black', c, players_info[c]) for c in setting['characters']]
-            white_players = [Player('white', c, players_info[c]) for c in setting['characters']]
+        if 'player_names' in setting:
+            black_players = [Player('black', c, players_info[c]) for c in setting['player_names']]
+            white_players = [Player('white', c, players_info[c]) for c in setting['player_names']]
         else:
             black_players = [Player('black', c, players_info[c]) for c in players_info.keys()]
             white_players = [Player('white', c, players_info[c]) for c in players_info.keys()]
