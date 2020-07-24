@@ -44,20 +44,19 @@ from reversi import Reversi
 from reversi.strategies import Table
 
 
-if __name__ == '__main__':
-    Reversi(
-        {
-            'Table': Table(
-                corner=50,
-                c=-20,
-                a1=0,
-                a2=-1,
-                b1=-1,
-                b2=-1,
-                b3=-1,
-                x=-25,
-                o1=-5,
-                o2=-5,
-            ),
-        }
-    ).start()
+Reversi(
+    {
+        'Table': Table(
+            corner=50,
+            c=-20,
+            a1=0,
+            a2=-1,
+            b1=-1,
+            b2=-1,
+            b3=-1,
+            x=-25,
+            o1=-5,
+            o2=-5,
+        ),
+    }
+).start()
