@@ -10,6 +10,12 @@ import reversi.strategies.coordinator as coord
 class TestEvaluator(unittest.TestCase):
     """evaluator
     """
+    def test_evaluator_init(self):
+        evaluator = coord.Evaluator()
+
+        self.assertEqual(evaluator.separated, [])
+        self.assertEqual(evaluator.combined, [])
+
     def test_customized_evaluator(self):
         board8 = BitBoard(8)
         board8.put_disc('black', 3, 2)

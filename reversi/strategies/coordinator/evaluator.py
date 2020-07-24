@@ -5,6 +5,19 @@ from reversi.strategies.common import AbstractEvaluator
 from reversi.strategies.coordinator import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer, EdgeScorer, CornerScorer
 
 
+class Evaluator(AbstractEvaluator):
+    """Evaluator
+    """
+    def __init__(self, separated=[], combined=[]):
+        self.separated = separated
+        self.combined = combined
+
+    def evaluate(self, *args, **kwargs):
+        """evaluate
+        """
+        pass
+
+
 class Evaluator_T(AbstractEvaluator):
     """Evaluator_T
 
