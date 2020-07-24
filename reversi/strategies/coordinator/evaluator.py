@@ -15,7 +15,16 @@ class Evaluator(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        pass
+        for scorer in self.separated:
+            score = scorer.get_score(*args, **kwargs)
+            if score is not None:
+                return score
+
+        score = 0
+        for scorer in self.combined:
+            score += scorer.get_score(*args, **kwargs)
+
+        return score
 
 
 class Evaluator_T(AbstractEvaluator):

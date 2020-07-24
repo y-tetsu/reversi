@@ -21,6 +21,9 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(evaluator.separated, separated)
         self.assertEqual(evaluator.combined, combined)
 
+    def test_evaluator_evaluate(self):
+        pass
+
     def test_customized_evaluator(self):
         board8 = BitBoard(8)
         board8.put_disc('black', 3, 2)
