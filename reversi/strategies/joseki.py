@@ -1,11 +1,7 @@
-#!/usr/bin/env python
-"""
-定石打ち
+"""Joseki
 """
 
 from reversi.strategies.common import Measure, AbstractStrategy
-from reversi.strategies.alphabeta import AlphaBeta4_TPW
-from reversi.strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE  # noqa: E501
 
 
 # ===== 定石リスト =====
@@ -1215,96 +1211,6 @@ class Hitsuji(Joseki):
 
         # 最後にロード
         self.joseki.update(SHEEP)      # 羊定石
-
-
-class AlphaBeta4J_TPW(Usagi):
-    """
-    AlphaBeta法で4手先読みして次の手を決める+定石打ち
-    (評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AlphaBeta4_TPW()):
-        super().__init__(base)
-
-
-class AlphaBeta4F9J_TPW(Tora):
-    """
-    AlphaBeta法で4手先読みして次の手を決める+定石打ち
-    (評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AlphaBeta4F9_TPW()):
-        super().__init__(base)
-
-
-class AbIF9J_B_TPW(Nezumi):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_B_TPW()):
-        super().__init__(base)
-
-
-class AbIF9J_B_TPWE(Ushi):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_B_TPWE()):
-        super().__init__(base)
-
-
-class AbIF9J_B_TPWEC(Hitsuji):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPWEC, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_B_TPWEC()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPW(Ushi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPW()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPW2(Ushi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPW2()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPWE(Nezumi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPWE()):
-        super().__init__(base)
-
-
-class SwitchNsIF9J_B_TPW(Nezumi):
-    """
-    SwitchNsIF9_B_TPW+定石打ち
-    (完全読み開始:残り9手)
-    """
-    def __init__(self, base=SwitchNsIF9_B_TPW()):
-        super().__init__(base)
-
-
-class SwitchNsIF9J_B_TPWE(Neko):
-    """
-    SwitchNsIF9_B_TPWE+定石打ち
-    (完全読み開始:残り9手)
-    """
-    def __init__(self, base=SwitchNsIF9_B_TPWE()):
-        super().__init__(base)
 
 
 if __name__ == '__main__':

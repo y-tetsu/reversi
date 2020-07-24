@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-"""
-モンテカルロ法
+"""MonteCarlo
 """
 
 import random
@@ -75,30 +73,6 @@ class MonteCarlo(AbstractStrategy):
             ret = 0
 
         return ret
-
-
-class MonteCarlo30(MonteCarlo):
-    """
-    MonteCarlo法で次の手を決める(最大一手30回試行)
-    """
-    def __init__(self, count=30):
-        super().__init__(count)
-
-
-class MonteCarlo100(MonteCarlo):
-    """
-    MonteCarlo法で次の手を決める(最大一手100回試行)
-    """
-    def __init__(self, count=100):
-        super().__init__(count)
-
-
-class MonteCarlo1000(MonteCarlo):
-    """
-    MonteCarlo法で次の手を決める(最大一手1000回試行)
-    """
-    def __init__(self, count=1000):
-        super().__init__(count)
 
 
 if __name__ == '__main__':

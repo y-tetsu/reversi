@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-"""
-複数戦略切り替え型
+"""Switch
 """
 
 from reversi.strategies.common import Measure, AbstractStrategy
-from reversi.strategies.iterative import IterativeDeepning
-from reversi.strategies.negascout import NegaScout
-from reversi.strategies.coordinator import Selector, Sorter_B, Evaluator_TPW, Evaluator_TPWE
 
 
 class SwitchSizeError(Exception):
@@ -45,55 +40,10 @@ class Switch(AbstractStrategy):
         return strategy.next_move(color, board)
 
 
-class SwitchNsI_B_TPW(Switch):
-    """
-    NsI_B_TPWのパラーメータ切り替え型
-    """
-    def __init__(
-            self,
-            turns=[
-                15,
-                25,
-                35,
-                45,
-                60
-            ],
-            strategies=[
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=100, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=70,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=50,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30,  c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=6))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,   c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=8)))   # noqa: E501
-            ]):
-        super().__init__(turns, strategies)
-
-
-class SwitchNsI_B_TPWE(Switch):
-    """
-    NsI_B_TPWEのパラーメータ切り替え型
-    """
-    def __init__(
-            self,
-            turns=[
-                15,
-                25,
-                35,
-                45,
-                60
-            ],
-            strategies=[
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30, c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=6))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,  c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=8)))   # noqa: E501
-            ]):
-        super().__init__(turns, strategies)
-
-
 if __name__ == '__main__':
     import os
     from board import BitBoard
+    from reversi.strategies.iterative import IterativeDeepning
 
     print('--- Test For SwitchNsI_B_TPW Strategy ---')
     switch = SwitchNsI_B_TPW()

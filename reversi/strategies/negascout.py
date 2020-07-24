@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-"""
-ネガスカウト法
+"""NegaScout
 """
 
 from reversi.strategies.common import Timer, Measure, CPU_TIME
 from reversi.strategies.alphabeta import _AlphaBeta
-from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPOW
 
 
 class _NegaScout(_AlphaBeta):
@@ -76,67 +73,3 @@ class NegaScout(_NegaScout):
         評価値の取得
         """
         return super()._get_score(color, board, alpha, beta, depth)
-
-
-class NegaScout_TPW(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPW()):
-        super().__init__(evaluator=evaluator)
-
-
-class NegaScout_TPW2(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPW(corner=50, c=-20, a1=0, a2=22, b1=-1, b2=-1, b3=-1, x=-35, o1=-5, o2=-5, wp=5, ww=10000)):
-        super().__init__(evaluator=evaluator)
-
-
-class NegaScout_TPWE(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWEにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPWE()):
-        super().__init__(evaluator=evaluator)
-
-
-class NegaScout3_TPW(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaScout3_TPOW(NegaScout):
-    """
-    NegaScout法でEvaluator_TPOWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaScout4_TPW(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaScout4_TPWE(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWEにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPWE()):
-        super().__init__(depth, evaluator)
-
-
-class NegaScout4_TPOW(NegaScout):
-    """
-    NegaScout法でEvaluator_TPOWにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)

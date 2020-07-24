@@ -5,8 +5,7 @@ import unittest
 import os
 
 from reversi.board import BitBoard
-from reversi.strategies import _FullReading, FullReading
-from reversi.strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N
+from reversi.strategies import _AlphaBeta_N, AlphaBeta_N, _FullReading, FullReading
 from reversi.strategies.common import Measure
 
 

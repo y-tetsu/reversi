@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-"""
-アルファベータ法(ネガアルファ法)
+"""AlphaBeta(NegaAlpha)
 """
 
 from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_N
+from reversi.strategies.coordinator import Evaluator_N
 
 
 class _AlphaBeta(AbstractStrategy):
@@ -130,51 +128,3 @@ class AlphaBeta_N(AlphaBeta):
     """
     def __init__(self, depth, evaluator=Evaluator_N()):
         super().__init__(depth=depth, evaluator=evaluator)
-
-
-class AlphaBeta_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPW()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta_TPWE(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWEにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPWE()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta_TPWEC(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWECにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPWEC()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta3_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta4_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta4_TPWE(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWEにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPWE()):
-        super().__init__(depth, evaluator)
