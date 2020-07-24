@@ -12,9 +12,14 @@ class TestEvaluator(unittest.TestCase):
     """
     def test_evaluator_init(self):
         evaluator = coord.Evaluator()
-
         self.assertEqual(evaluator.separated, [])
         self.assertEqual(evaluator.combined, [])
+
+        separated = [coord.WinLoseScorer()]
+        combined = [coord.PossibilityScorer(), coord.EdgeScorer()]
+        evaluator = coord.Evaluator(separated=separated, combined=combined)
+        self.assertEqual(evaluator.separated, separated)
+        self.assertEqual(evaluator.combined, combined)
 
     def test_customized_evaluator(self):
         board8 = BitBoard(8)
