@@ -6,9 +6,9 @@ import os
 import time
 
 from reversi.board import BitBoard
-from reversi.strategies import _NegaMax, NegaMax
-from reversi.strategies.coordinator import Evaluator_T, Evaluator_TPOW
 from reversi.strategies.common import Timer, Measure, CPU_TIME
+from reversi.strategies import _NegaMax, NegaMax
+import reversi.strategies.coordinator as coord
 
 
 class TestNegaMax(unittest.TestCase):
@@ -20,24 +20,24 @@ class TestNegaMax(unittest.TestCase):
         self.assertEqual(negamax.depth, 3)
         self.assertEqual(negamax.evaluator, None)
 
-        negamax = _NegaMax(depth=4, evaluator=Evaluator_T())
+        negamax = _NegaMax(depth=4, evaluator=coord.Evaluator_T())
         self.assertEqual(negamax._MIN, -10000000)
         self.assertEqual(negamax.depth, 4)
-        self.assertTrue(isinstance(negamax.evaluator, Evaluator_T))
+        self.assertTrue(isinstance(negamax.evaluator, coord.Evaluator_T))
 
         negamax = NegaMax()
         self.assertEqual(negamax._MIN, -10000000)
         self.assertEqual(negamax.depth, 3)
         self.assertEqual(negamax.evaluator, None)
 
-        negamax = NegaMax(depth=4, evaluator=Evaluator_T())
+        negamax = NegaMax(depth=4, evaluator=coord.Evaluator_T())
         self.assertEqual(negamax._MIN, -10000000)
         self.assertEqual(negamax.depth, 4)
-        self.assertTrue(isinstance(negamax.evaluator, Evaluator_T))
+        self.assertTrue(isinstance(negamax.evaluator, coord.Evaluator_T))
 
     def test_negamax_get_score(self):
         board = BitBoard()
-        negamax = _NegaMax(evaluator=Evaluator_T())
+        negamax = _NegaMax(evaluator=coord.Evaluator_T())
 
         self.assertEqual(negamax.get_score('black', board, 1), -3)
         self.assertEqual(negamax.get_score('black', board, 2), -1)
@@ -52,7 +52,7 @@ class TestNegaMax(unittest.TestCase):
 
     def test_negamax_next_move(self):
         board = BitBoard()
-        negamax = _NegaMax(evaluator=Evaluator_TPOW())
+        negamax = _NegaMax(evaluator=coord.Evaluator_TPOW())
 
         board.put_disc('black', 3, 2)
         self.assertEqual(negamax.next_move('white', board), (2, 4))
@@ -69,7 +69,7 @@ class TestNegaMax(unittest.TestCase):
         board.put_disc('black', 3, 2)
 
         # NegaMax
-        negamax = NegaMax(evaluator=Evaluator_TPOW())
+        negamax = NegaMax(evaluator=coord.Evaluator_TPOW())
         key = negamax.__class__.__name__ + str(os.getpid())
 
         Measure.count[key] = 0
@@ -81,7 +81,7 @@ class TestNegaMax(unittest.TestCase):
         self.assertEqual(Measure.count[key], 428)
 
         # _NegaMax
-        negamax = _NegaMax(evaluator=Evaluator_TPOW())
+        negamax = _NegaMax(evaluator=coord.Evaluator_TPOW())
         key = negamax.__class__.__name__ + str(os.getpid())
 
         Measure.count[key] = 0
@@ -122,7 +122,7 @@ class TestNegaMax(unittest.TestCase):
     def test_negamax_timer_timeout(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
-        negamax = NegaMax(depth=10, evaluator=Evaluator_TPOW())
+        negamax = NegaMax(depth=10, evaluator=coord.Evaluator_TPOW())
         key = negamax.__class__.__name__ + str(os.getpid())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
 

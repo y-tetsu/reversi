@@ -5,9 +5,9 @@ import unittest
 import os
 
 from reversi.board import BitBoard
-from reversi.strategies import MinMax
-from reversi.strategies.coordinator import Evaluator_T, Evaluator_TPOW
 from reversi.strategies.common import Measure
+from reversi.strategies import MinMax
+import reversi.strategies.coordinator as coord
 
 
 class TestMinMax(unittest.TestCase):
@@ -20,15 +20,15 @@ class TestMinMax(unittest.TestCase):
         self.assertEqual(minmax.depth, 3)
         self.assertEqual(minmax.evaluator, None)
 
-        minmax = MinMax(depth=4, evaluator=Evaluator_T())
+        minmax = MinMax(depth=4, evaluator=coord.Evaluator_T())
         self.assertEqual(minmax._MIN, -10000000)
         self.assertEqual(minmax._MAX, 10000000)
         self.assertEqual(minmax.depth, 4)
-        self.assertTrue(isinstance(minmax.evaluator, Evaluator_T))
+        self.assertTrue(isinstance(minmax.evaluator, coord.Evaluator_T))
 
     def test_minmax_get_score(self):
         board = BitBoard()
-        minmax = MinMax(evaluator=Evaluator_T())
+        minmax = MinMax(evaluator=coord.Evaluator_T())
 
         self.assertEqual(minmax.get_score('black', board, 1), -3)
         self.assertEqual(minmax.get_score('black', board, 2), -1)
@@ -43,7 +43,7 @@ class TestMinMax(unittest.TestCase):
 
     def test_minmax_next_move(self):
         board = BitBoard()
-        minmax = MinMax(evaluator=Evaluator_TPOW())
+        minmax = MinMax(evaluator=coord.Evaluator_TPOW())
 
         board.put_disc('black', 3, 2)
         self.assertEqual(minmax.next_move('white', board), (2, 4))
@@ -59,7 +59,7 @@ class TestMinMax(unittest.TestCase):
         board = BitBoard()
         board.put_disc('black', 3, 2)
 
-        minmax = MinMax(evaluator=Evaluator_TPOW())
+        minmax = MinMax(evaluator=coord.Evaluator_TPOW())
         key = minmax.__class__.__name__ + str(os.getpid())
 
         Measure.count[key] = 0

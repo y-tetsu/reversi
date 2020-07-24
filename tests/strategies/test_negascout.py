@@ -6,10 +6,9 @@ import os
 import time
 
 from reversi.board import BitBoard
-from reversi.strategies import _NegaScout, NegaScout
-from reversi.strategies.coordinator import Evaluator_T, Evaluator_TPW, Evaluator_TPOW
 from reversi.strategies.common import Timer, Measure, CPU_TIME
-from reversi.strategies.coordinator import Sorter_B
+from reversi.strategies import _NegaScout, NegaScout
+import reversi.strategies.coordinator as coord
 
 
 class TestNegaScout(unittest.TestCase):
@@ -22,11 +21,11 @@ class TestNegaScout(unittest.TestCase):
         self.assertEqual(negascout.depth, 3)
         self.assertEqual(negascout.evaluator, None)
 
-        negascout = _NegaScout(depth=4, evaluator=Evaluator_T())
+        negascout = _NegaScout(depth=4, evaluator=coord.Evaluator_T())
         self.assertEqual(negascout._MIN, -10000000)
         self.assertEqual(negascout._MAX, 10000000)
         self.assertEqual(negascout.depth, 4)
-        self.assertTrue(isinstance(negascout.evaluator, Evaluator_T))
+        self.assertTrue(isinstance(negascout.evaluator, coord.Evaluator_T))
 
         negascout = NegaScout()
         self.assertEqual(negascout._MIN, -10000000)
@@ -34,15 +33,15 @@ class TestNegaScout(unittest.TestCase):
         self.assertEqual(negascout.depth, 3)
         self.assertEqual(negascout.evaluator, None)
 
-        negascout = NegaScout(depth=4, evaluator=Evaluator_T())
+        negascout = NegaScout(depth=4, evaluator=coord.Evaluator_T())
         self.assertEqual(negascout._MIN, -10000000)
         self.assertEqual(negascout._MAX, 10000000)
         self.assertEqual(negascout.depth, 4)
-        self.assertTrue(isinstance(negascout.evaluator, Evaluator_T))
+        self.assertTrue(isinstance(negascout.evaluator, coord.Evaluator_T))
 
     def test_negascout_get_score(self):
         board = BitBoard()
-        negascout = _NegaScout(evaluator=Evaluator_T())
+        negascout = _NegaScout(evaluator=coord.Evaluator_T())
         self.assertEqual(negascout._get_score('black', board, negascout._MIN, negascout._MAX, 1), -3)
         self.assertEqual(negascout._get_score('black', board, negascout._MIN, negascout._MAX, 2), -1)
         self.assertEqual(negascout._get_score('black', board, negascout._MIN, negascout._MAX, 3), -4)
@@ -56,7 +55,7 @@ class TestNegaScout(unittest.TestCase):
 
     def test_negascout_next_move(self):
         board = BitBoard()
-        negascout = _NegaScout(evaluator=Evaluator_TPOW())
+        negascout = _NegaScout(evaluator=coord.Evaluator_TPOW())
 
         board.put_disc('black', 3, 2)
         self.assertEqual(negascout.next_move('white', board), (2, 4))
@@ -70,7 +69,7 @@ class TestNegaScout(unittest.TestCase):
 
     def test_negascout_get_best_move(self):
         board = BitBoard()
-        negascout = _NegaScout(evaluator=Evaluator_TPW())
+        negascout = _NegaScout(evaluator=coord.Evaluator_TPW())
 
         board.put_disc('black', 3, 2)
         board.put_disc('white', 2, 4)
@@ -86,7 +85,7 @@ class TestNegaScout(unittest.TestCase):
         board.put_disc('black', 3, 2)
 
         # NegaScout
-        negascout = NegaScout(evaluator=Evaluator_TPOW())
+        negascout = NegaScout(evaluator=coord.Evaluator_TPOW())
         key = negascout.__class__.__name__ + str(os.getpid())
 
         Measure.count[key] = 0
@@ -98,7 +97,7 @@ class TestNegaScout(unittest.TestCase):
         self.assertEqual(Measure.count[key], 568)
 
         # _NegaScout
-        negascout = _NegaScout(evaluator=Evaluator_TPOW())
+        negascout = _NegaScout(evaluator=coord.Evaluator_TPOW())
         key = negascout.__class__.__name__ + str(os.getpid())
 
         Measure.count[key] = 0
@@ -147,7 +146,7 @@ class TestNegaScout(unittest.TestCase):
             def get_best_move(self, color, board, moves, depth):
                 return super().get_best_move(color, board, moves, depth)
 
-        negascout = _NegaScoutTest(evaluator=Evaluator_TPOW())
+        negascout = _NegaScoutTest(evaluator=coord.Evaluator_TPOW())
         key = negascout.__class__.__name__ + str(os.getpid())
 
         moves = board.get_legal_moves('black')
@@ -162,7 +161,7 @@ class TestNegaScout(unittest.TestCase):
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
         self.assertEqual(negascout.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))  # noqa: E501
 
-        moves = Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
+        moves = coord.Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
             negascout.get_best_move('black', board, moves, 4)
@@ -176,7 +175,7 @@ class TestNegaScout(unittest.TestCase):
     def test_negascout_timer_timeout(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
-        negascout = NegaScout(depth=10, evaluator=Evaluator_TPOW())
+        negascout = NegaScout(depth=10, evaluator=coord.Evaluator_TPOW())
         key = negascout.__class__.__name__ + str(os.getpid())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         Measure.count[key] = 0
