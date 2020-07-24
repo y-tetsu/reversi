@@ -22,7 +22,54 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(evaluator.combined, combined)
 
     def test_evaluator_evaluate(self):
-        pass
+        evaluator = coord.Evaluator(
+            separated=[
+                coord.WinLoseScorer(),
+            ],
+            combined=[
+                coord.TableScorer(),
+                coord.PossibilityScorer(),
+                coord.EdgeScorer(),
+            ],
+        )
+
+        board8 = BitBoard(8)
+        board8._black_bitboard = 0xFFFFFFFFFFFFFFFF  # black win
+        board8._white_bitboard = 0x0000000000000000
+        board8.update_score()
+        legal_moves_b = board8.get_legal_moves('black')
+        legal_moves_w = board8.get_legal_moves('white')
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_w = evaluator.evaluate(color='white', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        self.assertEqual(score_b, 10064)
+        self.assertEqual(score_w, 10064)
+
+        board8._black_bitboard = 0x0000000000000000
+        board8._white_bitboard = 0xFFFFFFFFFFFFFFFF  # white win
+        board8.update_score()
+        legal_moves_b = board8.get_legal_moves('black')
+        legal_moves_w = board8.get_legal_moves('white')
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_w = evaluator.evaluate(color='white', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        self.assertEqual(score_b, -10064)
+        self.assertEqual(score_w, -10064)
+
+        board8 = BitBoard(8)
+        board8.put_disc('black', 3, 2)
+        board8.put_disc('white', 2, 2)
+        board8.put_disc('black', 2, 3)
+        board8.put_disc('white', 4, 2)
+        board8.put_disc('black', 1, 1)
+        board8.put_disc('white', 0, 0)
+        board8._black_bitboard = 0x0000002010003C7E
+        legal_moves_b = board8.get_legal_moves('black')
+        legal_moves_w = board8.get_legal_moves('white')
+        score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        self.assertEqual(score, -81)
+
+        board8._black_bitboard = 0x0000002010003C7C
+        score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        self.assertEqual(score, -61)
 
     def test_customized_evaluator(self):
         board8 = BitBoard(8)

@@ -38,7 +38,7 @@ class Evaluator_T(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['color'], kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_P(AbstractEvaluator):
@@ -52,7 +52,7 @@ class Evaluator_P(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['legal_moves_b'], kwargs['legal_moves_w'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_O(AbstractEvaluator):
@@ -66,7 +66,7 @@ class Evaluator_O(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_W(AbstractEvaluator):
@@ -80,7 +80,7 @@ class Evaluator_W(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'], kwargs['legal_moves_b'], kwargs['legal_moves_w'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_N(AbstractEvaluator):
@@ -94,7 +94,7 @@ class Evaluator_N(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_E(AbstractEvaluator):
@@ -108,7 +108,7 @@ class Evaluator_E(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_C(AbstractEvaluator):
@@ -122,7 +122,7 @@ class Evaluator_C(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_TP(AbstractEvaluator):
