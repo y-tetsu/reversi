@@ -184,4 +184,4 @@ class TestAlphaBeta(unittest.TestCase):
         alphabeta.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[key])
         self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
-        print('(2600)', Measure.count[key])
+        print('(3800)', Measure.count[key])

@@ -79,5 +79,5 @@ class TestIterativeDeepning(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        print('(2000)', Measure.count[key2])
+        print('(3500)', Measure.count[key2])
         print('(max_depth=5)', iterative.max_depth)
