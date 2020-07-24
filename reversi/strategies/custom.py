@@ -1,11 +1,9 @@
 """Custom strategies
 """
 
-import random
-
 from reversi.strategies.common import Measure
-from reversi.strategies import Random, MonteCarlo, MinMax, _NegaMax, NegaMax, _AlphaBeta, AlphaBeta, NegaScout, Switch, _FullReading, FullReading, IterativeDeepning, Usagi, Tora, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
-from reversi.strategies.coordinator import Selector, Sorter_B, Evaluator_N, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
+from reversi.strategies import Random, MonteCarlo, MinMax, _NegaMax, NegaMax, AlphaBeta, NegaScout, Switch, _FullReading, FullReading, IterativeDeepning, Usagi, Tora, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
+from reversi.strategies.coordinator import Selector, Sorter_B, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
 # ---------- #
