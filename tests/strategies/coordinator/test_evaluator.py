@@ -112,3 +112,26 @@ class TestEvaluator(unittest.TestCase):
         board8._black_bitboard = 0x0703012010003C7E
         score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
         self.assertEqual(score, 310)
+
+        # Evaluator_W
+        evaluator = coord.Evaluator_W()
+
+        board8._black_bitboard = 0xFFFFFFFFFFFFFFFF  # black win
+        board8._white_bitboard = 0x0000000000000000
+        board8.update_score()
+        legal_moves_b = board8.get_legal_moves('black')
+        legal_moves_w = board8.get_legal_moves('white')
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_w = evaluator.evaluate(color='white', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        self.assertEqual(score_b, 10064)
+        self.assertEqual(score_w, 10064)
+
+        board8._black_bitboard = 0x0000000000000000
+        board8._white_bitboard = 0xFFFFFFFFFFFFFFFF  # white win
+        board8.update_score()
+        legal_moves_b = board8.get_legal_moves('black')
+        legal_moves_w = board8.get_legal_moves('white')
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_w = evaluator.evaluate(color='white', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        self.assertEqual(score_b, -10064)
+        self.assertEqual(score_w, -10064)
