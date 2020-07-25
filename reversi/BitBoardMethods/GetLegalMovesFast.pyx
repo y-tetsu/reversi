@@ -31,9 +31,9 @@ cdef inline _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned l
 
     cdef:
         unsigned long long blank = ~(player | opponent)
-        unsigned long long horizontal = opponent & 0x7E7E7E7E7E7E7E7E  # horizontal mask value
-        unsigned long long vertical = opponent & 0x00FFFFFFFFFFFF00    # vertical mask value
-        unsigned long long diagonal = opponent & 0x007E7E7E7E7E7E00    # diagonal mask value
+        unsigned long long horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
+        unsigned long long vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
+        unsigned long long diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
         unsigned long long tmp_h, tmp_v, tmp_d1, tmp_d2, legal_moves = 0
 
     # left/right
