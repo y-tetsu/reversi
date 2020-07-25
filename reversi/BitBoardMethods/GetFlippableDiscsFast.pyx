@@ -20,7 +20,7 @@ def get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask)
     return _get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask)
 
 
-cdef _get_flippable_discs_size8_64bit(color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
+cdef inline _get_flippable_discs_size8_64bit(color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
     """_get_flippable_discs_size8_64bit
     """
     cdef:

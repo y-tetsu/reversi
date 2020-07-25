@@ -21,7 +21,7 @@ def get_board_info(size, b, w):
     return _get_board_info(size, b, w)
 
 
-cdef _get_board_info_size8_64bit(unsigned long long b, unsigned long long w):
+cdef inline _get_board_info_size8_64bit(unsigned long long b, unsigned long long w):
     """_get_board_info_size8_64bit
     """
     cdef:

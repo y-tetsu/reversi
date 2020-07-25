@@ -21,7 +21,7 @@ def get_legal_moves(color, size, b, w, mask):
     return _get_legal_moves(color, size, b, w, mask)
 
 
-cdef _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long long w):
+cdef inline _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long long w):
     """_get_legal_moves_size8_64bit
     """
     cdef:
