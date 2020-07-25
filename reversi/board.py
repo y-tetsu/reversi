@@ -60,13 +60,13 @@ class Board(AbstractBoard):
 
         # 石とスコアの初期設定
         self.disc = {}
-        self.score = {}
         factory = DiscFactory()
-
         for color in ('black', 'white', 'blank'):
             self.disc[color] = factory.create(color)
-            if color != 'blank':
-                self.score[color] = 2
+
+        # スコアの初期設定
+        self._black_score = 2
+        self._white_score = 2
 
         # 前回の手
         self.prev = []
@@ -196,8 +196,8 @@ class Board(AbstractBoard):
     def update_score(self):
         """update_score
         """
-        for color in ('black', 'white'):
-            self.score[color] = sum([row.count(self.disc[color]) for row in self._board])
+        self._black_score = sum([row.count(self.disc['black']) for row in self._board])
+        self._white_score = sum([row.count(self.disc['white']) for row in self._board])
 
     def get_board_info(self):
         """get_board_info
@@ -264,14 +264,15 @@ class BitBoard(AbstractBoard):
         # ボードサイズの初期設定
         self.size = size
 
-        # 石とスコアの初期設定
-        self.disc, self.score = {}, {}
+        # 石の初期設定
+        self.disc = {}
         factory = DiscFactory()
-
         for color in ('black', 'white', 'blank'):
             self.disc[color] = factory.create(color)
-            if color != 'blank':
-                self.score[color] = 2
+
+        # スコアの初期設定
+        self._black_score = 2
+        self._white_score = 2
 
         # 前回の手
         self.prev = []
@@ -346,15 +347,15 @@ class BitBoard(AbstractBoard):
     def update_score(self):
         """update_score
         """
-        self.score['black'], self.score['white'] = 0, 0
+        self._black_score, self._white_score = 0, 0
         size = self.size
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
                 if self._black_bitboard & mask:
-                    self.score['black'] += 1
+                    self._black_score += 1
                 elif self._white_bitboard & mask:
-                    self.score['white'] += 1
+                    self._white_score += 1
                 mask >>= 1
 
     def get_board_info(self):

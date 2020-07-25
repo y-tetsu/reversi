@@ -19,7 +19,7 @@ class FullReading(AbstractStrategy):
         """
         次の一手
         """
-        remain = (board.size * board.size) - (board.score['black'] + board.score['white'])
+        remain = (board.size * board.size) - (board._black_score + board._white_score)
 
         # 残り手数が閾値以下
         if remain <= self.remain:

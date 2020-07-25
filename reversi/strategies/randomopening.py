@@ -17,7 +17,7 @@ class RandomOpening(AbstractStrategy):
     def next_move(self, color, board):
         """next_move
         """
-        depth = board.score['black'] + board.score['white'] - 4
+        depth = board._black_score + board._white_score - 4
 
         if depth < self.depth:
             return self.random.next_move(color, board)

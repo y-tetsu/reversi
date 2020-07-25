@@ -44,13 +44,13 @@ cdef inline _put_disc_size8_64bit(board, color, unsigned int x, unsigned int y):
     if color == 'black':
         board._black_bitboard ^= put | flippable_discs_num
         board._white_bitboard ^= flippable_discs_num
-        board.score['black'] += 1 + len(flippable_discs)
-        board.score['white'] -= len(flippable_discs)
+        board._black_score += 1 + len(flippable_discs)
+        board._white_score -= len(flippable_discs)
     else:
         board._white_bitboard ^= put | flippable_discs_num
         board._black_bitboard ^= flippable_discs_num
-        board.score['black'] -= len(flippable_discs)
-        board.score['white'] += 1 + len(flippable_discs)
+        board._black_score -= len(flippable_discs)
+        board._white_score += 1 + len(flippable_discs)
 
     # 打った手の記録
     board.prev += [(color, x, y, flippable_discs_num, len(flippable_discs))]
@@ -80,13 +80,13 @@ cdef inline _put_disc(size, board, color, unsigned int x, unsigned int y):
     if color == 'black':
         board._black_bitboard ^= put | flippable_discs_num
         board._white_bitboard ^= flippable_discs_num
-        board.score['black'] += 1 + len(flippable_discs)
-        board.score['white'] -= len(flippable_discs)
+        board._black_score += 1 + len(flippable_discs)
+        board._white_score -= len(flippable_discs)
     else:
         board._white_bitboard ^= put | flippable_discs_num
         board._black_bitboard ^= flippable_discs_num
-        board.score['black'] -= len(flippable_discs)
-        board.score['white'] += 1 + len(flippable_discs)
+        board._black_score -= len(flippable_discs)
+        board._white_score += 1 + len(flippable_discs)
 
     # 打った手の記録
     board.prev += [(color, x, y, flippable_discs_num, len(flippable_discs))]

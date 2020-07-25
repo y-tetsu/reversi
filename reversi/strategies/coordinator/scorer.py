@@ -110,7 +110,7 @@ class WinLoseScorer(AbstractScorer):
 
         # 対局終了時
         if not legal_moves_b and not legal_moves_w:
-            ret = board.score['black'] - board.score['white']
+            ret = board._black_score - board._white_score
 
             if ret > 0:    # 黒が勝った
                 ret += self._W
@@ -130,7 +130,7 @@ class NumberScorer(AbstractScorer):
         """
         board = kwargs['board']
 
-        return board.score['black'] - board.score['white']
+        return board._black_score - board._white_score
 
 
 class EdgeScorer(AbstractScorer):

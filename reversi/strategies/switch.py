@@ -27,7 +27,7 @@ class Switch(AbstractStrategy):
         """
         次の一手
         """
-        disc_num = board.score['black'] + board.score['white']
+        disc_num = board._black_score + board._white_score
 
         # 現在の手数が閾値以下
         strategy = self.strategies[-1]
