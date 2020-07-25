@@ -27,7 +27,12 @@ cdef inline _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned l
     cdef:
         unsigned long long player, opponent
 
-    player, opponent = (b, w) if color == 'black' else (w, b)
+    if color == 'black':
+        player = b
+        opponent = w
+    else:
+        player = w
+        opponent = b
 
     cdef:
         unsigned long long blank = ~(player | opponent)
