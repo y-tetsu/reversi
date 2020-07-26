@@ -33,12 +33,11 @@ try:
 except ImportError:
     from ..BitBoardMethods.Undo import undo
 
-#try:
-#    from ..BitBoardMethods.PutDiscFast import put_disc
-#    SLOW_MODE5 = False
-#except ImportError:
-#    from ..BitBoardMethods.PutDisc import put_disc
-from ..BitBoardMethods.PutDisc import put_disc
+try:
+    from ..BitBoardMethods.PutDiscFast import put_disc
+    SLOW_MODE5 = False
+except ImportError:
+    from ..BitBoardMethods.PutDisc import put_disc
 
 
 __all__ = [
