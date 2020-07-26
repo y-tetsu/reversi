@@ -363,7 +363,7 @@ class TestBoard(unittest.TestCase):
  7□□〇●□□□□
  8□□□□□□□□
 """
-        self.assertEqual(board.undo(), (0x0000020408002000, 0x00000018141C1000, 4, 8))
+        self.assertEqual(board.undo(), (0x0000020408002000, 0x00000018141C1000, 4, 8, 0x0000001000000000, 'black'))
         self.assertEqual(str(board), board_str)
 
     def test_bitboard_mask(self):

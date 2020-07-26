@@ -69,7 +69,7 @@ class OpeningScorer(AbstractScorer):
 
         # 最後にひっくり返された石の場所を取得する
         if isinstance(board, BitBoard):
-            flippable_discs = board.prev[-1][3]
+            flippable_discs = board.prev[-1][4]
 
             discs = []
             mask = 1 << ((size * size) - 1)
