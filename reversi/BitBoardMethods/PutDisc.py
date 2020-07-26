@@ -9,7 +9,7 @@ def put_disc(board, color, x, y):
     size = board.size
     shift_size = ((size*size-1)-(y*size+x))
     if shift_size < 0 or shift_size > size**2-1:
-        return []
+        return 0
 
     # 反転位置を整数に変換
     flippable_discs = board.get_flippable_discs(color, x, y)
@@ -33,4 +33,4 @@ def put_disc(board, color, x, y):
         board._black_score -= len(flippable_discs)
         board._white_score += 1 + len(flippable_discs)
 
-    return flippable_discs
+    return flippable_discs_num
