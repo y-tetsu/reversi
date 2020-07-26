@@ -22,45 +22,27 @@ cdef inline _undo_size8_64bit(board):
     """_undo_size8_64bit
     """
     cdef:
-        unsigned int x, y, disc_num
-        unsigned long long flippable_discs, put
+        unsigned long long black_bitboard, white_bitboard, flippable_discs_num
+        unsigned int black_score, white_score
 
-    (color, x, y, flippable_discs, disc_num) = board.prev.pop()
+    (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color) = board.prev.pop()
+    if black_bitboard is not None:
+        board._black_bitboard = black_bitboard
+        board._white_bitboard = white_bitboard
+        board._black_score = black_score
+        board._white_score = white_score
 
-    if color == 'black':
-        put = <unsigned long long>1 << (63-(y*8+x))
-        board._black_bitboard ^= put | flippable_discs
-        board._white_bitboard ^= flippable_discs
-        board._black_score -= 1 + disc_num
-        board._white_score += disc_num
-    elif color == 'white':
-        put = <unsigned long long>1 << (63-(y*8+x))
-        board._white_bitboard ^= put | flippable_discs
-        board._black_bitboard ^= flippable_discs
-        board._black_score += disc_num
-        board._white_score -= 1 + disc_num
-
-    return (color, x, y, flippable_discs, disc_num)
+    return (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color)
 
 
 cdef inline _undo(size, board):
     """_undo
     """
-    cdef:
-        unsigned int disc_num
-    (color, x, y, flippable_discs, disc_num) = board.prev.pop()
+    (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color) = board.prev.pop()
+    if black_bitboard is not None:
+        board._black_bitboard = black_bitboard
+        board._white_bitboard = white_bitboard
+        board._black_score = black_score
+        board._white_score = white_score
 
-    if color:
-        put = 1 << ((size*size-1)-(y*size+x))
-        if color == 'black':
-            board._black_bitboard ^= put | flippable_discs
-            board._white_bitboard ^= flippable_discs
-            board._black_score -= 1 + disc_num
-            board._white_score += disc_num
-        else:
-            board._white_bitboard ^= put | flippable_discs
-            board._black_bitboard ^= flippable_discs
-            board._black_score += disc_num
-            board._white_score -= 1 + disc_num
-
-    return (color, x, y, flippable_discs, disc_num)
+    return (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color)
