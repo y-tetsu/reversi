@@ -27,17 +27,19 @@ try:
 except ImportError:
     from ..BitBoardMethods.GetBoardInfo import get_board_info
 
-try:
-    from ..BitBoardMethods.UndoFast import undo
-    SLOW_MODE4 = False
-except ImportError:
-    from ..BitBoardMethods.Undo import undo
+#try:
+#    from ..BitBoardMethods.UndoFast import undo
+#    SLOW_MODE4 = False
+#except ImportError:
+#    from ..BitBoardMethods.Undo import undo
+from ..BitBoardMethods.Undo import undo
 
-try:
-    from ..BitBoardMethods.PutDiscFast import put_disc
-    SLOW_MODE5 = False
-except ImportError:
-    from ..BitBoardMethods.PutDisc import put_disc
+#try:
+#    from ..BitBoardMethods.PutDiscFast import put_disc
+#    SLOW_MODE5 = False
+#except ImportError:
+#    from ..BitBoardMethods.PutDisc import put_disc
+from ..BitBoardMethods.PutDisc import put_disc
 
 
 __all__ = [

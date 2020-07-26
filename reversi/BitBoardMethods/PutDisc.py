@@ -11,7 +11,8 @@ def put_disc(board, color, x, y):
     if shift_size < 0 or shift_size > size**2-1:
         return []
 
-    put = 1 << ((size*size-1)-(y*size+x))
+    # 打つ前の状態を格納
+    board.prev += [(board._black_bitboard, board._white_bitboard, board._black_score, board._white_score)]
 
     # 反転位置を整数に変換
     flippable_discs = board.get_flippable_discs(color, x, y)
@@ -20,6 +21,7 @@ def put_disc(board, color, x, y):
         flippable_discs_num |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
 
     # 自分の石を置いて相手の石をひっくり返す
+    put = 1 << ((size*size-1)-(y*size+x))
     if color == 'black':
         board._black_bitboard ^= put | flippable_discs_num
         board._white_bitboard ^= flippable_discs_num
@@ -30,8 +32,5 @@ def put_disc(board, color, x, y):
         board._black_bitboard ^= flippable_discs_num
         board._black_score -= len(flippable_discs)
         board._white_score += 1 + len(flippable_discs)
-
-    # 打った手の記録
-    board.prev += [(color, x, y, flippable_discs_num, len(flippable_discs))]
 
     return flippable_discs
