@@ -74,23 +74,23 @@ class TestBoard(unittest.TestCase):
     def test_board_size_4_put_disc(self):
         board = Board(4)
 
-        self.assertEqual(board.put_disc('black', 0, 0), [])  # can not flippable
+        self.assertEqual(board.put_disc('black', 0, 0), 0x0)  # can not flippable
         board.undo()
 
-        self.assertEqual(board.put_disc('black', 3, 5), [])  # out of range
+        self.assertEqual(board.put_disc('black', 3, 5), 0x0)  # out of range
 
-        self.assertEqual(board.put_disc('black', 1, 0), [(1, 1)])
-        self.assertEqual(board.put_disc('white', 0, 0), [(1, 1)])
-        self.assertEqual(board.put_disc('black', 0, 1), [(1, 1)])
-        self.assertEqual(board.put_disc('white', 2, 0), [(2, 1), (1, 0)])
-        self.assertEqual(board.put_disc('black', 3, 0), [(2, 1)])
-        self.assertEqual(board.put_disc('white', 1, 3), [(1, 2), (1, 1)])
-        self.assertEqual(board.put_disc('black', 0, 3), [(1, 2)])
-        self.assertEqual(board.put_disc('white', 0, 2), [(1, 2), (0, 1)])
-        self.assertEqual(board.put_disc('black', 2, 3), [(1, 3), (2, 2)])
-        self.assertEqual(board.put_disc('white', 3, 2), [(2, 2), (2, 1)])
-        self.assertEqual(board.put_disc('black', 3, 1), [(2, 2)])
-        self.assertEqual(board.put_disc('white', 3, 3), [(2, 2)])
+        self.assertEqual(board.put_disc('black', 1, 0), 0x0400)
+        self.assertEqual(board.put_disc('white', 0, 0), 0x0400)
+        self.assertEqual(board.put_disc('black', 0, 1), 0x0400)
+        self.assertEqual(board.put_disc('white', 2, 0), 0x4200)
+        self.assertEqual(board.put_disc('black', 3, 0), 0x0200)
+        self.assertEqual(board.put_disc('white', 1, 3), 0x0440)
+        self.assertEqual(board.put_disc('black', 0, 3), 0x0040)
+        self.assertEqual(board.put_disc('white', 0, 2), 0x0840)
+        self.assertEqual(board.put_disc('black', 2, 3), 0x0024)
+        self.assertEqual(board.put_disc('white', 3, 2), 0x0220)
+        self.assertEqual(board.put_disc('black', 3, 1), 0x0020)
+        self.assertEqual(board.put_disc('white', 3, 3), 0x0020)
         self.assertEqual(board.get_bitboard_info(), (4366, 61169))
 
     def test_bitboard_size_4_put_disc(self):

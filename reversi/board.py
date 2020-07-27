@@ -175,7 +175,7 @@ class Board(AbstractBoard):
                指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
         if not self._in_range(x, y):
-            return []
+            return 0
 
         flippable_discs = self.get_flippable_discs(color, x, y)
 
@@ -191,7 +191,17 @@ class Board(AbstractBoard):
         # 打った手の記録
         self.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs}]
 
-        return flippable_discs
+        # 返した石のビット
+        ret = 0
+        size = self.size
+        mask = 1 << (size*size-1)
+        for y in range(self.size):
+            for x in range(self.size):
+                if (x, y) in flippable_discs:
+                    ret |= mask
+                mask >>= 1
+
+        return ret
 
     def update_score(self):
         """update_score
