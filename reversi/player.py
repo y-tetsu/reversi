@@ -26,6 +26,7 @@ class Player:
         captures = board.put_disc(self.color, *self.move)  # put disc on board
 
         # bits to array
+        self.captures.clear()
         size = board.size
         mask = 1 << (size*size-1)
         for y in range(size):

@@ -12,8 +12,15 @@ class TestPlayer(unittest.TestCase):
     """
     def test_player(self):
         class TestStrategy:
+            def __init__(self):
+                self.cnt = 0
+
             def next_move(self, color, board):
-                return (5, 4)
+                if self.cnt == 0:
+                    self.cnt += 1
+                    return (5, 4)
+
+                return (3, 2)
 
         # ----- #
         # Board #
@@ -37,6 +44,10 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(p.move, (5, 4))
         self.assertEqual(p.captures, [(4, 4)])
 
+        p.put_disc(board)
+        self.assertEqual(p.move, (3, 2))
+        self.assertEqual(p.captures, [(3, 3)])
+
         # -------- #
         # BitBoard #
         # -------- #
@@ -58,3 +69,7 @@ class TestPlayer(unittest.TestCase):
         p.put_disc(board)
         self.assertEqual(p.move, (5, 4))
         self.assertEqual(p.captures, [(4, 4)])
+
+        p.put_disc(board)
+        self.assertEqual(p.move, (3, 2))
+        self.assertEqual(p.captures, [(3, 3)])
