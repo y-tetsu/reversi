@@ -15,9 +15,9 @@ class TestPlayer(unittest.TestCase):
             def next_move(self, color, board):
                 return (5, 4)
 
-        #-------#
+        # ----- #
         # Board #
-        #-------#
+        # ----- #
         board = Board(8)
         p = Player('black', 'TestPlayer', TestStrategy())
 
@@ -37,9 +37,9 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(p.move, (5, 4))
         self.assertEqual(p.captures, [(4, 4)])
 
-        #----------#
+        # -------- #
         # BitBoard #
-        #----------#
+        # -------- #
         board = BitBoard(8)
         p = Player('black', 'TestPlayer', TestStrategy())
 
