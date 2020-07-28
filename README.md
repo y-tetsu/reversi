@@ -402,7 +402,7 @@ board = BitBoard(4)
 print(board)
 ```
 
-上記の実行結果は下記となります。
+上記の実行結果は下記となります。<br>
 ![board_print](https://raw.githubusercontent.com/y-tetsu/reversi/images/board_print.png)
 
 #### boardオブジェクトのメソッド
@@ -461,7 +461,7 @@ print(board)
 pprint(board_info)
 ```
 
-上記の実行結果は下記となります。
+上記の実行結果は下記となります。<br>
 ![get_board_info](https://raw.githubusercontent.com/y-tetsu/reversi/images/get_board_info.png)
 
 ##### put_disc
@@ -478,7 +478,7 @@ board.put_disc('black', 5, 4)
 print(board)
 ```
 
-上記の実行結果は下記となります。
+上記の実行結果は下記となります。<br>
 ![put_disc](https://raw.githubusercontent.com/y-tetsu/reversi/images/put_disc.png)
 
 ##### undo
@@ -496,7 +496,7 @@ board.undo()
 print(board)
 ```
 
-上記の実行結果は下記となります。
+上記の実行結果は下記となります。<br>
 ![undo](https://raw.githubusercontent.com/y-tetsu/reversi/images/undo.png)
 
 
