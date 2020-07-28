@@ -483,7 +483,8 @@ print(board)
 
 ##### undo
 `put_disc`メソッドで置いた石を元に戻します。引数はありません。
-`put_disc`メソッドを呼び出す前に、本メソッドを呼び出さないでください。
+`put_disc`メソッドを呼び出した回数だけ、元に戻すことができます。
+`put_disc`メソッドを呼び出した回数を超えて、本メソッドを呼び出さないでください。
 
 ```Python
 from reversi import BitBoard
