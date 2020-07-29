@@ -150,7 +150,7 @@ from reversi.strategies import AbstractStrategy
 
 class OriginalAI(AbstractStrategy):
     def next_move(self, color, board):
-        move = ### 次の一手 ###
+        move = (X, Y)  ### 次の一手 ###
 
         return move
 ```
@@ -163,7 +163,7 @@ class OriginalAI(AbstractStrategy):
  |引数|説明|
  |:---|:---|
  |`color`変数|`black`か`white`の`str`型の文字列が入り、それぞれ黒番か白番かを判別することができます。|
- |`board`オブジェクト|リバーシの盤面情報を持ったオブジェクトです。黒と白の石の配置情報の他、リバーシのゲームを進行するために必要となる、パラメータやメソッドを持っています。|
+ |`board`オブジェクト|リバーシの盤面情報を持ったオブジェクトです。黒と白の石の配置情報のほか、リバーシのゲームを進行するために必要となる、パラメータやメソッドを持っています。|
 
 `next_move`の戻り値には、手番と盤面の情報を元に"次に打つ手の座標"を指定してください。
 座標を決定する方法が、自作の必要な部分となります。
