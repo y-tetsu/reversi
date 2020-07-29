@@ -1,11 +1,7 @@
-#!/usr/bin/env python
-"""
-定石打ち
+"""Joseki
 """
 
 from reversi.strategies.common import Measure, AbstractStrategy
-from reversi.strategies.alphabeta import AlphaBeta4_TPW
-from reversi.strategies.fullreading import AlphaBeta4F9_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPW2, NsIF9_B_TPWE, SwitchNsIF9_B_TPW, SwitchNsIF9_B_TPWE  # noqa: E501
 
 
 # ===== 定石リスト =====
@@ -1217,781 +1213,691 @@ class Hitsuji(Joseki):
         self.joseki.update(SHEEP)      # 羊定石
 
 
-class AlphaBeta4J_TPW(Usagi):
-    """
-    AlphaBeta法で4手先読みして次の手を決める+定石打ち
-    (評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AlphaBeta4_TPW()):
-        super().__init__(base)
-
-
-class AlphaBeta4F9J_TPW(Tora):
-    """
-    AlphaBeta法で4手先読みして次の手を決める+定石打ち
-    (評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AlphaBeta4F9_TPW()):
-        super().__init__(base)
-
-
-class AbIF9J_B_TPW(Nezumi):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_B_TPW()):
-        super().__init__(base)
-
-
-class AbIF9J_B_TPWE(Ushi):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_B_TPWE()):
-        super().__init__(base)
-
-
-class AbIF9J_B_TPWEC(Hitsuji):
-    """
-    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPWEC, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=AbIF9_B_TPWEC()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPW(Ushi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPW()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPW2(Ushi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPW2()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPWE(Nezumi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPWE()):
-        super().__init__(base)
-
-
-class SwitchNsIF9J_B_TPW(Nezumi):
-    """
-    SwitchNsIF9_B_TPW+定石打ち
-    (完全読み開始:残り9手)
-    """
-    def __init__(self, base=SwitchNsIF9_B_TPW()):
-        super().__init__(base)
-
-
-class SwitchNsIF9J_B_TPWE(Neko):
-    """
-    SwitchNsIF9_B_TPWE+定石打ち
-    (完全読み開始:残り9手)
-    """
-    def __init__(self, base=SwitchNsIF9_B_TPWE()):
-        super().__init__(base)
-
-
-if __name__ == '__main__':
-    from board import BitBoard
-
-    def rotate_180(bbits, wbits, move):  # 180°回転
-        bbits_tmp = [['0' for i in range(8)] for j in range(8)]
-        wbits_tmp = [['0' for i in range(8)] for j in range(8)]
-
-        check = 1 << 63
-        for y in range(8):
-            for x in range(8):
-                if bbits & check:
-                    bbits_tmp[y][x] = '1'
-                if wbits & check:
-                    wbits_tmp[y][x] = '1'
-                check >>= 1
-
-        import numpy as np
-
-        bbits_tmp = np.rot90(np.rot90(np.array(bbits_tmp)))
-        wbits_tmp = np.rot90(np.rot90(np.array(wbits_tmp)))
-        bbits = int(''.join(bbits_tmp.flatten()), 2)
-        wbits = int(''.join(wbits_tmp.flatten()), 2)
-        move = 7 - move[0], 7 - move[1]
-
-        return bbits, wbits, move
-
-    def delta_swap(bits, mask, delta):
-        x = (bits ^ (bits >> delta)) & mask
-        return bits ^ x ^ (x << delta)
-
-    def flip_diag(bbits, wbits, move):  # 対角線を軸に反転
-        bbits = delta_swap(bbits, 0x00000000F0F0F0F0, 28)
-        bbits = delta_swap(bbits, 0x0000CCCC0000CCCC, 14)
-        bbits = delta_swap(bbits, 0x00AA00AA00AA00AA,  7)
-        wbits = delta_swap(wbits, 0x00000000F0F0F0F0, 28)
-        wbits = delta_swap(wbits, 0x0000CCCC0000CCCC, 14)
-        wbits = delta_swap(wbits, 0x00AA00AA00AA00AA,  7)
-        move = move[1], move[0]
-        return bbits, wbits, move
-
-    def rotate_flip(color, b, w, move):
-        print(f"    ('{color}', 0x{b:016X}, 0x{w:016X}): {move},")
-        b2, w2, move2 = rotate_180(b, w, move)
-        print(f"    ('{color}', 0x{b2:016X}, 0x{w2:016X}): {move2},")
-        b3, w3, move3 = flip_diag(b, w, move)
-        print(f"    ('{color}', 0x{b3:016X}, 0x{w3:016X}): {move3},")
-        b4, w4, move4 = flip_diag(b2, w2, move2)
-        print(f"    ('{color}', 0x{b4:016X}, 0x{w4:016X}): {move4},")
-
-    # --------------------------------------------
-    # 兎定石
-    print('--- Test For Usagi Strategy ---')
-    joseki = AlphaBeta4J_TPW()
-
-    bitboard8 = BitBoard()
-    print(bitboard8)
-
-    # 1手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 2手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 3手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 4手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 5手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # Sローズ基本形
-    # 6手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 7手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (3, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 8手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 9手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 10手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 6)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 11手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (6, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 12手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # --------------------------------------------
-    # 虎定石
-    print('--- Test For Tora Strategy ---')
-    joseki = AlphaBeta4F9J_TPW()
-
-    bitboard8 = BitBoard()
-    print(bitboard8)
-
-    # 1手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 2手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 3手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # ローズビル基本形
-    # 4手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 5手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 3)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 6手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 7手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 8手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (1, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 9手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 1)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # --------------------------------------------
-    # 牛定石
-    print('--- Test For Ushi Strategy ---')
-    joseki = AbIF9J_B_TPWE()
-
-    bitboard8 = BitBoard()
-    print(bitboard8)
-
-    # 1手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 2手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 3手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 4手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 5手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 6手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 4)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 快速船基礎形
-    # 7手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 3)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 8手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (4, 6)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 9手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 10手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (4, 1)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 11手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 12手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 1)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # --------------------------------------------
-    # 鼠定石
-    print('--- Test For Nezumi Strategy ---')
-    joseki = AbIF9J_B_TPW()
-
-    bitboard8 = BitBoard()
-    print(bitboard8)
-
-    # 1手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 2手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 3手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 4手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 5手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (3, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 6手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 4)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 7手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (3, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 8手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 9手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 10手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 6)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 11手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (3, 6)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 12手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 13手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (6, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 14手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (6, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 15手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 16手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 1)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 17手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 1)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 18手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (4, 6)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # --------------------------------------------
-    # 猫定石
-    print('--- Test For Neko Strategy ---')
-    joseki = SwitchNsIF9J_B_TPWE()
-
-    bitboard8 = BitBoard()
-    print(bitboard8)
-
-    # 1手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 2手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 3手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 3)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 4手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 5手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 6手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 7手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 8手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 9手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 1)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 10手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 11手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 12手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 13手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (3, 6)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 14手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 7)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # --------------------------------------------
-    # 羊定石
-    print('--- Test For Hitsuji Strategy ---')
-    joseki = AbIF9J_B_TPWEC()
-
-    bitboard8 = BitBoard()
-    print(bitboard8)
-
-    # 1手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (5, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 2手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 3手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 3)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 4手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (3, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 5手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 6手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 3)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 7手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (4, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 8手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 2)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 9手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 5)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 10手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (5, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 11手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (6, 4)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 12手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (6, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 13手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (2, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 14手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (7, 5)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 15手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (6, 3)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 16手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (7, 4)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # 17手目
-    move = joseki.next_move('black', bitboard8)
-    print(move)
-    assert move == (7, 2)
-    bitboard8.put_disc('black', *move)
-    print(bitboard8)
-
-    # 18手目
-    move = joseki.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 4)
-    bitboard8.put_disc('white', *move)
-    print(bitboard8)
-
-    # -----------------------------------#
-    color, move = 'white', (2, 4)
-    b, w = bitboard8.get_bitboard_info()
-    rotate_flip(color, b, w, move)
-    import sys
-    sys.exit()
-    # -----------------------------------#
+# if __name__ == '__main__':
+#     from board import BitBoard
+#
+#     def rotate_180(bbits, wbits, move):  # 180°回転
+#         bbits_tmp = [['0' for i in range(8)] for j in range(8)]
+#         wbits_tmp = [['0' for i in range(8)] for j in range(8)]
+#
+#         check = 1 << 63
+#         for y in range(8):
+#             for x in range(8):
+#                 if bbits & check:
+#                     bbits_tmp[y][x] = '1'
+#                 if wbits & check:
+#                     wbits_tmp[y][x] = '1'
+#                 check >>= 1
+#
+#         import numpy as np
+#
+#         bbits_tmp = np.rot90(np.rot90(np.array(bbits_tmp)))
+#         wbits_tmp = np.rot90(np.rot90(np.array(wbits_tmp)))
+#         bbits = int(''.join(bbits_tmp.flatten()), 2)
+#         wbits = int(''.join(wbits_tmp.flatten()), 2)
+#         move = 7 - move[0], 7 - move[1]
+#
+#         return bbits, wbits, move
+#
+#     def delta_swap(bits, mask, delta):
+#         x = (bits ^ (bits >> delta)) & mask
+#         return bits ^ x ^ (x << delta)
+#
+#     def flip_diag(bbits, wbits, move):  # 対角線を軸に反転
+#         bbits = delta_swap(bbits, 0x00000000F0F0F0F0, 28)
+#         bbits = delta_swap(bbits, 0x0000CCCC0000CCCC, 14)
+#         bbits = delta_swap(bbits, 0x00AA00AA00AA00AA,  7)
+#         wbits = delta_swap(wbits, 0x00000000F0F0F0F0, 28)
+#         wbits = delta_swap(wbits, 0x0000CCCC0000CCCC, 14)
+#         wbits = delta_swap(wbits, 0x00AA00AA00AA00AA,  7)
+#         move = move[1], move[0]
+#         return bbits, wbits, move
+#
+#     def rotate_flip(color, b, w, move):
+#         print(f"    ('{color}', 0x{b:016X}, 0x{w:016X}): {move},")
+#         b2, w2, move2 = rotate_180(b, w, move)
+#         print(f"    ('{color}', 0x{b2:016X}, 0x{w2:016X}): {move2},")
+#         b3, w3, move3 = flip_diag(b, w, move)
+#         print(f"    ('{color}', 0x{b3:016X}, 0x{w3:016X}): {move3},")
+#         b4, w4, move4 = flip_diag(b2, w2, move2)
+#         print(f"    ('{color}', 0x{b4:016X}, 0x{w4:016X}): {move4},")
+#
+#     # --------------------------------------------
+#     # 兎定石
+#     print('--- Test For Usagi Strategy ---')
+#     joseki = AlphaBeta4J_TPW()
+#
+#     bitboard8 = BitBoard()
+#     print(bitboard8)
+#
+#     # 1手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 2手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 3手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 4手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 5手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # Sローズ基本形
+#     # 6手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 7手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (3, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 8手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 9手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 10手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 6)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 11手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (6, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 12手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # --------------------------------------------
+#     # 虎定石
+#     print('--- Test For Tora Strategy ---')
+#     joseki = AlphaBeta4F9J_TPW()
+#
+#     bitboard8 = BitBoard()
+#     print(bitboard8)
+#
+#     # 1手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 2手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 3手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # ローズビル基本形
+#     # 4手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 5手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 3)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 6手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 7手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 8手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (1, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 9手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 1)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # --------------------------------------------
+#     # 牛定石
+#     print('--- Test For Ushi Strategy ---')
+#     joseki = AbIF9J_B_TPWE()
+#
+#     bitboard8 = BitBoard()
+#     print(bitboard8)
+#
+#     # 1手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 2手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 3手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 4手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 5手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 6手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 4)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 快速船基礎形
+#     # 7手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 3)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 8手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (4, 6)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 9手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 10手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (4, 1)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 11手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 12手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 1)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # --------------------------------------------
+#     # 鼠定石
+#     print('--- Test For Nezumi Strategy ---')
+#     joseki = AbIF9J_B_TPW()
+#
+#     bitboard8 = BitBoard()
+#     print(bitboard8)
+#
+#     # 1手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 2手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 3手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 4手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 5手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (3, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 6手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 4)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 7手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (3, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 8手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 9手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 10手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 6)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 11手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (3, 6)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 12手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 13手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (6, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 14手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (6, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 15手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 16手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 1)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 17手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 1)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 18手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (4, 6)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # --------------------------------------------
+#     # 猫定石
+#     print('--- Test For Neko Strategy ---')
+#     joseki = SwitchNsIF9J_B_TPWE()
+#
+#     bitboard8 = BitBoard()
+#     print(bitboard8)
+#
+#     # 1手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 2手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 3手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 3)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 4手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 5手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 6手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 7手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 8手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 9手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 1)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 10手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 11手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 12手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 13手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (3, 6)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 14手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 7)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # --------------------------------------------
+#     # 羊定石
+#     print('--- Test For Hitsuji Strategy ---')
+#     joseki = AbIF9J_B_TPWEC()
+#
+#     bitboard8 = BitBoard()
+#     print(bitboard8)
+#
+#     # 1手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (5, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 2手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 3手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 3)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 4手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (3, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 5手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 6手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 3)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 7手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (4, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 8手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 2)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 9手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 5)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 10手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (5, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 11手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (6, 4)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 12手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (6, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 13手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (2, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 14手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (7, 5)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 15手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (6, 3)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 16手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (7, 4)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # 17手目
+#     move = joseki.next_move('black', bitboard8)
+#     print(move)
+#     assert move == (7, 2)
+#     bitboard8.put_disc('black', *move)
+#     print(bitboard8)
+#
+#     # 18手目
+#     move = joseki.next_move('white', bitboard8)
+#     print(move)
+#     assert move == (2, 4)
+#     bitboard8.put_disc('white', *move)
+#     print(bitboard8)
+#
+#     # -----------------------------------#
+#     color, move = 'white', (2, 4)
+#     b, w = bitboard8.get_bitboard_info()
+#     rotate_flip(color, b, w, move)
+#     import sys
+#     sys.exit()
+#     # -----------------------------------#

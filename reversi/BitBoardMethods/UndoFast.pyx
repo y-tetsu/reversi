@@ -11,68 +11,38 @@ MAXSIZE64 = 2**63 - 1
 def undo(board):
     """undo
     """
-    if sys.maxsize == MAXSIZE64:
-        return _undo_64bit(board)
+    size = board.size
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _undo_size8_64bit(board)
 
-    return _undo(board)
+    return _undo(size, board)
 
 
-cdef inline _undo_64bit(board):
-    """_undo_64bit
+cdef inline _undo_size8_64bit(board):
+    """_undo_size8_64bit
     """
     cdef:
-        unsigned int size, disc_num
-        unsigned long long flippable_discs, put
+        unsigned long long black_bitboard, white_bitboard, flippable_discs_num
+        unsigned int black_score, white_score
 
-    prev = board.prev.pop()
+    (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color) = board.prev.pop()
+    if black_bitboard is not None:
+        board._black_bitboard = black_bitboard
+        board._white_bitboard = white_bitboard
+        board._black_score = black_score
+        board._white_score = white_score
 
-    if prev:
-        size = board.size
-        flippable_discs, disc_num = prev['flippable_discs'], prev['disc_num']
-
-        put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
-
-        if prev['color'] == 'black':
-            board._black_bitboard ^= put | flippable_discs
-            board._white_bitboard ^= flippable_discs
-            board.score['black'] -= 1 + disc_num
-            board.score['white'] += disc_num
-        else:
-            board._white_bitboard ^= put | flippable_discs
-            board._black_bitboard ^= flippable_discs
-            board.score['black'] += disc_num
-            board.score['white'] -= 1 + disc_num
-
-    board._legal_moves_cache.clear()
-
-    return prev
+    return (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color)
 
 
-cdef inline _undo(board):
+cdef inline _undo(size, board):
     """_undo
     """
-    cdef:
-        unsigned int size, disc_num
+    (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color) = board.prev.pop()
+    if black_bitboard is not None:
+        board._black_bitboard = black_bitboard
+        board._white_bitboard = white_bitboard
+        board._black_score = black_score
+        board._white_score = white_score
 
-    prev = board.prev.pop()
-
-    if prev:
-        size = board.size
-        flippable_discs, disc_num = prev['flippable_discs'], prev['disc_num']
-
-        put = 1 << ((size*size-1)-(prev['y']*size+prev['x']))
-
-        if prev['color'] == 'black':
-            board._black_bitboard ^= put | flippable_discs
-            board._white_bitboard ^= flippable_discs
-            board.score['black'] -= 1 + disc_num
-            board.score['white'] += disc_num
-        else:
-            board._white_bitboard ^= put | flippable_discs
-            board._black_bitboard ^= flippable_discs
-            board.score['black'] += disc_num
-            board.score['white'] -= 1 + disc_num
-
-    board._legal_moves_cache.clear()
-
-    return prev
+    return (black_bitboard, white_bitboard, black_score, white_score, flippable_discs_num, color)

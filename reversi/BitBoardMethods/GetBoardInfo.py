@@ -14,12 +14,12 @@ def get_board_info(size, b, w):
         tmp = []
         for x in range(size):
             if b & mask:
-                tmp.append(1)
+                tmp += [1]
             elif w & mask:
-                tmp.append(-1)
+                tmp += [-1]
             else:
-                tmp.append(0)
+                tmp += [0]
             mask >>= 1
-        board_info.append(tmp)
+        board_info += [tmp]
 
     return board_info

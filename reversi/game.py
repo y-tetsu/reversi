@@ -30,7 +30,7 @@ class Game:
                         if self.cancel.event.is_set():
                             break
 
-                    legal_moves = list(self.board.get_legal_moves(player.color).keys())
+                    legal_moves = self.board.get_legal_moves(player.color)
 
                     if not legal_moves:
                         continue
@@ -66,7 +66,7 @@ class Game:
     def _judge(self):
         """judge
         """
-        black_num, white_num = self.board.score['black'], self.board.score['white']
+        black_num, white_num = self.board._black_score, self.board._white_score
 
         if black_num == white_num:
             self._draw()
@@ -93,7 +93,7 @@ class Game:
         self.result = GameResult(
             winlose,
             self.black_player.name, self.white_player.name,
-            self.board.score['black'], self.board.score['white'],
+            self.board._black_score, self.board._white_score,
         )
 
 

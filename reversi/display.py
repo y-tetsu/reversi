@@ -38,8 +38,8 @@ class ConsoleDisplay(AbstractDisplay):
     """Console Display"""
     def progress(self, board, black_player, white_player):
         """display progress"""
-        score_b = str(black_player) + ':' + str(board.score['black'])
-        score_w = str(white_player) + ':' + str(board.score['white'])
+        score_b = str(black_player) + ':' + str(board._black_score)
+        score_w = str(white_player) + ':' + str(board._white_score)
 
         print(score_b, score_w)
         print(board)
@@ -103,8 +103,8 @@ class WindowDisplay(AbstractDisplay):
 
     def progress(self, board, black_player, white_player):
         """display progress"""
-        for color in PLAYER_COLORS:
-            self.info.set_text(color, 'score', str(board.score[color]))
+        self.info.set_text('black', 'score', str(board._black_score))
+        self.info.set_text('white', 'score', str(board._white_score))
 
     def turn(self, player, legal_moves):
         """display turn"""

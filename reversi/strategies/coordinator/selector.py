@@ -10,9 +10,6 @@ class Selector(AbstractSelector):
     def select_moves(self, color, board, moves, scores, depth):
         """select_moves
         """
-        if moves is None:
-            return list(board.get_legal_moves(color, cache=True).keys())
-
         return moves
 
 

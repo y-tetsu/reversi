@@ -163,7 +163,7 @@ class TestDisplay(unittest.TestCase):
         with captured_stdout() as stdout:
             display.turn(Player('black', 'TestPlayer', None), Board().get_legal_moves('black'))
             lines = stdout.getvalue().splitlines()
-            self.assertEqual(lines, ['set_turn_text_on black', 'enable_moves {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}'])
+            self.assertEqual(lines, ['set_turn_text_on black', 'enable_moves [(3, 2), (2, 3), (5, 4), (4, 5)]'])
 
         # move
         player = Player('black', 'TestPlayer', None)
@@ -178,7 +178,7 @@ class TestDisplay(unittest.TestCase):
                 'set_move_text_off black',
                 'set_turn_text_off white',
                 'set_move_text_off white',
-                'disable_moves {(3, 2): [(3, 3)], (2, 3): [(3, 3)], (5, 4): [(4, 4)], (4, 5): [(4, 4)]}',
+                'disable_moves [(3, 2), (2, 3), (5, 4), (4, 5)]',
                 'enable_move 5 4',
                 'put_disc black 5 4',
                 'set_move_text_on black f 5',

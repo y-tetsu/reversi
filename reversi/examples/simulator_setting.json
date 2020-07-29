@@ -4,7 +4,7 @@
     "matches": 50,
     "processes": 2,
     "random_opening": 0,
-    "characters": [
+    "player_names": [
         "Unselfish",
         "Random",
         "Greedy"

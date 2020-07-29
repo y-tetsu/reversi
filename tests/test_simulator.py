@@ -45,7 +45,7 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(simulator.total, [])
         self.assertEqual(simulator.result_ratio, {})
 
-        # Setting File
+        # Setting File1
         json_file = './simulator_setting.json'
         simulator_setting = {
             "board_size": 4,
@@ -76,6 +76,51 @@ class TestSimulator(unittest.TestCase):
             self.assertEqual(simulator.white_players[index].name, strategy)
             self.assertIsInstance(simulator.white_players[index].strategy, type(players_info[strategy]))
 
+        self.assertEqual(simulator.game_results, [])
+        self.assertEqual(simulator.total, [])
+        self.assertEqual(simulator.result_ratio, {})
+
+        # Setting File2
+        json_file = './simulator_setting.json'
+        simulator_setting = {
+            "board_size": 12,
+            "board_type": 'board',
+            "matches": 500,
+            "processes": 1,
+            "random_opening": 4,
+            "player_names": [
+                "Random",
+                "Table",
+            ]
+        }
+        with open(json_file, 'w') as f:
+            json.dump(simulator_setting, f)
+
+        players_info = {
+            'Unselfish': Unselfish(),
+            'Random': Random(),
+            'Greedy': Greedy(),
+            'Table': Table(),
+        }
+        simulator = Simulator(players_info, json_file)
+
+        os.remove(json_file)
+
+        self.assertEqual(simulator.matches, 500)
+        self.assertEqual(simulator.board_size, 12)
+        self.assertEqual(simulator.board_type, "board")
+        self.assertEqual(simulator.processes, 1)
+        self.assertEqual(simulator.random_opening, 4)
+        self.assertEqual(len(simulator.black_players), 2)
+        self.assertEqual(len(simulator.white_players), 2)
+        self.assertEqual(simulator.black_players[0].name, "Random")
+        self.assertEqual(simulator.white_players[0].name, "Random")
+        self.assertEqual(simulator.black_players[1].name, "Table")
+        self.assertEqual(simulator.white_players[1].name, "Table")
+        self.assertIsInstance(simulator.black_players[0].strategy.base, type(Random()))
+        self.assertIsInstance(simulator.white_players[0].strategy.base, type(Random()))
+        self.assertIsInstance(simulator.black_players[1].strategy.base, type(Table()))
+        self.assertIsInstance(simulator.white_players[1].strategy.base, type(Table()))
         self.assertEqual(simulator.game_results, [])
         self.assertEqual(simulator.total, [])
         self.assertEqual(simulator.result_ratio, {})

@@ -5,9 +5,8 @@ import unittest
 import os
 
 from reversi.board import BitBoard
-from reversi.strategies import _FullReading, FullReading
-from reversi.strategies.alphabeta import _AlphaBeta_N, AlphaBeta_N
 from reversi.strategies.common import Measure
+from reversi.strategies import _AlphaBeta_N, AlphaBeta_N, _FullReading, FullReading
 
 
 class TestFullReading(unittest.TestCase):
@@ -67,35 +66,30 @@ class TestFullReading(unittest.TestCase):
         board._white_bitboard = 0x400011C0E4523900
         board.update_score()
         self.assertEqual(fullreading.next_move(color, board), (0, 0))
-        board._legal_moves_cache.clear()
 
         # pattern 2
         board._black_bitboard = 0x81878F170B470000
         board._white_bitboard = 0x7C387068F4381F3F
         board.update_score()
         self.assertEqual(fullreading.next_move(color, board), (6, 0))
-        board._legal_moves_cache.clear()
 
         # pattern 3
         board._black_bitboard = 0xF27FBF650158381E
         board._white_bitboard = 0x9AFEA6C4E0
         board.update_score()
         self.assertEqual(fullreading.next_move(color, board), (7, 7))
-        board._legal_moves_cache.clear()
 
         # pattern 4
         board._black_bitboard = 0x5C2353046C3874BA
         board._white_bitboard = 0x80DCACFB93850B00
         board.update_score()
         self.assertEqual(fullreading.next_move(color, board), (7, 0))
-        board._legal_moves_cache.clear()
 
         # pattern 5
         board._black_bitboard = 0x828522161C1C07FF
         board._white_bitboard = 0x4858DC69E3E3B800
         board.update_score()
         self.assertEqual(fullreading.next_move(color, board), (7, 2))
-        board._legal_moves_cache.clear()
 
         print()
         print(key, 'remain = 9')
@@ -117,7 +111,6 @@ class TestFullReading(unittest.TestCase):
         board._white_bitboard = 0x2009AFEA6C4E0
         board.update_score()
         self.assertEqual(fullreading.next_move(color, board), (7, 0))
-        board._legal_moves_cache.clear()
 
         print()
         print(key, 'remain = 10')

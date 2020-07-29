@@ -5,6 +5,28 @@ from reversi.strategies.common import AbstractEvaluator
 from reversi.strategies.coordinator import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer, EdgeScorer, CornerScorer
 
 
+class Evaluator(AbstractEvaluator):
+    """Evaluator
+    """
+    def __init__(self, separated=[], combined=[]):
+        self.separated = separated
+        self.combined = combined
+
+    def evaluate(self, *args, **kwargs):
+        """evaluate
+        """
+        for scorer in self.separated:
+            score = scorer.get_score(*args, **kwargs)
+            if score is not None:
+                return score
+
+        score = 0
+        for scorer in self.combined:
+            score += scorer.get_score(*args, **kwargs)
+
+        return score
+
+
 class Evaluator_T(AbstractEvaluator):
     """Evaluator_T
 
@@ -16,7 +38,7 @@ class Evaluator_T(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['color'], kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_P(AbstractEvaluator):
@@ -30,7 +52,7 @@ class Evaluator_P(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['legal_moves_b'], kwargs['legal_moves_w'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_O(AbstractEvaluator):
@@ -44,7 +66,7 @@ class Evaluator_O(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_W(AbstractEvaluator):
@@ -58,7 +80,7 @@ class Evaluator_W(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'], kwargs['legal_moves_b'], kwargs['legal_moves_w'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_N(AbstractEvaluator):
@@ -72,7 +94,7 @@ class Evaluator_N(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_E(AbstractEvaluator):
@@ -86,7 +108,7 @@ class Evaluator_E(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_C(AbstractEvaluator):
@@ -100,7 +122,7 @@ class Evaluator_C(AbstractEvaluator):
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        return self.scorer.get_score(kwargs['board'])
+        return self.scorer.get_score(*args, **kwargs)
 
 
 class Evaluator_TP(AbstractEvaluator):

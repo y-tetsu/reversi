@@ -35,11 +35,11 @@ class TestGame(unittest.TestCase):
 
         class TopLeft(AbstractStrategy):
             def next_move(self, color, board):
-                return list(board.get_legal_moves(color).keys())[0]
+                return board.get_legal_moves(color)[0]
 
         class BottomRight(AbstractStrategy):
             def next_move(self, color, board):
-                return list(board.get_legal_moves(color).keys())[-1]
+                return board.get_legal_moves(color)[-1]
 
         class Foul(AbstractStrategy):
             def next_move(self, color, board):
@@ -406,7 +406,7 @@ class TestGame(unittest.TestCase):
                 '   a b c d',
                 ' 1□□□□',
                 ' 2□●〇□',
-                ' 3□〇●□',
+                ' 3□〇〇□',
                 ' 4□□□□',
                 ' 〇Foul ●BottomRight',
                 'display.foul 〇Foul',
@@ -416,8 +416,8 @@ class TestGame(unittest.TestCase):
             self.assertEqual(game4.result.winlose, Game.WHITE_WIN)
             self.assertEqual(game4.result.black_name, 'Foul')
             self.assertEqual(game4.result.white_name, 'BottomRight')
-            self.assertEqual(game4.result.black_num, 2)
-            self.assertEqual(game4.result.white_num, 2)
+            self.assertEqual(game4.result.black_num, 3)
+            self.assertEqual(game4.result.white_num, 1)
 
         # play-white-foul
         with captured_stdout() as stdout:

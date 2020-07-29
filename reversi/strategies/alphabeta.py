@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-"""
-アルファベータ法(ネガアルファ法)
+"""AlphaBeta(NegaAlpha)
 """
 
 from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_N
+from reversi.strategies.coordinator import Evaluator_N
 
 
 class _AlphaBeta(AbstractStrategy):
@@ -23,7 +21,7 @@ class _AlphaBeta(AbstractStrategy):
         """
         次の一手
         """
-        moves = board.get_legal_moves(color, cache=True).keys()  # 手の候補
+        moves = board.get_legal_moves(color)  # 手の候補
         best_move, _ = self.get_best_move(color, board, moves, self.depth)
 
         return best_move
@@ -53,12 +51,10 @@ class _AlphaBeta(AbstractStrategy):
         """
         手を打った時の評価値を取得
         """
-        legal_moves_backup = board.get_legal_moves(color, cache=True)        # 手の候補
         board.put_disc(color, *move)                                         # 一手打つ
         next_color = 'white' if color == 'black' else 'black'                # 相手の色
         score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
         board.undo()                                                         # 打った手を戻す
-        board._legal_moves_cache[color] = legal_moves_backup                 # recover cache
 
         return score
 
@@ -84,8 +80,7 @@ class _AlphaBeta(AbstractStrategy):
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 評価値を算出
-        for move in legal_moves.keys():
-            board._legal_moves_cache[color] = legal_moves  # recover cache
+        for move in legal_moves:
             board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
@@ -133,51 +128,3 @@ class AlphaBeta_N(AlphaBeta):
     """
     def __init__(self, depth, evaluator=Evaluator_N()):
         super().__init__(depth=depth, evaluator=evaluator)
-
-
-class AlphaBeta_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPW()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta_TPWE(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWEにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPWE()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta_TPWEC(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWECにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPWEC()):
-        super().__init__(evaluator=evaluator)
-
-
-class AlphaBeta3_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta4_TPW(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class AlphaBeta4_TPWE(AlphaBeta):
-    """
-    AlphaBeta法でEvaluator_TPWEにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPWE()):
-        super().__init__(depth, evaluator)

@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-"""
-ネガマックス法
+"""NegaMax
 """
 
 import random
 
 from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
-from reversi.strategies.coordinator import Evaluator_TPW, Evaluator_TPOW
 
 
 class _NegaMax(AbstractStrategy):
@@ -28,9 +25,8 @@ class _NegaMax(AbstractStrategy):
         moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
-        legal_moves = board.get_legal_moves(color, cache=True)
-        for move in legal_moves.keys():
-            board._legal_moves_cache[color] = legal_moves  # recover cache
+        legal_moves = board.get_legal_moves(color)
+        for move in legal_moves:
             board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                              # 打った手を戻す
@@ -70,8 +66,7 @@ class _NegaMax(AbstractStrategy):
 
         # 評価値を算出
         max_score = self._MIN
-        for move in legal_moves.keys():
-            board._legal_moves_cache[color] = legal_moves  # recover cache
+        for move in legal_moves:
             board.put_disc(color, *move)
             score = -self.get_score(next_color, board, depth-1)
             board.undo()
@@ -101,51 +96,3 @@ class NegaMax(_NegaMax):
         評価値の取得
         """
         return super().get_score(color, board, depth)
-
-
-class NegaMax1_TPOW(NegaMax):
-    """
-    NegaMax法でEvaluator_TPOWにより次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaMax2_TPOW(NegaMax):
-    """
-    NegaMax法でEvaluator_TPOWにより次の手を決める(2手読み)
-    """
-    def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class _NegaMax3_TPW(_NegaMax):
-    """
-    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaMax3_TPW(NegaMax):
-    """
-    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaMax3_TPOW(NegaMax):
-    """
-    NegaMax法でEvaluator_TPOWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaMax4_TPOW(NegaMax):
-    """
-    NegaMax法でEvaluator_TPOWにより次の手を決める(4手読み)
-    """
-    def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)

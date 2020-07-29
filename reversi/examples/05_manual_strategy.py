@@ -25,7 +25,7 @@ class Manual(strategies.common.AbstractStrategy):
             board (obj) : Board(BitBoard) object
         """
         move = None
-        legal_moves = list(board.get_legal_moves(color, cache=True).keys())
+        legal_moves = board.get_legal_moves(color)
         size = board.size
 
         # Preferentially get corners
@@ -54,9 +54,8 @@ class Manual(strategies.common.AbstractStrategy):
         return move
 
 
-if __name__ == '__main__':
-    Reversi(
-        {
-            'Manual': Manual(),
-        }
-    ).start()
+Reversi(
+    {
+        'Manual': Manual(),
+    }
+).start()

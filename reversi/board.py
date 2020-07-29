@@ -18,6 +18,10 @@ class AbstractBoard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def get_flippable_discs(self, color, x, y):
+        pass
+
+    @abc.abstractmethod
     def put_disc(self, color, x, y):
         pass
 
@@ -56,13 +60,13 @@ class Board(AbstractBoard):
 
         # 石とスコアの初期設定
         self.disc = {}
-        self.score = {}
         factory = DiscFactory()
-
         for color in ('black', 'white', 'blank'):
             self.disc[color] = factory.create(color)
-            if color != 'blank':
-                self.score[color] = 2
+
+        # スコアの初期設定
+        self._black_score = 2
+        self._white_score = 2
 
         # 前回の手
         self.prev = []
@@ -75,9 +79,6 @@ class Board(AbstractBoard):
         self._board[center-1][center-1] = self.disc['white']
         self._board[center][center] = self.disc['white']
 
-        # 置ける場所のキャッシュ
-        self._legal_moves_cache = {}
-
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
         body = ''
@@ -86,36 +87,27 @@ class Board(AbstractBoard):
 
         return header + body
 
-    def get_legal_moves(self, color, cache=False):
+    def get_legal_moves(self, color):
         """get_legal_moves
 
         Args:
             color : player's color
-            cache : True if cache use
 
         Returns:
-            legal_moves
+            legal_moves list
         """
-        # if cache option is True and cache available, return cache
-        if cache and color in self._legal_moves_cache:
-            return self._legal_moves_cache[color]
-
-        self._legal_moves_cache.clear()
-        legal_moves = {}
-
+        legal_moves = []
         for y in range(self.size):
             for x in range(self.size):
-                flippable_discs = self._get_flippable_discs(color, x, y)
+                flippable_discs = self.get_flippable_discs(color, x, y)
 
                 if flippable_discs:
-                    legal_moves[(x, y)] = flippable_discs
-
-        self._legal_moves_cache[color] = legal_moves
+                    legal_moves += [(x, y)]
 
         return legal_moves
 
-    def _get_flippable_discs(self, color, x, y):
-        """_get_flippable_discs
+    def get_flippable_discs(self, color, x, y):
+        """get_flippable_discs
 
                指定座標のひっくり返せる石の場所をすべて返す
         """
@@ -182,29 +174,40 @@ class Board(AbstractBoard):
 
                指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
         """
-        legal_moves = self.get_legal_moves(color, cache=True)
-        if (x, y) in legal_moves:
-            self._board[y][x] = self.disc[color]  # 指定座標に指定した色の石を置く
-            flippable_discs = legal_moves[(x, y)]
+        if not self._in_range(x, y):
+            return 0
 
-            # ひっくり返せる場所に指定した色の石を変更する
-            for tmp_x, tmp_y, in flippable_discs:
-                self._board[tmp_y][tmp_x] = self.disc[color]
+        flippable_discs = self.get_flippable_discs(color, x, y)
 
-            self.update_score()
+        # 指定座標に石を置く
+        self._board[y][x] = self.disc[color]
 
-            # 打った手の記録
-            self.prev.append({'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs})
+        # ひっくり返せる場所に石を置く
+        for tmp_x, tmp_y, in flippable_discs:
+            self._board[tmp_y][tmp_x] = self.disc[color]
 
-            return flippable_discs
+        self.update_score()
 
-        return []
+        # 打った手の記録
+        self.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs}]
+
+        # 返した石のビット
+        ret = 0
+        size = self.size
+        mask = 1 << (size*size-1)
+        for y in range(self.size):
+            for x in range(self.size):
+                if (x, y) in flippable_discs:
+                    ret |= mask
+                mask >>= 1
+
+        return ret
 
     def update_score(self):
         """update_score
         """
-        for color in ('black', 'white'):
-            self.score[color] = sum([row.count(self.disc[color]) for row in self._board])
+        self._black_score = sum([row.count(self.disc['black']) for row in self._board])
+        self._white_score = sum([row.count(self.disc['white']) for row in self._board])
 
     def get_board_info(self):
         """get_board_info
@@ -215,13 +218,13 @@ class Board(AbstractBoard):
 
             for col in row:
                 if col == self.disc['black']:
-                    tmp.append(1)
+                    tmp += [1]
                 elif col == self.disc['white']:
-                    tmp.append(-1)
+                    tmp += [-1]
                 elif col == self.disc['blank']:
-                    tmp.append(0)
+                    tmp += [0]
 
-            board_info.append(tmp)
+            board_info += [tmp]
 
         return board_info
 
@@ -258,8 +261,6 @@ class Board(AbstractBoard):
 
             self.update_score()
 
-        self._legal_moves_cache.clear()
-
         return prev
 
 
@@ -273,14 +274,15 @@ class BitBoard(AbstractBoard):
         # ボードサイズの初期設定
         self.size = size
 
-        # 石とスコアの初期設定
-        self.disc, self.score = {}, {}
+        # 石の初期設定
+        self.disc = {}
         factory = DiscFactory()
-
         for color in ('black', 'white', 'blank'):
             self.disc[color] = factory.create(color)
-            if color != 'blank':
-                self.score[color] = 2
+
+        # スコアの初期設定
+        self._black_score = 2
+        self._white_score = 2
 
         # 前回の手
         self.prev = []
@@ -308,9 +310,6 @@ class BitBoard(AbstractBoard):
             int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
         )
 
-        # 置ける場所のキャッシュ
-        self._legal_moves_cache = {}
-
     def __str__(self):
         size = self.size
         header = '   ' + ' '.join([chr(97 + i) for i in range(size)]) + '\n'
@@ -330,26 +329,23 @@ class BitBoard(AbstractBoard):
 
         return header + body
 
-    def get_legal_moves(self, color, cache=False):
+    def get_legal_moves(self, color):
         """get_legal_moves
 
         Args:
             color : player's color
-            cache : True if cache use
 
         Returns:
-            legal_moves
+            legal_moves list
         """
-        # if cache option is True and cache available, return cache
-        if cache and color in self._legal_moves_cache:
-            return self._legal_moves_cache[color]
+        return BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
 
-        self._legal_moves_cache.clear()
+    def get_flippable_discs(self, color, x, y):
+        """get_flippable_discs
 
-        ret = BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
-        self._legal_moves_cache[color] = ret
-
-        return ret
+               指定座標のひっくり返せる石の場所をすべて返す
+        """
+        return BitBoardMethods.get_flippable_discs(color, self.size, self._black_bitboard, self._white_bitboard, x, y, self._mask)
 
     def put_disc(self, color, x, y):
         """put_disc
@@ -361,15 +357,15 @@ class BitBoard(AbstractBoard):
     def update_score(self):
         """update_score
         """
-        self.score['black'], self.score['white'] = 0, 0
+        self._black_score, self._white_score = 0, 0
         size = self.size
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
                 if self._black_bitboard & mask:
-                    self.score['black'] += 1
+                    self._black_score += 1
                 elif self._white_bitboard & mask:
-                    self.score['white'] += 1
+                    self._white_score += 1
                 mask >>= 1
 
     def get_board_info(self):

@@ -15,7 +15,7 @@ class TestSelector(unittest.TestCase):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
         selector = Selector()
-        moves = selector.select_moves('white', board, None, None, None)
+        moves = selector.select_moves('white', board, board.get_legal_moves('white'), None, None)
 
         self.assertEqual(moves, [(2, 2), (4, 2), (2, 4)])
 
@@ -42,8 +42,8 @@ class TestSelector(unittest.TestCase):
 
         moves = board.get_legal_moves('black')
         best_move, scores = strategy.get_best_move('black', board, moves, 4)
-        moves = selector.select_moves('black', board, None, scores, 2)
+        moves = selector.select_moves('black', board, board.get_legal_moves('black'), scores, 2)
         self.assertEqual(moves, [(0, 3), (2, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (0, 7), (2, 7)])
 
-        moves = selector.select_moves('black', board, None, scores, 5)
+        moves = selector.select_moves('black', board, board.get_legal_moves('black'), scores, 5)
         self.assertEqual(moves, [(2, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (0, 7), (2, 7)])
