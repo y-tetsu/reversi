@@ -137,7 +137,7 @@ Reversi(
 
 
 ### AI戦略を自作する
-続いて、本ライブラリを使って、独自のAIを自作(プログラミング)しアプリケーションに追加する方法を示します。
+続いて、本ライブラリを使って独自のAIを自作(プログラミング)し、アプリケーションに追加する方法を示します。
 
 
 #### 戦略クラスの作り方
@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
 #### シミュレータの設定ファイル
 シミュレータの設定ファイル(JSON形式)の作成例は下記のとおりです。
-Simulatorの第二引数に、本ファイル名(任意。上記例では`./simulator_setting.json`)を指定してください。
+Simulatorの第二引数に、本ファイル名(上記例では`./simulator_setting.json`ですが任意)を指定してください。
 
 ```JSON
 {
@@ -288,7 +288,7 @@ Simulatorの第二引数に、本ファイル名(任意。上記例では`./simu
  |パラメータ名|説明|
  |:---|:---|
  |board_size|盤面のサイズを指定してください。|
- |board_type|盤面の種類(board または bitboard)を選択してください。bitboardの方が高速で通常は変更不要です。|
+ |board_type|盤面の種類(board または bitboard)を選択してください。bitboardの方が高速で通常はこちらを使用してください。|
  |matches|AI同士の対戦回数を指定してください。100を指定した場合、AIの各組み合わせにつき先手と後手で100試合ずつ対戦する動作となります。|
  |processes|並列実行数を指定してください。AI同士の対戦組み合わせ別に並列実行します。お使いのPCのコア数に合わせて必要に応じて設定してください。|
  |random_opening|対戦開始からランダムに打つ手数を指定してください。指定された手数まではランダムに試合を進行します。不要な場合は0を指定してください。|
@@ -426,6 +426,8 @@ print(legal_moves)
 ```
 [(3, 2), (2, 3), (5, 4), (4, 5)]
 ```
+下図の黄色のマスの位置が、着手可能な位置として返されます。<br>
+![legal_mvoes](https://raw.githubusercontent.com/y-tetsu/reversi/imalegal_mvoes.png)
 
 ##### get_flippable_discs
 指定位置に着手した場合の、ひっくり返せる石を返します。
@@ -445,6 +447,8 @@ print(flippable_discs)
 ```
 [(4, 4)]
 ```
+下図の黄色のマスの位置が、ひっくり返せる石の位置として返されます。<br>
+![flippable_discs](https://raw.githubusercontent.com/y-tetsu/reversi/flippable_discs.png)
 
 ##### get_board_info
 盤面に置かれた石の状態を"2次元リスト"で返します。
