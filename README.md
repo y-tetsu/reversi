@@ -426,7 +426,7 @@ print(legal_moves)
 ```
 [(3, 2), (2, 3), (5, 4), (4, 5)]
 ```
-下図の黄色のマスの位置が、着手可能な位置として返されます。<br>
+この場合、下図の黄色のマスの位置が、着手可能な位置として返されます。<br>
 ![legal_moves](https://raw.githubusercontent.com/y-tetsu/reversi/images/legal_moves.png)
 
 ##### get_flippable_discs
@@ -447,7 +447,7 @@ print(flippable_discs)
 ```
 [(4, 4)]
 ```
-下図の黄色のマスの位置が、ひっくり返せる石の位置として返されます。<br>
+この場合、下図の黄色のマスの位置が、ひっくり返せる石の位置として返されます。<br>
 ![flippable_discs](https://raw.githubusercontent.com/y-tetsu/reversi/images/flippable_discs.png)
 
 ##### get_board_info
