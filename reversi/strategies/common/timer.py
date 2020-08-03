@@ -60,8 +60,7 @@ class Timer:
         タイムアウト発生有無
         """
         key = obj.__class__.__name__ + str(os.getpid())
-
         if key in Timer.timeout_flag:
-            return Timer.timeout_flag[obj.__class__.__name__ + str(os.getpid())]
+            return Timer.timeout_flag[key]
 
         return False
