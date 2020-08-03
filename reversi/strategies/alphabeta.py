@@ -5,7 +5,7 @@ from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 from reversi.strategies.coordinator import Evaluator_N
 
 
-class _AlphaBeta(AbstractStrategy):
+class _AlphaBeta_(AbstractStrategy):
     """
     AlphaBeta法で次の手を決める
     """
@@ -16,7 +16,6 @@ class _AlphaBeta(AbstractStrategy):
         self.depth = depth
         self.evaluator = evaluator
 
-    @Measure.time
     def next_move(self, color, board):
         """
         次の一手
@@ -58,7 +57,6 @@ class _AlphaBeta(AbstractStrategy):
 
         return score
 
-    @Measure.countup
     def _get_score(self, color, board, alpha, beta, depth):
         """
         評価値の取得
@@ -95,26 +93,57 @@ class _AlphaBeta(AbstractStrategy):
         return alpha
 
 
-class AlphaBeta(_AlphaBeta):
+class _AlphaBeta(_AlphaBeta_):
+    """AlphaBeta + Measure
     """
-    AlphaBeta法で次の手を決める(時間制限付き)
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Measure.countup
+    def _get_score(self, color, board, alpha, beta, depth):
+        """_get_score
+        """
+        return super()._get_score(color, board, alpha, beta, depth)
+
+
+class AlphaBeta_(_AlphaBeta_):
+    """AlphaBeta + Timer
     """
     @Timer.start(CPU_TIME, -10000000)
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         return super().next_move(color, board)
 
     @Timer.timeout
     def _get_score(self, color, board, alpha, beta, depth):
-        """
-        評価値の取得
+        """_get_score
         """
         return super()._get_score(color, board, alpha, beta, depth)
 
 
-class _AlphaBeta_N(_AlphaBeta):
+class AlphaBeta(_AlphaBeta_):
+    """AlphaBeta + Measure + Timer
+    """
+    @Timer.start(CPU_TIME, -10000000)
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Timer.timeout
+    @Measure.countup
+    def _get_score(self, color, board, alpha, beta, depth):
+        """_get_score
+        """
+        return super()._get_score(color, board, alpha, beta, depth)
+
+
+class _AlphaBetaN_(_AlphaBeta_):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
     """
@@ -122,7 +151,23 @@ class _AlphaBeta_N(_AlphaBeta):
         super().__init__(depth=depth, evaluator=evaluator)
 
 
-class AlphaBeta_N(AlphaBeta):
+class _AlphaBetaN(_AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_Nにより次の手を決める
+    """
+    def __init__(self, depth, evaluator=Evaluator_N()):
+        super().__init__(depth=depth, evaluator=evaluator)
+
+
+class AlphaBetaN_(AlphaBeta_):
+    """
+    AlphaBeta法でEvaluator_Nにより次の手を決める
+    """
+    def __init__(self, depth, evaluator=Evaluator_N()):
+        super().__init__(depth=depth, evaluator=evaluator)
+
+
+class AlphaBetaN(AlphaBeta):
     """
     AlphaBeta法でEvaluator_Nにより次の手を決める
     """

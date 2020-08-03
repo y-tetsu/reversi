@@ -2,14 +2,13 @@
 """
 
 from reversi.strategies.common import Timer, Measure, CPU_TIME
-from reversi.strategies.alphabeta import _AlphaBeta
+from reversi.strategies.alphabeta import _AlphaBeta_
 
 
-class _NegaScout(_AlphaBeta):
+class _NegaScout_(_AlphaBeta_):
     """
     NegaScout法で次の手を決める
     """
-    @Measure.countup
     def _get_score(self, color, board, alpha, beta, depth):
         """
         評価値の取得
@@ -56,20 +55,51 @@ class _NegaScout(_AlphaBeta):
         return alpha
 
 
-class NegaScout(_NegaScout):
+class _NegaScout(_NegaScout_):
+    """NegaScout + Measure
     """
-    NegaScout法で次の手を決める(時間制限付き)
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Measure.countup
+    def _get_score(self, color, board, alpha, beta, depth):
+        """_get_score
+        """
+        return super()._get_score(color, board, alpha, beta, depth)
+
+
+class NegaScout_(_NegaScout_):
+    """NegaScout + Timer
     """
     @Timer.start(CPU_TIME, -10000000)
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         return super().next_move(color, board)
 
     @Timer.timeout
     def _get_score(self, color, board, alpha, beta, depth):
+        """_get_score
         """
-        評価値の取得
+        return super()._get_score(color, board, alpha, beta, depth)
+
+
+class NegaScout(_NegaScout_):
+    """NegaScout + Measure + Timer
+    """
+    @Timer.start(CPU_TIME, -10000000)
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Timer.timeout
+    @Measure.countup
+    def _get_score(self, color, board, alpha, beta, depth):
+        """_get_score
         """
         return super()._get_score(color, board, alpha, beta, depth)

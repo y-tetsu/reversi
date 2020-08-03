@@ -3,13 +3,13 @@ from ..strategies.user import ConsoleUserInput, WindowUserInput
 from ..strategies.easy import Random, Greedy, Unselfish, SlowStarter
 from ..strategies.table import Table
 from ..strategies.montecarlo import MonteCarlo
-from ..strategies.minmax import MinMax
-from ..strategies.negamax import _NegaMax, NegaMax
-from ..strategies.alphabeta import _AlphaBeta, AlphaBeta, _AlphaBeta_N, AlphaBeta_N
+from ..strategies.minmax import _MinMax_, MinMax
+from ..strategies.negamax import _NegaMax_, _NegaMax, NegaMax_, NegaMax
+from ..strategies.alphabeta import _AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta, _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN
 from ..strategies.negascout import _NegaScout, NegaScout
 from ..strategies.switch import Switch
 from ..strategies.joseki import Usagi, Tora, Ushi, Nezumi, Neko, Hitsuji
-from ..strategies.fullreading import _FullReading, FullReading
+from ..strategies.fullreading import _FullReading_, _FullReading, FullReading_, FullReading
 from ..strategies.iterative import IterativeDeepning
 from ..strategies.randomopening import RandomOpening
 from ..strategies.external import External
@@ -33,6 +33,7 @@ __all__ = [
     'Unselfish',
     'SlowStarter',
     'Table',
+    '_MinMax_',
     'MinMax',
     'MinMax1_T',
     'MinMax2_T',
@@ -53,17 +54,23 @@ __all__ = [
     'MinMax2_TPOW',
     'MinMax3_TPOW',
     'MinMax4_TPOW',
+    '_NegaMax_',
     '_NegaMax',
+    'NegaMax_',
     'NegaMax',
     'NegaMax1_TPOW',
     'NegaMax2_TPOW',
     'NegaMax3_TPW',
     'NegaMax3_TPOW',
     'NegaMax4_TPOW',
+    '_AlphaBeta_',
     '_AlphaBeta',
+    'AlphaBeta_',
     'AlphaBeta',
-    '_AlphaBeta_N',
-    'AlphaBeta_N',
+    '_AlphaBetaN_',
+    '_AlphaBetaN',
+    'AlphaBetaN_',
+    'AlphaBetaN',
     'AlphaBeta3_TPW',
     'AlphaBeta4_TPW',
     '_NegaScout',
@@ -74,7 +81,9 @@ __all__ = [
     'IterativeDeepning',
     'AbI_B_TPW',
     'NsI_B_TPW',
+    '_FullReading_',
     '_FullReading',
+    'FullReading_',
     'FullReading',
     'AlphaBeta4F9_TPW',
     'AbIF9_B_TPW',

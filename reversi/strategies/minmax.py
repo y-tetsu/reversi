@@ -6,7 +6,7 @@ import random
 from reversi.strategies.common import Measure, AbstractStrategy
 
 
-class MinMax(AbstractStrategy):
+class _MinMax_(AbstractStrategy):
     """decide next move by MinMax method
     """
     def __init__(self, depth=3, evaluator=None):
@@ -16,7 +16,6 @@ class MinMax(AbstractStrategy):
         self.depth = depth
         self.evaluator = evaluator
 
-    @Measure.time
     def next_move(self, color, board):
         """next_move
         """
@@ -38,7 +37,6 @@ class MinMax(AbstractStrategy):
 
         return random.choice(next_moves[best_score])  # random choice if many best scores
 
-    @Measure.countup
     def get_score(self, color, board, depth):
         """get_score
         """
@@ -64,3 +62,19 @@ class MinMax(AbstractStrategy):
             best_score = max(best_score, score) if color == 'black' else min(best_score, score)
 
         return best_score
+
+
+class MinMax(_MinMax_):
+    """MinMax + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Measure.countup
+    def get_score(self, color, board, depth):
+        """get_score
+        """
+        return super().get_score(color, board, depth)

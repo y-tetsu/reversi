@@ -6,7 +6,7 @@ import random
 from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
 
 
-class _NegaMax(AbstractStrategy):
+class _NegaMax_(AbstractStrategy):
     """
     NegaMax法で次の手を決める
     """
@@ -16,7 +16,6 @@ class _NegaMax(AbstractStrategy):
         self.depth = depth
         self.evaluator = evaluator
 
-    @Measure.time
     def next_move(self, color, board):
         """
         次の一手
@@ -43,7 +42,6 @@ class _NegaMax(AbstractStrategy):
 
         return random.choice(moves[max_score])  # 複数候補がある場合はランダムに選ぶ
 
-    @Measure.countup
     def get_score(self, color, board, depth):
         """
         評価値の取得
@@ -79,20 +77,51 @@ class _NegaMax(AbstractStrategy):
         return max_score
 
 
-class NegaMax(_NegaMax):
+class _NegaMax(_NegaMax_):
+    """NegaMax + Measure
     """
-    NegaMax法で次の手を決める(時間制限付き)
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Measure.countup
+    def get_score(self, color, board, depth):
+        """get_score
+        """
+        return super().get_score(color, board, depth)
+
+
+class NegaMax_(_NegaMax_):
+    """NegaMax + Timer
     """
     @Timer.start(CPU_TIME, -10000000)
     def next_move(self, color, board):
-        """
-        次の一手
+        """next_move
         """
         return super().next_move(color, board)
 
     @Timer.timeout
     def get_score(self, color, board, depth):
+        """get_score
         """
-        評価値の取得
+        return super().get_score(color, board, depth)
+
+
+class NegaMax(_NegaMax_):
+    """NegaMax + Measure + Timer
+    """
+    @Timer.start(CPU_TIME, -10000000)
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+    @Timer.timeout
+    @Measure.countup
+    def get_score(self, color, board, depth):
+        """get_score
         """
         return super().get_score(color, board, depth)

@@ -6,7 +6,7 @@ import os
 
 from reversi.board import BitBoard
 from reversi.strategies.common import Measure
-from reversi.strategies import _AlphaBeta_N, AlphaBeta_N, _FullReading, FullReading
+from reversi.strategies import _AlphaBetaN, AlphaBetaN, _FullReading, FullReading
 
 
 class TestFullReading(unittest.TestCase):
@@ -22,12 +22,12 @@ class TestFullReading(unittest.TestCase):
 
         self.assertEqual(fullreading.remain, remain)
         self.assertTrue(isinstance(fullreading.base, Test))
-        self.assertTrue(isinstance(fullreading.fullreading, AlphaBeta_N))
+        self.assertTrue(isinstance(fullreading.fullreading, AlphaBetaN))
         self.assertEqual(fullreading.fullreading.depth, remain)
 
         self.assertEqual(_fullreading.remain, remain)
         self.assertTrue(isinstance(_fullreading.base, Test))
-        self.assertTrue(isinstance(_fullreading.fullreading, _AlphaBeta_N))
+        self.assertTrue(isinstance(_fullreading.fullreading, _AlphaBetaN))
         self.assertEqual(_fullreading.fullreading.depth, remain)
 
     def test_fullreading_next_move(self):

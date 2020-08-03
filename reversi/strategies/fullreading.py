@@ -2,22 +2,20 @@
 """
 
 from reversi.strategies.common import Measure, AbstractStrategy
-from reversi.strategies import _AlphaBeta_N, AlphaBeta_N
+from reversi.strategies import _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN
 
 
-class FullReading(AbstractStrategy):
-    """
-    終盤完全読み
+class _FullReading_(AbstractStrategy):
+    """終盤完全読み
     """
     def __init__(self, remain=None, base=None):
         self.remain = remain
-        self.fullreading = AlphaBeta_N(depth=remain)
+        self.fullreading = _AlphaBetaN_(depth=remain)
         self.base = base
 
     @Measure.time
     def next_move(self, color, board):
-        """
-        次の一手
+        """次の一手
         """
         remain = (board.size * board.size) - (board._black_score + board._white_score)
 
@@ -28,11 +26,40 @@ class FullReading(AbstractStrategy):
         return self.base.next_move(color, board)
 
 
-class _FullReading(FullReading):
-    """
-    終盤完全読み(時間制限なし)
+class _FullReading(_FullReading_):
+    """終盤完全読み + Measure
     """
     def __init__(self, remain=None, base=None):
         self.remain = remain
-        self.fullreading = _AlphaBeta_N(depth=remain)
+        self.fullreading = _AlphaBetaN(depth=remain)
         self.base = base
+
+    @Measure.time
+    def next_move(self, color, board):
+        """次の一手
+        """
+        return super().next_move(color, board)
+
+
+class FullReading_(_FullReading_):
+    """終盤完全読み + Timer
+    """
+    def __init__(self, remain=None, base=None):
+        self.remain = remain
+        self.fullreading = AlphaBetaN_(depth=remain)
+        self.base = base
+
+
+class FullReading(_FullReading_):
+    """終盤完全読み + Measure + Timer
+    """
+    def __init__(self, remain=None, base=None):
+        self.remain = remain
+        self.fullreading = AlphaBetaN(depth=remain)
+        self.base = base
+
+    @Measure.time
+    def next_move(self, color, board):
+        """次の一手
+        """
+        return super().next_move(color, board)
