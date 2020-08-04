@@ -10,7 +10,7 @@ import reversi.strategies.coordinator as coord
 class TestEvaluator(unittest.TestCase):
     """evaluator
     """
-    def test_evaluator_init(self):
+    def test_general_evaluator_init(self):
         evaluator = coord.Evaluator()
         self.assertEqual(evaluator.separated, [])
         self.assertEqual(evaluator.combined, [])
@@ -21,7 +21,7 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(evaluator.separated, separated)
         self.assertEqual(evaluator.combined, combined)
 
-    def test_evaluator_evaluate(self):
+    def test_general_evaluator_evaluate(self):
         evaluator = coord.Evaluator(
             separated=[
                 coord.WinLoseScorer(),
@@ -71,7 +71,7 @@ class TestEvaluator(unittest.TestCase):
         score = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
         self.assertEqual(score, -61)
 
-    def test_customized_evaluator(self):
+    def test_specific_evaluator(self):
         board8 = BitBoard(8)
         board8.put_disc('black', 3, 2)
         board8.put_disc('white', 2, 2)

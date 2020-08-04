@@ -6,7 +6,7 @@ from reversi.strategies.coordinator import TableScorer, PossibilityScorer, Openi
 
 
 class Evaluator(AbstractEvaluator):
-    """Evaluator
+    """General Evaluator
     """
     def __init__(self, separated=[], combined=[]):
         self.separated = separated
@@ -28,7 +28,7 @@ class Evaluator(AbstractEvaluator):
 
 
 class Evaluator_T(AbstractEvaluator):
-    """Evaluator_T
+    """Specific Evaluator Table
 
            盤面の評価値をTableで算出
     """
@@ -42,7 +42,7 @@ class Evaluator_T(AbstractEvaluator):
 
 
 class Evaluator_P(AbstractEvaluator):
-    """Evaluator_P
+    """Specific Evaluator Possibility
 
            盤面の評価値を配置可能数で算出
     """
@@ -56,7 +56,7 @@ class Evaluator_P(AbstractEvaluator):
 
 
 class Evaluator_O(AbstractEvaluator):
-    """Evaluator_O
+    """Specific Evaluator Opening
 
            盤面の評価値を開放度で算出
     """
@@ -70,7 +70,7 @@ class Evaluator_O(AbstractEvaluator):
 
 
 class Evaluator_W(AbstractEvaluator):
-    """Evaluator_W
+    """Specific Evaluator WinLose
 
            盤面の評価値を勝敗で算出
     """
@@ -84,7 +84,7 @@ class Evaluator_W(AbstractEvaluator):
 
 
 class Evaluator_N(AbstractEvaluator):
-    """Evaluator_N
+    """Specific Evaluator Number
 
            盤面の評価値を石数で算出
     """
@@ -98,7 +98,7 @@ class Evaluator_N(AbstractEvaluator):
 
 
 class Evaluator_E(AbstractEvaluator):
-    """Evaluator_E
+    """Specific Evaluator Edge
 
            辺のパターンの評価値を算出
     """
@@ -112,7 +112,7 @@ class Evaluator_E(AbstractEvaluator):
 
 
 class Evaluator_C(AbstractEvaluator):
-    """Evaluator_C
+    """Specific Evaluator Corner
 
            隅のパターンの評価値を算出
     """
@@ -126,217 +126,217 @@ class Evaluator_C(AbstractEvaluator):
 
 
 class Evaluator_TP(AbstractEvaluator):
-    """Evaluator_TP
+    """Specific Evaluator Table + Possibility
 
            盤面の評価値をTable+配置可能数で算出
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
-        self.p = Evaluator_P(wp)
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_t = self.t.evaluate(*args, **kwargs)
-        score_p = self.p.evaluate(*args, **kwargs)
+        score_t = self.t.get_score(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
 
         return score_t + score_p
 
 
 class Evaluator_TPO(AbstractEvaluator):
-    """Evaluator_TPO
+    """Specific Evaluator Table + Possibility + Opening
 
            盤面の評価値をTable+配置可能数+開放度で算出
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, wo=-0.75):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
-        self.p = Evaluator_P(wp)
-        self.o = Evaluator_O(wo)
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.o = OpeningScorer(wo)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_t = self.t.evaluate(*args, **kwargs)
-        score_p = self.p.evaluate(*args, **kwargs)
-        score_o = self.o.evaluate(*args, **kwargs)
+        score_t = self.t.get_score(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
+        score_o = self.o.get_score(*args, **kwargs)
 
         return score_t + score_p + score_o
 
 
 class Evaluator_NW(AbstractEvaluator):
-    """Evaluator_NW
+    """Specific Evaluator Number + WinLose
 
            盤面の評価値を石数+勝敗で算出
     """
     def __init__(self, ww=10000):
-        self.n = Evaluator_N()
-        self.w = Evaluator_W(ww)
+        self.n = NumberScorer()
+        self.w = WinLoseScorer(ww)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_n = self.n.evaluate(*args, **kwargs)
+        score_n = self.n.get_score(*args, **kwargs)
 
         return score_n
 
 
 class Evaluator_PW(AbstractEvaluator):
-    """Evaluator_PW
+    """Specific Evaluator Possibility + WinLose
 
            盤面の評価値を配置可能数+勝敗で算出
     """
     def __init__(self, wp=5, ww=10000):
-        self.p = Evaluator_P(wp)
-        self.w = Evaluator_W(ww)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.evaluate(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
 
         return score_p
 
 
 class Evaluator_TPW(AbstractEvaluator):
-    """Evaluator_TPW
+    """Specific Evaluator Table + Possibility + WinLose
 
            盤面の評価値をTable+配置可能数+勝敗で算出
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
-        self.p = Evaluator_P(wp)
-        self.w = Evaluator_W(ww)
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.evaluate(*args, **kwargs)
-        score_p = self.p.evaluate(*args, **kwargs)
+        score_t = self.t.get_score(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
 
         return score_t + score_p
 
 
-class Evaluator_TPOW(Evaluator_TPO):
-    """Evaluator_TPOW
+class Evaluator_TPOW(AbstractEvaluator):
+    """Specific Evaluator Table + Possibility + Opening + WinLose
 
            盤面の評価値をTable+配置可能数+開放度+勝敗で算出
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, wo=-0.75, ww=10000):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
-        self.p = Evaluator_P(wp)
-        self.o = Evaluator_O(wo)
-        self.w = Evaluator_W(ww)
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.o = OpeningScorer(wo)
+        self.w = WinLoseScorer(ww)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.evaluate(*args, **kwargs)
-        score_p = self.p.evaluate(*args, **kwargs)
-        score_o = self.o.evaluate(*args, **kwargs)
+        score_t = self.t.get_score(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
+        score_o = self.o.get_score(*args, **kwargs)
 
         return score_t + score_p + score_o
 
 
 class Evaluator_TPWE(AbstractEvaluator):
-    """Evaluator_TPWE
+    """Specific Evaluator Table + Possibility + WinLose + Edge
 
            盤面の評価値をTable+配置可能数+勝敗+辺のパターンで算出
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000, we=100):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
-        self.p = Evaluator_P(wp)
-        self.w = Evaluator_W(ww)
-        self.e = Evaluator_E(we)
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.e = EdgeScorer(we)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.evaluate(*args, **kwargs)
-        score_p = self.p.evaluate(*args, **kwargs)
-        score_e = self.e.evaluate(*args, **kwargs)
+        score_t = self.t.get_score(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
+        score_e = self.e.get_score(*args, **kwargs)
 
         return score_t + score_p + score_e
 
 
 class Evaluator_TPWEC(AbstractEvaluator):
-    """Eavluator_TPWEC
+    """Specific Eavluator Table + Possibility + WinLose + Edge + Corner
 
            盤面の評価値をTable+配置可能数+勝敗+辺のパターン+隅のパターンで算出
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000, we=100, wc=120):
-        self.t = Evaluator_T(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
-        self.p = Evaluator_P(wp)
-        self.w = Evaluator_W(ww)
-        self.e = Evaluator_E(we)
-        self.c = Evaluator_C(wc)
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.e = EdgeScorer(we)
+        self.c = CornerScorer(wc)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.evaluate(*args, **kwargs)
-        score_p = self.p.evaluate(*args, **kwargs)
-        score_e = self.e.evaluate(*args, **kwargs)
-        score_c = self.c.evaluate(*args, **kwargs)
+        score_t = self.t.get_score(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
+        score_e = self.e.get_score(*args, **kwargs)
+        score_c = self.c.get_score(*args, **kwargs)
 
         return score_t + score_p + score_e + score_c
 
 
 class Evaluator_PWE(AbstractEvaluator):
-    """Evaluator_PWE
+    """Specific Evaluator Possibility + WinLose + Edge
 
            盤面の評価値を配置可能数+勝敗+辺のパターンで算出
     """
     def __init__(self, size=8, wp=10, ww=10000, we=75):
-        self.p = Evaluator_P(wp)
-        self.w = Evaluator_W(ww)
-        self.e = Evaluator_E(we)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.e = EdgeScorer(we)
 
     def evaluate(self, *args, **kwargs):
         """evaluate
         """
-        score_w = self.w.evaluate(*args, **kwargs)
+        score_w = self.w.get_score(*args, **kwargs)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.evaluate(*args, **kwargs)
-        score_e = self.e.evaluate(*args, **kwargs)
+        score_p = self.p.get_score(*args, **kwargs)
+        score_e = self.e.get_score(*args, **kwargs)
 
         return score_p + score_e
