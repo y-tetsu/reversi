@@ -11,7 +11,7 @@ class SwitchSizeError(Exception):
     pass
 
 
-class Switch(AbstractStrategy):
+class _Switch_(AbstractStrategy):
     """
     複数戦略を切り替える
     """
@@ -22,7 +22,6 @@ class Switch(AbstractStrategy):
         self.turns = turns
         self.strategies = strategies
 
-    @Measure.time
     def next_move(self, color, board):
         """
         次の一手
@@ -38,6 +37,16 @@ class Switch(AbstractStrategy):
                 break
 
         return strategy.next_move(color, board)
+
+
+class Switch(_Switch_):
+    """Switch + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
 
 
 # if __name__ == '__main__':

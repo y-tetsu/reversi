@@ -28,16 +28,17 @@ class MonteCarlo(AbstractStrategy):
         """
         次の一手
         """
-        moves = board.get_legal_moves(color)              # 手の候補を取得
-        scores = [0 for _ in range(len(moves))]           # スコアの初期化
+        pid = Timer.get_pid(self)                # タイムアウト監視用のプロセスID
+        moves = board.get_legal_moves(color)     # 手の候補を取得
+        scores = [0 for _ in range(len(moves))]  # スコアの初期化
 
         for _ in range(self.count):
             for i, move in enumerate(moves):
                 scores[i] += self._playout(color, board, move)  # この手を選んだ時の勝敗を取得
 
-                if Timer.is_timeout(self):
+                if Timer.is_timeout(pid):
                     break
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(pid):
                 break
 
         best_score = max(scores)  # ベストスコアを取得

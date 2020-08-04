@@ -20,12 +20,13 @@ class _AlphaBeta_(AbstractStrategy):
         """
         次の一手
         """
+        pid = Timer.get_pid(self)             # タイムアウト監視用のプロセスID
         moves = board.get_legal_moves(color)  # 手の候補
-        best_move, _ = self.get_best_move(color, board, moves, self.depth)
+        best_move, _ = self.get_best_move(color, board, moves, self.depth, pid)
 
         return best_move
 
-    def get_best_move(self, color, board, moves, depth):
+    def get_best_move(self, color, board, moves, depth, pid=None):
         """
         最善手を選ぶ
         """
@@ -33,10 +34,9 @@ class _AlphaBeta_(AbstractStrategy):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in moves:
-            score = self.get_score(move, color, board, alpha, beta, depth)
+            score = self.get_score(move, color, board, alpha, beta, depth, pid)
             scores[move] = score
-
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(pid):
                 best_move = move if best_move is None else best_move
                 break
             else:
@@ -46,18 +46,18 @@ class _AlphaBeta_(AbstractStrategy):
 
         return best_move, scores
 
-    def get_score(self, move, color, board, alpha, beta, depth):
+    def get_score(self, move, color, board, alpha, beta, depth, pid=None):
         """
         手を打った時の評価値を取得
         """
-        board.put_disc(color, *move)                                         # 一手打つ
-        next_color = 'white' if color == 'black' else 'black'                # 相手の色
-        score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
-        board.undo()                                                         # 打った手を戻す
+        board.put_disc(color, *move)                                              # 一手打つ
+        next_color = 'white' if color == 'black' else 'black'                     # 相手の色
+        score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid)  # 評価値を取得
+        board.undo()                                                              # 打った手を戻す
 
         return score
 
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """
         評価値の取得
         """
@@ -65,7 +65,6 @@ class _AlphaBeta_(AbstractStrategy):
         legal_moves_b = board.get_legal_moves('black')
         legal_moves_w = board.get_legal_moves('white')
         is_game_end = True if not legal_moves_b and not legal_moves_w else False
-
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
             return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w) * sign
@@ -73,17 +72,15 @@ class _AlphaBeta_(AbstractStrategy):
         # パスの場合
         legal_moves = legal_moves_b if color == 'black' else legal_moves_w
         next_color = 'white' if color == 'black' else 'black'
-
         if not legal_moves:
-            return -self._get_score(next_color, board, -beta, -alpha, depth)
+            return -self._get_score(next_color, board, -beta, -alpha, depth, pid)
 
         # 評価値を算出
         for move in legal_moves:
             board.put_disc(color, *move)
-            score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
+            score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid)
             board.undo()
-
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(pid):
                 break
 
             alpha = max(alpha, score)  # 最大値を選択
@@ -103,10 +100,10 @@ class _AlphaBeta(_AlphaBeta_):
         return super().next_move(color, board)
 
     @Measure.countup
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth)
+        return super()._get_score(color, board, alpha, beta, depth, pid)
 
 
 class AlphaBeta_(_AlphaBeta_):
@@ -119,10 +116,10 @@ class AlphaBeta_(_AlphaBeta_):
         return super().next_move(color, board)
 
     @Timer.timeout
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth)
+        return super()._get_score(color, board, alpha, beta, depth, pid)
 
 
 class AlphaBeta(_AlphaBeta_):
@@ -137,10 +134,10 @@ class AlphaBeta(_AlphaBeta_):
 
     @Timer.timeout
     @Measure.countup
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth)
+        return super()._get_score(color, board, alpha, beta, depth, pid)
 
 
 class _AlphaBetaN_(_AlphaBeta_):

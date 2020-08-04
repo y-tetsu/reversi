@@ -5,7 +5,7 @@ from reversi.strategies.common import Measure, AbstractStrategy
 from reversi.strategies.easy import Random
 
 
-class RandomOpening(AbstractStrategy):
+class _RandomOpening_(AbstractStrategy):
     """RandomOpening
     """
     def __init__(self, depth=None, base=None):
@@ -13,7 +13,6 @@ class RandomOpening(AbstractStrategy):
         self.random = Random()
         self.base = base
 
-    @Measure.time
     def next_move(self, color, board):
         """next_move
         """
@@ -23,3 +22,13 @@ class RandomOpening(AbstractStrategy):
             return self.random.next_move(color, board)
 
         return self.base.next_move(color, board)
+
+
+class RandomOpening(_RandomOpening_):
+    """RandomOpening + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)

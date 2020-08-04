@@ -17,14 +17,20 @@ class Timer:
     time_limit = 0
 
     @classmethod
-    def set_deadline(cls, name, value):
+    def get_pid(cls, obj):
+        """
+        プロセスID取得
+        """
+        return obj.__class__.__name__ + str(os.getpid())
+
+    @classmethod
+    def set_deadline(cls, pid, value):
         """
         期限を設定
         """
-        key = name + str(os.getpid())
-        Timer.deadline[key] = time.time() + Timer.time_limit  # デッドラインを設定する
-        Timer.timeout_flag[key] = False                       # タイムアウト未発生
-        Timer.timeout_value[key] = value                      # タイムアウト発生時の値を設定する
+        Timer.deadline[pid] = time.time() + Timer.time_limit  # デッドラインを設定する
+        Timer.timeout_flag[pid] = False                       # タイムアウト未発生
+        Timer.timeout_value[pid] = value                      # タイムアウト発生時の値を設定する
 
     @classmethod
     def start(cls, limit, value):
@@ -35,8 +41,8 @@ class Timer:
 
         def _start(func):
             def wrapper(*args, **kwargs):
-                name = args[0].__class__.__name__
-                cls.set_deadline(name, value)
+                pid = cls.get_pid(args[0])
+                cls.set_deadline(pid, value)
                 return func(*args, **kwargs)
             return wrapper
         return _start
@@ -47,20 +53,19 @@ class Timer:
         タイマー経過チェック
         """
         def wrapper(*args, **kwargs):
-            key = args[0].__class__.__name__ + str(os.getpid())
-            if time.time() > Timer.deadline[key]:
-                Timer.timeout_flag[key] = True  # タイムアウト発生
-                return Timer.timeout_value[key]
+            pid = cls.get_pid(args[0])
+            if time.time() > Timer.deadline[pid]:
+                Timer.timeout_flag[pid] = True  # タイムアウト発生
+                return Timer.timeout_value[pid]
             return func(*args, **kwargs)
         return wrapper
 
     @classmethod
-    def is_timeout(cls, obj):
+    def is_timeout(cls, pid):
         """
         タイムアウト発生有無
         """
-        key = obj.__class__.__name__ + str(os.getpid())
-        if key in Timer.timeout_flag:
-            return Timer.timeout_flag[key]
+        if pid in Timer.timeout_flag:
+            return Timer.timeout_flag[pid]
 
         return False

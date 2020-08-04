@@ -9,7 +9,7 @@ class _NegaScout_(_AlphaBeta_):
     """
     NegaScout法で次の手を決める
     """
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """
         評価値の取得
         """
@@ -43,7 +43,7 @@ class _NegaScout_(_AlphaBeta_):
                         alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1)
                         board.undo()
 
-                        if Timer.is_timeout(self):
+                        if Timer.is_timeout(pid):
                             return alpha
                     else:
                         alpha = tmp
@@ -65,10 +65,10 @@ class _NegaScout(_NegaScout_):
         return super().next_move(color, board)
 
     @Measure.countup
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth)
+        return super()._get_score(color, board, alpha, beta, depth, pid)
 
 
 class NegaScout_(_NegaScout_):
@@ -81,10 +81,10 @@ class NegaScout_(_NegaScout_):
         return super().next_move(color, board)
 
     @Timer.timeout
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth)
+        return super()._get_score(color, board, alpha, beta, depth, pid)
 
 
 class NegaScout(_NegaScout_):
@@ -99,7 +99,7 @@ class NegaScout(_NegaScout_):
 
     @Timer.timeout
     @Measure.countup
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth)
+        return super()._get_score(color, board, alpha, beta, depth, pid)

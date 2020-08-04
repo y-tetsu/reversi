@@ -20,17 +20,18 @@ class _NegaMax_(AbstractStrategy):
         """
         次の一手
         """
+        pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
         next_color = 'white' if color == 'black' else 'black'
         moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         legal_moves = board.get_legal_moves(color)
         for move in legal_moves:
-            board.put_disc(color, *move)                              # 一手打つ
-            score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
-            board.undo()                                              # 打った手を戻す
+            board.put_disc(color, *move)                                   # 一手打つ
+            score = -self.get_score(next_color, board, self.depth-1, pid)  # 評価値を取得
+            board.undo()                                                   # 打った手を戻す
 
-            if Timer.is_timeout(self):      # タイムアウト発生時
+            if Timer.is_timeout(pid):       # タイムアウト発生時
                 if max_score not in moves:  # 候補がない場合は現在の手を返す
                     return move
                 break
@@ -42,7 +43,7 @@ class _NegaMax_(AbstractStrategy):
 
         return random.choice(moves[max_score])  # 複数候補がある場合はランダムに選ぶ
 
-    def get_score(self, color, board, depth):
+    def get_score(self, color, board, depth, pid=None):
         """
         評価値の取得
         """
@@ -60,16 +61,16 @@ class _NegaMax_(AbstractStrategy):
         next_color = 'white' if color == 'black' else 'black'
 
         if not legal_moves:
-            return -self.get_score(next_color, board, depth)
+            return -self.get_score(next_color, board, depth, pid)
 
         # 評価値を算出
         max_score = self._MIN
         for move in legal_moves:
             board.put_disc(color, *move)
-            score = -self.get_score(next_color, board, depth-1)
+            score = -self.get_score(next_color, board, depth-1, pid)
             board.undo()
 
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(pid):
                 break
             else:
                 max_score = max(max_score, score)  # 最大値を選択
@@ -87,10 +88,10 @@ class _NegaMax(_NegaMax_):
         return super().next_move(color, board)
 
     @Measure.countup
-    def get_score(self, color, board, depth):
+    def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth)
+        return super().get_score(color, board, depth, pid)
 
 
 class NegaMax_(_NegaMax_):
@@ -103,10 +104,10 @@ class NegaMax_(_NegaMax_):
         return super().next_move(color, board)
 
     @Timer.timeout
-    def get_score(self, color, board, depth):
+    def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth)
+        return super().get_score(color, board, depth, pid)
 
 
 class NegaMax(_NegaMax_):
@@ -121,7 +122,7 @@ class NegaMax(_NegaMax_):
 
     @Timer.timeout
     @Measure.countup
-    def get_score(self, color, board, depth):
+    def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth)
+        return super().get_score(color, board, depth, pid)

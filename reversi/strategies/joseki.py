@@ -1061,7 +1061,7 @@ SHEEP = {
 # ===== 定石リスト =====
 
 
-class Joseki(AbstractStrategy):
+class _Joseki_(AbstractStrategy):
     """
     定石通りに打つ(8x8限定)
     """
@@ -1085,7 +1085,7 @@ class Joseki(AbstractStrategy):
         return self.base.next_move(color, board)
 
 
-class Usagi(Joseki):
+class _Usagi_(_Joseki_):
     """
     兎
     """
@@ -1106,7 +1106,17 @@ class Usagi(Joseki):
         self.joseki.update(RABBIT)     # 兎定石
 
 
-class Tora(Joseki):
+class Usagi(_Usagi_):
+    """Usagi + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+
+class _Tora_(_Joseki_):
     """
     虎
     """
@@ -1127,7 +1137,17 @@ class Tora(Joseki):
         self.joseki.update(TIGER)      # 虎定石
 
 
-class Ushi(Joseki):
+class Tora(_Tora_):
+    """Tora + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+
+class _Ushi_(_Joseki_):
     """
     牛
     """
@@ -1148,7 +1168,17 @@ class Ushi(Joseki):
         self.joseki.update(BULL)       # 牛定石
 
 
-class Nezumi(Joseki):
+class Ushi(_Ushi_):
+    """Ushi + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+
+class _Nezumi_(_Joseki_):
     """
     鼠
     """
@@ -1169,7 +1199,17 @@ class Nezumi(Joseki):
         self.joseki.update(MOUSE)      # 鼠定石
 
 
-class Neko(Joseki):
+class Nezumi(_Nezumi_):
+    """Nezumi + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+
+class _Neko_(_Joseki_):
     """
     猫
     """
@@ -1191,7 +1231,17 @@ class Neko(Joseki):
         self.joseki.update(CAT)        # 猫定石
 
 
-class Hitsuji(Joseki):
+class Neko(_Neko_):
+    """Neko + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
+
+
+class _Hitsuji_(_Joseki_):
     """
     羊
     """
@@ -1211,6 +1261,16 @@ class Hitsuji(Joseki):
 
         # 最後にロード
         self.joseki.update(SHEEP)      # 羊定石
+
+
+class Hitsuji(_Hitsuji_):
+    """Hitsuji + Measure
+    """
+    @Measure.time
+    def next_move(self, color, board):
+        """next_move
+        """
+        return super().next_move(color, board)
 
 
 # if __name__ == '__main__':
