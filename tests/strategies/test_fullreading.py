@@ -6,7 +6,7 @@ import os
 
 from reversi.board import BitBoard
 from reversi.strategies.common import Measure
-from reversi.strategies import _AlphaBetaN, AlphaBetaN, _FullReading, FullReading
+from reversi.strategies import _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN, _FullReading_, _FullReading, FullReading_, FullReading
 
 
 class TestFullReading(unittest.TestCase):
@@ -19,6 +19,8 @@ class TestFullReading(unittest.TestCase):
         remain = 3
         fullreading = FullReading(remain=remain, base=Test())
         _fullreading = _FullReading(remain=remain, base=Test())
+        fullreading_ = FullReading_(remain=remain, base=Test())
+        _fullreading_ = _FullReading_(remain=remain, base=Test())
 
         self.assertEqual(fullreading.remain, remain)
         self.assertTrue(isinstance(fullreading.base, Test))
@@ -29,6 +31,16 @@ class TestFullReading(unittest.TestCase):
         self.assertTrue(isinstance(_fullreading.base, Test))
         self.assertTrue(isinstance(_fullreading.fullreading, _AlphaBetaN))
         self.assertEqual(_fullreading.fullreading.depth, remain)
+
+        self.assertEqual(fullreading_.remain, remain)
+        self.assertTrue(isinstance(fullreading_.base, Test))
+        self.assertTrue(isinstance(fullreading_.fullreading, AlphaBetaN_))
+        self.assertEqual(fullreading_.fullreading.depth, remain)
+
+        self.assertEqual(_fullreading_.remain, remain)
+        self.assertTrue(isinstance(_fullreading_.base, Test))
+        self.assertTrue(isinstance(_fullreading_.fullreading, _AlphaBetaN_))
+        self.assertEqual(_fullreading_.fullreading.depth, remain)
 
     def test_fullreading_next_move(self):
         class Test:
