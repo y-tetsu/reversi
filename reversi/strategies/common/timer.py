@@ -14,7 +14,7 @@ class Timer:
     deadline = {}
     timeout_flag = {}
     timeout_value = {}
-    time_limit = 0
+    time_limit = CPU_TIME
 
     @classmethod
     def get_pid(cls, obj):
@@ -37,7 +37,7 @@ class Timer:
         """
         タイマー開始
         """
-        Timer.time_limit = CPU_TIME
+        Timer.time_limit = limit
 
         def _start(func):
             def wrapper(*args, **kwargs):
