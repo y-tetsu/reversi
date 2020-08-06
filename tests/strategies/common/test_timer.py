@@ -11,49 +11,51 @@ from reversi.strategies.common import Timer, CPU_TIME
 class TestTimer(unittest.TestCase):
     """timer
     """
+    def test_time_limit(self):
+        self.assertEqual(Timer.time_limit, CPU_TIME)
+
     def test_get_pid(self):
         pid1 = self.__class__.__name__ + str(os.getpid())
         pid2 = Timer.get_pid(self)
         self.assertEqual(pid1, pid2)
 
-    def test_dedline(self):
+    def test_deadline(self):
         pid = Timer.get_pid(self)
+        deadline = time.time() + Timer.time_limit
         Timer.set_deadline(pid, -10000)
-        self.assertEqual(Timer.deadline[pid], time.time() + CPU_TIME)
+        self.assertGreaterEqual(Timer.deadline[pid], deadline)
         self.assertFalse(Timer.timeout_flag[pid])
         self.assertEqual(Timer.timeout_value[pid], -10000)
 
     def test_start(self):
-        pre_limit = Timer.time_limit
-        limit, value = 100, -100
+        value = -100
 
         class Dummy:
             def __init__(self):
                 self.dummy = False
 
-            @Timer.start(limit, value)
+            @Timer.start(value)
             def timer_start(self):
                 self.dummy = True
 
+        deadline = time.time() + Timer.time_limit
         dummy = Dummy()
-        self.assertEqual(Timer.time_limit, limit)
         dummy.timer_start()
         pid = dummy.__class__.__name__ + str(os.getpid())
         self.assertTrue(dummy.dummy)
-        self.assertGreaterEqual(Timer.deadline[pid], time.time() + limit)
+        self.assertGreaterEqual(Timer.deadline[pid], deadline)
         self.assertFalse(Timer.timeout_flag[pid])
         self.assertEqual(Timer.timeout_value[pid], value)
-        Timer.time_limit = pre_limit
 
     def test_timeout(self):
         pre_limit = Timer.time_limit
-        limit, value = 0.1, -100
+        value = -100
 
         class Dummy:
             def __init__(self):
                 self.dummy = False
 
-            @Timer.start(limit, value)
+            @Timer.start(value)
             def timer_start(self):
                 self.dummy = True
 
@@ -69,7 +71,7 @@ class TestTimer(unittest.TestCase):
         dummy.timeout_monitor()
         self.assertFalse(Timer.timeout_flag[pid])
 
-        time.sleep(limit * 1.1)
+        time.sleep(Timer.time_limit * 1.1)
         dummy.timeout_monitor()
         self.assertTrue(Timer.timeout_flag[pid])
 
@@ -77,13 +79,13 @@ class TestTimer(unittest.TestCase):
 
     def test_is_timeout(self):
         pre_limit = Timer.time_limit
-        limit, value = 0.1, -100
+        value = -100
 
         class Dummy:
             def __init__(self):
                 self.dummy = False
 
-            @Timer.start(limit, value)
+            @Timer.start(value)
             def timer_start(self):
                 self.dummy = True
 
@@ -98,7 +100,7 @@ class TestTimer(unittest.TestCase):
 
         self.assertFalse(Timer.is_timeout(pid))
 
-        time.sleep(limit * 1.1)
+        time.sleep(Timer.time_limit * 1.1)
         dummy.timeout_monitor()
 
         self.assertTrue(Timer.is_timeout(pid))
@@ -107,13 +109,13 @@ class TestTimer(unittest.TestCase):
 
     def test_multi(self):
         pre_limit = Timer.time_limit
-        limit, value = 0.1, -100
+        value = -100
 
         class Dummy1:
             def __init__(self):
                 self.dummy = False
 
-            @Timer.start(limit, value)
+            @Timer.start(value)
             def timer_start(self):
                 self.dummy = True
 
@@ -125,7 +127,7 @@ class TestTimer(unittest.TestCase):
             def __init__(self):
                 self.dummy = False
 
-            @Timer.start(limit, value)
+            @Timer.start(value)
             def timer_start(self):
                 self.dummy = True
 
@@ -145,7 +147,7 @@ class TestTimer(unittest.TestCase):
         dummy1.timer_start()
 
         # time elapsed
-        time.sleep((limit/2)*1.1)
+        time.sleep((Timer.time_limit/2)*1.1)
         dummy1.timeout_monitor()
         self.assertFalse(Timer.is_timeout(pid1))
         self.assertFalse(Timer.is_timeout(pid2))
@@ -154,14 +156,14 @@ class TestTimer(unittest.TestCase):
         dummy2.timer_start()
 
         # time elapsed and dummy1 timeout
-        time.sleep((limit/2)*1.1)
+        time.sleep((Timer.time_limit/2)*1.1)
         dummy1.timeout_monitor()
         dummy2.timeout_monitor()
         self.assertTrue(Timer.is_timeout(pid1))
         self.assertFalse(Timer.is_timeout(pid2))
 
         # time elapsed and dummy2 timeout
-        time.sleep((limit/2)*1.1)
+        time.sleep((Timer.time_limit/2)*1.1)
         dummy1.timeout_monitor()
         dummy2.timeout_monitor()
         self.assertTrue(Timer.is_timeout(pid1))
@@ -172,7 +174,7 @@ class TestTimer(unittest.TestCase):
         dummy1.timer_start()
 
         # time elapsed
-        time.sleep((limit/2)*1.1)
+        time.sleep((Timer.time_limit/2)*1.1)
         dummy1.timeout_monitor()
         self.assertFalse(Timer.is_timeout(pid1))
         self.assertTrue(Timer.is_timeout(pid2))
@@ -181,14 +183,14 @@ class TestTimer(unittest.TestCase):
         dummy2.timer_start()
 
         # time elapsed and dummy1 timeout
-        time.sleep((limit/2)*1.1)
+        time.sleep((Timer.time_limit/2)*1.1)
         dummy1.timeout_monitor()
         dummy2.timeout_monitor()
         self.assertTrue(Timer.is_timeout(pid1))
         self.assertFalse(Timer.is_timeout(pid2))
 
         # time elapsed and dummy2 timeout
-        time.sleep((limit/2)*1.1)
+        time.sleep((Timer.time_limit/2)*1.1)
         dummy1.timeout_monitor()
         dummy2.timeout_monitor()
         self.assertTrue(Timer.is_timeout(pid1))

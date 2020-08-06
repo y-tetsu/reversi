@@ -33,12 +33,10 @@ class Timer:
         Timer.timeout_value[pid] = value                      # タイムアウト発生時の値を設定する
 
     @classmethod
-    def start(cls, limit, value):
+    def start(cls, value):
         """
         タイマー開始
         """
-        Timer.time_limit = limit
-
         def _start(func):
             def wrapper(*args, **kwargs):
                 pid = cls.get_pid(args[0])

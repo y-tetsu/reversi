@@ -5,7 +5,7 @@
 
 import random
 
-from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.table import Table
 
 
@@ -118,7 +118,7 @@ class NegaMax_(MinMax_):
     NegaMax法で次の手を決める
     """
     @Measure.time
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """
         次の一手
@@ -194,7 +194,7 @@ class AlphaBeta_(NegaMax_):
     AlphaBeta法で次の手を決める
     """
     @Measure.time
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """
         次の一手
@@ -281,7 +281,7 @@ class AB_T(AlphaBeta_):
         self._W4 = w4
 
     @Measure.time
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """
         次の一手
@@ -341,7 +341,7 @@ class AB_TI(AB_T):
         super().__init__(depth, corner, c, a, b, x, o, w1, w2, w3, w4, min_value, max_value)
 
     @Measure.time
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """
         次の一手

@@ -3,7 +3,7 @@
 
 import random
 
-from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.common import Timer, Measure, AbstractStrategy
 
 
 class _NegaMax_(AbstractStrategy):
@@ -97,7 +97,7 @@ class _NegaMax(_NegaMax_):
 class NegaMax_(_NegaMax_):
     """NegaMax + Timer
     """
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """next_move
         """
@@ -113,7 +113,7 @@ class NegaMax_(_NegaMax_):
 class NegaMax(_NegaMax_):
     """NegaMax + Measure + Timer
     """
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     @Measure.time
     def next_move(self, color, board):
         """next_move

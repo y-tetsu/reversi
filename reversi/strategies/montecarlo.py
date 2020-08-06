@@ -8,7 +8,7 @@ from reversi.game import Game
 from reversi.player import Player
 from reversi.display import NoneDisplay
 
-from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.easy import Random
 
 
@@ -23,7 +23,7 @@ class MonteCarlo(AbstractStrategy):
         self._white_player = Player('white', 'Random_W', Random())
 
     @Measure.time
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """
         次の一手

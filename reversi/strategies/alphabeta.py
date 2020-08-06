@@ -1,7 +1,7 @@
 """AlphaBeta(NegaAlpha)
 """
 
-from reversi.strategies.common import Timer, Measure, CPU_TIME, AbstractStrategy
+from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.coordinator import Evaluator_N
 
 
@@ -109,7 +109,7 @@ class _AlphaBeta(_AlphaBeta_):
 class AlphaBeta_(_AlphaBeta_):
     """AlphaBeta + Timer
     """
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """next_move
         """
@@ -125,7 +125,7 @@ class AlphaBeta_(_AlphaBeta_):
 class AlphaBeta(_AlphaBeta_):
     """AlphaBeta + Measure + Timer
     """
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     @Measure.time
     def next_move(self, color, board):
         """next_move

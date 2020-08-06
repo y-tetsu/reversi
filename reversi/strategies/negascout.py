@@ -1,7 +1,7 @@
 """NegaScout
 """
 
-from reversi.strategies.common import Timer, Measure, CPU_TIME
+from reversi.strategies.common import Timer, Measure
 from reversi.strategies.alphabeta import _AlphaBeta_
 
 
@@ -74,7 +74,7 @@ class _NegaScout(_NegaScout_):
 class NegaScout_(_NegaScout_):
     """NegaScout + Timer
     """
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     def next_move(self, color, board):
         """next_move
         """
@@ -90,7 +90,7 @@ class NegaScout_(_NegaScout_):
 class NegaScout(_NegaScout_):
     """NegaScout + Measure + Timer
     """
-    @Timer.start(CPU_TIME, -10000000)
+    @Timer.start(-10000000)
     @Measure.time
     def next_move(self, color, board):
         """next_move
