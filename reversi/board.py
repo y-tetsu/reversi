@@ -261,8 +261,6 @@ class Board(AbstractBoard):
 
             self.update_score()
 
-        return prev
-
 
 class BitBoard(AbstractBoard):
     """BitBoard
@@ -381,4 +379,4 @@ class BitBoard(AbstractBoard):
     def undo(self):
         """undo
         """
-        return BitBoardMethods.undo(self)
+        BitBoardMethods.undo(self)
