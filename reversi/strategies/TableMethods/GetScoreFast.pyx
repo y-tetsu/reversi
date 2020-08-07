@@ -26,27 +26,16 @@ cdef inline signed int _get_score_size8_64bit(table, board):
         unsigned long long b, w
         unsigned long long mask = 0x8000000000000000
         unsigned int x, y
-        signed int score
-        signed int board_info[8][8]
-
-    # get board info
+        signed int score = 0
     b = board._black_bitboard
     w = board._white_bitboard
     for y in range(8):
         for x in range(8):
             if b & mask:
-                board_info[y][x] = 1
+                score += <signed int>table[y][x] * <signed int>1
             elif w & mask:
-                board_info[y][x] = -1
-            else:
-                board_info[y][x] = 0
+                score += <signed int>table[y][x] * <signed int>-1
             mask >>= 1
-
-    # calculate score
-    score = 0
-    for y in range(8):
-        for x in range(8):
-            score += <signed int>table[y][x] * <signed int>board_info[y][x]
 
     return score
 
