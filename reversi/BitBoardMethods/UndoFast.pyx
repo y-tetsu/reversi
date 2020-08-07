@@ -2,8 +2,6 @@
 """UndoFast
 """
 
-import sys
-
 
 def undo(board):
     """undo
@@ -14,4 +12,4 @@ def undo(board):
 cdef inline _undo(board):
     """_undo
     """
-    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score, _, _) = board.prev.pop()
+    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()

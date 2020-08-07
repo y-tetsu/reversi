@@ -18,7 +18,7 @@ def put_disc(board, color, x, y):
         flippable_discs_num |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
 
     # 打つ前の状態を格納
-    board.prev += [(board._black_bitboard, board._white_bitboard, board._black_score, board._white_score, flippable_discs_num, color)]
+    board.prev += [(board._black_bitboard, board._white_bitboard, board._black_score, board._white_score)]
 
     # 自分の石を置いて相手の石をひっくり返す
     put = 1 << ((size*size-1)-(y*size+x))
@@ -32,5 +32,7 @@ def put_disc(board, color, x, y):
         board._black_bitboard ^= flippable_discs_num
         board._black_score -= len(flippable_discs)
         board._white_score += 1 + len(flippable_discs)
+
+    board._flippable_discs_num = flippable_discs_num
 
     return flippable_discs_num

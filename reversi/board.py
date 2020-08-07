@@ -284,6 +284,7 @@ class BitBoard(AbstractBoard):
 
         # 前回の手
         self.prev = []
+        self._flippable_discs_num = 0
 
         # ビットボードの初期配置
         center = size // 2
