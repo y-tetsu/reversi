@@ -14,12 +14,12 @@ def put_disc(board, color, x, y):
     size = board.size
 
     if size == 8 and sys.maxsize == MAXSIZE64:
-        return _put_disc_size8_64bit(board, color, x, y)
+        return _put_disc_size8_64bit(board, 1 if color == 'black' else 0, x, y)
 
     return _put_disc(size, board, color, x, y)
 
 
-cdef inline _put_disc_size8_64bit(board, color, unsigned int x, unsigned int y):
+cdef inline unsigned long long _put_disc_size8_64bit(board, signed int color, unsigned int x, unsigned int y):
     """_put_disc_size8_64bit
     """
     cdef:
@@ -30,7 +30,7 @@ cdef inline _put_disc_size8_64bit(board, color, unsigned int x, unsigned int y):
     # 配置位置を整数に変換
     shift_size = (63-(y*8+x))
     if shift_size < 0 or shift_size > 63:
-        return 0
+        return <unsigned long long>0
 
     put = <unsigned long long>1 << (63-(y*8+x))
 
@@ -46,7 +46,7 @@ cdef inline _put_disc_size8_64bit(board, color, unsigned int x, unsigned int y):
     board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
 
     # 自分の石を置いて相手の石をひっくり返す
-    if color == 'black':
+    if color:
         black_bitboard ^= put | flippable_discs_num
         white_bitboard ^= flippable_discs_num
         black_score += <unsigned int>1 + <unsigned int>flippable_discs_count
@@ -66,7 +66,7 @@ cdef inline _put_disc_size8_64bit(board, color, unsigned int x, unsigned int y):
     return flippable_discs_num
 
 
-cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
+cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(signed int color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
     """_get_flippable_discs_size8_64bit
     """
     cdef:
@@ -75,7 +75,7 @@ cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(color, unsig
         unsigned long long move = 0
         unsigned long long player, opponent, flippable_discs_num = 0
 
-    if color == 'black':
+    if color:
         player = black_bitboard
         opponent = white_bitboard
     else:
