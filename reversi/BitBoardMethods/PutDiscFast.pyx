@@ -14,12 +14,12 @@ def put_disc(board, color, x, y):
     size = board.size
 
     if size == 8 and sys.maxsize == MAXSIZE64:
-        return _put_disc_size8_64bit(board, 1 if color == 'black' else 0, x, y)
+        return _put_disc_size8_64bit(board, color == 'black', x, y)
 
     return _put_disc(size, board, color, x, y)
 
 
-cdef inline unsigned long long _put_disc_size8_64bit(board, signed int color, unsigned int x, unsigned int y):
+cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y):
     """_put_disc_size8_64bit
     """
     cdef:
@@ -32,14 +32,14 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, signed int color, un
     if shift_size < 0 or shift_size > 63:
         return <unsigned long long>0
 
-    put = <unsigned long long>1 << (63-(y*8+x))
+    put = <unsigned long long>1 << shift_size
 
     # ひっくり返せる石を取得
     black_bitboard = board._black_bitboard
     white_bitboard = board._white_bitboard
     black_score = board._black_score
     white_score = board._white_score
-    flippable_discs_num = _get_flippable_discs_num_size8_64bit(color, black_bitboard, white_bitboard, x, y)
+    flippable_discs_num = _get_flippable_discs_num_size8_64bit(color, black_bitboard, white_bitboard, shift_size)
     flippable_discs_count = _get_flippable_discs_count_size8_64bit(flippable_discs_num)
 
     # 打つ前の状態を格納
@@ -66,7 +66,7 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, signed int color, un
     return flippable_discs_num
 
 
-cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(signed int color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
+cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(unsigned int color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int shift_size):
     """_get_flippable_discs_size8_64bit
     """
     cdef:
@@ -82,7 +82,7 @@ cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(signed int c
         player = white_bitboard
         opponent = black_bitboard
 
-    move = <unsigned long long>1 << (63-(y*8+x))
+    move = <unsigned long long>1 << shift_size
 
     for direction1 in range(8):
         buff = 0
