@@ -124,8 +124,7 @@ class TestTable(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        self.assertEqual(table.get_score('black', board), -22)
-        self.assertEqual(table.get_score('white', board), 22)
+        self.assertEqual(table.get_score(board), -22)
         self.assertEqual(table.next_move('black', board), (5, 2))
         self.assertEqual(table.next_move('white', board), (2, 5))
 

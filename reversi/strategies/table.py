@@ -91,14 +91,16 @@ class Table(AbstractStrategy):
 
         self.table = table
 
-    def get_score(self, color, board):
+    def get_score(self, board):
         """get_score
         """
-        return TableMethods.get_score(color, self.table, board)
+        return TableMethods.get_score(self.table, board)
 
     def next_move(self, color, board):
         """next move
         """
+        sign = 1 if color == 'black' else -1
+
         if self.size != board.size:
             self.set_table(board.size)
 
@@ -108,7 +110,7 @@ class Table(AbstractStrategy):
 
         for move in legal_moves:
             board.put_disc(color, *move)
-            score = self.get_score(color, board)
+            score = self.get_score(board) * sign
 
             if max_score is None or score > max_score:
                 max_score = score

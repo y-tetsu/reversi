@@ -18,13 +18,11 @@ class TableScorer(AbstractScorer):
         """
         評価値の算出
         """
-        color, board = kwargs['color'], kwargs['board']
+        board = kwargs['board']
         if self.table.size != board.size:  # テーブルサイズの調整
             self.table.set_table(board.size)
 
-        sign = 1 if color == 'black' else -1
-
-        return self.table.get_score(color, board) * sign  # +側黒優勢、-側白優勢に直す
+        return self.table.get_score(board)  # +側黒優勢、-側白優勢に直す
 
 
 class PossibilityScorer(AbstractScorer):
