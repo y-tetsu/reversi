@@ -34,7 +34,7 @@ class MonteCarlo(AbstractStrategy):
 
         for _ in range(self.count):
             for i, move in enumerate(moves):
-                scores[i] += self._playout(color, board, move)  # この手を選んだ時の勝敗を取得
+                scores[i] += self._playout(color, board, move, pid=pid)  # この手を選んだ時の勝敗を取得
 
                 if Timer.is_timeout(pid):
                     break
@@ -48,7 +48,7 @@ class MonteCarlo(AbstractStrategy):
 
     @Measure.countup
     @Timer.timeout
-    def _playout(self, color, board, move):
+    def _playout(self, color, board, move, pid=None):
         """
         終了までゲームを進めて勝敗を返す
         """

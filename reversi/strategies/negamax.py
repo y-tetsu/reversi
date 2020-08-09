@@ -27,9 +27,9 @@ class _NegaMax_(AbstractStrategy):
         # 打てる手の中から評価値の最も高い手を選ぶ
         legal_moves = board.get_legal_moves(color)
         for move in legal_moves:
-            board.put_disc(color, *move)                                   # 一手打つ
-            score = -self.get_score(next_color, board, self.depth-1, pid)  # 評価値を取得
-            board.undo()                                                   # 打った手を戻す
+            board.put_disc(color, *move)                                       # 一手打つ
+            score = -self.get_score(next_color, board, self.depth-1, pid=pid)  # 評価値を取得
+            board.undo()                                                       # 打った手を戻す
 
             if Timer.is_timeout(pid):       # タイムアウト発生時
                 if max_score not in moves:  # 候補がない場合は現在の手を返す
@@ -61,13 +61,13 @@ class _NegaMax_(AbstractStrategy):
         next_color = 'white' if color == 'black' else 'black'
 
         if not legal_moves:
-            return -self.get_score(next_color, board, depth, pid)
+            return -self.get_score(next_color, board, depth, pid=pid)
 
         # 評価値を算出
         max_score = self._MIN
         for move in legal_moves:
             board.put_disc(color, *move)
-            score = -self.get_score(next_color, board, depth-1, pid)
+            score = -self.get_score(next_color, board, depth-1, pid=pid)
             board.undo()
 
             if Timer.is_timeout(pid):
@@ -91,7 +91,7 @@ class _NegaMax(_NegaMax_):
     def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth, pid)
+        return super().get_score(color, board, depth, pid=pid)
 
 
 class NegaMax_(_NegaMax_):
@@ -107,7 +107,7 @@ class NegaMax_(_NegaMax_):
     def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth, pid)
+        return super().get_score(color, board, depth, pid=pid)
 
 
 class NegaMax(_NegaMax_):
@@ -125,4 +125,4 @@ class NegaMax(_NegaMax_):
     def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth, pid)
+        return super().get_score(color, board, depth, pid=pid)

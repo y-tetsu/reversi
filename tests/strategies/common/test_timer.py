@@ -60,7 +60,7 @@ class TestTimer(unittest.TestCase):
                 self.dummy = True
 
             @Timer.timeout
-            def timeout_monitor(self):
+            def timeout_monitor(self, pid=None):
                 self.dummy2 = True
 
         dummy = Dummy()
@@ -68,11 +68,11 @@ class TestTimer(unittest.TestCase):
         pid = dummy.__class__.__name__ + str(os.getpid())
         self.assertFalse(Timer.timeout_flag[pid])
 
-        dummy.timeout_monitor()
+        dummy.timeout_monitor(pid=pid)
         self.assertFalse(Timer.timeout_flag[pid])
 
         time.sleep(Timer.time_limit * 1.1)
-        dummy.timeout_monitor()
+        dummy.timeout_monitor(pid=pid)
         self.assertTrue(Timer.timeout_flag[pid])
 
         Timer.time_limit = pre_limit
@@ -90,18 +90,18 @@ class TestTimer(unittest.TestCase):
                 self.dummy = True
 
             @Timer.timeout
-            def timeout_monitor(self):
+            def timeout_monitor(self, pid=None):
                 self.dummy2 = True
 
         dummy = Dummy()
         dummy.timer_start()
         pid = dummy.__class__.__name__ + str(os.getpid())
-        dummy.timeout_monitor()
+        dummy.timeout_monitor(pid=pid)
 
         self.assertFalse(Timer.is_timeout(pid))
 
         time.sleep(Timer.time_limit * 1.1)
-        dummy.timeout_monitor()
+        dummy.timeout_monitor(pid=pid)
 
         self.assertTrue(Timer.is_timeout(pid))
 
@@ -120,7 +120,7 @@ class TestTimer(unittest.TestCase):
                 self.dummy = True
 
             @Timer.timeout
-            def timeout_monitor(self):
+            def timeout_monitor(self, pid=None):
                 self.dummy2 = True
 
         class Dummy2:
@@ -132,7 +132,7 @@ class TestTimer(unittest.TestCase):
                 self.dummy = True
 
             @Timer.timeout
-            def timeout_monitor(self):
+            def timeout_monitor(self, pid=None):
                 self.dummy2 = True
 
         dummy1 = Dummy1()
@@ -148,7 +148,7 @@ class TestTimer(unittest.TestCase):
 
         # time elapsed
         time.sleep((Timer.time_limit/2)*1.1)
-        dummy1.timeout_monitor()
+        dummy1.timeout_monitor(pid=pid1)
         self.assertFalse(Timer.is_timeout(pid1))
         self.assertFalse(Timer.is_timeout(pid2))
 
@@ -157,15 +157,15 @@ class TestTimer(unittest.TestCase):
 
         # time elapsed and dummy1 timeout
         time.sleep((Timer.time_limit/2)*1.1)
-        dummy1.timeout_monitor()
-        dummy2.timeout_monitor()
+        dummy1.timeout_monitor(pid=pid1)
+        dummy2.timeout_monitor(pid=pid2)
         self.assertTrue(Timer.is_timeout(pid1))
         self.assertFalse(Timer.is_timeout(pid2))
 
         # time elapsed and dummy2 timeout
         time.sleep((Timer.time_limit/2)*1.1)
-        dummy1.timeout_monitor()
-        dummy2.timeout_monitor()
+        dummy1.timeout_monitor(pid=pid1)
+        dummy2.timeout_monitor(pid=pid2)
         self.assertTrue(Timer.is_timeout(pid1))
         self.assertTrue(Timer.is_timeout(pid2))
 
@@ -175,7 +175,7 @@ class TestTimer(unittest.TestCase):
 
         # time elapsed
         time.sleep((Timer.time_limit/2)*1.1)
-        dummy1.timeout_monitor()
+        dummy1.timeout_monitor(pid=pid1)
         self.assertFalse(Timer.is_timeout(pid1))
         self.assertTrue(Timer.is_timeout(pid2))
 
@@ -184,15 +184,15 @@ class TestTimer(unittest.TestCase):
 
         # time elapsed and dummy1 timeout
         time.sleep((Timer.time_limit/2)*1.1)
-        dummy1.timeout_monitor()
-        dummy2.timeout_monitor()
+        dummy1.timeout_monitor(pid=pid1)
+        dummy2.timeout_monitor(pid=pid2)
         self.assertTrue(Timer.is_timeout(pid1))
         self.assertFalse(Timer.is_timeout(pid2))
 
         # time elapsed and dummy2 timeout
         time.sleep((Timer.time_limit/2)*1.1)
-        dummy1.timeout_monitor()
-        dummy2.timeout_monitor()
+        dummy1.timeout_monitor(pid=pid1)
+        dummy2.timeout_monitor(pid=pid2)
         self.assertTrue(Timer.is_timeout(pid1))
         self.assertTrue(Timer.is_timeout(pid2))
 

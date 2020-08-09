@@ -27,20 +27,20 @@ class _NegaScout_(_AlphaBeta_):
         next_color = 'white' if color == 'black' else 'black'
 
         if not legal_moves:
-            return -self._get_score(next_color, board, -beta, -alpha, depth)
+            return -self._get_score(next_color, board, -beta, -alpha, depth, pid=pid)
 
         # NegaScout法
         tmp, null_window = None, beta
         for i, move in enumerate(legal_moves):
             if alpha < beta:
                 board.put_disc(color, *move)
-                tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1)
+                tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1, pid=pid)
                 board.undo()
 
                 if alpha < tmp:
                     if tmp <= null_window and i:
                         board.put_disc(color, *move)
-                        alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1)
+                        alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1, pid=pid)
                         board.undo()
 
                         if Timer.is_timeout(pid):
@@ -68,7 +68,7 @@ class _NegaScout(_NegaScout_):
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid)
+        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
 
 
 class NegaScout_(_NegaScout_):
@@ -84,7 +84,7 @@ class NegaScout_(_NegaScout_):
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid)
+        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
 
 
 class NegaScout(_NegaScout_):
@@ -102,4 +102,4 @@ class NegaScout(_NegaScout_):
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid)
+        return super()._get_score(color, board, alpha, beta, depth, pid=pid)

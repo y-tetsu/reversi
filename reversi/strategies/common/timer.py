@@ -51,10 +51,12 @@ class Timer:
         タイマー経過チェック
         """
         def wrapper(*args, **kwargs):
-            pid = cls.get_pid(args[0])
-            if time.time() > Timer.deadline[pid]:
-                Timer.timeout_flag[pid] = True  # タイムアウト発生
-                return Timer.timeout_value[pid]
+            if 'pid' in kwargs:
+                pid = kwargs['pid']
+                if pid:
+                    if time.time() > Timer.deadline[pid]:
+                        Timer.timeout_flag[pid] = True  # タイムアウト発生
+                        return Timer.timeout_value[pid]
             return func(*args, **kwargs)
         return wrapper
 

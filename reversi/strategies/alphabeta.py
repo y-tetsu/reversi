@@ -50,10 +50,10 @@ class _AlphaBeta_(AbstractStrategy):
         """
         手を打った時の評価値を取得
         """
-        board.put_disc(color, *move)                                              # 一手打つ
-        next_color = 'white' if color == 'black' else 'black'                     # 相手の色
-        score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid)  # 評価値を取得
-        board.undo()                                                              # 打った手を戻す
+        board.put_disc(color, *move)                                                  # 一手打つ
+        next_color = 'white' if color == 'black' else 'black'                         # 相手の色
+        score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid=pid)  # 評価値を取得
+        board.undo()                                                                  # 打った手を戻す
 
         return score
 
@@ -73,12 +73,12 @@ class _AlphaBeta_(AbstractStrategy):
         legal_moves = legal_moves_b if color == 'black' else legal_moves_w
         next_color = 'white' if color == 'black' else 'black'
         if not legal_moves:
-            return -self._get_score(next_color, board, -beta, -alpha, depth, pid)
+            return -self._get_score(next_color, board, -beta, -alpha, depth, pid=pid)
 
         # 評価値を算出
         for move in legal_moves:
             board.put_disc(color, *move)
-            score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid)
+            score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid=pid)
             board.undo()
             if Timer.is_timeout(pid):
                 break
@@ -103,7 +103,7 @@ class _AlphaBeta(_AlphaBeta_):
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid)
+        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
 
 
 class AlphaBeta_(_AlphaBeta_):
@@ -119,7 +119,7 @@ class AlphaBeta_(_AlphaBeta_):
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid)
+        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
 
 
 class AlphaBeta(_AlphaBeta_):
@@ -137,7 +137,7 @@ class AlphaBeta(_AlphaBeta_):
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid)
+        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
 
 
 class _AlphaBetaN_(_AlphaBeta_):
