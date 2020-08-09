@@ -85,8 +85,8 @@ class TestEvaluator(unittest.TestCase):
 
         # Evaluator_T
         evaluator = coord.Evaluator_T()
-        score_b = evaluator.evaluate(color='black', board=board8)
-        score_w = evaluator.evaluate(color='white', board=board8)
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=None, legal_moves_w=None)
+        score_w = evaluator.evaluate(color='white', board=board8, legal_moves_b=None, legal_moves_w=None)
         self.assertEqual(score_b, -22)
         self.assertEqual(score_w, -22)
 
@@ -102,28 +102,28 @@ class TestEvaluator(unittest.TestCase):
 
         # Evaluator_TPOW
         evaluator = coord.Evaluator_TPOW()
-        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=[], legal_moves_w=[])
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=None, legal_moves_w=None)
         self.assertEqual(score_b, -10006)
         score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
         self.assertEqual(score_b, -25.25)
 
         # Evaluator_PW
         evaluator = coord.Evaluator_PW()
-        score = evaluator.evaluate(board=board8, legal_moves_b=[], legal_moves_w=[])
+        score = evaluator.evaluate(color=None, board=board8, legal_moves_b=None, legal_moves_w=None)
         self.assertEqual(score, -10006)
-        score = evaluator.evaluate(board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score = evaluator.evaluate(color=None, board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
         self.assertEqual(score, 5)
 
         # Evaluator_N
         evaluator = coord.Evaluator_N()
-        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=[], legal_moves_w=[])
+        score_b = evaluator.evaluate(color='black', board=board8, legal_moves_b=None, legal_moves_w=None)
         self.assertEqual(score_b, -6)
 
         # Evaluator_NW
         evaluator = coord.Evaluator_NW()
-        score = evaluator.evaluate(board=board8, legal_moves_b=[], legal_moves_w=[])
+        score = evaluator.evaluate(color=None, board=board8, legal_moves_b=None, legal_moves_w=None)
         self.assertEqual(score, -10006)
-        score = evaluator.evaluate(board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score = evaluator.evaluate(color=None, board=board8, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
         self.assertEqual(score, -6)
 
         # Evaluator_TPWE

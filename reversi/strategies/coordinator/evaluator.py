@@ -35,10 +35,10 @@ class Evaluator_T(AbstractEvaluator):
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5):
         self.scorer = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)  # Tableによる評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(board=board)
 
 
 class Evaluator_P(AbstractEvaluator):
@@ -49,10 +49,10 @@ class Evaluator_P(AbstractEvaluator):
     def __init__(self, wp=5):
         self.scorer = PossibilityScorer(wp)  # 配置可能数による評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
 
 class Evaluator_O(AbstractEvaluator):
@@ -63,10 +63,10 @@ class Evaluator_O(AbstractEvaluator):
     def __init__(self, wo=-0.75):
         self.scorer = OpeningScorer(wo)  # 開放度による評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(board=board)
 
 
 class Evaluator_W(AbstractEvaluator):
@@ -77,10 +77,10 @@ class Evaluator_W(AbstractEvaluator):
     def __init__(self, ww=10000):
         self.scorer = WinLoseScorer(ww)  # 勝敗による評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
 
 class Evaluator_N(AbstractEvaluator):
@@ -91,10 +91,10 @@ class Evaluator_N(AbstractEvaluator):
     def __init__(self):
         self.scorer = NumberScorer()  # 石数による評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(board=board)
 
 
 class Evaluator_E(AbstractEvaluator):
@@ -105,10 +105,10 @@ class Evaluator_E(AbstractEvaluator):
     def __init__(self, w=100):
         self.scorer = EdgeScorer(w)  # 辺のパターンによる評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(board=board)
 
 
 class Evaluator_C(AbstractEvaluator):
@@ -119,10 +119,10 @@ class Evaluator_C(AbstractEvaluator):
     def __init__(self, w=100):
         self.scorer = CornerScorer(w)  # 隅のパターンによる評価値算出
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        return self.scorer.get_score(*args, **kwargs)
+        return self.scorer.get_score(board=board)
 
 
 class Evaluator_TP(AbstractEvaluator):
@@ -134,11 +134,11 @@ class Evaluator_TP(AbstractEvaluator):
         self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
         self.p = PossibilityScorer(wp)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_t = self.t.get_score(*args, **kwargs)
-        score_p = self.p.get_score(*args, **kwargs)
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         return score_t + score_p
 
@@ -153,12 +153,12 @@ class Evaluator_TPO(AbstractEvaluator):
         self.p = PossibilityScorer(wp)
         self.o = OpeningScorer(wo)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_t = self.t.get_score(*args, **kwargs)
-        score_p = self.p.get_score(*args, **kwargs)
-        score_o = self.o.get_score(*args, **kwargs)
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_o = self.o.get_score(board=board)
 
         return score_t + score_p + score_o
 
@@ -172,16 +172,16 @@ class Evaluator_NW(AbstractEvaluator):
         self.n = NumberScorer()
         self.w = WinLoseScorer(ww)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_n = self.n.get_score(*args, **kwargs)
+        score_n = self.n.get_score(board=board)
 
         return score_n
 
@@ -195,16 +195,16 @@ class Evaluator_PW(AbstractEvaluator):
         self.p = PossibilityScorer(wp)
         self.w = WinLoseScorer(ww)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.get_score(*args, **kwargs)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         return score_p
 
@@ -219,17 +219,17 @@ class Evaluator_TPW(AbstractEvaluator):
         self.p = PossibilityScorer(wp)
         self.w = WinLoseScorer(ww)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(*args, **kwargs)
-        score_p = self.p.get_score(*args, **kwargs)
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         return score_t + score_p
 
@@ -245,18 +245,18 @@ class Evaluator_TPOW(AbstractEvaluator):
         self.o = OpeningScorer(wo)
         self.w = WinLoseScorer(ww)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(*args, **kwargs)
-        score_p = self.p.get_score(*args, **kwargs)
-        score_o = self.o.get_score(*args, **kwargs)
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_o = self.o.get_score(board=board)
 
         return score_t + score_p + score_o
 
@@ -272,18 +272,18 @@ class Evaluator_TPWE(AbstractEvaluator):
         self.w = WinLoseScorer(ww)
         self.e = EdgeScorer(we)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(*args, **kwargs)
-        score_p = self.p.get_score(*args, **kwargs)
-        score_e = self.e.get_score(*args, **kwargs)
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_e = self.e.get_score(board=board)
 
         return score_t + score_p + score_e
 
@@ -300,19 +300,19 @@ class Evaluator_TPWEC(AbstractEvaluator):
         self.e = EdgeScorer(we)
         self.c = CornerScorer(wc)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(*args, **kwargs)
-        score_p = self.p.get_score(*args, **kwargs)
-        score_e = self.e.get_score(*args, **kwargs)
-        score_c = self.c.get_score(*args, **kwargs)
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_e = self.e.get_score(board=board)
+        score_c = self.c.get_score(board=board)
 
         return score_t + score_p + score_e + score_c
 
@@ -327,16 +327,16 @@ class Evaluator_PWE(AbstractEvaluator):
         self.w = WinLoseScorer(ww)
         self.e = EdgeScorer(we)
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, legal_moves_b, legal_moves_w):
         """evaluate
         """
-        score_w = self.w.get_score(*args, **kwargs)
+        score_w = self.w.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.get_score(*args, **kwargs)
-        score_e = self.e.get_score(*args, **kwargs)
+        score_p = self.p.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+        score_e = self.e.get_score(board=board)
 
         return score_p + score_e
