@@ -183,4 +183,4 @@ class TestNegaScout(unittest.TestCase):
         negascout.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[key])
         self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
-        print('(4800)', Measure.count[key])
+        print('(5300)', Measure.count[key])
