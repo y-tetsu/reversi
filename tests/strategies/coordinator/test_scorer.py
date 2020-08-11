@@ -70,12 +70,12 @@ class TestScorer(unittest.TestCase):
 
         # initial value
         self.assertEqual(scorer._W, 5)
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
+        legal_moves_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+        legal_moves_w = board.get_bit_count(board.get_legal_moves_bits('white'))
         self.assertEqual(scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), 0)
         board.put_disc('black', 5, 4)
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
+        legal_moves_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+        legal_moves_w = board.get_bit_count(board.get_legal_moves_bits('white'))
         self.assertEqual(scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), 0)
 
         # check
@@ -87,8 +87,8 @@ class TestScorer(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
+        legal_moves_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+        legal_moves_w = board.get_bit_count(board.get_legal_moves_bits('white'))
 
         self.assertEqual(scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), 5)
 

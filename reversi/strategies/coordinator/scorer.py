@@ -36,13 +36,7 @@ class PossibilityScorer(AbstractScorer):
         """
         評価値の算出
         """
-        legal_moves_b, legal_moves_w = kwargs['legal_moves_b'], kwargs['legal_moves_w']
-
-        # 置ける場所の数に重みを掛ける
-        black_num = len(legal_moves_b)
-        white_num = len(legal_moves_w)
-
-        return (black_num - white_num) * self._W
+        return (kwargs['legal_moves_b'] - kwargs['legal_moves_w']) * self._W
 
 
 class OpeningScorer(AbstractScorer):

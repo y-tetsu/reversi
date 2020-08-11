@@ -41,25 +41,30 @@ class _MinMax_(AbstractStrategy):
         """get_score
         """
         # game finish or max-depth
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
-        is_game_end = True if not legal_moves_b and not legal_moves_w else False
+        legal_moves_b_bits = board.get_legal_moves_bits('black')
+        legal_moves_w_bits = board.get_legal_moves_bits('white')
+        is_game_end = True if not legal_moves_b_bits and not legal_moves_w_bits else False
         if is_game_end or depth <= 0:
-            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w)
+            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=board.get_bit_count(legal_moves_b_bits), legal_moves_w=board.get_bit_count(legal_moves_w_bits))
 
         # in case of pass
-        legal_moves = legal_moves_b if color == 'black' else legal_moves_w
+        legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
         next_color = 'white' if color == 'black' else 'black'
-        if not legal_moves:
+        if not legal_moves_bits:
             return self.get_score(next_color, board, depth)
 
         # get best score
         best_score = self._MIN if color == 'black' else self._MAX
-        for move in legal_moves:
-            board.put_disc(color, *move)
-            score = self.get_score(next_color, board, depth-1)
-            board.undo()
-            best_score = max(best_score, score) if color == 'black' else min(best_score, score)
+        size = board.size
+        mask = 1 << ((size**2)-1)
+        for y in range(size):
+            for x in range(size):
+                if legal_moves_bits & mask:
+                    board.put_disc(color, x, y)
+                    score = self.get_score(next_color, board, depth-1)
+                    board.undo()
+                    best_score = max(best_score, score) if color == 'black' else min(best_score, score)
+                mask >>= 1
 
         return best_score
 

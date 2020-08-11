@@ -14,42 +14,54 @@ class _NegaScout_(_AlphaBeta_):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
-        is_game_end = True if not legal_moves_b and not legal_moves_w else False
-
+        legal_moves_b_bits = board.get_legal_moves_bits('black')
+        legal_moves_w_bits = board.get_legal_moves_bits('white')
+        is_game_end = True if not legal_moves_b_bits and not legal_moves_w_bits else False
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
-            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w) * sign
+            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=board.get_bit_count(legal_moves_b_bits), legal_moves_w=board.get_bit_count(legal_moves_w_bits)) * sign
 
         # パスの場合
-        legal_moves = legal_moves_b if color == 'black' else legal_moves_w
+        legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
         next_color = 'white' if color == 'black' else 'black'
 
-        if not legal_moves:
+        if not legal_moves_bits:
             return -self._get_score(next_color, board, -beta, -alpha, depth, pid=pid)
 
         # NegaScout法
-        tmp, null_window = None, beta
-        for i, move in enumerate(legal_moves):
-            if alpha < beta:
-                board.put_disc(color, *move)
-                tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1, pid=pid)
-                board.undo()
-
-                if alpha < tmp:
-                    if tmp <= null_window and i:
-                        board.put_disc(color, *move)
-                        alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1, pid=pid)
+        tmp, null_window, index = None, beta, 0
+        size = board.size
+        mask = 1 << ((size**2)-1)
+        for y in range(size):
+            skip = False
+            for x in range(size):
+                if legal_moves_bits & mask:
+                    if alpha < beta:
+                        board.put_disc(color, x, y)
+                        tmp = -self._get_score(next_color, board, -null_window, -alpha, depth-1, pid=pid)
                         board.undo()
 
-                        if Timer.is_timeout(pid):
-                            return alpha
-                    else:
-                        alpha = tmp
+                        if alpha < tmp:
+                            if tmp <= null_window and index:
+                                board.put_disc(color, x, y)
+                                alpha = -self._get_score(next_color, board, -beta, -tmp, depth-1, pid=pid)
+                                board.undo()
 
-                null_window = alpha + 1
-            else:
+                                if Timer.is_timeout(pid):
+                                    return alpha
+                            else:
+                                alpha = tmp
+
+                        null_window = alpha + 1
+                    else:
+                        skip = True
+                        break
+
+                    index += 1
+
+                mask >>= 1
+
+            if skip:
                 break
 
         return alpha

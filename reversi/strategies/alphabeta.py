@@ -62,29 +62,40 @@ class _AlphaBeta_(AbstractStrategy):
         評価値の取得
         """
         # ゲーム終了 or 最大深さに到達
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
-        is_game_end = True if not legal_moves_b and not legal_moves_w else False
+        legal_moves_b_bits = board.get_legal_moves_bits('black')
+        legal_moves_w_bits = board.get_legal_moves_bits('white')
+        is_game_end = True if not legal_moves_b_bits and not legal_moves_w_bits else False
         if is_game_end or depth <= 0:
             sign = 1 if color == 'black' else -1
-            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w) * sign
+            return self.evaluator.evaluate(color=color, board=board, legal_moves_b=board.get_bit_count(legal_moves_b_bits), legal_moves_w=board.get_bit_count(legal_moves_w_bits)) * sign
 
         # パスの場合
-        legal_moves = legal_moves_b if color == 'black' else legal_moves_w
+        legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
         next_color = 'white' if color == 'black' else 'black'
-        if not legal_moves:
+        if not legal_moves_bits:
             return -self._get_score(next_color, board, -beta, -alpha, depth, pid=pid)
 
         # 評価値を算出
-        for move in legal_moves:
-            board.put_disc(color, *move)
-            score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid=pid)
-            board.undo()
-            if Timer.is_timeout(pid):
-                break
+        size = board.size
+        mask = 1 << ((size**2)-1)
+        for y in range(size):
+            skip = False
+            for x in range(size):
+                if legal_moves_bits & mask:
+                    board.put_disc(color, x, y)
+                    score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid=pid)
+                    board.undo()
 
-            alpha = max(alpha, score)  # 最大値を選択
-            if alpha >= beta:  # 枝刈り
+                    if Timer.is_timeout(pid):
+                        return alpha
+
+                    alpha = max(alpha, score)  # 最大値を選択
+                    if alpha >= beta:  # 枝刈り
+                        skip = True
+                        break
+                mask >>= 1
+
+            if skip:
                 break
 
         return alpha
