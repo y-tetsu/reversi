@@ -154,6 +154,27 @@ class TestIterativeDeepning(unittest.TestCase):
             depth=2,
             selector=coord.Selector(),
             sorter=coord.Sorter_B(),
+            search=AlphaBeta(
+                evaluator=coord.Evaluator_TPWE(),
+            ),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
+
+        print()
+        print(key)
+        print('AlphaBeta-Evaluator_TPWE : (5800)', Measure.count[key2])
+        print('(max_depth=5)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+
+        iterative = IterativeDeepning(
+            depth=2,
+            selector=coord.Selector(),
+            sorter=coord.Sorter_B(),
             search=NegaScout(
                 evaluator=coord.Evaluator(
                     separated=[coord.WinLoseScorer()],
