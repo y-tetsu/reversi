@@ -42,6 +42,8 @@ except ImportError:
 
 __all__ = [
     'get_legal_moves',
+    'get_legal_moves_bits',
+    'get_bit_count',
     'get_flippable_discs',
     'get_board_info',
     'undo',

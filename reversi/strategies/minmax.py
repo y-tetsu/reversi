@@ -45,7 +45,7 @@ class _MinMax_(AbstractStrategy):
         legal_moves_w_bits = board.get_legal_moves_bits('white')
         is_game_end = True if not legal_moves_b_bits and not legal_moves_w_bits else False
         if is_game_end or depth <= 0:
-            return self.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits))
+            return self.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits))  # noqa: E501
 
         # in case of pass
         legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits

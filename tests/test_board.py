@@ -529,7 +529,6 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_legal_moves_bits(self):
         board = Board(8)
-        blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
         legal_moves_bits = board.get_legal_moves_bits('black')
         self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
@@ -845,7 +844,6 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_bit_count(self):
         board = Board(8)
-        blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
         legal_moves_bits = board.get_legal_moves_bits('black')
         self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
 
@@ -941,7 +939,6 @@ class TestBoard(unittest.TestCase):
 
     def test_bitboard_size_8_get_legal_moves_bits(self):
         board = BitBoard(8)
-        legal_moves = board.get_legal_moves('black')
         legal_moves_bits = board.get_legal_moves_bits('black')
         self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
@@ -1142,7 +1139,6 @@ class TestBoard(unittest.TestCase):
 
     def test_bitboard_size_8_get_bit_count(self):
         board = BitBoard(8)
-        legal_moves = board.get_legal_moves('black')
         legal_moves_bits = board.get_legal_moves_bits('black')
         self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
 
