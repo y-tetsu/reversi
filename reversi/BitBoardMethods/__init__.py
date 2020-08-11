@@ -10,10 +10,10 @@ SLOW_MODE5 = True
 
 
 try:
-    from ..BitBoardMethods.GetLegalMovesFast import get_legal_moves
+    from ..BitBoardMethods.GetLegalMovesFast import get_legal_moves, get_legal_moves_bits, get_bit_count
     SLOW_MODE1 = False
 except ImportError:
-    from ..BitBoardMethods.GetLegalMoves import get_legal_moves
+    from ..BitBoardMethods.GetLegalMoves import get_legal_moves, get_legal_moves_bits, get_bit_count
 
 try:
     from ..BitBoardMethods.GetFlippableDiscsFast import get_flippable_discs

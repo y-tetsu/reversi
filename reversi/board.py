@@ -18,6 +18,10 @@ class AbstractBoard(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def get_legal_moves_bits(self, color):
+        pass
+
+    @abc.abstractmethod
     def get_flippable_discs(self, color, x, y):
         pass
 
@@ -35,6 +39,10 @@ class AbstractBoard(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def get_bitboard_info(self):
+        pass
+
+    @abc.abstractmethod
+    def get_bit_count(self, bits):
         pass
 
     @abc.abstractmethod
@@ -105,6 +113,25 @@ class Board(AbstractBoard):
                     legal_moves += [(x, y)]
 
         return legal_moves
+
+    def get_legal_moves_bits(self, color):
+        """get_legal_moves_bits
+
+        Args:
+            color : player's color
+
+        Returns:
+            legal_moves bits
+        """
+        legal_moves = self.get_legal_moves(color)
+        legal_moves_bits = 0
+        size = self.size
+        mask = 1 << ((size**2)-1)
+        for x, y in legal_moves:
+            bits = mask >> (y*size+x)
+            legal_moves_bits |= bits
+
+        return legal_moves_bits
 
     def get_flippable_discs(self, color, x, y):
         """get_flippable_discs
@@ -228,6 +255,19 @@ class Board(AbstractBoard):
 
         return board_info
 
+    def get_bit_count(self, bits):
+        """get_bit_count
+        """
+        count = 0
+        size = self.size
+        mask = 1 << ((size**2)-1)
+        for _ in range(size**2):
+            if bits & mask:
+                count += 1
+            mask >>= 1
+
+        return count
+
     def get_bitboard_info(self):
         """get_bitboard_info
         """
@@ -339,6 +379,17 @@ class BitBoard(AbstractBoard):
         """
         return BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
 
+    def get_legal_moves_bits(self, color):
+        """get_legal_moves_bits
+
+        Args:
+            color : player's color
+
+        Returns:
+            legal_moves bits
+        """
+        return BitBoardMethods.get_legal_moves_bits(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
+
     def get_flippable_discs(self, color, x, y):
         """get_flippable_discs
 
@@ -371,6 +422,11 @@ class BitBoard(AbstractBoard):
         """get_board_info
         """
         return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
+
+    def get_bit_count(self, bits):
+        """get_git_count
+        """
+        return BitBoardMethods.get_bit_count(self.size, bits)
 
     def get_bitboard_info(self):
         """get_bitboard_info

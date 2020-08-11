@@ -393,6 +393,21 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._mask.l, 0xFEFEFEFEFEFEFEFE)
         self.assertEqual(board._mask.ul, 0xFEFEFEFEFEFEFE00)
 
+    def test_board_size_4_get_legal_moves_bits(self):
+        board = Board(4)
+        blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, black, black, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(legal_moves_bits, 0x0013)
+        legal_moves_bits = board.get_legal_moves_bits('white')
+        self.assertEqual(legal_moves_bits, 0xA080)
+
     def test_board_size_4_get_legal_moves(self):
         board = Board(4)
         blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
@@ -496,6 +511,27 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_flippable_discs('white', 2, 0), [(2, 1)])
         self.assertEqual(board.get_flippable_discs('white', 3, 0), [(2, 1)])
         self.assertEqual(board.get_flippable_discs('white', 3, 1), [(2, 1)])
+
+    def test_board_size_4_get_bit_count(self):
+        board = Board(4)
+        blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, black, black, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+        legal_moves_bits = board.get_legal_moves_bits('white')
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+
+    def test_board_size_8_get_legal_moves_bits(self):
+        board = Board(8)
+        blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
     def test_board_size_8_get_legal_moves(self):
         board = Board(8)
@@ -807,6 +843,22 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_flippable_discs('black', 2, 5), [(3, 5)])
         self.assertEqual(board.get_flippable_discs('black', 6, 5), [(5, 5)])
 
+    def test_board_size_8_get_bit_count(self):
+        board = Board(8)
+        blank, black, white = board.disc['blank'], board.disc['black'], board.disc['white']
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
+
+    def test_bitboard_size_4_get_legal_moves_bits(self):
+        board = BitBoard(4)
+
+        board._black_bitboard = 0x640
+        board._white_bitboard = 0x020
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(legal_moves_bits, 0x0013)
+        legal_moves_bits = board.get_legal_moves_bits('white')
+        self.assertEqual(legal_moves_bits, 0xA080)
+
     def test_bitboard_size_4_get_legal_moves(self):
         board = BitBoard(4)
 
@@ -876,6 +928,22 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_flippable_discs('white', 2, 0), [(2, 1)])
         self.assertEqual(board.get_flippable_discs('white', 3, 0), [(2, 1)])
         self.assertEqual(board.get_flippable_discs('white', 3, 1), [(2, 1)])
+
+    def test_bitboard_size_4_get_bit_count(self):
+        board = BitBoard(4)
+
+        board._black_bitboard = 0x640
+        board._white_bitboard = 0x020
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+        legal_moves_bits = board.get_legal_moves_bits('white')
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+
+    def test_bitboard_size_8_get_legal_moves_bits(self):
+        board = BitBoard(8)
+        legal_moves = board.get_legal_moves('black')
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
     def test_bitboard_size_8_get_legal_moves(self):
         board = BitBoard(8)
@@ -1072,6 +1140,12 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_flippable_discs('black', 2, 5), [(3, 5)])
         self.assertEqual(board.get_flippable_discs('black', 6, 5), [(5, 5)])
 
+    def test_bitboard_size_8_get_bit_count(self):
+        board = BitBoard(8)
+        legal_moves = board.get_legal_moves('black')
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
+
     def test_board_random_play(self):
         class TestPlayer(Player):
             def put_disc(self, board, bitboard):
@@ -1149,6 +1223,9 @@ class TestBoard(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             class Test(AbstractBoard):
+                def get_legal_moves_bits(self, color):
+                    pass
+
                 def get_flippable_discs(self, color, x, y):
                     pass
 
@@ -1164,114 +1241,7 @@ class TestBoard(unittest.TestCase):
                 def get_bitboard_info(self):
                     pass
 
-                def undo(self):
-                    pass
-
-            test = Test()
-
-        with self.assertRaises(TypeError):
-            class Test(AbstractBoard):
-                def get_legal_moves(self, color):
-                    pass
-
-                def put_disc(self, color, x, y):
-                    pass
-
-                def update_score(self):
-                    pass
-
-                def get_board_info(self):
-                    pass
-
-                def get_bitboard_info(self):
-                    pass
-
-                def undo(self):
-                    pass
-
-            test = Test()
-
-        with self.assertRaises(TypeError):
-            class Test(AbstractBoard):
-                def get_legal_moves(self, color):
-                    pass
-
-                def get_flippable_discs(self, color, x, y):
-                    pass
-
-                def update_score(self):
-                    pass
-
-                def get_board_info(self):
-                    pass
-
-                def get_bitboard_info(self):
-                    pass
-
-                def undo(self):
-                    pass
-
-            test = Test()
-
-        with self.assertRaises(TypeError):
-            class Test(AbstractBoard):
-                def get_legal_moves(self, color):
-                    pass
-
-                def get_flippable_discs(self, color, x, y):
-                    pass
-
-                def put_disc(self, color, x, y):
-                    pass
-
-                def get_board_info(self):
-                    pass
-
-                def get_bitboard_info(self):
-                    pass
-
-                def undo(self):
-                    pass
-
-            test = Test()
-
-        with self.assertRaises(TypeError):
-            class Test(AbstractBoard):
-                def get_legal_moves(self, color):
-                    pass
-
-                def get_flippable_discs(self, color, x, y):
-                    pass
-
-                def put_disc(self, color, x, y):
-                    pass
-
-                def update_score(self):
-                    pass
-
-                def get_bitboard_info(self):
-                    pass
-
-                def undo(self):
-                    pass
-
-            test = Test()
-
-        with self.assertRaises(TypeError):
-            class Test(AbstractBoard):
-                def get_legal_moves(self, color):
-                    pass
-
-                def get_flippable_discs(self, color, x, y):
-                    pass
-
-                def put_disc(self, color, x, y):
-                    pass
-
-                def update_score(self):
-                    pass
-
-                def get_board_info(self):
+                def get_bit_count(self, bits):
                     pass
 
                 def undo(self):
@@ -1297,12 +1267,217 @@ class TestBoard(unittest.TestCase):
                     pass
 
                 def get_bitboard_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def get_flippable_discs(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def get_flippable_discs(self, color, x, y):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def get_flippable_discs(self, color, x, y):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def get_flippable_discs(self, color, x, y):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def get_flippable_discs(self, color, x, y):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def undo(self):
+                    pass
+
+            test = Test()
+
+        with self.assertRaises(TypeError):
+            class Test(AbstractBoard):
+                def get_legal_moves(self, color):
+                    pass
+
+                def get_legal_moves_bits(self, color):
+                    pass
+
+                def get_flippable_discs(self, color, x, y):
+                    pass
+
+                def put_disc(self, color, x, y):
+                    pass
+
+                def update_score(self):
+                    pass
+
+                def get_board_info(self):
+                    pass
+
+                def get_bitboard_info(self):
+                    pass
+
+                def get_bit_count(self, bits):
                     pass
 
             test = Test()
 
         class Test(AbstractBoard):
             def get_legal_moves(self, color):
+                pass
+
+            def get_legal_moves_bits(self, color):
                 pass
 
             def get_flippable_discs(self, color, x, y):
@@ -1318,6 +1493,9 @@ class TestBoard(unittest.TestCase):
                 pass
 
             def get_bitboard_info(self):
+                pass
+
+            def get_bit_count(self, bits):
                 pass
 
             def undo(self):

@@ -6,23 +6,7 @@ def get_legal_moves(color, size, b, w, mask):
     """
     石が置ける場所をすべて返す
     """
-    # 前準備
-    player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
-    legal_moves = 0                                            # 石が置ける場所
-    horizontal = opponent & mask.h                             # 水平方向のチェック値
-    vertical = opponent & mask.v                               # 垂直方向のチェック値
-    diagonal = opponent & mask.d                               # 斜め方向のチェック値
-    blank = ~(player | opponent)                               # 空きマス位置
-
-    # 置ける場所を探す
-    legal_moves |= get_legal_moves_lshift(size, horizontal, player, blank, 1)     # 左方向
-    legal_moves |= get_legal_moves_rshift(size, horizontal, player, blank, 1)     # 右方向
-    legal_moves |= get_legal_moves_lshift(size, vertical, player, blank, size)    # 上方向
-    legal_moves |= get_legal_moves_rshift(size, vertical, player, blank, size)    # 下方向
-    legal_moves |= get_legal_moves_lshift(size, diagonal, player, blank, size+1)  # 左斜め上方向
-    legal_moves |= get_legal_moves_lshift(size, diagonal, player, blank, size-1)  # 右斜め上方向
-    legal_moves |= get_legal_moves_rshift(size, diagonal, player, blank, size-1)  # 左斜め下方向
-    legal_moves |= get_legal_moves_rshift(size, diagonal, player, blank, size+1)  # 右斜め下方向
+    legal_moves_bits = get_legal_moves_bits(color, size, b, w, mask)
 
     # 石が置ける場所を格納
     ret = []
@@ -30,11 +14,36 @@ def get_legal_moves(color, size, b, w, mask):
     for y in range(size):
         for x in range(size):
             # 石が置ける場合
-            if legal_moves & check:
+            if legal_moves_bits & check:
                 ret += [(x, y)]
             check >>= 1
 
     return ret
+
+
+def get_legal_moves_bits(color, size, b, w, mask):
+    """
+    石が置ける場所をすべて返す
+    """
+    # 前準備
+    player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
+    legal_moves_bits = 0                                       # 石が置ける場所
+    horizontal = opponent & mask.h                             # 水平方向のチェック値
+    vertical = opponent & mask.v                               # 垂直方向のチェック値
+    diagonal = opponent & mask.d                               # 斜め方向のチェック値
+    blank = ~(player | opponent)                               # 空きマス位置
+
+    # 置ける場所を探す
+    legal_moves_bits |= get_legal_moves_lshift(size, horizontal, player, blank, 1)     # 左方向
+    legal_moves_bits |= get_legal_moves_rshift(size, horizontal, player, blank, 1)     # 右方向
+    legal_moves_bits |= get_legal_moves_lshift(size, vertical, player, blank, size)    # 上方向
+    legal_moves_bits |= get_legal_moves_rshift(size, vertical, player, blank, size)    # 下方向
+    legal_moves_bits |= get_legal_moves_lshift(size, diagonal, player, blank, size+1)  # 左斜め上方向
+    legal_moves_bits |= get_legal_moves_lshift(size, diagonal, player, blank, size-1)  # 右斜め上方向
+    legal_moves_bits |= get_legal_moves_rshift(size, diagonal, player, blank, size-1)  # 左斜め下方向
+    legal_moves_bits |= get_legal_moves_rshift(size, diagonal, player, blank, size+1)  # 右斜め下方向
+
+    return legal_moves_bits
 
 
 def get_legal_moves_lshift(size, mask, player, blank, shift_size):
@@ -57,3 +66,17 @@ def get_legal_moves_rshift(size, mask, player, blank, shift_size):
         tmp |= mask & (tmp >> shift_size)
 
     return blank & (tmp >> shift_size)
+
+
+def get_bit_count(size, bits):
+    """get_bit_count
+    """
+    count = 0
+    mask = 1 << ((size**2)-1)
+    for y in range(size):
+        for x in range(size):
+            if bits & mask:
+                count += 1
+            mask >>= 1
+
+    return count
