@@ -36,7 +36,7 @@ class PossibilityScorer(AbstractScorer):
         """
         評価値の算出
         """
-        return (kwargs['legal_moves_b'] - kwargs['legal_moves_w']) * self._W
+        return (kwargs['possibility_b'] - kwargs['possibility_w']) * self._W
 
 
 class OpeningScorer(AbstractScorer):
@@ -95,11 +95,11 @@ class WinLoseScorer(AbstractScorer):
         """
         評価値の算出
         """
-        board, legal_moves_b, legal_moves_w = kwargs['board'], kwargs['legal_moves_b'], kwargs['legal_moves_w']
+        board, possibility_b, possibility_w = kwargs['board'], kwargs['possibility_b'], kwargs['possibility_w']
         ret = None
 
         # 対局終了時
-        if not legal_moves_b and not legal_moves_w:
+        if not possibility_b and not possibility_w:
             ret = board._black_score - board._white_score
 
             if ret > 0:    # 黒が勝った

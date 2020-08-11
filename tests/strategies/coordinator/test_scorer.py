@@ -70,13 +70,13 @@ class TestScorer(unittest.TestCase):
 
         # initial value
         self.assertEqual(scorer._W, 5)
-        legal_moves_b = board.get_bit_count(board.get_legal_moves_bits('black'))
-        legal_moves_w = board.get_bit_count(board.get_legal_moves_bits('white'))
-        self.assertEqual(scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), 0)
+        possibility_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+        possibility_w = board.get_bit_count(board.get_legal_moves_bits('white'))
+        self.assertEqual(scorer.get_score(possibility_b=possibility_b, possibility_w=possibility_w), 0)
         board.put_disc('black', 5, 4)
-        legal_moves_b = board.get_bit_count(board.get_legal_moves_bits('black'))
-        legal_moves_w = board.get_bit_count(board.get_legal_moves_bits('white'))
-        self.assertEqual(scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), 0)
+        possibility_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+        possibility_w = board.get_bit_count(board.get_legal_moves_bits('white'))
+        self.assertEqual(scorer.get_score(possibility_b=possibility_b, possibility_w=possibility_w), 0)
 
         # check
         board = Board(8)
@@ -87,10 +87,10 @@ class TestScorer(unittest.TestCase):
         board.put_disc('black', 1, 1)
         board.put_disc('white', 0, 0)
 
-        legal_moves_b = board.get_bit_count(board.get_legal_moves_bits('black'))
-        legal_moves_w = board.get_bit_count(board.get_legal_moves_bits('white'))
+        possibility_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+        possibility_w = board.get_bit_count(board.get_legal_moves_bits('white'))
 
-        self.assertEqual(scorer.get_score(legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), 5)
+        self.assertEqual(scorer.get_score(possibility_b=possibility_b, possibility_w=possibility_w), 5)
 
     def test_opening_scorer(self):
         board = Board()
@@ -114,11 +114,11 @@ class TestScorer(unittest.TestCase):
         board.put_disc('white', 0, 0)
 
         scorer = coord.WinLoseScorer()
-        self.assertEqual(scorer.get_score(board=board, legal_moves_b=[], legal_moves_w=[]), -10006)
+        self.assertEqual(scorer.get_score(board=board, possibility_b=None, possibility_w=None), -10006)
 
-        legal_moves_b = board.get_legal_moves('black')
-        legal_moves_w = board.get_legal_moves('white')
-        self.assertEqual(scorer.get_score(board=board, legal_moves_b=legal_moves_b, legal_moves_w=legal_moves_w), None)
+        possibility_b = board.get_legal_moves('black')
+        possibility_w = board.get_legal_moves('white')
+        self.assertEqual(scorer.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w), None)
 
     def test_number_scorer(self):
         board = Board()
