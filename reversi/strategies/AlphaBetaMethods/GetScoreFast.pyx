@@ -47,18 +47,17 @@ def get_score_measure_timer(alphabeta, color, board, alpha, beta, depth, pid):
     return _get_score_measure_timer(_get_score_measure_timer, alphabeta, color, board, alpha, beta, depth, pid)
 
 
-cdef signed int _get_score(func, alphabeta, color, board, signed int alpha, signed int beta, unsigned int depth, pid):
+cdef _get_score(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
     """_get_score
     """
     cdef:
         unsigned int is_game_end
-        signed int sign
 
     # ゲーム終了 or 最大深さに到達
     legal_moves_b_bits = board.get_legal_moves_bits('black')
     legal_moves_w_bits = board.get_legal_moves_bits('white')
-    is_game_end = 1 if not legal_moves_b_bits and not legal_moves_w_bits else 0
-    if is_game_end or depth <= 0:
+    is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
+    if is_game_end or depth == <unsigned int>0:
         sign = 1 if color == 'black' else -1
         return alphabeta.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
 
@@ -70,11 +69,11 @@ cdef signed int _get_score(func, alphabeta, color, board, signed int alpha, sign
 
     # 評価値を算出
     cdef:
-        unsigned int size, skip, y, x
+        unsigned int x, y
     size = board.size
     mask = 1 << ((size**2)-1)
     for y in range(size):
-        skip = <unsigned int>0
+        skip = False
         for x in range(size):
             if legal_moves_bits & mask:
                 board.put_disc(color, x, y)
@@ -86,7 +85,7 @@ cdef signed int _get_score(func, alphabeta, color, board, signed int alpha, sign
 
                 alpha = max(alpha, score)  # 最大値を選択
                 if alpha >= beta:  # 枝刈り
-                    skip = <unsigned int>1
+                    skip = True
                     break
             mask >>= 1
 
@@ -96,7 +95,7 @@ cdef signed int _get_score(func, alphabeta, color, board, signed int alpha, sign
     return alpha
 
 
-cdef signed int _get_score_measure(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
+cdef _get_score_measure(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
     """_get_score_measure
     """
     measure(pid)
@@ -104,7 +103,7 @@ cdef signed int _get_score_measure(func, alphabeta, color, board, alpha, beta, u
     return _get_score(func, alphabeta, color, board, alpha, beta, depth, pid)
 
 
-cdef signed int _get_score_timer(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
+cdef _get_score_timer(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
     """_get_score_timer
     """
     cdef:
@@ -114,7 +113,7 @@ cdef signed int _get_score_timer(func, alphabeta, color, board, alpha, beta, uns
     return timeout if timeout else _get_score(func, alphabeta, color, board, alpha, beta, depth, pid)
 
 
-cdef signed int _get_score_measure_timer(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
+cdef _get_score_measure_timer(func, alphabeta, color, board, alpha, beta, unsigned int depth, pid):
     """_get_score_measure_timer
     """
     cdef:
