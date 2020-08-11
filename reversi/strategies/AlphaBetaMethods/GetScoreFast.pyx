@@ -69,11 +69,11 @@ cdef _get_score(func, alphabeta, color, board, alpha, beta, unsigned int depth, 
 
     # 評価値を算出
     cdef:
-        unsigned int x, y
+        unsigned int skip
     size = board.size
     mask = 1 << ((size**2)-1)
     for y in range(size):
-        skip = False
+        skip = <unsigned int>0
         for x in range(size):
             if legal_moves_bits & mask:
                 board.put_disc(color, x, y)
@@ -85,7 +85,7 @@ cdef _get_score(func, alphabeta, color, board, alpha, beta, unsigned int depth, 
 
                 alpha = max(alpha, score)  # 最大値を選択
                 if alpha >= beta:  # 枝刈り
-                    skip = True
+                    skip = <unsigned int>1
                     break
             mask >>= 1
 
