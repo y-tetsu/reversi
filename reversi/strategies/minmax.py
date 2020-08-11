@@ -3,7 +3,7 @@
 
 import random
 
-from reversi.strategies.common import Measure, AbstractStrategy
+from reversi.strategies.common import Timer, Measure, AbstractStrategy
 
 
 class _MinMax_(AbstractStrategy):
@@ -19,6 +19,8 @@ class _MinMax_(AbstractStrategy):
     def next_move(self, color, board):
         """next_move
         """
+        pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
+
         # select best move
         next_color = 'white' if color == 'black' else 'black'
         next_moves = {}
@@ -26,7 +28,7 @@ class _MinMax_(AbstractStrategy):
         legal_moves = board.get_legal_moves(color)
         for move in legal_moves:
             board.put_disc(color, *move)
-            score = self.get_score(next_color, board, self.depth-1)
+            score = self.get_score(next_color, board, self.depth-1, pid=pid)
             board.undo()
             best_score = max(best_score, score) if color == 'black' else min(best_score, score)
 
@@ -37,7 +39,7 @@ class _MinMax_(AbstractStrategy):
 
         return random.choice(next_moves[best_score])  # random choice if many best scores
 
-    def get_score(self, color, board, depth):
+    def get_score(self, color, board, depth, pid=None):
         """get_score
         """
         # game finish or max-depth
@@ -51,7 +53,7 @@ class _MinMax_(AbstractStrategy):
         legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
         next_color = 'white' if color == 'black' else 'black'
         if not legal_moves_bits:
-            return self.get_score(next_color, board, depth)
+            return self.get_score(next_color, board, depth, pid=pid)
 
         # get best score
         best_score = self._MIN if color == 'black' else self._MAX
@@ -61,7 +63,7 @@ class _MinMax_(AbstractStrategy):
             for x in range(size):
                 if legal_moves_bits & mask:
                     board.put_disc(color, x, y)
-                    score = self.get_score(next_color, board, depth-1)
+                    score = self.get_score(next_color, board, depth-1, pid=pid)
                     board.undo()
                     best_score = max(best_score, score) if color == 'black' else min(best_score, score)
                 mask >>= 1
@@ -79,7 +81,7 @@ class MinMax(_MinMax_):
         return super().next_move(color, board)
 
     @Measure.countup
-    def get_score(self, color, board, depth):
+    def get_score(self, color, board, depth, pid=None):
         """get_score
         """
-        return super().get_score(color, board, depth)
+        return super().get_score(color, board, depth, pid=pid)

@@ -112,59 +112,59 @@ class TestAlphaBeta(unittest.TestCase):
 
         # AlphaBeta
         alphabeta = AlphaBeta(evaluator=coord.Evaluator_TPOW())
-        key = alphabeta.__class__.__name__ + str(os.getpid())
+        pid = alphabeta.__class__.__name__ + str(os.getpid())
 
-        Measure.count[key] = 0
-        Timer.timeout_flag[key] = False
-        Timer.timeout_value[key] = 0
-        Timer.deadline[key] = time.time() + CPU_TIME
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 5)  # depth 5
+        Measure.count[pid] = 0
+        Timer.timeout_flag[pid] = False
+        Timer.timeout_value[pid] = 0
+        Timer.deadline[pid] = time.time() + CPU_TIME
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 5, pid=pid)  # depth 5
         self.assertEqual(score, 4)
-        self.assertEqual(Measure.count[key], 703)
+        self.assertEqual(Measure.count[pid], 703)
 
         # _AlphaBeta
         alphabeta = _AlphaBeta(evaluator=coord.Evaluator_TPOW())
-        key = alphabeta.__class__.__name__ + str(os.getpid())
+        pid = alphabeta.__class__.__name__ + str(os.getpid())
 
-        Measure.count[key] = 0
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 2)  # depth 2
+        Measure.count[pid] = 0
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 2, pid=pid)  # depth 2
         self.assertEqual(score, -10.75)
-        self.assertEqual(Measure.count[key], 16)
+        self.assertEqual(Measure.count[pid], 16)
 
-        Measure.count[key] = 0
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 3)  # depth 3
+        Measure.count[pid] = 0
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 3, pid=pid)  # depth 3
         self.assertEqual(score, 6.25)
-        self.assertEqual(Measure.count[key], 63)
+        self.assertEqual(Measure.count[pid], 63)
 
-        Measure.count[key] = 0
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 4)  # depth 4
+        Measure.count[pid] = 0
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 4, pid=pid)  # depth 4
         self.assertEqual(score, -8.25)
-        self.assertEqual(Measure.count[key], 257)
+        self.assertEqual(Measure.count[pid], 257)
 
-        Measure.count[key] = 0
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 5)  # depth 5
+        Measure.count[pid] = 0
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 5, pid=pid)  # depth 5
         self.assertEqual(score, 4)
-        self.assertEqual(Measure.count[key], 703)
+        self.assertEqual(Measure.count[pid], 703)
 
-        Measure.count[key] = 0
-        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 6)  # depth 6
+        Measure.count[pid] = 0
+        score = alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 6, pid=pid)  # depth 6
         self.assertEqual(score, -3.5)
-        self.assertEqual(Measure.count[key], 2696)
+        self.assertEqual(Measure.count[pid], 2696)
 
         board.put_disc('white', 2, 4)
         board.put_disc('black', 5, 5)
         board.put_disc('white', 4, 2)
         board.put_disc('black', 5, 2)
         board.put_disc('white', 5, 4)
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(5):
             alphabeta.next_move('black', board)
 
         print()
-        print(key, 'depth = 3')
-        print(' min :', Measure.elp_time[key]['min'], '(s)')
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+        print(pid, 'depth = 3')
+        print(' min :', Measure.elp_time[pid]['min'], '(s)')
+        print(' max :', Measure.elp_time[pid]['max'], '(s)')
+        print(' ave :', Measure.elp_time[pid]['ave'], '(s)')
 
         # best move
         class _AlphaBetaTest(_AlphaBeta):
@@ -173,40 +173,40 @@ class TestAlphaBeta(unittest.TestCase):
                 return super().get_best_move(color, board, moves, depth)
 
         alphabeta = _AlphaBetaTest(evaluator=coord.Evaluator_TPOW())
-        key = alphabeta.__class__.__name__ + str(os.getpid())
+        pid = alphabeta.__class__.__name__ + str(os.getpid())
 
         moves = board.get_legal_moves('black')
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
             alphabeta.get_best_move('black', board, moves, 4)
 
         print()
-        print(key, 'depth = 4')
-        print(' min :', Measure.elp_time[key]['min'], '(s)')
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+        print(pid, 'depth = 4')
+        print(' min :', Measure.elp_time[pid]['min'], '(s)')
+        print(' max :', Measure.elp_time[pid]['max'], '(s)')
+        print(' ave :', Measure.elp_time[pid]['ave'], '(s)')
         self.assertEqual(alphabeta.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))  # noqa: E501
 
         moves = coord.Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
             alphabeta.get_best_move('black', board, moves, 4)
 
         print()
-        print(key, 'depth = 4 Sorter_B')
-        print(' min :', Measure.elp_time[key]['min'], '(s)')
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+        print(pid, 'depth = 4 Sorter_B')
+        print(' min :', Measure.elp_time[pid]['min'], '(s)')
+        print(' max :', Measure.elp_time[pid]['max'], '(s)')
+        print(' ave :', Measure.elp_time[pid]['ave'], '(s)')
 
     def test_alphabeta_timer_timeout(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
         alphabeta = AlphaBeta(depth=10, evaluator=coord.Evaluator_TPOW())
-        key = alphabeta.__class__.__name__ + str(os.getpid())
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
-        Measure.count[key] = 0
+        pid = alphabeta.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.count[pid] = 0
 
         alphabeta.next_move('white', board)
-        self.assertTrue(Timer.timeout_flag[key])
-        self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
-        print('(5300)', Measure.count[key])
+        self.assertTrue(Timer.timeout_flag[pid])
+        self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
+        print('(5300)', Measure.count[pid])

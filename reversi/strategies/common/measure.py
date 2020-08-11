@@ -50,14 +50,11 @@ class Measure:
         コール回数のカウントアップ
         """
         def wrapper(*args, **kwargs):
-            key = args[0].__class__.__name__ + str(os.getpid())
+            if 'pid' in kwargs:
+                pid = kwargs['pid']
+                if pid not in Measure.count:
+                    Measure.count[pid] = 0
+                Measure.count[pid] += 1
 
-            if key not in Measure.count:
-                Measure.count[key] = 0
-
-            Measure.count[key] += 1
-
-            ret = func(*args, **kwargs)
-
-            return ret
+            return func(*args, **kwargs)
         return wrapper

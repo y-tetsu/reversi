@@ -70,62 +70,62 @@ class TestNegaMax(unittest.TestCase):
 
         # NegaMax
         negamax = NegaMax(evaluator=coord.Evaluator_TPOW())
-        key = negamax.__class__.__name__ + str(os.getpid())
+        pid = negamax.__class__.__name__ + str(os.getpid())
 
-        Measure.count[key] = 0
-        Timer.timeout_flag[key] = False
-        Timer.timeout_value[key] = 0
-        Timer.deadline[key] = time.time() + CPU_TIME
-        score = negamax.get_score('white', board, 4)  # depth 4
+        Measure.count[pid] = 0
+        Timer.timeout_flag[pid] = False
+        Timer.timeout_value[pid] = 0
+        Timer.deadline[pid] = time.time() + CPU_TIME
+        score = negamax.get_score('white', board, 4, pid=pid)  # depth 4
         self.assertEqual(score, -8.25)
-        self.assertEqual(Measure.count[key], 428)
+        self.assertEqual(Measure.count[pid], 428)
 
         # _NegaMax
         negamax = _NegaMax(evaluator=coord.Evaluator_TPOW())
-        key = negamax.__class__.__name__ + str(os.getpid())
+        pid = negamax.__class__.__name__ + str(os.getpid())
 
-        Measure.count[key] = 0
-        score = negamax.get_score('white', board, 2)  # depth 2
+        Measure.count[pid] = 0
+        score = negamax.get_score('white', board, 2, pid=pid)  # depth 2
         self.assertEqual(score, -10.75)
-        self.assertEqual(Measure.count[key], 18)
+        self.assertEqual(Measure.count[pid], 18)
 
-        Measure.count[key] = 0
-        score = negamax.get_score('white', board, 3)  # depth 3
+        Measure.count[pid] = 0
+        score = negamax.get_score('white', board, 3, pid=pid)  # depth 3
         self.assertEqual(score, 6.25)
-        self.assertEqual(Measure.count[key], 79)
+        self.assertEqual(Measure.count[pid], 79)
 
-        Measure.count[key] = 0
-        score = negamax.get_score('white', board, 4)  # depth 4
+        Measure.count[pid] = 0
+        score = negamax.get_score('white', board, 4, pid=pid)  # depth 4
         self.assertEqual(score, -8.25)
-        self.assertEqual(Measure.count[key], 428)
+        self.assertEqual(Measure.count[pid], 428)
 
-        Measure.count[key] = 0
-        score = negamax.get_score('white', board, 5)  # depth 5
+        Measure.count[pid] = 0
+        score = negamax.get_score('white', board, 5, pid=pid)  # depth 5
         self.assertEqual(score, 4)
-        self.assertEqual(Measure.count[key], 2478)
+        self.assertEqual(Measure.count[pid], 2478)
 
         board.put_disc('white', 2, 4)
         board.put_disc('black', 5, 5)
         board.put_disc('white', 4, 2)
         board.put_disc('black', 5, 2)
         board.put_disc('white', 5, 4)
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(5):
             negamax.next_move('black', board)
 
         print()
-        print(key, 'depth = 3')
-        print(' min :', Measure.elp_time[key]['min'], '(s)')
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+        print(pid, 'depth = 3')
+        print(' min :', Measure.elp_time[pid]['min'], '(s)')
+        print(' max :', Measure.elp_time[pid]['max'], '(s)')
+        print(' ave :', Measure.elp_time[pid]['ave'], '(s)')
 
     def test_negamax_timer_timeout(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
         negamax = NegaMax(depth=10, evaluator=coord.Evaluator_TPOW())
-        key = negamax.__class__.__name__ + str(os.getpid())
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        pid = negamax.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
 
         negamax.next_move('white', board)
-        self.assertTrue(Timer.timeout_flag[key])
-        self.assertLessEqual(Measure.elp_time[key]['max'], CPU_TIME * 1.1)
+        self.assertTrue(Timer.timeout_flag[pid])
+        self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
