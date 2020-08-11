@@ -1,7 +1,6 @@
 """Table
 """
 
-import sys
 import random
 import itertools
 
