@@ -3,6 +3,7 @@
 
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.coordinator import Evaluator_N
+import reversi.strategies.AlphaBetaMethods as AlphaBetaMethods
 
 
 class _AlphaBeta_(AbstractStrategy):
@@ -61,44 +62,7 @@ class _AlphaBeta_(AbstractStrategy):
         """
         評価値の取得
         """
-        # ゲーム終了 or 最大深さに到達
-        legal_moves_b_bits = board.get_legal_moves_bits('black')
-        legal_moves_w_bits = board.get_legal_moves_bits('white')
-        is_game_end = True if not legal_moves_b_bits and not legal_moves_w_bits else False
-        if is_game_end or depth <= 0:
-            sign = 1 if color == 'black' else -1
-            return self.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
-
-        # パスの場合
-        legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
-        next_color = 'white' if color == 'black' else 'black'
-        if not legal_moves_bits:
-            return -self._get_score(next_color, board, -beta, -alpha, depth, pid=pid)
-
-        # 評価値を算出
-        size = board.size
-        mask = 1 << ((size**2)-1)
-        for y in range(size):
-            skip = False
-            for x in range(size):
-                if legal_moves_bits & mask:
-                    board.put_disc(color, x, y)
-                    score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid=pid)
-                    board.undo()
-
-                    if Timer.is_timeout(pid):
-                        return alpha
-
-                    alpha = max(alpha, score)  # 最大値を選択
-                    if alpha >= beta:  # 枝刈り
-                        skip = True
-                        break
-                mask >>= 1
-
-            if skip:
-                break
-
-        return alpha
+        return AlphaBetaMethods.get_score(self, color, board, alpha, beta, depth, pid)
 
 
 class _AlphaBeta(_AlphaBeta_):
@@ -110,11 +74,10 @@ class _AlphaBeta(_AlphaBeta_):
         """
         return super().next_move(color, board)
 
-    @Measure.countup
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
+        return AlphaBetaMethods.get_score_measure(self, color, board, alpha, beta, depth, pid)
 
 
 class AlphaBeta_(_AlphaBeta_):
@@ -126,11 +89,10 @@ class AlphaBeta_(_AlphaBeta_):
         """
         return super().next_move(color, board)
 
-    @Timer.timeout
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
+        return AlphaBetaMethods.get_score_timer(self, color, board, alpha, beta, depth, pid)
 
 
 class AlphaBeta(_AlphaBeta_):
@@ -143,12 +105,10 @@ class AlphaBeta(_AlphaBeta_):
         """
         return super().next_move(color, board)
 
-    @Timer.timeout
-    @Measure.countup
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
         """
-        return super()._get_score(color, board, alpha, beta, depth, pid=pid)
+        return AlphaBetaMethods.get_score_measure_timer(self, color, board, alpha, beta, depth, pid)
 
 
 class _AlphaBetaN_(_AlphaBeta_):
