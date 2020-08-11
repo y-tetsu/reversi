@@ -8,8 +8,6 @@ import itertools
 from reversi.strategies.common import AbstractStrategy
 import reversi.strategies.TableMethods as TableMethods
 
-sys.path.append('../')
-
 
 class Table(AbstractStrategy):
     """select move by evaluation table
