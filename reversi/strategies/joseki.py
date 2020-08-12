@@ -1069,7 +1069,6 @@ class _Joseki_(AbstractStrategy):
         self.joseki = {}
         self.base = base
 
-    @Measure.time
     def next_move(self, color, board):
         """
         次の一手
