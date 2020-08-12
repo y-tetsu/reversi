@@ -179,7 +179,7 @@ cdef double _get_score_size8_64bit(func, alphabeta, color, board, double alpha, 
     cdef:
         double score
         unsigned long long b, w, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
-        unsigned int is_game_end, color_num, x, y, skip
+        unsigned int is_game_end, color_num, x, y
         signed int sign
 
     # ゲーム終了 or 最大深さに到達
@@ -210,26 +210,22 @@ cdef double _get_score_size8_64bit(func, alphabeta, color, board, double alpha, 
     # 評価値を算出
     mask = 1 << 63
     for y in range(8):
-        skip = <unsigned int>0
         for x in range(8):
             if legal_moves_bits & mask:
                 _put_disc_size8_64bit(board, color_num, x, y)
                 score = -func(func, alphabeta, next_color, board, -beta, -alpha, depth-1, pid)
                 _undo(board)
 
-                if Timer.is_timeout(pid):
-                    return alpha
-
                 if score > alpha:
                     alpha = score
 
-                if alpha >= beta:  # 枝刈り
-                    skip = <unsigned int>1
-                    break
-            mask >>= 1
+                if Timer.is_timeout(pid):
+                    return alpha
 
-        if skip:
-            break
+                if alpha >= beta:  # 枝刈り
+                    return alpha
+
+            mask >>= 1
 
     return alpha
 
@@ -311,9 +307,6 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, 
 
     # 配置位置を整数に変換
     shift_size = (63-(y*8+x))
-    if shift_size < 0 or shift_size > 63:
-        return <unsigned long long>0
-
     put = <unsigned long long>1 << shift_size
 
     # ひっくり返せる石を取得
