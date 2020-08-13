@@ -3,7 +3,7 @@
 
 from reversi.strategies.common import Measure
 from reversi.strategies import Random, MonteCarlo, MinMax, _NegaMax, NegaMax, AlphaBeta_, AlphaBeta, AlphaBeta_old, NegaScout, Switch, FullReading_, _FullReading, FullReading, FullReading_old, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
-from reversi.strategies.coordinator import Selector, Orderer_B, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
+from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
 # ---------- #
@@ -448,6 +448,14 @@ class AbI_B_TPWE(IterativeDeepning):
         super().__init__(depth, selector, orderer, search)
 
 
+class AbI_PCB_TPWE(IterativeDeepning):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:PCB、評価関数:TPWE)
+    """
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_PCB(), search=AlphaBeta_TPWE()):
+        super().__init__(depth, selector, orderer, search)
+
+
 class AbI_B_TPWE_old(IterativeDeepning):
     """
     AlphaBeta_old法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
@@ -581,6 +589,15 @@ class AbIF9_B_TPWE(FullReading):
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
     """
     def __init__(self, remain=9, base=AbI_B_TPWE()):
+        super().__init__(remain, base)
+
+
+class AbIF9_PCB_TPWE(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:PCB、評価関数:TPWE, 完全読み開始:残り9手)
+    """
+    def __init__(self, remain=9, base=AbI_PCB_TPWE()):
         super().__init__(remain, base)
 
 
@@ -742,6 +759,15 @@ class AbIF9J_B_TPWE(Ushi):
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
     """
     def __init__(self, base=AbIF9_B_TPWE()):
+        super().__init__(base)
+
+
+class AbIF9J_PCB_TPWE(Ushi):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
+    (選択的探索:なし、並べ替え:PCB、評価関数:TPWE, 完全読み開始:残り9手)
+    """
+    def __init__(self, base=AbIF9_PCB_TPWE()):
         super().__init__(base)
 
 
