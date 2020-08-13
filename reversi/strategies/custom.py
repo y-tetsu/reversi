@@ -619,6 +619,15 @@ class AbIF10_B_TPWE(FullReading):
         super().__init__(remain, base)
 
 
+class AbIF10_PCB_TPWE(FullReading):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:PCB、評価関数:TPWE, 完全読み開始:残り10手)
+    """
+    def __init__(self, remain=10, base=AbI_PCB_TPWE()):
+        super().__init__(remain, base)
+
+
 class AbIF9_B_TPWE_(FullReading_):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(メジャーなし)
@@ -786,6 +795,15 @@ class AbIF10J_B_TPWE(Ushi):
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り10手)
     """
     def __init__(self, base=AbIF10_B_TPWE()):
+        super().__init__(base)
+
+
+class AbIF10J_PCB_TPWE(Ushi):
+    """
+    AlphaBeta法に反復深化法を適用して次の手を決める+定石打ち
+    (選択的探索:なし、並べ替え:PCB、評価関数:TPWE, 完全読み開始:残り10手)
+    """
+    def __init__(self, base=AbIF10_PCB_TPWE()):
         super().__init__(base)
 
 
