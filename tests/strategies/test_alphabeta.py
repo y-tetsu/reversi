@@ -7,7 +7,7 @@ import time
 
 from reversi.board import Board, BitBoard
 from reversi.strategies.common import Timer, Measure, CPU_TIME
-from reversi.strategies import _AlphaBeta, AlphaBeta
+from reversi.strategies import _AlphaBeta, AlphaBeta, AlphaBeta_old
 import reversi.strategies.coordinator as coord
 
 
@@ -209,4 +209,16 @@ class TestAlphaBeta(unittest.TestCase):
         alphabeta.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
-        print('(5300)', Measure.count[pid])
+        print('(7800)', Measure.count[pid])
+
+        board = BitBoard()
+        board.put_disc('black', 3, 2)
+        alphabeta_old = AlphaBeta_old(depth=10, evaluator=coord.Evaluator_TPOW())
+        pid = alphabeta_old.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.count[pid] = 0
+
+        alphabeta_old.next_move('white', board)
+        self.assertTrue(Timer.timeout_flag[pid])
+        self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
+        print('old(5500)', Measure.count[pid])
