@@ -25,9 +25,9 @@ class _IterativeDeepning_(AbstractStrategy):
 
         moves = board.get_legal_moves(color)
         while True:
-            moves = self.selector.select_moves(color, board, moves, scores, depth)                      # 次の手の候補を選択
+            moves = self.selector.select_moves(color, board, moves, scores, depth)                          # 次の手の候補を選択
             moves = self.orderer.move_ordering(color=color, board=board, moves=moves, best_move=best_move)  # 次の手の候補を並び替え
-            best_move, scores = self.search.get_best_move(color, board, moves, depth, pid)              # 最善手を取得
+            best_move, scores = self.search.get_best_move(color, board, moves, depth, pid)                  # 最善手を取得
 
             if Timer.is_timeout(pid):  # タイムアウト発生時、処理を抜ける
                 break
