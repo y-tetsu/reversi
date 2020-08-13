@@ -3,7 +3,7 @@
 
 from reversi.strategies.common import Measure
 from reversi.strategies import Random, MonteCarlo, MinMax, _NegaMax, NegaMax, AlphaBeta_, AlphaBeta, AlphaBeta_old, NegaScout, Switch, FullReading_, _FullReading, FullReading, FullReading_old, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
-from reversi.strategies.coordinator import Selector, Sorter_B, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
+from reversi.strategies.coordinator import Selector, Orderer_B, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
 # ---------- #
@@ -436,64 +436,64 @@ class AbI_B_TPW(IterativeDeepning):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPW()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=AlphaBeta_TPW()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class AbI_B_TPWE(IterativeDeepning):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWE()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=AlphaBeta_TPWE()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class AbI_B_TPWE_old(IterativeDeepning):
     """
     AlphaBeta_old法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWE_old()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=AlphaBeta_TPWE_old()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class _AbI_B_TPWE_(_IterativeDeepning_):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)(メジャーなし)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWE_()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=AlphaBeta_TPWE_()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class AbI_B_TPWEC(IterativeDeepning):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWEC)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=AlphaBeta_TPWEC()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=AlphaBeta_TPWEC()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class NsI_B_TPW(IterativeDeepning):
     """
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPW()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPW()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class NsI_B_TPWE(IterativeDeepning):
     """
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPWE()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPWE()):
+        super().__init__(depth, selector, orderer, search)
 
 
 class NsI_B_TPW2(IterativeDeepning):
     """
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW2)
     """
-    def __init__(self, depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout_TPW2()):
-        super().__init__(depth, selector, sorter, search)
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPW2()):
+        super().__init__(depth, selector, orderer, search)
 
 
 # ------ #
@@ -513,11 +513,11 @@ class SwitchNsI_B_TPW(Switch):
                 60
             ],
             strategies=[
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=100, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=70,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=50,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30,  c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=6))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,   c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=8)))   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=100, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=70,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=50,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30,  c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=6))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,   c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=8)))   # noqa: E501
             ]):
         super().__init__(turns, strategies)
 
@@ -536,11 +536,11 @@ class SwitchNsI_B_TPWE(Switch):
                 60
             ],
             strategies=[
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30, c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=6))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), sorter=Sorter_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,  c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=8)))   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30, c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=6))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,  c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=8)))   # noqa: E501
             ]):
         super().__init__(turns, strategies)
 

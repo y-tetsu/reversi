@@ -1,7 +1,7 @@
 from ...strategies.common.cputime import CPU_TIME
 from ...strategies.common.timer import Timer
 from ...strategies.common.measure import Measure
-from ...strategies.common.abstract import AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractSorter, AbstractSelector
+from ...strategies.common.abstract import AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractOrderer, AbstractSelector
 
 
 __all__ = [
@@ -11,6 +11,6 @@ __all__ = [
     'AbstractStrategy',
     'AbstractScorer',
     'AbstractEvaluator',
-    'AbstractSorter',
+    'AbstractOrderer',
     'AbstractSelector',
 ]

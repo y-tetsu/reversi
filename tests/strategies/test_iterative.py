@@ -19,7 +19,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator_TPOW(),
             )
@@ -27,7 +27,7 @@ class TestIterativeDeepning(unittest.TestCase):
 
         self.assertEqual(iterative.depth, 2)
         self.assertTrue(isinstance(iterative.selector, coord.Selector))
-        self.assertTrue(isinstance(iterative.sorter, coord.Sorter_B))
+        self.assertTrue(isinstance(iterative.orderer, coord.Orderer_B))
         self.assertTrue(isinstance(iterative.search, AlphaBeta))
         self.assertTrue(isinstance(iterative.search.evaluator, coord.Evaluator_TPOW))
 
@@ -38,7 +38,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=_AlphaBeta(
                 evaluator=coord.Evaluator_TPOW(),
             ),
@@ -63,7 +63,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter(),
+            orderer=coord.Orderer(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator(separated=[coord.NumberScorer()]),
             ),
@@ -84,7 +84,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator_TPOW(),
             ),
@@ -105,7 +105,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator(
                     separated=[coord.WinLoseScorer()],
@@ -129,7 +129,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator(
                     separated=[coord.WinLoseScorer()],
@@ -153,7 +153,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=AlphaBeta(
                 evaluator=coord.Evaluator_TPWE(),
             ),
@@ -174,7 +174,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=NegaScout(
                 evaluator=coord.Evaluator(
                     separated=[coord.WinLoseScorer()],
@@ -198,7 +198,7 @@ class TestIterativeDeepning(unittest.TestCase):
         iterative = IterativeDeepning(
             depth=2,
             selector=coord.Selector(),
-            sorter=coord.Sorter_B(),
+            orderer=coord.Orderer_B(),
             search=NegaScout(
                 evaluator=coord.Evaluator_TPWE(),
             ),

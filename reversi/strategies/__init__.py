@@ -1,4 +1,4 @@
-from ..strategies.common import CPU_TIME, Timer, Measure, AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractSorter, AbstractSelector
+from ..strategies.common import CPU_TIME, Timer, Measure, AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractOrderer, AbstractSelector
 from ..strategies.user import ConsoleUserInput, WindowUserInput
 from ..strategies.easy import Random, Greedy, Unselfish, SlowStarter
 from ..strategies.table import Table
@@ -24,7 +24,7 @@ __all__ = [
     'AbstractStrategy',
     'AbstractScorer',
     'AbstractEvaluator',
-    'AbstractSorter',
+    'AbstractOrderer',
     'AbstractSelector',
     'ConsoleUserInput',
     'WindowUserInput',

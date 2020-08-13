@@ -161,13 +161,13 @@ class TestNegaScout(unittest.TestCase):
         print(' ave :', Measure.elp_time[pid]['ave'], '(s)')
         self.assertEqual(negascout.get_best_move('black', board, moves, 4), ((5, 3), {(2, 2): -4.25, (2, 3): -3.75, (5, 3): -1.75, (1, 5): -1.75, (2, 5): -1.75, (3, 5): -1.75, (4, 5): -1.75, (6, 5): -1.75}))  # noqa: E501
 
-        moves = coord.Sorter_B().sort_moves(color='black', board=board, moves=moves, best_move=(5, 3))
+        moves = coord.Orderer_B().move_ordering(color='black', board=board, moves=moves, best_move=(5, 3))
         Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         for _ in range(3):
             negascout.get_best_move('black', board, moves, 4)
 
         print()
-        print(pid, 'depth = 4 Sorter_B')
+        print(pid, 'depth = 4 Orderer_B')
         print(' min :', Measure.elp_time[pid]['min'], '(s)')
         print(' max :', Measure.elp_time[pid]['max'], '(s)')
         print(' ave :', Measure.elp_time[pid]['ave'], '(s)')

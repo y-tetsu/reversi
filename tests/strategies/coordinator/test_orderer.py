@@ -1,33 +1,33 @@
-"""Tests of sorter.py
+"""Tests of orderer.py
 """
 
 import unittest
 
 from reversi.board import BitBoard
-from reversi.strategies.coordinator import Sorter, Sorter_B, Sorter_C, Sorter_BC, Sorter_CB
+from reversi.strategies.coordinator import Orderer, Orderer_B, Orderer_C, Orderer_BC, Orderer_CB
 
 
-class TestSorter(unittest.TestCase):
-    """sorter
+class TestOrderer(unittest.TestCase):
+    """orderer
     """
-    def test_sorter(self):
+    def test_orderer(self):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
-        sorter = Sorter()
-        moves = sorter.sort_moves(color='white', board=board, moves=board.get_legal_moves('white'), best_move=None)
+        orderer = Orderer()
+        moves = orderer.move_ordering(color='white', board=board, moves=board.get_legal_moves('white'), best_move=None)
 
         self.assertEqual(moves, [(2, 2), (4, 2), (2, 4)])
 
-    def test_sorter_b(self):
+    def test_orderer_b(self):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
         best_move = (4, 2)
-        sorter = Sorter_B()
-        moves = sorter.sort_moves(color='white', board=board, moves=board.get_legal_moves('white'), best_move=best_move)
+        orderer = Orderer_B()
+        moves = orderer.move_ordering(color='white', board=board, moves=board.get_legal_moves('white'), best_move=best_move)
 
         self.assertEqual(moves, [(4, 2), (2, 2), (2, 4)])
 
-    def test_sorter_c(self):
+    def test_orderer_c(self):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
         board.put_disc('white', 2, 4)
@@ -37,12 +37,12 @@ class TestSorter(unittest.TestCase):
         board.put_disc('white', 2, 6)
         board.put_disc('black', 1, 6)
         board.put_disc('white', 1, 7)
-        sorter = Sorter_C()
-        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=None)
+        orderer = Orderer_C()
+        moves = orderer.move_ordering(color='black', board=board, moves=board.get_legal_moves('black'), best_move=None)
 
         self.assertEqual(moves, [(0, 7), (0, 3), (2, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)])
 
-    def test_sorter_bc(self):
+    def test_orderer_bc(self):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
         board.put_disc('white', 2, 4)
@@ -53,12 +53,12 @@ class TestSorter(unittest.TestCase):
         board.put_disc('black', 1, 6)
         board.put_disc('white', 1, 7)
         best_move = (2, 3)
-        sorter = Sorter_BC()
-        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=best_move)
+        orderer = Orderer_BC()
+        moves = orderer.move_ordering(color='black', board=board, moves=board.get_legal_moves('black'), best_move=best_move)
 
         self.assertEqual(moves, [(0, 7), (2, 3), (0, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)])
 
-    def test_sorter_cb(self):
+    def test_orderer_cb(self):
         board = BitBoard(8)
         board.put_disc('black', 3, 2)
         board.put_disc('white', 2, 4)
@@ -69,7 +69,7 @@ class TestSorter(unittest.TestCase):
         board.put_disc('black', 1, 6)
         board.put_disc('white', 1, 7)
         best_move = (2, 3)
-        sorter = Sorter_CB()
-        moves = sorter.sort_moves(color='black', board=board, moves=board.get_legal_moves('black'), best_move=best_move)
+        orderer = Orderer_CB()
+        moves = orderer.move_ordering(color='black', board=board, moves=board.get_legal_moves('black'), best_move=best_move)
 
         self.assertEqual(moves, [(2, 3), (0, 7), (0, 3), (0, 4), (5, 4), (0, 5), (4, 5), (5, 5), (0, 6), (2, 7)])

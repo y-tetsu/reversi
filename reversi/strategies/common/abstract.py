@@ -24,9 +24,9 @@ class AbstractEvaluator(metaclass=abc.ABCMeta):
         pass
 
 
-class AbstractSorter(metaclass=abc.ABCMeta):
+class AbstractOrderer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def sort_moves(self, *args, **kwargs):
+    def move_ordering(self, *args, **kwargs):
         pass
 
 
