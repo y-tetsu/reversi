@@ -682,6 +682,15 @@ class NsIF9_B_TPWE(FullReading):
         super().__init__(remain, base)
 
 
+class NsIF10_B_TPWE(FullReading):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り10手)
+    """
+    def __init__(self, remain=10, base=NsI_B_TPWE()):
+        super().__init__(remain, base)
+
+
 class NsIF10_B_TPW(FullReading):
     """
     NegaScout法に反復深化法を適用して次の手を決める
@@ -867,6 +876,15 @@ class NsIF9J_B_TPWE(Nezumi):
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
     """
     def __init__(self, base=NsIF9_B_TPWE()):
+        super().__init__(base)
+
+
+class NsIF10J_B_TPWE(Neko):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
+    (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り10手)
+    """
+    def __init__(self, base=NsIF10_B_TPWE()):
         super().__init__(base)
 
 
