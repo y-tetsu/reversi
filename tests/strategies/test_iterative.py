@@ -191,7 +191,7 @@ class TestIterativeDeepning(unittest.TestCase):
 
         print()
         print(key)
-        print('NegaScout-TPWE_Scorer : (9000)', Measure.count[key2])
+        print('NegaScout-TPWE_Scorer : (10000)', Measure.count[key2])
         print('(max_depth=7)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
 
@@ -212,6 +212,6 @@ class TestIterativeDeepning(unittest.TestCase):
 
         print()
         print(key)
-        print('NegaScout-Evaluator_TPWE : (9500)', Measure.count[key2])
+        print('NegaScout-Evaluator_TPWE : (10500)', Measure.count[key2])
         print('(max_depth=7)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
