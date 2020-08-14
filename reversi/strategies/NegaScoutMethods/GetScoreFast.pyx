@@ -192,7 +192,7 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
     cdef:
         double score, tmp, null_window
         unsigned long long b, w, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
-        unsigned int is_game_end, color_num, x, y, index = 0
+        unsigned int is_game_end, color_num, x, y, i, count, index = 0
         signed int sign
 
     # ゲーム終了 or 最大深さに到達
@@ -229,19 +229,20 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
                 possibilities += [((x, y), _get_possibility_size8_64bit(board, color_num, x, y, sign))]
             mask >>= 1
 
-    next_moves = [i[0] for i in sorted(possibilities, reverse=True, key=lambda x:x[1])]
+    next_moves = [move[0] for move in sorted(possibilities, reverse=True, key=lambda x:x[1])]
 
     # 次の手の探索
+    count = <unsigned int>len(next_moves)
     null_window = beta
-    for x, y in next_moves:
+    for i in range(count):
         if alpha < beta:
-            _put_disc_size8_64bit(board, color_num, x, y)
+            _put_disc_size8_64bit(board, color_num, next_moves[i][0], next_moves[i][1])
             tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
             _undo(board)
 
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _put_disc_size8_64bit(board, color_num, x, y)
+                    _put_disc_size8_64bit(board, color_num, next_moves[i][0], next_moves[i][1])
                     alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
                     _undo(board)
 
