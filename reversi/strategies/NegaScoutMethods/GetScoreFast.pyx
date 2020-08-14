@@ -220,22 +220,13 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
     if not legal_moves_bits:
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid)
 
-    # 手の並び替え
-    cdef:
-        signed int possibility, possibility_b, possibility_w
+    # 着手可能数に応じて手を並び替え
     possibilities = []
     mask = 1 << 63
     for y in range(8):
         for x in range(8):
             if legal_moves_bits & mask:
-                _put_disc_size8_64bit(board, color_num, x, y)
-                b = board._black_bitboard
-                w = board._white_bitboard
-                possibility_b = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(1, b, w))
-                possibility_w = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(0, b, w))
-                possibility = (possibility_b - possibility_w) * sign
-                _undo(board)
-                possibilities += [((x, y), possibility)]
+                possibilities += [((x, y), _get_possibility_size8_64bit(board, color_num, x, y, sign))]
             mask >>= 1
 
     next_moves = [i[0] for i in sorted(possibilities, reverse=True, key=lambda x:x[1])]
@@ -448,3 +439,33 @@ cdef inline _undo(board):
     """_undo
     """
     (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
+
+
+cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y, signed int sign):
+    """_get_possibility_size8_64bit
+    """
+    cdef:
+        unsigned long long put, black_bitboard, white_bitboard, flippable_discs_num
+        signed int shift_size, possibility_b, possibility_w
+
+    # 配置位置を整数に変換
+    shift_size = (63-(y*8+x))
+    put = <unsigned long long>1 << shift_size
+
+    # ひっくり返せる石を取得
+    black_bitboard = board._black_bitboard
+    white_bitboard = board._white_bitboard
+    flippable_discs_num = _get_flippable_discs_num_size8_64bit(color, black_bitboard, white_bitboard, shift_size)
+
+    # 自分の石を置いて相手の石をひっくり返す
+    if color:
+        black_bitboard ^= put | flippable_discs_num
+        white_bitboard ^= flippable_discs_num
+    else:
+        white_bitboard ^= put | flippable_discs_num
+        black_bitboard ^= flippable_discs_num
+
+    possibility_b = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(1, black_bitboard, white_bitboard))
+    possibility_w = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(0, black_bitboard, white_bitboard))
+
+    return (possibility_b - possibility_w) * sign
