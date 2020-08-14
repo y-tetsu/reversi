@@ -220,35 +220,50 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
     if not legal_moves_bits:
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid)
 
-    # NegaScout法
-    null_window = beta
+    # 手の並び替え
+    cdef:
+        signed int possibility, possibility_b, possibility_w
+    possibilities = []
     mask = 1 << 63
     for y in range(8):
         for x in range(8):
             if legal_moves_bits & mask:
-                if alpha < beta:
+                _put_disc_size8_64bit(board, color_num, x, y)
+                b = board._black_bitboard
+                w = board._white_bitboard
+                possibility_b = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(1, b, w))
+                possibility_w = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(0, b, w))
+                possibility = (possibility_b - possibility_w) * sign
+                _undo(board)
+                possibilities += [((x, y), possibility)]
+            mask >>= 1
+
+    next_moves = [i[0] for i in sorted(possibilities, reverse=True, key=lambda x:x[1])]
+
+    # 次の手の探索
+    null_window = beta
+    for x, y in next_moves:
+        if alpha < beta:
+            _put_disc_size8_64bit(board, color_num, x, y)
+            tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
+            _undo(board)
+
+            if alpha < tmp:
+                if tmp <= null_window and index:
                     _put_disc_size8_64bit(board, color_num, x, y)
-                    tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
+                    alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
                     _undo(board)
 
-                    if alpha < tmp:
-                        if tmp <= null_window and index:
-                            _put_disc_size8_64bit(board, color_num, x, y)
-                            alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
-                            _undo(board)
-
-                            if Timer.is_timeout(pid):
-                                return alpha
-                        else:
-                            alpha = tmp
-
-                    null_window = alpha + 1
+                    if Timer.is_timeout(pid):
+                        return alpha
                 else:
-                    return alpha
+                    alpha = tmp
 
-                index += <unsigned int>1
+            null_window = alpha + 1
+        else:
+            return alpha
 
-            mask >>= 1
+        index += <unsigned int>1
 
     return alpha
 

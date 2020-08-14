@@ -94,7 +94,7 @@ class TestNegaScout(unittest.TestCase):
         Timer.deadline[pid] = time.time() + CPU_TIME
         score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 5, pid=pid)  # depth 5
         self.assertEqual(score, 4)
-        self.assertEqual(Measure.count[pid], 568)
+        self.assertEqual(Measure.count[pid], 293)
 
         # _NegaScout
         negascout = _NegaScout(evaluator=coord.Evaluator_TPOW())
@@ -103,27 +103,32 @@ class TestNegaScout(unittest.TestCase):
         Measure.count[pid] = 0
         score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 2, pid=pid)  # depth 2
         self.assertEqual(score, -10.75)
-        self.assertEqual(Measure.count[pid], 22)
+        self.assertEqual(Measure.count[pid], 20)
 
         Measure.count[pid] = 0
         score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 3, pid=pid)  # depth 3
         self.assertEqual(score, 6.25)
-        self.assertEqual(Measure.count[pid], 116)
+        self.assertEqual(Measure.count[pid], 76)
 
         Measure.count[pid] = 0
         score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 4, pid=pid)  # depth 4
         self.assertEqual(score, -8.25)
-        self.assertEqual(Measure.count[pid], 516)
+        self.assertEqual(Measure.count[pid], 295)
 
         Measure.count[pid] = 0
         score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 5, pid=pid)  # depth 5
         self.assertEqual(score, 4)
-        self.assertEqual(Measure.count[pid], 568)
+        self.assertEqual(Measure.count[pid], 293)
 
         Measure.count[pid] = 0
         score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 6, pid=pid)  # depth 6
         self.assertEqual(score, -3.5)
-        self.assertEqual(Measure.count[pid], 2449)
+        self.assertEqual(Measure.count[pid], 1275)
+
+        Measure.count[pid] = 0
+        score = negascout._get_score('white', board, negascout._MIN, negascout._MAX, 7, pid=pid)  # depth 7
+        self.assertEqual(score, 1.0)
+        self.assertEqual(Measure.count[pid], 1596)
 
         board.put_disc('white', 2, 4)
         board.put_disc('black', 5, 5)
@@ -183,4 +188,4 @@ class TestNegaScout(unittest.TestCase):
         negascout.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
-        print('(8000)', Measure.count[pid])
+        print('(6000)', Measure.count[pid])
