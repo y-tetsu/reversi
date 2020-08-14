@@ -574,6 +574,15 @@ class AlphaBeta4F9_TPW(FullReading):
         super().__init__(remain, base)
 
 
+class AlphaBeta4F10_TPW(FullReading):
+    """
+    AlphaBeta法で4手先を読む
+    (評価関数:TPW, 完全読み開始:残り10手)
+    """
+    def __init__(self, remain=10, base=AlphaBeta4_TPW()):
+        super().__init__(remain, base)
+
+
 class AbIF9_B_TPW(FullReading):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める
@@ -750,6 +759,15 @@ class AlphaBeta4F9J_TPW(Tora):
     (評価関数:TPW, 完全読み開始:残り9手)
     """
     def __init__(self, base=AlphaBeta4F9_TPW()):
+        super().__init__(base)
+
+
+class AlphaBeta4F10J_TPW(Tora):
+    """
+    AlphaBeta法で4手先読みして次の手を決める+定石打ち
+    (評価関数:TPW, 完全読み開始:残り10手)
+    """
+    def __init__(self, base=AlphaBeta4F10_TPW()):
         super().__init__(base)
 
 
