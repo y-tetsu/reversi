@@ -62,8 +62,8 @@ def _get_score(func, negascout, color, board, alpha, beta, depth, pid):
     legal_moves_b_bits = board.get_legal_moves_bits('black')
     legal_moves_w_bits = board.get_legal_moves_bits('white')
     is_game_end = True if not legal_moves_b_bits and not legal_moves_w_bits else False
+    sign = 1 if color == 'black' else -1
     if is_game_end or depth <= 0:
-        sign = 1 if color == 'black' else -1
         return negascout.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
 
     # パスの場合
@@ -73,41 +73,46 @@ def _get_score(func, negascout, color, board, alpha, beta, depth, pid):
     if not legal_moves_bits:
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid=pid)
 
-    # NegaScout法
-    tmp, null_window, index = None, beta, 0
+    # 着手可能数に応じて手を並び替え
+    tmp = []
     size = board.size
     mask = 1 << ((size**2)-1)
     for y in range(size):
-        skip = False
         for x in range(size):
             if legal_moves_bits & mask:
-                if alpha < beta:
-                    board.put_disc(color, x, y)
-                    tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid=pid)
-                    board.undo()
-
-                    if alpha < tmp:
-                        if tmp <= null_window and index:
-                            board.put_disc(color, x, y)
-                            alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid=pid)
-                            board.undo()
-
-                            if Timer.is_timeout(pid):
-                                return alpha
-                        else:
-                            alpha = tmp
-
-                    null_window = alpha + 1
-                else:
-                    skip = True
-                    break
-
-                index += 1
-
+                board.put_disc(color, x, y)
+                possibility_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+                possibility_w = board.get_bit_count(board.get_legal_moves_bits('white'))
+                tmp += [((x, y), (possibility_b - possibility_w) * sign)]
+                board.undo()
             mask >>= 1
 
-        if skip:
+    next_moves = [i[0] for i in sorted(tmp, reverse=True, key=lambda x:x[1])]
+
+    # NegaScout法
+    tmp, null_window, index = None, beta, 0
+    for move in next_moves:
+        if alpha < beta:
+            board.put_disc(color, *move)
+            tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid=pid)
+            board.undo()
+
+            if alpha < tmp:
+                if tmp <= null_window and index:
+                    board.put_disc(color, *move)
+                    alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid=pid)
+                    board.undo()
+
+                    if Timer.is_timeout(pid):
+                        return alpha
+                else:
+                    alpha = tmp
+
+            null_window = alpha + 1
+        else:
             break
+
+        index += 1
 
     return alpha
 

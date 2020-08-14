@@ -57,8 +57,8 @@ cdef _get_score(func, negascout, color, board, alpha, beta, unsigned int depth, 
     legal_moves_b_bits = board.get_legal_moves_bits('black')
     legal_moves_w_bits = board.get_legal_moves_bits('white')
     is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
+    sign = 1 if color == 'black' else -1
     if is_game_end or depth == <unsigned int>0:
-        sign = 1 if color == 'black' else -1
         return negascout.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
 
     # パスの場合
@@ -67,43 +67,48 @@ cdef _get_score(func, negascout, color, board, alpha, beta, unsigned int depth, 
     if not legal_moves_bits:
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid=pid)
 
-    # NegaScout法
-    cdef:
-        unsigned int skip, index = 0
-    tmp, null_window = None, beta
+    # 着手可能数に応じて手を並び替え
+    tmp = []
     size = board.size
     mask = 1 << ((size**2)-1)
     for y in range(size):
-        skip = <unsigned int>0
         for x in range(size):
             if legal_moves_bits & mask:
-                if alpha < beta:
-                    board.put_disc(color, x, y)
-                    tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid=pid)
-                    board.undo()
-
-                    if alpha < tmp:
-                        if tmp <= null_window and index:
-                            board.put_disc(color, x, y)
-                            alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid=pid)
-                            board.undo()
-
-                            if Timer.is_timeout(pid):
-                                return alpha
-                        else:
-                            alpha = tmp
-
-                    null_window = alpha + 1
-                else:
-                    skip = <unsigned int>1
-                    break
-
-                index += <unsigned int>1
-
+                board.put_disc(color, x, y)
+                possibility_b = board.get_bit_count(board.get_legal_moves_bits('black'))
+                possibility_w = board.get_bit_count(board.get_legal_moves_bits('white'))
+                tmp += [((x, y), (possibility_b - possibility_w) * sign)]
+                board.undo()
             mask >>= 1
 
-        if skip:
+    next_moves = [i[0] for i in sorted(tmp, reverse=True, key=lambda x:x[1])]
+
+    # NegaScout法
+    cdef:
+        unsigned int index = 0
+    tmp, null_window = None, beta
+    for move in next_moves:
+        if alpha < beta:
+            board.put_disc(color, *move)
+            tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid=pid)
+            board.undo()
+
+            if alpha < tmp:
+                if tmp <= null_window and index:
+                    board.put_disc(color, *move)
+                    alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid=pid)
+                    board.undo()
+
+                    if Timer.is_timeout(pid):
+                        return alpha
+                else:
+                    alpha = tmp
+
+            null_window = alpha + 1
+        else:
             break
+
+        index += <unsigned int>1
 
     return alpha
 
@@ -193,7 +198,10 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
         double score, tmp, null_window
         unsigned long long b, w, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
         unsigned int is_game_end, color_num, x, y, i, count, index = 0
+        unsigned int next_moves_x[64]
+        unsigned int next_moves_y[64]
         signed int sign
+        signed int possibilities[64]
 
     # ゲーム終了 or 最大深さに到達
     b = board._black_bitboard
@@ -221,28 +229,32 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid)
 
     # 着手可能数に応じて手を並び替え
-    possibilities = []
+    count = 0
     mask = 1 << 63
+    test = []
     for y in range(8):
         for x in range(8):
             if legal_moves_bits & mask:
-                possibilities += [((x, y), _get_possibility_size8_64bit(board, color_num, x, y, sign))]
+                next_moves_x[count] = x
+                next_moves_y[count] = y
+                possibilities[count] = _get_possibility_size8_64bit(board, color_num, x, y, sign)
+                test += [(x, y, possibilities[count])]
+                count += 1
             mask >>= 1
 
-    next_moves = [move[0] for move in sorted(possibilities, reverse=True, key=lambda x:x[1])]
+    _sort_moves_by_possibility(count, next_moves_x, next_moves_y, possibilities)
 
     # 次の手の探索
-    count = <unsigned int>len(next_moves)
     null_window = beta
     for i in range(count):
         if alpha < beta:
-            _put_disc_size8_64bit(board, color_num, next_moves[i][0], next_moves[i][1])
+            _put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
             tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
             _undo(board)
 
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _put_disc_size8_64bit(board, color_num, next_moves[i][0], next_moves[i][1])
+                    _put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
                     alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
                     _undo(board)
 
@@ -470,3 +482,52 @@ cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, u
     possibility_w = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(0, black_bitboard, white_bitboard))
 
     return (possibility_b - possibility_w) * sign
+
+
+cdef _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+    """_sort_moves_by_possibility
+    """
+    cdef:
+        unsigned int len1, len2, i
+        unsigned int array_x1[64]
+        unsigned int array_x2[64]
+        unsigned int array_y1[64]
+        unsigned int array_y2[64]
+        signed int array_p1[64]
+        signed int array_p2[64]
+
+    # merge sort
+    if count > 1:
+        len1 = <unsigned int>(count / 2)
+        len2 = <unsigned int>(count - len1)
+        for i in range(len1):
+            array_x1[i] = next_moves_x[i]
+            array_y1[i] = next_moves_y[i]
+            array_p1[i] = possibilities[i]
+        for i in range(len2):
+            array_x2[i] = next_moves_x[len1+i]
+            array_y2[i] = next_moves_y[len1+i]
+            array_p2[i] = possibilities[len1+i]
+        _sort_moves_by_possibility(len1, array_x1, array_y1, array_p1)
+        _sort_moves_by_possibility(len2, array_x2, array_y2, array_p2)
+        _merge(len1, len2, array_x1, array_y1, array_p1, array_x2, array_y2, array_p2, next_moves_x, next_moves_y, possibilities)
+
+
+cdef inline _merge(unsigned int len1, unsigned int len2, unsigned int *array_x1, unsigned int *array_y1, signed int *array_p1, unsigned int *array_x2, unsigned int *array_y2, signed int *array_p2, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+    """_merge
+    """
+    cdef:
+        unsigned int i = 0, j = 0
+
+    while i < len1 or j < len2:
+        # descending sort
+        if j >= len2 or (i < len1 and array_p1[i] >= array_p2[j]):
+            next_moves_x[i+j] = array_x1[i]
+            next_moves_y[i+j] = array_y1[i]
+            possibilities[i+j] = array_p1[i]
+            i += 1
+        else:
+            next_moves_x[i+j] = array_x2[j]
+            next_moves_y[i+j] = array_y2[j]
+            possibilities[i+j] = array_p2[j]
+            j += 1
