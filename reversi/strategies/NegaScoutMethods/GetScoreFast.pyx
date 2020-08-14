@@ -231,14 +231,12 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
     # 着手可能数に応じて手を並び替え
     count = 0
     mask = 1 << 63
-    test = []
     for y in range(8):
         for x in range(8):
             if legal_moves_bits & mask:
                 next_moves_x[count] = x
                 next_moves_y[count] = y
                 possibilities[count] = _get_possibility_size8_64bit(board, color_num, x, y, sign)
-                test += [(x, y, possibilities[count])]
                 count += 1
             mask >>= 1
 
@@ -484,7 +482,7 @@ cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, u
     return (possibility_b - possibility_w) * sign
 
 
-cdef _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+cdef inline _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
     """_sort_moves_by_possibility
     """
     cdef:
