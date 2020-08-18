@@ -127,8 +127,8 @@ class EdgeScorer(AbstractScorer):
     """
     辺のパターンに基づいて算出
     """
-    def __init__(self, ws=100):
-        self._WS = ws
+    def __init__(self, w=100):
+        self._W = w
 
         # 確定石
         # ◎◎―――――― ◎◎◎――――― ◎◎◎◎―――― ◎◎◎◎◎――― ◎◎◎◎◎◎―― ◎◎◎◎◎◎◎―
@@ -219,7 +219,7 @@ class EdgeScorer(AbstractScorer):
         board = kwargs['board']
         score = 0
         b_bitboard, w_bitboard = board.get_bitboard_info()
-        weight = self._WS
+        weight = self._W
 
         # ボードサイズ8以外は考慮なし
         if board.size != 8:
