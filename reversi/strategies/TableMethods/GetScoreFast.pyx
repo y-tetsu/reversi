@@ -32,9 +32,9 @@ cdef inline signed int _get_score_size8_64bit(table, board):
     for y in range(8):
         for x in range(8):
             if b & mask:
-                score += <signed int>table[y][x] * <signed int>1
+                score += <signed int>table[y][x]
             elif w & mask:
-                score += <signed int>table[y][x] * <signed int>-1
+                score -= <signed int>table[y][x]
             mask >>= 1
 
     return score
