@@ -514,10 +514,10 @@ class SwitchAbI_B_TPWE(Switch):
     def __init__(
             self,
             turns=[
-                15,
-                25,
-                35,
-                45,
+                12,
+                24,
+                36,
+                48,
                 60
             ],
             strategies=[
@@ -560,18 +560,18 @@ class SwitchNsI_B_TPWE(Switch):
     def __init__(
             self,
             turns=[
-                15,
-                25,
-                35,
-                45,
+                12,
+                24,
+                36,
+                48,
                 60
             ],
             strategies=[
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE())),
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30, c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=6))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,  c=0, a1=1, a2=1, b1=1, b2=1, b3=1, x=0, o1=1, o2=1, wp=8)))   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=50, c=-20, a1=-10, a2=0,  b1=-4, b2=-2, b3=-2, x=-25, o1=-13, o2=-5, wp=4, ww=9999,  we=91))),   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=44, c=-18, a1=-4,  a2=-2, b1=-2, b2=-4, b3=-3, x=-40, o1=-10, o2=-8, wp=4, ww=10001, we=95))),   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=41, c=-14, a1=-1,  a2=-4, b1=-4, b2=-1, b3=2,  x=-38, o1=-5,  o2=-5, wp=4, ww=9996,  we=103))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=62, c=-19, a1=1,   a2=0,  b1=-1, b2=0,  b3=1,  x=-25, o1=-4,  o2=-2, wp=8, ww=9990,  we=94))),   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=50, c=-23, a1=0,   a2=-9, b1=-2, b2=-2, b3=16, x=-25, o1=-9,  o2=-8, wp=8, ww=9998,  we=93)))    # noqa: E501
             ]):
         super().__init__(turns, strategies)
 
@@ -765,6 +765,14 @@ class SwitchNsIF9_B_TPWE(FullReading):
         super().__init__(remain, base)
 
 
+class SwitchNsIF10_B_TPWE(FullReading):
+    """
+    SwitchNsI_B_TPWE+完全読み開始:残り10手
+    """
+    def __init__(self, remain=10, base=SwitchNsI_B_TPWE()):
+        super().__init__(remain, base)
+
+
 class RandomF11(_FullReading):
     """
     ランダムに手を読む
@@ -943,6 +951,15 @@ class SwitchNsIF9J_B_TPWE(Neko):
     (完全読み開始:残り9手)
     """
     def __init__(self, base=SwitchNsIF9_B_TPWE()):
+        super().__init__(base)
+
+
+class SwitchNsIF10J_B_TPWE(Ushi):
+    """
+    SwitchNsIF10_B_TPWE+定石打ち
+    (完全読み開始:残り10手)
+    """
+    def __init__(self, base=SwitchNsIF10_B_TPWE()):
         super().__init__(base)
 
 
