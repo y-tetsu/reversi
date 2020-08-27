@@ -19,6 +19,7 @@ setup(
         'reversi.strategies.coordinator',
         'reversi.strategies.TableMethods',
         'reversi.strategies.AlphaBetaMethods',
+        'reversi.strategies.NegaScoutMethods',
         'reversi.genetic_algorithm',
         'reversi.examples',
         'reversi.examples.extra',
