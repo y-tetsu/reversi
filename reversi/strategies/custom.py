@@ -954,7 +954,7 @@ class SwitchNsIF9J_B_TPWE(Neko):
         super().__init__(base)
 
 
-class SwitchNsIF10J_B_TPWE(Ushi):
+class SwitchNsIF10J_B_TPWE(Neko):
     """
     SwitchNsIF10_B_TPWE+定石打ち
     (完全読み開始:残り10手)
