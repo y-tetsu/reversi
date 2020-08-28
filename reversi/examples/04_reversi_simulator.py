@@ -36,6 +36,7 @@ if __name__ == '__main__':
             'FullReading': strategies.AlphaBeta4F9J_TPW(),
             'Iterative': strategies.AbIF9J_B_TPW(),
             'Edge': strategies.AbIF9J_B_TPWE(),
+            'Switch': strategies.SwitchNsIF10J_B_TPWE(),
             # ↑↑↑↑↑ Add players here ↑↑↑↑↑
         },
         './simulator_setting.json',

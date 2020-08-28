@@ -50,6 +50,15 @@
             Edge
                 In addition to Iterative, this player chooses a move that increases the definite disc
                 by considering the 4-edge pattern.
+
+            Switch
+                Each parameter of Edge is strengthened using a genetic algorithm,
+                and the parameter is switched to 5 levels according to the number of steps.
+                Therefore, the move that matches the progress of the game is selected.
+                The search method is also changed from the alpha-beta method to the negacout method,
+                and the board candidates are rearranged so as to preferentially search for
+                a move with a larger number of possible moves to read the board more efficiently.
+                In addition, read the discs difference from the last 10 moves to the final phase of the game.
 """
 
 from reversi import Reversi, strategies
@@ -70,5 +79,6 @@ Reversi(
         'FullReading': strategies.AlphaBeta4F9J_TPW(),
         'Iterative': strategies.AbIF9J_B_TPW(),
         'Edge': strategies.AbIF9J_B_TPWE(),
+        'Switch': strategies.SwitchNsIF10J_B_TPWE(),
     }
 ).start()
