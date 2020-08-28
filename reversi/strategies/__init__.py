@@ -125,6 +125,7 @@ __all__ = [
     'SwitchNsIF9J_B_TPW',
     'SwitchNsIF9J_B_TPWE',
     'SwitchNsIF10J_B_TPWE',
+    'SwitchNsIF10J_B_TPWE_Type2',
     'MonteCarlo',
     'MonteCarlo30',
     'MonteCarlo100',
