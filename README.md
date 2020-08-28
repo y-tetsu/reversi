@@ -448,7 +448,7 @@ print(flippable_discs)
 [(4, 4)]
 ```
 この場合、下図の黄色のマスの位置が、ひっくり返せる石の位置として返されます。<br>
-![flippable_discs](https://raw.githubusercontent.com/y-tetsu/reversi/images/flippable_discs.png)
+![flippable_discs](https://raw.githubusercontent.com/y-tetsu/reversi/images/flippable_discs2.png)
 
 ##### get_board_info
 盤面に置かれた石の状態を"2次元リスト"で返します。
