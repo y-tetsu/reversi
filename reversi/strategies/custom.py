@@ -566,7 +566,7 @@ class SwitchNsI_B_TPWE(Switch):
                 48,
                 60
             ],
-            # generation 842
+            # generation 843
             strategies=[
                 IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=50, c=-20, a1=-10, a2=0,  b1=-4, b2=-2, b3=-2, x=-25, o1=-13, o2=-5, wp=4, ww=9999,  we=91))),   # noqa: E501
                 IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWE(corner=44, c=-18, a1=-4,  a2=-2, b1=-2, b2=-4, b3=-3, x=-40, o1=-10, o2=-8, wp=4, ww=10001, we=95))),   # noqa: E501
