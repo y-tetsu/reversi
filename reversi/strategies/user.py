@@ -71,23 +71,3 @@ class WindowUserInput(AbstractStrategy):
             time.sleep(0.01)
 
         return move
-
-
-if __name__ == '__main__':
-    def input(string):
-        print(string + '1')
-        return '1'
-
-    from board import Board
-
-    board = Board()
-    print(board)
-    console_user_input = ConsoleUserInput()
-
-    legal_moves = board.get_legal_moves('black')
-
-    for index, value in enumerate(legal_moves, 1):
-        coordinate = (chr(value[0] + 97), str(value[1] + 1))
-        print(f'{index:2d}:', coordinate)
-
-    print('User', console_user_input.next_move('black', board))
