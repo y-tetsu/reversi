@@ -8,7 +8,7 @@ from ..strategies.negamax import _NegaMax_, _NegaMax, NegaMax_, NegaMax
 from ..strategies.alphabeta import _AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta, AlphaBeta_old, _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN, AlphaBetaN_old  # noqa: E501
 from ..strategies.negascout import _NegaScout, NegaScout
 from ..strategies.switch import _Switch_, Switch
-from ..strategies.joseki import _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi, _Neko_, Neko, _Hitsuji_, Hitsuji
+from ..strategies.joseki import _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi, _Neko_, Neko, _Hitsuji_, Hitsuji
 from ..strategies.fullreading import _FullReading_, _FullReading, FullReading_, FullReading, FullReading_old
 from ..strategies.iterative import _IterativeDeepning_, IterativeDeepning
 from ..strategies.randomopening import _RandomOpening_, RandomOpening
@@ -95,6 +95,7 @@ __all__ = [
     'NsIF11_B_TPW',
     'NsIF12_B_TPW',
     'RandomF11',
+    '_Joseki_',
     '_Usagi_',
     'Usagi',
     '_Tora_',
