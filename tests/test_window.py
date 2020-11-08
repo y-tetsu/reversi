@@ -3,6 +3,7 @@
 
 import unittest
 import tkinter as tk
+import threading
 
 import reversi
 from reversi import Window
@@ -77,3 +78,27 @@ class TestWindow(unittest.TestCase):
         window.set_state('Disable')
         self.assertEqual(window.start.state, 'Disable')
         self.assertEqual(window.menu.state, 'Disable')
+
+    def test_window_menu_init(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        self.assertIsInstance(window.menu.window, Window)
+        self.assertEqual(window.menu.size, reversi.window.DEFAULT_BOARD_SIZE)
+        self.assertEqual(window.menu.black_player, b[0])
+        self.assertEqual(window.menu.white_player, w[0])
+        self.assertEqual(window.menu.assist, reversi.window.ASSIST_MENU[1])
+        self.assertEqual(window.menu.language, reversi.window.LANGUAGE_MENU[0])
+        self.assertEqual(window.menu.cancel, reversi.window.CANCEL_MENU[0])
+        self.assertIsInstance(window.menu.event, threading.Event)
+        self.assertEqual(window.menu.menu_items['size'], range(reversi.board.MIN_BOARD_SIZE, reversi.board.MAX_BOARD_SIZE + 1, 2))
+        self.assertEqual(window.menu.menu_items['black'], b)
+        self.assertEqual(window.menu.menu_items['white'], w)
+        self.assertEqual(window.menu.menu_items['cputime'], reversi.window.CPUTIME_MENU)
+        self.assertEqual(window.menu.menu_items['extra'], reversi.window.EXTRA_MENU)
+        self.assertEqual(window.menu.menu_items['assist'], reversi.window.ASSIST_MENU)
+        self.assertEqual(window.menu.menu_items['language'], reversi.window.LANGUAGE_MENU)
+        self.assertEqual(window.menu.menu_items['cancel'], reversi.window.CANCEL_MENU)
+        for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'language', 'cancel']:
+            self.assertIsInstance(window.menu.menus[item], tk.Menu)
