@@ -52,3 +52,28 @@ class TestWindow(unittest.TestCase):
         # start
         self.assertEqual(window.start.language, reversi.window.LANGUAGE_MENU[0])
         self.assertEqual(window.start.event.is_set(), False)
+
+    def test_window_set_state(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        window.init_screen()
+
+        class TestState:
+            def __init__(self):
+                self.state = None
+
+            def set_state(self, state):
+                self.state = state
+
+        window.start = TestState()
+        window.menu = TestState()
+
+        window.set_state('Normal')
+        self.assertEqual(window.start.state, 'Normal')
+        self.assertEqual(window.menu.state, 'Normal')
+
+        window.set_state('Disable')
+        self.assertEqual(window.start.state, 'Disable')
+        self.assertEqual(window.menu.state, 'Disable')
