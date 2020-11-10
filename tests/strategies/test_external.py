@@ -33,19 +33,13 @@ class TestExternal(unittest.TestCase):
         self.assertEqual(lines[0], "コマンドが設定されていません。")
 
     def test_external_next_move_cmd_timeout_error(self):
-        import platform
-        pf = platform.system()
-        command = 'sleep 5'
-        if pf == 'Windows':
-            command = 'timeout 5'
-
         def error_message(message):
             print(message)
 
         board = BitBoard()
         color = 'black'
-        external = External(command)
-        external.timeouttime = 0.01
+        external = External('more')
+        external.timeouttime = 0
         external.error_message = error_message
 
         with captured_stdout() as stdout:
