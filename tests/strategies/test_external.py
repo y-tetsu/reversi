@@ -35,9 +35,9 @@ class TestExternal(unittest.TestCase):
     def test_external_next_move_cmd_timeout_error(self):
         import platform
         pf = platform.system()
-        command = 'sleep 10'
+        command = 'sleep 5'
         if pf == 'Windows':
-            command = 'timeout 10'
+            command = 'timeout 5'
 
         def error_message(message):
             print(message)
