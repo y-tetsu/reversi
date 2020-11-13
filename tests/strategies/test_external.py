@@ -14,6 +14,15 @@ def error_message(message):
     print(message)
 
 
+def mainloop_check(message):
+    print('mainloop_check')
+
+
+class MainLoop:
+    def mainloop(self):
+        print('mainloop')
+
+
 class TestExternal(unittest.TestCase):
     """external
     """
@@ -225,3 +234,22 @@ if __name__ == '__main__':
         external.error_message = error_message
 
         self.assertEqual(external.next_move('white', self.board2), (2, 1))
+
+    def test_external_error_message(self):
+        external = External()
+        external._mainloop = mainloop_check
+
+        with captured_stdout() as stdout:
+            external.error_message('test')
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "mainloop_check")
+
+    def test_external_mainloop(self):
+        external = External()
+
+        with captured_stdout() as stdout:
+            external._mainloop(MainLoop())
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "mainloop")

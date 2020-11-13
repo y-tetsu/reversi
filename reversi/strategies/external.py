@@ -90,4 +90,10 @@ class External(AbstractStrategy):
         root.minsize(300, 30)
         label = tk.Label(root, text=message)
         label.pack(fill='x', padx='5', pady='5')
+        self._mainloop(root)
+
+    def _mainloop(self, root):
+        """
+        tkinter起動
+        """
         root.mainloop()
