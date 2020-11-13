@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 外部コマンド実行用
 """
@@ -92,25 +91,3 @@ class External(AbstractStrategy):
         label = tk.Label(root, text=message)
         label.pack(fill='x', padx='5', pady='5')
         root.mainloop()
-
-
-if __name__ == '__main__':
-    from board import BitBoard
-
-    bitboard8 = BitBoard()
-    bitboard8.put_disc('black', 3, 2)
-    bitboard8.put_disc('white', 2, 4)
-    bitboard8.put_disc('black', 5, 5)
-    bitboard8.put_disc('white', 4, 2)
-    bitboard8.put_disc('black', 5, 2)
-    bitboard8.put_disc('white', 5, 4)
-    bitboard8.put_disc('black', 4, 5)
-    bitboard8.put_disc('white', 5, 6)
-    bitboard8.put_disc('black', 4, 6)
-    print(bitboard8)
-
-    # TopLeft(python)実行
-    external = External('py -3.7 ./extra/python/topleft/topleft.py')
-    move = external.next_move('white', bitboard8)
-    print(move)
-    assert move == (2, 1)
