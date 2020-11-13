@@ -71,9 +71,9 @@ class External(AbstractStrategy):
                         return (int(x), int(y))
                     else:
                         out = out.rstrip()
-                        self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
+                        self.error_message('プログラムからの戻り値が想定外でした(2)。戻り値(' + str(out) + ')')
                 except:  # noqa: E722
-                    self.error_message('プログラムからの戻り値が想定外でした。戻り値(' + str(out) + ')')
+                    self.error_message('プログラムからの戻り値が想定外でした(1)。戻り値(' + str(out) + ')')
             else:
                 self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')' + '\n(標準エラー出力)\n' + str(err))
         else:
