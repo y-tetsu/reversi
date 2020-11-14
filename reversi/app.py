@@ -72,9 +72,15 @@ class Reversi:
         """
         ゲーム開始
         """
-        game = threading.Thread(target=self.gameloop)
-        game.daemon = True
-        game.start()
+        game_thread = threading.Thread(target=self.gameloop)
+        game_thread.daemon = True
+        self._thread_start(game_thread)
+
+    def _thread_start(self, thread):
+        """
+        スレッド開始
+        """
+        thread.start()
 
     def window_start(self):
         """

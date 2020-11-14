@@ -50,15 +50,65 @@ class TestApp(unittest.TestCase):
 
     def test_reversi_gameloop(self):
         app = Reversi()
+
         def test_game():
             print('test_game')
             return True
+
         app.game = test_game
+
         with captured_stdout() as stdout:
             app.gameloop()
 
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], "test_game")
+
+    def test_reversi_start(self):
+        app = Reversi()
+
+        def test_game_start():
+            print('test_game_start')
+
+        app.game_start = test_game_start
+
+        def test_window_start():
+            print('test_window_start')
+
+        app.window_start = test_window_start
+
+        with captured_stdout() as stdout:
+            app.start()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "test_game_start")
+        self.assertEqual(lines[1], "test_window_start")
+
+    def test_reversi_game_start(self):
+        app = Reversi()
+
+        def test_thread_start(game_thread):
+            print(game_thread.daemon)
+
+        app._thread_start = test_thread_start
+
+        with captured_stdout() as stdout:
+            app.game_start()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "True")
+
+    def test_reversi_thread_start(self):
+        app = Reversi()
+
+        class TestThreadStart:
+            def start(self):
+                print('thread.start()')
+
+        with captured_stdout() as stdout:
+            app._thread_start(TestThreadStart())
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "thread.start()")
 
     def test_reversic_init(self):
         app = Reversic()
