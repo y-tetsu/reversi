@@ -110,6 +110,28 @@ class TestApp(unittest.TestCase):
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], 'thread.start()')
 
+    def test_reversi_window_start(self):
+        app = Reversi()
+
+        class TestWindow:
+            def __init__(self):
+                class Root:
+                    def deiconify(self):
+                        print('deiconify')
+
+                    def mainloop(self):
+                        print('mainloop')
+
+                self.root = Root()
+
+        app.window = TestWindow()
+        with captured_stdout() as stdout:
+            app.window_start()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'deiconify')
+        self.assertEqual(lines[1], 'mainloop')
+
     def test_reversic_init(self):
         app = Reversic()
 
