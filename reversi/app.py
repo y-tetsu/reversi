@@ -110,6 +110,7 @@ class Reversi:
         """
         if os.path.isfile(extra_file):
             with open(extra_file, 'r') as f:
+                name, cmd, timeouttime = None, None, None
                 try:
                     # 設定の読み出し
                     json_dict = json.load(f)

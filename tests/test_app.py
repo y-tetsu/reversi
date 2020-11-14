@@ -3,6 +3,7 @@
 
 import unittest
 from test.support import captured_stdout
+import os
 
 from reversi import Reversi, Reversic, Window
 from reversi.strategies import WindowUserInput, ConsoleUserInput
@@ -15,6 +16,13 @@ def error_message(message):
 class TestApp(unittest.TestCase):
     """app
     """
+    def setUp(self):
+        with open('./not_json.json', 'w') as wf:
+            wf.write('This is not a json file.\n')
+
+    def tearDown(self):
+        os.remove('./not_json.json')
+
     def test_reversi_init(self):
         app = Reversi()
         self.assertEqual(app.state, app.INIT)
@@ -176,6 +184,15 @@ class TestApp(unittest.TestCase):
 
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], '指定された登録ファイルが見つかりませんでした')
+
+    def test_reversi_load_extra_file_format_error(self):
+        app = Reversi()
+        app.error_message = error_message
+        with captured_stdout() as stdout:
+            app._load_extra_file('./not_json.json')
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'フォーマットエラーのため登録ファイルが読み込めませんでした')
 
     def test_reversic_init(self):
         app = Reversic()
