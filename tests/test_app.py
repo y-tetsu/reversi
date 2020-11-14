@@ -13,7 +13,6 @@ class TestApp(unittest.TestCase):
     """
     def test_reversi_init(self):
         app = Reversi()
-
         self.assertEqual(app.state, app.INIT)
         self.assertIsInstance(app.window, Window)
         self.assertTrue('User1' in app.players_info)
@@ -23,7 +22,6 @@ class TestApp(unittest.TestCase):
 
     def test_reversi_state(self):
         app = Reversi()
-
         app.state = 'INIT'
         self.assertEqual(app.state, app.INIT)
         self.assertEqual(app.game, app._Reversi__init)
@@ -168,7 +166,6 @@ class TestApp(unittest.TestCase):
 
     def test_reversic_init(self):
         app = Reversic()
-
         self.assertEqual(app.board_size, 8)
         self.assertEqual(app.player_names, {'black': 'User1', 'white': 'User2'})
         self.assertEqual(app.state, app.START)
