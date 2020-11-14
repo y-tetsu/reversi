@@ -129,14 +129,16 @@ class Reversi:
                 except Exception:
                     self.error_message('フォーマットエラーのため登録ファイルが読み込めませんでした')
 
-                # メニューにAIの名前を追加
-                for color in ('black', 'white'):
-                    if name not in self.window.menu.menu_items[color]:
-                        self.window.menu.menu_items[color].append(name)
-                        self.window.menu.menus[color].add_command(label=str(name), command=self.window.menu._command(color, name))
+                else:
+                    # メニューにAIの名前を追加
+                    for color in ('black', 'white'):
+                        if name not in self.window.menu.menu_items[color]:
+                            self.window.menu.menu_items[color].append(name)
+                            self.window.menu.menus[color].add_command(label=str(name), command=self.window.menu._command(color, name))
 
-                # 戦略を追加
-                self.players_info[name] = strategies.External(cmd, timeouttime)
+                    # 戦略を追加
+                    self.players_info[name] = strategies.External(cmd, timeouttime)
+
         else:
             self.error_message('指定された登録ファイルが見つかりませんでした')
 
