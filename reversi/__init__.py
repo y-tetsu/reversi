@@ -5,6 +5,7 @@ from .game import Game
 from .window import Window
 from .app import Reversi, Reversic
 from .simulator import Simulator
+from .error_message import ErrorMessage
 from . import strategies
 from . import genetic_algorithm
 
@@ -23,6 +24,7 @@ __all__ = [
     'Reversi',
     'Reversic',
     'Simulator',
+    'ErrorMessage',
     'strategies',
     'genetic_algorithm',
 ]
