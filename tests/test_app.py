@@ -8,6 +8,10 @@ from reversi import Reversi, Reversic, Window
 from reversi.strategies import WindowUserInput, ConsoleUserInput
 
 
+def error_message(message):
+    print(message)
+
+
 class TestApp(unittest.TestCase):
     """app
     """
@@ -163,6 +167,15 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[2], 'extra_file')
         self.assertEqual(app.window.extra_file, '')
         self.assertEqual(app.state, Reversi.DEMO)
+
+    def test_reversi_load_extra_file_no_file_error(self):
+        app = Reversi()
+        app.error_message = error_message
+        with captured_stdout() as stdout:
+            app._load_extra_file('./no_file')
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], '指定された登録ファイルが見つかりませんでした')
 
     def test_reversic_init(self):
         app = Reversic()
