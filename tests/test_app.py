@@ -61,7 +61,7 @@ class TestApp(unittest.TestCase):
             app.gameloop()
 
         lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], "test_game")
+        self.assertEqual(lines[0], 'test_game')
 
     def test_reversi_start(self):
         app = Reversi()
@@ -80,8 +80,8 @@ class TestApp(unittest.TestCase):
             app.start()
 
         lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], "test_game_start")
-        self.assertEqual(lines[1], "test_window_start")
+        self.assertEqual(lines[0], 'test_game_start')
+        self.assertEqual(lines[1], 'test_window_start')
 
     def test_reversi_game_start(self):
         app = Reversi()
@@ -95,7 +95,7 @@ class TestApp(unittest.TestCase):
             app.game_start()
 
         lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], "True")
+        self.assertEqual(lines[0], 'True')
 
     def test_reversi_thread_start(self):
         app = Reversi()
@@ -108,7 +108,7 @@ class TestApp(unittest.TestCase):
             app._thread_start(TestThreadStart())
 
         lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], "thread.start()")
+        self.assertEqual(lines[0], 'thread.start()')
 
     def test_reversic_init(self):
         app = Reversic()
