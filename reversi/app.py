@@ -58,7 +58,8 @@ class Reversi:
         ゲーム処理
         """
         while True:
-            self.game()
+            if self.game():
+                break
 
     def start(self):
         """
