@@ -39,6 +39,12 @@ class TestApp(unittest.TestCase):
         self.assertIsInstance(app.players_info['User1'], WindowUserInput)
         self.assertTrue('User2' in app.players_info)
         self.assertIsInstance(app.players_info['User2'], WindowUserInput)
+        self.assertEqual(app.e_title, 'Error')
+        self.assertEqual(app.e_minsize_x, 300)
+        self.assertEqual(app.e_minsize_y, 30)
+        self.assertEqual(app.e_label_fill, 'x')
+        self.assertEqual(app.e_label_padx, '5')
+        self.assertEqual(app.e_label_pady, '5')
 
     def test_reversi_state(self):
         app = Reversi()
@@ -141,7 +147,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[0], 'deiconify')
         self.assertEqual(lines[1], 'mainloop')
 
-    def test_reversi_init(self):
+    def test_reversi__init(self):
         class TestWindow:
             def __init__(self):
                 self.extra_file = None
@@ -209,6 +215,31 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(app.players_info['EXTERNAL'].cmd, 'cmd external')
         self.assertEqual(app.players_info['EXTERNAL'].timeouttime, 10)
+
+    def test_reversi_error_message(self):
+        app = Reversi()
+        app._show_error_message = lambda: print('_show_error_message')
+
+        with captured_stdout() as stdout:
+            app.error_message('test_error_message')
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], '_show_error_message')
+        self.assertEqual(app.emsg_label.cget('text'), 'test_error_message')
+
+    def test_reversi_show_error_message(self):
+        class TestRoot:
+            def mainloop(self):
+                print('mainloop')
+
+        app = Reversi()
+        app.emsg_root = TestRoot()
+
+        with captured_stdout() as stdout:
+            app._show_error_message()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'mainloop')
 
     def test_reversic_init(self):
         app = Reversic()

@@ -34,6 +34,14 @@ class Reversi:
         players_info['User2'] = strategies.WindowUserInput(self.window)
         self.players_info = players_info
 
+        # for error_message
+        self.e_title = 'Error'
+        self.e_minsize_x = 300
+        self.e_minsize_y = 30
+        self.e_label_fill = 'x'
+        self.e_label_padx = '5'
+        self.e_label_pady = '5'
+
     @property
     def state(self):
         return self._state
@@ -136,12 +144,18 @@ class Reversi:
         """
         エラーメッセージを表示
         """
-        root = tk.Tk()
-        root.title('Error')
-        root.minsize(300, 30)
-        label = tk.Label(root, text=message)
-        label.pack(fill='x', padx='5', pady='5')
-        root.mainloop()
+        self.emsg_root = tk.Tk()
+        self.emsg_root.title(self.e_title)
+        self.emsg_root.minsize(self.e_minsize_x, self.e_minsize_y)
+        self.emsg_label = tk.Label(self.emsg_root, text=message)
+        self.emsg_label.pack(fill=self.e_label_fill, padx=self.e_label_padx, pady=self.e_label_pady)
+        self._show_error_message()
+
+    def _show_error_message(self):
+        """
+        ウィンドウ表示
+        """
+        self.emsg_root.mainloop()
 
     def __demo(self):
         """
