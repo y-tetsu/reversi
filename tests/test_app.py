@@ -20,8 +20,16 @@ class TestApp(unittest.TestCase):
         with open('./not_json.json', 'w') as wf:
             wf.write('This is not a json file.\n')
 
+        with open('./extra_file.json', 'w') as wf:
+            wf.write('{\n')
+            wf.write('    "name": "EXTERNAL",\n')
+            wf.write('    "cmd": "cmd external",\n')
+            wf.write('    "timeouttime": 10\n')
+            wf.write('}\n')
+
     def tearDown(self):
         os.remove('./not_json.json')
+        os.remove('./extra_file.json')
 
     def test_reversi_init(self):
         app = Reversi()
@@ -193,6 +201,14 @@ class TestApp(unittest.TestCase):
 
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], 'フォーマットエラーのため登録ファイルが読み込めませんでした')
+
+    def test_reversi_load_extra_file(self):
+        app = Reversi()
+        app.error_message = error_message
+        app._load_extra_file('./extra_file.json')
+
+        self.assertEqual(app.players_info['EXTERNAL'].cmd, 'cmd external')
+        self.assertEqual(app.players_info['EXTERNAL'].timeouttime, 10)
 
     def test_reversic_init(self):
         app = Reversic()

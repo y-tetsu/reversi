@@ -128,12 +128,7 @@ class Reversi:
                         self.window.menu.menus[color].add_command(label=str(name), command=self.window.menu._command(color, name))
 
                 # 戦略を追加
-                if name not in self.players_info:
-                    self.players_info[name] = strategies.External(cmd, timeouttime)
-                else:
-                    self.players_info[name].cmd = cmd
-                    self.players_info[name].timeouttime = timeouttime
-
+                self.players_info[name] = strategies.External(cmd, timeouttime)
         else:
             self.error_message('指定された登録ファイルが見つかりませんでした')
 
