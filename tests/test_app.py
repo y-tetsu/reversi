@@ -132,6 +132,49 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[0], 'deiconify')
         self.assertEqual(lines[1], 'mainloop')
 
+    def test_reversi_init(self):
+        class TestWindow:
+            def __init__(self):
+                self.extra_file = None
+
+            def init_screen(self):
+                print('init_screen')
+
+            def set_state(self, state):
+                print(state)
+
+        def _load_extra_file(extra_file):
+            print(extra_file)
+
+        # no extra_file
+        app = Reversi()
+        app.window = TestWindow()
+        app._load_extra_file = _load_extra_file
+        with captured_stdout() as stdout:
+            app._Reversi__init()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'init_screen')
+        self.assertEqual(lines[1], 'normal')
+        with self.assertRaises(IndexError):
+            print(lines[2])
+        self.assertEqual(app.state, Reversi.DEMO)
+
+        # extra_file
+        app = Reversi()
+        app.window = TestWindow()
+        app.window.extra_file = 'extra_file'
+        app._load_extra_file = _load_extra_file
+        with captured_stdout() as stdout:
+            app._Reversi__init()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'init_screen')
+        self.assertEqual(lines[1], 'normal')
+        self.assertEqual(lines[2], 'extra_file')
+        self.assertEqual(app.window.extra_file, '')
+        self.assertEqual(app.state, Reversi.DEMO)
+
     def test_reversic_init(self):
         app = Reversic()
 
