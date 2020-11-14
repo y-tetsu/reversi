@@ -26,15 +26,15 @@ class TestRandomOpening(unittest.TestCase):
                 return (0, 0)
 
         board = Board()
-        randomopening = RandomOpening(depth=6, base=TestStrategy())
+        randomopening = RandomOpening(depth=4, base=TestStrategy())
 
-        # depth = 1 - 6
-        for _ in range(3):
+        # depth = 1 - 4
+        for _ in range(2):
             for color in ('black', 'white'):
                 move = randomopening.next_move(color, board)
                 self.assertNotEqual(move, (0, 0))
                 board.put_disc(color, *move)
 
-        # depth = 7
+        # depth = 5
         move = randomopening.next_move('black', board)
         self.assertEqual(move, (0, 0))
