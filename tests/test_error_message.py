@@ -29,6 +29,8 @@ class TestErrorMessage(unittest.TestCase):
 
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], 'start_window')
+        with self.assertRaises(IndexError):
+            print(lines[1])
         self.assertEqual(err_msg.label.cget('text'), 'test_show')
 
     def test_error_message_start_window(self):
@@ -43,3 +45,5 @@ class TestErrorMessage(unittest.TestCase):
 
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], 'mainloop')
+        with self.assertRaises(IndexError):
+            print(lines[1])
