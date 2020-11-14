@@ -49,14 +49,12 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.game, app._Reversi__reinit)
 
     def test_reversi_gameloop(self):
-        app = Reversi()
-
         def test_game():
             print('test_game')
             return True
 
+        app = Reversi()
         app.game = test_game
-
         with captured_stdout() as stdout:
             app.gameloop()
 
@@ -64,18 +62,15 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[0], 'test_game')
 
     def test_reversi_start(self):
-        app = Reversi()
-
         def test_game_start():
             print('test_game_start')
-
-        app.game_start = test_game_start
 
         def test_window_start():
             print('test_window_start')
 
+        app = Reversi()
+        app.game_start = test_game_start
         app.window_start = test_window_start
-
         with captured_stdout() as stdout:
             app.start()
 
@@ -84,13 +79,11 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[1], 'test_window_start')
 
     def test_reversi_game_start(self):
-        app = Reversi()
-
         def test_thread_start(game_thread):
             print(game_thread.daemon)
 
+        app = Reversi()
         app._thread_start = test_thread_start
-
         with captured_stdout() as stdout:
             app.game_start()
 
@@ -98,12 +91,11 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[0], 'True')
 
     def test_reversi_thread_start(self):
-        app = Reversi()
-
         class TestThreadStart:
             def start(self):
                 print('thread.start()')
 
+        app = Reversi()
         with captured_stdout() as stdout:
             app._thread_start(TestThreadStart())
 
@@ -111,8 +103,6 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[0], 'thread.start()')
 
     def test_reversi_window_start(self):
-        app = Reversi()
-
         class TestWindow:
             def __init__(self):
                 class Root:
@@ -124,6 +114,7 @@ class TestApp(unittest.TestCase):
 
                 self.root = Root()
 
+        app = Reversi()
         app.window = TestWindow()
         with captured_stdout() as stdout:
             app.window_start()
