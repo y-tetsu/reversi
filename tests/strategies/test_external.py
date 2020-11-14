@@ -8,19 +8,12 @@ import os
 import reversi
 from reversi.strategies.external import External
 from reversi.board import BitBoard
+from reversi.error_message import ErrorMessage
 
 
-def error_message(message):
-    print(message)
-
-
-def mainloop_check(message):
-    print('mainloop_check')
-
-
-class MainLoop:
-    def mainloop(self):
-        print('mainloop')
+class TestErrMsg:
+    def show(self, message):
+        print(message)
 
 
 class TestExternal(unittest.TestCase):
@@ -161,12 +154,11 @@ if __name__ == '__main__':
         external = External()
         self.assertEqual(external.cmd, None)
         self.assertEqual(external.timeouttime, reversi.strategies.external.TIMEOUT_TIME)
+        self.assertIsInstance(external.err_msg, ErrorMessage)
 
     def test_external_next_move_no_cmd_error(self):
         external = External()
-        external.error_message = error_message
-
-        move = None
+        external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
             move = external.next_move('black', self.board1)
 
@@ -177,9 +169,7 @@ if __name__ == '__main__':
     def test_external_next_move_cmd_timeout_error(self):
         external = External('more')
         external.timeouttime = 0
-        external.error_message = error_message
-
-        move = None
+        external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
             move = external.next_move('black', self.board1)
 
@@ -190,9 +180,7 @@ if __name__ == '__main__':
     def test_external_next_move_cmd_illegal_finish_error(self):
         cmd = 'py -3.7 ./exit1.py' if self.osname == 'nt' else 'python ./exit1.py'
         external = External(cmd)
-        external.error_message = error_message
-
-        move = None
+        external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
             move = external.next_move('black', self.board1)
 
@@ -205,9 +193,7 @@ if __name__ == '__main__':
     def test_external_next_move_cmd_unexpected_output1_error(self):
         cmd = 'py -3.7 ./unexpected1.py' if self.osname == 'nt' else 'python ./unexpected1.py'
         external = External(cmd)
-        external.error_message = error_message
-
-        move = None
+        external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
             move = external.next_move('black', self.board1)
 
@@ -218,9 +204,7 @@ if __name__ == '__main__':
     def test_external_next_move_cmd_unexpected_output2_error(self):
         cmd = 'py -3.7 ./unexpected2.py' if self.osname == 'nt' else 'python ./unexpected2.py'
         external = External(cmd)
-        external.error_message = error_message
-
-        move = None
+        external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
             move = external.next_move('black', self.board1)
 
@@ -231,25 +215,5 @@ if __name__ == '__main__':
     def test_external_next_move(self):
         cmd = 'py -3.7 ./topleft.py' if self.osname == 'nt' else 'python ./topleft.py'
         external = External(cmd)
-        external.error_message = error_message
 
         self.assertEqual(external.next_move('white', self.board2), (2, 1))
-
-    def test_external_error_message(self):
-        external = External()
-        external._mainloop = mainloop_check
-
-        with captured_stdout() as stdout:
-            external.error_message('test')
-
-        lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], "mainloop_check")
-
-    def test_external_mainloop(self):
-        external = External()
-
-        with captured_stdout() as stdout:
-            external._mainloop(MainLoop())
-
-        lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], "mainloop")

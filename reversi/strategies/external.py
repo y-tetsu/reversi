@@ -8,6 +8,7 @@ import re
 import tkinter as tk
 
 from reversi.strategies.common import AbstractStrategy
+from reversi.error_message import ErrorMessage
 
 
 TIMEOUT_TIME = 60  # タイムアウト時間(s)
@@ -20,6 +21,7 @@ class External(AbstractStrategy):
     def __init__(self, cmd=None, timeouttime=TIMEOUT_TIME):
         self.cmd = cmd
         self.timeouttime = timeouttime
+        self.err_msg = ErrorMessage()
 
     def next_move(self, color, board):
         """
@@ -55,7 +57,7 @@ class External(AbstractStrategy):
                     pipe.kill()
 
                     # タイムアウトした場合は反則負け
-                    self.error_message('コマンドがタイムアウトしました。')
+                    self.err_msg.show('コマンドがタイムアウトしました。')
                     return (board_size//2-1, board_size//2-1)
 
             status = pipe.poll()
@@ -70,30 +72,13 @@ class External(AbstractStrategy):
                         return (int(x), int(y))
                     else:
                         out = out.rstrip()
-                        self.error_message('プログラムからの戻り値が想定外でした(2)。戻り値(' + str(out) + ')')
+                        self.err_msg.show('プログラムからの戻り値が想定外でした(2)。戻り値(' + str(out) + ')')
                 except:  # noqa: E722
-                    self.error_message('プログラムからの戻り値が想定外でした(1)。戻り値(' + str(out) + ')')
+                    self.err_msg.show('プログラムからの戻り値が想定外でした(1)。戻り値(' + str(out) + ')')
             else:
-                self.error_message('プロセスが異常終了しました。終了ステータス(' + str(status) + ')' + '\n(標準エラー出力)\n' + str(err))
+                self.err_msg.show('プロセスが異常終了しました。終了ステータス(' + str(status) + ')' + '\n(標準エラー出力)\n' + str(err))
         else:
-            self.error_message('コマンドが設定されていません。')
+            self.err_msg.show('コマンドが設定されていません。')
 
         # 戻り値が正しくない場合は反則負け
         return (board_size//2-1, board_size//2-1)
-
-    def error_message(self, message):
-        """
-        エラーメッセージ
-        """
-        root = tk.Tk()
-        root.title('Error')
-        root.minsize(300, 30)
-        label = tk.Label(root, text=message)
-        label.pack(fill='x', padx='5', pady='5')
-        self._mainloop(root)
-
-    def _mainloop(self, root):
-        """
-        tkinter起動
-        """
-        root.mainloop()
