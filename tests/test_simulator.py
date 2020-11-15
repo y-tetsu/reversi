@@ -242,3 +242,41 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(lines[17], "Draw1                     |   0.0% |     0     0    20    20")
         self.assertEqual(lines[18], "Draw2                     |   0.0% |     0     0    20    20")
         self.assertEqual(lines[19], "------------------------------------------------------------")
+
+    def test_simulator_multi_process(self):
+        json_file = './simulator_setting.json'
+        simulator_setting = {
+            "board_size": 4,
+            "matches": 5,
+            "processes": 2,
+            "random_opening": 0,
+        }
+        with open(json_file, 'w') as f:
+            json.dump(simulator_setting, f)
+
+        players_info = {
+            'AlphaBeta1': _AlphaBeta(depth=2, evaluator=Evaluator_TPW()),
+            'AlphaBeta2': _AlphaBeta(depth=2, evaluator=Evaluator_TPW()),
+        }
+        simulator = Simulator(players_info, json_file)
+        os.remove(json_file)
+
+        with captured_stdout() as stdout:
+            simulator.start()
+            print(simulator)
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "processes 2")
+        self.assertEqual(lines[1], "")
+        self.assertEqual(lines[2], "Size : 4")
+        self.assertEqual(lines[3], "                          | AlphaBeta1                AlphaBeta2               ")
+        self.assertEqual(lines[4], "-------------------------------------------------------------------------------")
+        self.assertEqual(lines[5], "AlphaBeta1                | ------                     50.0%                    ")
+        self.assertEqual(lines[6], "AlphaBeta2                |  50.0%                    ------                    ")
+        self.assertEqual(lines[7], "-------------------------------------------------------------------------------")
+        self.assertEqual(lines[8], "")
+        self.assertEqual(lines[9], "                          | Total  | Win   Lose  Draw  Match")
+        self.assertEqual(lines[10], "------------------------------------------------------------")
+        self.assertEqual(lines[11], "AlphaBeta1                |  50.0% |     5     5     0    10")
+        self.assertEqual(lines[12], "AlphaBeta2                |  50.0% |     5     5     0    10")
+        self.assertEqual(lines[13], "------------------------------------------------------------")
