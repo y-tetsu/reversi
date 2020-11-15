@@ -5,7 +5,7 @@ import unittest
 import os
 import time
 
-from reversi.board import Board, BitBoard
+from reversi.board import BitBoard
 from reversi.strategies.common import Timer, Measure, CPU_TIME
 from reversi.strategies import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI
 
@@ -22,6 +22,38 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(minmax2._MIN, -10000000)
         self.assertEqual(minmax2._MAX, 10000000)
         self.assertEqual(minmax2.depth, 2)
+
+    def test_proto_minmax2_next_move(self):
+        minmax2 = MinMax2()
+        board = BitBoard()
+
+        board.put_disc('black', 3, 2)
+        self.assertEqual(minmax2.next_move('white', board), (2, 4))
+
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 1, 5)
+        board.put_disc('white', 1, 4)
+        self.assertEqual(minmax2.next_move('black', board), (2, 5))
+
+    def test_proto_minmax2_get_score(self):
+        minmax2 = MinMax2()
+        board = BitBoard(4)
+        board._black_bitboard = 0x0400
+        board._white_bitboard = 0x8030
+
+        self.assertEqual(minmax2.get_score('white', board, 2), 2)
+
+    def test_proto_minmax2_evaluate(self):
+        minmax2 = MinMax2()
+        board = BitBoard(4)
+
+        self.assertEqual(minmax2.evaluate(board, [], []), 0)
+
+        board._black_score = 3
+        self.assertEqual(minmax2.evaluate(board, [], []), 10001)
+
+        board._white_score = 4
+        self.assertEqual(minmax2.evaluate(board, [], []), -10001)
 
     def test_proto_negamax3_init(self):
         negamax3 = NegaMax3()

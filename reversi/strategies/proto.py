@@ -31,7 +31,7 @@ class MinMax_(AbstractStrategy):
         best_score = self._MIN if color == 'black' else self._MAX
 
         # 打てる手の中から評価値の最も良い手を選ぶ
-        for move in board.get_legal_moves(color, cache=True).keys():
+        for move in board.get_legal_moves(color):
             board.put_disc(color, *move)                             # 一手打つ
             score = self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                             # 打った手を戻す
@@ -68,7 +68,7 @@ class MinMax_(AbstractStrategy):
         # 評価値を算出
         best_score = self._MIN if color == 'black' else self._MAX
 
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board.put_disc(color, *move)
             score = self.get_score(next_color, board, depth-1)
             board.undo()
@@ -86,7 +86,7 @@ class MinMax_(AbstractStrategy):
 
         # 対局終了時
         if not legal_moves_b and not legal_moves_w:
-            ret = board.score['black'] - board.score['white']
+            ret = board._black_score - board._white_score
 
             if ret > 0:    # 黒が勝った
                 ret += self._W1
@@ -105,8 +105,8 @@ class MinMax_(AbstractStrategy):
         ret += corner * self._W2
 
         # 置ける場所の数に重みを掛ける
-        black_num = len(list(legal_moves_b.keys()))
-        white_num = len(list(legal_moves_w.keys()))
+        black_num = len(legal_moves_b)
+        white_num = len(legal_moves_w)
 
         ret += (black_num - white_num) * self._W3
 
