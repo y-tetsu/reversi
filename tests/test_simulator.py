@@ -280,3 +280,73 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(lines[11], "AlphaBeta1                |  50.0% |     5     5     0    10")
         self.assertEqual(lines[12], "AlphaBeta2                |  50.0% |     5     5     0    10")
         self.assertEqual(lines[13], "------------------------------------------------------------")
+
+    def test_simulator_white_win(self):
+        json_file = './simulator_setting.json'
+        simulator_setting = {
+            "board_size": 4,
+            "matches": 10,
+            "processes": 1,
+            "random_opening": 0,
+        }
+        with open(json_file, 'w') as f:
+            json.dump(simulator_setting, f)
+
+        class WhiteWin(AbstractStrategy):
+            def next_move(self, color, board):
+                depth = board._black_score + board._white_score - 4
+                move = None
+                if depth == 0:
+                    move = (1, 0)
+                elif depth == 1:
+                    move = (0, 0)
+                elif depth == 2:
+                    move = (0, 1)
+                elif depth == 3:
+                    move = (2, 0)
+                elif depth == 4:
+                    move = (3, 0)
+                elif depth == 5:
+                    move = (0, 2)
+                elif depth == 6:
+                    move = (0, 3)
+                elif depth == 7:
+                    move = (3, 2)
+                elif depth == 8:
+                    move = (2, 3)
+
+                return move
+
+        players_info = {
+            'WhiteWin1': WhiteWin(),
+            'WhiteWin2': WhiteWin(),
+        }
+        simulator = Simulator(players_info, json_file)
+
+        os.remove(json_file)
+
+        with captured_stdout() as stdout:
+            simulator.start()
+            print(simulator)
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "processes 1")
+        self.assertEqual(lines[1], "WhiteWin1 WhiteWin2")
+        self.assertEqual(lines[2], "    - WhiteWin1 WhiteWin2 5")
+        self.assertEqual(lines[3], "    - WhiteWin1 WhiteWin2 10")
+        self.assertEqual(lines[4], "WhiteWin2 WhiteWin1")
+        self.assertEqual(lines[5], "    - WhiteWin2 WhiteWin1 5")
+        self.assertEqual(lines[6], "    - WhiteWin2 WhiteWin1 10")
+        self.assertEqual(lines[7], "")
+        self.assertEqual(lines[8], "Size : 4")
+        self.assertEqual(lines[9], "                          | WhiteWin1                 WhiteWin2                ")
+        self.assertEqual(lines[10], "-------------------------------------------------------------------------------")
+        self.assertEqual(lines[11], "WhiteWin1                 | ------                     50.0%                    ")
+        self.assertEqual(lines[12], "WhiteWin2                 |  50.0%                    ------                    ")
+        self.assertEqual(lines[13], "-------------------------------------------------------------------------------")
+        self.assertEqual(lines[14], "")
+        self.assertEqual(lines[15], "                          | Total  | Win   Lose  Draw  Match")
+        self.assertEqual(lines[16], "------------------------------------------------------------")
+        self.assertEqual(lines[17], "WhiteWin1                 |  50.0% |    10    10     0    20")
+        self.assertEqual(lines[18], "WhiteWin2                 |  50.0% |    10    10     0    20")
+        self.assertEqual(lines[19], "------------------------------------------------------------")
