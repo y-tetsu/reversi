@@ -6,7 +6,7 @@ from test.support import captured_stdout
 import os
 
 from reversi import Reversi, Reversic, Window, ErrorMessage
-from reversi.strategies import WindowUserInput, ConsoleUserInput
+from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
 
 
 class TestErrMsg:
@@ -329,6 +329,244 @@ class TestApp(unittest.TestCase):
             print(lines[0])
 
         self.assertEqual(ret, False)
+
+    def test_reversi__play(self):
+        class TestWindow:
+            def __init__(self):
+                class Board:
+                    def __init__(self):
+                        self.size = 4
+
+                    def enable_moves(self, moves):
+                        print('enable_moves', moves)
+
+                    def disable_moves(self, moves):
+                        print('disable_moves', moves)
+
+                    def enable_move(self, x, y):
+                        print('enable_move', x, y)
+
+                    def disable_move(self, x, y):
+                        print('disable_move', x, y)
+
+                    def put_disc(self, color, x, y):
+                        print('put_disc', color, x, y)
+
+                    def turn_disc(self, color, captures):
+                        print('put_disc', color, captures)
+
+                    def win(self, player):
+                        print('win', player)
+
+                class Menu:
+                    def __init__(self):
+                        class Event:
+                            def is_set(self):
+                                return False
+
+                        self.event = Event()
+
+                class Info:
+                    def set_text(self, color, text, score):
+                        print('set_text', color, text, score)
+
+                    def set_turn_text_on(self, color):
+                        print('set_turn_text_on', color)
+
+                    def set_turn_text_off(self, color):
+                        print('set_turn_text_off', color)
+
+                    def set_move_text_on(self, color, x, y):
+                        print('set_move_text_on', color, x, y)
+
+                    def set_move_text_off(self, color):
+                        print('set_move_text_off', color)
+
+                    def set_win_text_on(self, color):
+                        print('set_win_text_on', color)
+
+                    def set_lose_text_on(self, color):
+                        print('set_lose_text_on', color)
+
+                self.board = Board()
+                self.menu = Menu()
+                self.player = {'black': 'WhiteWin', 'white': 'WhiteWin'}
+                self.cputime = 0.1
+                self.info = Info()
+
+            def set_state(self, state):
+                print(state)
+
+        class WhiteWin(AbstractStrategy):
+            def next_move(self, color, board):
+                depth = board._black_score + board._white_score - 4
+                move = None
+                if depth == 0:
+                    move = (1, 0)
+                elif depth == 1:
+                    move = (0, 0)
+                elif depth == 2:
+                    move = (0, 1)
+                elif depth == 3:
+                    move = (2, 0)
+                elif depth == 4:
+                    move = (3, 0)
+                elif depth == 5:
+                    move = (0, 2)
+                elif depth == 6:
+                    move = (0, 3)
+                elif depth == 7:
+                    move = (3, 2)
+                elif depth == 8:
+                    move = (2, 3)
+
+                return move
+
+        app = Reversi()
+        app.window = TestWindow()
+        app.players_info = {'WhiteWin': WhiteWin()}
+
+        with captured_stdout() as stdout:
+            app._Reversi__play()
+
+        lines = stdout.getvalue().splitlines()
+
+        self.assertEqual(lines[0], 'disable')
+        self.assertEqual(lines[1], 'set_text black score 2')
+        self.assertEqual(lines[2], 'set_text white score 2')
+        self.assertEqual(lines[3], 'set_turn_text_on black')
+        self.assertEqual(lines[4], 'enable_moves [(1, 0), (0, 1), (3, 2), (2, 3)]')
+        self.assertEqual(lines[5], 'set_turn_text_off black')
+        self.assertEqual(lines[6], 'set_move_text_off black')
+        self.assertEqual(lines[7], 'set_turn_text_off white')
+        self.assertEqual(lines[8], 'set_move_text_off white')
+        self.assertEqual(lines[9], 'disable_moves [(1, 0), (0, 1), (3, 2), (2, 3)]')
+        self.assertEqual(lines[10], 'enable_move 1 0')
+        self.assertEqual(lines[11], 'put_disc black 1 0')
+        self.assertEqual(lines[12], 'set_move_text_on black b 1')
+        self.assertEqual(lines[13], 'put_disc black [(1, 1)]')
+        self.assertEqual(lines[14], 'disable_move 1 0')
+        self.assertEqual(lines[15], 'set_text black score 4')
+        self.assertEqual(lines[16], 'set_text white score 1')
+        self.assertEqual(lines[17], 'set_turn_text_on white')
+        self.assertEqual(lines[18], 'enable_moves [(0, 0), (2, 0), (0, 2)]')
+        self.assertEqual(lines[19], 'set_turn_text_off black')
+        self.assertEqual(lines[20], 'set_move_text_off black')
+        self.assertEqual(lines[21], 'set_turn_text_off white')
+        self.assertEqual(lines[22], 'set_move_text_off white')
+        self.assertEqual(lines[23], 'disable_moves [(0, 0), (2, 0), (0, 2)]')
+        self.assertEqual(lines[24], 'enable_move 0 0')
+        self.assertEqual(lines[25], 'put_disc white 0 0')
+        self.assertEqual(lines[26], 'set_move_text_on white a 1')
+        self.assertEqual(lines[27], 'put_disc white [(1, 1)]')
+        self.assertEqual(lines[28], 'disable_move 0 0')
+        self.assertEqual(lines[29], 'set_text black score 3')
+        self.assertEqual(lines[30], 'set_text white score 3')
+        self.assertEqual(lines[31], 'set_turn_text_on black')
+        self.assertEqual(lines[32], 'enable_moves [(0, 1), (3, 2), (2, 3)]')
+        self.assertEqual(lines[33], 'set_turn_text_off black')
+        self.assertEqual(lines[34], 'set_move_text_off black')
+        self.assertEqual(lines[35], 'set_turn_text_off white')
+        self.assertEqual(lines[36], 'set_move_text_off white')
+        self.assertEqual(lines[37], 'disable_moves [(0, 1), (3, 2), (2, 3)]')
+        self.assertEqual(lines[38], 'enable_move 0 1')
+        self.assertEqual(lines[39], 'put_disc black 0 1')
+        self.assertEqual(lines[40], 'set_move_text_on black a 2')
+        self.assertEqual(lines[41], 'put_disc black [(1, 1)]')
+        self.assertEqual(lines[42], 'disable_move 0 1')
+        self.assertEqual(lines[43], 'set_text black score 5')
+        self.assertEqual(lines[44], 'set_text white score 2')
+        self.assertEqual(lines[45], 'set_turn_text_on white')
+        self.assertEqual(lines[46], 'enable_moves [(2, 0), (0, 2)]')
+        self.assertEqual(lines[47], 'set_turn_text_off black')
+        self.assertEqual(lines[48], 'set_move_text_off black')
+        self.assertEqual(lines[49], 'set_turn_text_off white')
+        self.assertEqual(lines[50], 'set_move_text_off white')
+        self.assertEqual(lines[51], 'disable_moves [(2, 0), (0, 2)]')
+        self.assertEqual(lines[52], 'enable_move 2 0')
+        self.assertEqual(lines[53], 'put_disc white 2 0')
+        self.assertEqual(lines[54], 'set_move_text_on white c 1')
+        self.assertEqual(lines[55], 'put_disc white [(1, 0), (2, 1)]')
+        self.assertEqual(lines[56], 'disable_move 2 0')
+        self.assertEqual(lines[57], 'set_text black score 3')
+        self.assertEqual(lines[58], 'set_text white score 5')
+        self.assertEqual(lines[59], 'set_turn_text_on black')
+        self.assertEqual(lines[60], 'enable_moves [(3, 0), (3, 1), (3, 2), (3, 3)]')
+        self.assertEqual(lines[61], 'set_turn_text_off black')
+        self.assertEqual(lines[62], 'set_move_text_off black')
+        self.assertEqual(lines[63], 'set_turn_text_off white')
+        self.assertEqual(lines[64], 'set_move_text_off white')
+        self.assertEqual(lines[65], 'disable_moves [(3, 0), (3, 1), (3, 2), (3, 3)]')
+        self.assertEqual(lines[66], 'enable_move 3 0')
+        self.assertEqual(lines[67], 'put_disc black 3 0')
+        self.assertEqual(lines[68], 'set_move_text_on black d 1')
+        self.assertEqual(lines[69], 'put_disc black [(2, 1)]')
+        self.assertEqual(lines[70], 'disable_move 3 0')
+        self.assertEqual(lines[71], 'set_text black score 5')
+        self.assertEqual(lines[72], 'set_text white score 4')
+        self.assertEqual(lines[73], 'set_turn_text_on white')
+        self.assertEqual(lines[74], 'enable_moves [(0, 2), (3, 2), (1, 3)]')
+        self.assertEqual(lines[75], 'set_turn_text_off black')
+        self.assertEqual(lines[76], 'set_move_text_off black')
+        self.assertEqual(lines[77], 'set_turn_text_off white')
+        self.assertEqual(lines[78], 'set_move_text_off white')
+        self.assertEqual(lines[79], 'disable_moves [(0, 2), (3, 2), (1, 3)]')
+        self.assertEqual(lines[80], 'enable_move 0 2')
+        self.assertEqual(lines[81], 'put_disc white 0 2')
+        self.assertEqual(lines[82], 'set_move_text_on white a 3')
+        self.assertEqual(lines[83], 'put_disc white [(0, 1), (1, 1), (1, 2)]')
+        self.assertEqual(lines[84], 'disable_move 0 2')
+        self.assertEqual(lines[85], 'set_text black score 2')
+        self.assertEqual(lines[86], 'set_text white score 8')
+        self.assertEqual(lines[87], 'set_turn_text_on black')
+        self.assertEqual(lines[88], 'enable_moves [(0, 3), (2, 3)]')
+        self.assertEqual(lines[89], 'set_turn_text_off black')
+        self.assertEqual(lines[90], 'set_move_text_off black')
+        self.assertEqual(lines[91], 'set_turn_text_off white')
+        self.assertEqual(lines[92], 'set_move_text_off white')
+        self.assertEqual(lines[93], 'disable_moves [(0, 3), (2, 3)]')
+        self.assertEqual(lines[94], 'enable_move 0 3')
+        self.assertEqual(lines[95], 'put_disc black 0 3')
+        self.assertEqual(lines[96], 'set_move_text_on black a 4')
+        self.assertEqual(lines[97], 'put_disc black [(1, 2)]')
+        self.assertEqual(lines[98], 'disable_move 0 3')
+        self.assertEqual(lines[99], 'set_text black score 4')
+        self.assertEqual(lines[100], 'set_text white score 7')
+        self.assertEqual(lines[101], 'set_turn_text_on white')
+        self.assertEqual(lines[102], 'enable_moves [(3, 1), (3, 2), (1, 3), (2, 3)]')
+        self.assertEqual(lines[103], 'set_turn_text_off black')
+        self.assertEqual(lines[104], 'set_move_text_off black')
+        self.assertEqual(lines[105], 'set_turn_text_off white')
+        self.assertEqual(lines[106], 'set_move_text_off white')
+        self.assertEqual(lines[107], 'disable_moves [(3, 1), (3, 2), (1, 3), (2, 3)]')
+        self.assertEqual(lines[108], 'enable_move 3 2')
+        self.assertEqual(lines[109], 'put_disc white 3 2')
+        self.assertEqual(lines[110], 'set_move_text_on white d 3')
+        self.assertEqual(lines[111], 'put_disc white [(2, 1)]')
+        self.assertEqual(lines[112], 'disable_move 3 2')
+        self.assertEqual(lines[113], 'set_text black score 3')
+        self.assertEqual(lines[114], 'set_text white score 9')
+        self.assertEqual(lines[115], 'set_turn_text_on white')
+        self.assertEqual(lines[116], 'enable_moves [(1, 3), (2, 3)]')
+        self.assertEqual(lines[117], 'set_turn_text_off black')
+        self.assertEqual(lines[118], 'set_move_text_off black')
+        self.assertEqual(lines[119], 'set_turn_text_off white')
+        self.assertEqual(lines[120], 'set_move_text_off white')
+        self.assertEqual(lines[121], 'disable_moves [(1, 3), (2, 3)]')
+        self.assertEqual(lines[122], 'enable_move 2 3')
+        self.assertEqual(lines[123], 'put_disc white 2 3')
+        self.assertEqual(lines[124], 'set_move_text_on white c 4')
+        self.assertEqual(lines[125], 'put_disc white [(1, 2)]')
+        self.assertEqual(lines[126], 'disable_move 2 3')
+        self.assertEqual(lines[127], 'set_text black score 2')
+        self.assertEqual(lines[128], 'set_text white score 11')
+        self.assertEqual(lines[129], 'set_win_text_on white')
+        self.assertEqual(lines[130], 'set_lose_text_on black')
+
+        with self.assertRaises(IndexError):
+            print(lines[131])
+
+        self.assertEqual(app.state, Reversi.END)
 
     # for Reversic
     def test_reversic_init(self):
