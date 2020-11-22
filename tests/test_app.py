@@ -32,6 +32,7 @@ class TestApp(unittest.TestCase):
         os.remove('./not_json.json')
         os.remove('./extra_file.json')
 
+    # for Reversi
     def test_reversi_init(self):
         app = Reversi()
         self.assertEqual(app.state, app.INIT)
@@ -211,6 +212,50 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.players_info['EXTERNAL'].cmd, 'cmd external')
         self.assertEqual(app.players_info['EXTERNAL'].timeouttime, 10)
 
+    def test_reversi__demo(self):
+        class TestWindow:
+            def __init__(self):
+                class Start:
+                    def __init__(self):
+                        class Event:
+                            def __init__(self):
+                                self.is_set = None
+                            def clear(self):
+                                print('clear')
+                        self.event = Event()
+                self.start = Start()
+
+        def demo_animation_true():
+            return True
+
+        def demo_animation_false():
+            return False
+
+        app = Reversi()
+        app.window = TestWindow()
+
+        # event is_set True and demo_anumation_true
+        app.window.start.event.is_set = lambda: True
+        app._demo_animation = demo_animation_true
+        with captured_stdout() as stdout:
+            app._Reversi__demo()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'clear')
+        self.assertEqual(app.state, Reversi.PLAY)
+
+        # event is_set False and demo_anumation_false
+        app.window.start.event.is_set = lambda: False
+        app._demo_animation = demo_animation_false
+        with captured_stdout() as stdout:
+            app._Reversi__demo()
+
+        lines = stdout.getvalue().splitlines()
+        with self.assertRaises(IndexError):
+            print(lines[0])
+        self.assertEqual(app.state, Reversi.INIT)
+
+    # for Reversic
     def test_reversic_init(self):
         app = Reversic()
         self.assertEqual(app.board_size, 8)
