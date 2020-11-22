@@ -255,6 +255,81 @@ class TestApp(unittest.TestCase):
             print(lines[0])
         self.assertEqual(app.state, Reversi.INIT)
 
+    def test_reversi_demo_animaion(self):
+        class TestWindow:
+            def __init__(self):
+                class Board:
+                    def __init__(self):
+                        self.size = 8
+
+                    def remove_disc(self, color, x, y):
+                        print('remove_disc', color, x, y)
+
+                    def put_disc(self, color, x, y):
+                        print('put_disc', color, x, y)
+
+                self.board = Board()
+
+        app = Reversi()
+        app.window = TestWindow()
+
+        # setting_changed Falase
+        app._setting_changed = lambda: False
+        with captured_stdout() as stdout:
+            ret = app._demo_animation()
+
+        lines = stdout.getvalue().splitlines()
+
+        self.assertEqual(lines[0], 'remove_disc black 4 3')
+        self.assertEqual(lines[1], 'put_disc turnblack 4 3')
+        self.assertEqual(lines[2], 'remove_disc turnblack 4 3')
+        self.assertEqual(lines[3], 'put_disc white 4 3')
+        self.assertEqual(lines[4], 'remove_disc white 4 3')
+        self.assertEqual(lines[5], 'put_disc turnwhite 4 3')
+        self.assertEqual(lines[6], 'remove_disc turnwhite 4 3')
+        self.assertEqual(lines[7], 'put_disc black 4 3')
+        self.assertEqual(lines[8], 'remove_disc black 3 4')
+        self.assertEqual(lines[9], 'put_disc turnblack 3 4')
+        self.assertEqual(lines[10], 'remove_disc turnblack 3 4')
+        self.assertEqual(lines[11], 'put_disc white 3 4')
+        self.assertEqual(lines[12], 'remove_disc white 3 4')
+        self.assertEqual(lines[13], 'put_disc turnwhite 3 4')
+        self.assertEqual(lines[14], 'remove_disc turnwhite 3 4')
+        self.assertEqual(lines[15], 'put_disc black 3 4')
+        self.assertEqual(lines[16], 'remove_disc white 3 3')
+        self.assertEqual(lines[17], 'put_disc turnwhite 3 3')
+        self.assertEqual(lines[18], 'remove_disc turnwhite 3 3')
+        self.assertEqual(lines[19], 'put_disc black 3 3')
+        self.assertEqual(lines[20], 'remove_disc black 3 3')
+        self.assertEqual(lines[21], 'put_disc turnblack 3 3')
+        self.assertEqual(lines[22], 'remove_disc turnblack 3 3')
+        self.assertEqual(lines[23], 'put_disc white 3 3')
+        self.assertEqual(lines[24], 'remove_disc white 4 4')
+        self.assertEqual(lines[25], 'put_disc turnwhite 4 4')
+        self.assertEqual(lines[26], 'remove_disc turnwhite 4 4')
+        self.assertEqual(lines[27], 'put_disc black 4 4')
+        self.assertEqual(lines[28], 'remove_disc black 4 4')
+        self.assertEqual(lines[29], 'put_disc turnblack 4 4')
+        self.assertEqual(lines[30], 'remove_disc turnblack 4 4')
+        self.assertEqual(lines[31], 'put_disc white 4 4')
+
+        with self.assertRaises(IndexError):
+            print(lines[32])
+
+        self.assertEqual(ret, True)
+
+        # setting_changed True
+        app._setting_changed = lambda: True
+        with captured_stdout() as stdout:
+            ret = app._demo_animation()
+
+        lines = stdout.getvalue().splitlines()
+
+        with self.assertRaises(IndexError):
+            print(lines[0])
+
+        self.assertEqual(ret, False)
+
     # for Reversic
     def test_reversic_init(self):
         app = Reversic()
