@@ -1499,3 +1499,25 @@ class TestBoard(unittest.TestCase):
 
         test = Test()
         self.assertIsInstance(test, Test)
+
+    def test_board_abstract_concrete(self):
+        def concreter(abclass):
+            if not "__abatractmethods__" in abclass.__dict__:
+                return abclass
+
+            new_dict = abclass.__dict__.copy()
+            for abstractmethod in abclass.__abstractmethods__:
+                new_dict[abstractmethod] = lambda x, *args, **kw: (x, args, kw)
+
+            return type("dummy_concrete_%s" % abclass.__name__, (abclass,), new_dict)
+
+        absboard = concreter(AbstractBoard)
+        absboard.get_legal_moves(absboard, "color")
+        absboard.get_legal_moves_bits(absboard, "color")
+        absboard.get_flippable_discs(absboard, "color", "x", "y")
+        absboard.put_disc(absboard, "color", "x", "y")
+        absboard.update_score(absboard)
+        absboard.get_board_info(absboard)
+        absboard.get_bitboard_info(absboard)
+        absboard.get_bit_count(absboard, "bits")
+        absboard.undo(absboard)
