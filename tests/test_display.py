@@ -6,7 +6,7 @@ from test.support import captured_stdout
 
 from reversi.board import Board
 from reversi.player import Player
-from reversi.display import ConsoleDisplay, NoneDisplay, WindowDisplay
+from reversi.display import AbstractDisplay, ConsoleDisplay, NoneDisplay, WindowDisplay
 from reversi.strategies import ConsoleUserInput
 
 
@@ -208,3 +208,11 @@ class TestDisplay(unittest.TestCase):
             display.draw()
             lines = stdout.getvalue().splitlines()
             self.assertEqual(lines, ['set_draw_text_on black', 'set_draw_text_on white'])
+
+    def test_abstract_display(self):
+        AbstractDisplay.progress("self", "board", "black_player", "white_player")
+        AbstractDisplay.turn("self", "player", "legal_moves")
+        AbstractDisplay.move("self", "player", "legal_moves")
+        AbstractDisplay.foul("self", "player")
+        AbstractDisplay.win("self", "player")
+        AbstractDisplay.draw("self")
