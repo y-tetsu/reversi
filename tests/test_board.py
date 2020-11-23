@@ -1169,12 +1169,6 @@ class TestBoard(unittest.TestCase):
                         playable, foul_player = 0, None
 
                         for player in self.players:
-                            # キャンセル許可時
-                            if self.cancel:
-                                if self.cancel.event.is_set():
-                                    # キャンセルメニュー設定時は中断
-                                    break
-
                             legal_moves1 = self.board.get_legal_moves(player.color)
                             legal_moves2 = self.bitboard.get_legal_moves(player.color)
                             self.unittest.assertEqual(legal_moves1, legal_moves2)
@@ -1189,15 +1183,7 @@ class TestBoard(unittest.TestCase):
                             self.display.move(player, legal_moves1)
                             self.display.progress(self.board, self.black_player, self.white_player)
 
-                            if not player.captures:
-                                foul_player = player
-                                break
-
                             playable += 1
-
-                        if foul_player:
-                            self._foul(foul_player)
-                            break
 
                         if not playable:
                             self._judge()
@@ -1243,6 +1229,15 @@ class TestBoard(unittest.TestCase):
                 def undo(self):
                     pass
 
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
+
             test = Test()
 
         with self.assertRaises(TypeError):
@@ -1270,6 +1265,15 @@ class TestBoard(unittest.TestCase):
 
                 def undo(self):
                     pass
+
+            Test.get_legal_moves("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
 
             test = Test()
 
@@ -1299,6 +1303,15 @@ class TestBoard(unittest.TestCase):
                 def undo(self):
                     pass
 
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
+
             test = Test()
 
         with self.assertRaises(TypeError):
@@ -1326,6 +1339,15 @@ class TestBoard(unittest.TestCase):
 
                 def undo(self):
                     pass
+
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
 
             test = Test()
 
@@ -1355,6 +1377,15 @@ class TestBoard(unittest.TestCase):
                 def undo(self):
                     pass
 
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
+
             test = Test()
 
         with self.assertRaises(TypeError):
@@ -1382,6 +1413,15 @@ class TestBoard(unittest.TestCase):
 
                 def undo(self):
                     pass
+
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
 
             test = Test()
 
@@ -1411,6 +1451,15 @@ class TestBoard(unittest.TestCase):
                 def undo(self):
                     pass
 
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bit_count("self", "bits")
+            Test.undo("self")
+
             test = Test()
 
         with self.assertRaises(TypeError):
@@ -1439,6 +1488,15 @@ class TestBoard(unittest.TestCase):
                 def undo(self):
                     pass
 
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.undo("self")
+
             test = Test()
 
         with self.assertRaises(TypeError):
@@ -1466,6 +1524,15 @@ class TestBoard(unittest.TestCase):
 
                 def get_bit_count(self, bits):
                     pass
+
+            Test.get_legal_moves("self", "color")
+            Test.get_legal_moves_bits("self", "color")
+            Test.get_flippable_discs("self", "color", "x", "y")
+            Test.put_disc("self", "color", "x", "y")
+            Test.update_score("self")
+            Test.get_board_info("self")
+            Test.get_bitboard_info("self")
+            Test.get_bit_count("self", "bits")
 
             test = Test()
 
@@ -1497,27 +1564,26 @@ class TestBoard(unittest.TestCase):
             def undo(self):
                 pass
 
+        Test.get_legal_moves("self", "color")
+        Test.get_legal_moves_bits("self", "color")
+        Test.get_flippable_discs("self", "color", "x", "y")
+        Test.put_disc("self", "color", "x", "y")
+        Test.update_score("self")
+        Test.get_board_info("self")
+        Test.get_bitboard_info("self")
+        Test.get_bit_count("self", "bits")
+        Test.undo("self")
+
         test = Test()
         self.assertIsInstance(test, Test)
 
     def test_board_abstract_concrete(self):
-        def concreter(abclass):
-            if not "__abatractmethods__" in abclass.__dict__:
-                return abclass
-
-            new_dict = abclass.__dict__.copy()
-            for abstractmethod in abclass.__abstractmethods__:
-                new_dict[abstractmethod] = lambda x, *args, **kw: (x, args, kw)
-
-            return type("dummy_concrete_%s" % abclass.__name__, (abclass,), new_dict)
-
-        absboard = concreter(AbstractBoard)
-        absboard.get_legal_moves(absboard, "color")
-        absboard.get_legal_moves_bits(absboard, "color")
-        absboard.get_flippable_discs(absboard, "color", "x", "y")
-        absboard.put_disc(absboard, "color", "x", "y")
-        absboard.update_score(absboard)
-        absboard.get_board_info(absboard)
-        absboard.get_bitboard_info(absboard)
-        absboard.get_bit_count(absboard, "bits")
-        absboard.undo(absboard)
+        AbstractBoard.get_legal_moves("self", "color")
+        AbstractBoard.get_legal_moves_bits("self", "color")
+        AbstractBoard.get_flippable_discs("self", "color", "x", "y")
+        AbstractBoard.put_disc("self", "color", "x", "y")
+        AbstractBoard.update_score("self")
+        AbstractBoard.get_board_info("self")
+        AbstractBoard.get_bitboard_info("self")
+        AbstractBoard.get_bit_count("self", "bits")
+        AbstractBoard.undo("self")
