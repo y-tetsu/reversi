@@ -225,9 +225,6 @@ class TestApp(unittest.TestCase):
                         self.event = Event()
                 self.start = Start()
 
-        def demo_animation_true():
-            return True
-
         def demo_animation_false():
             return False
 
@@ -236,7 +233,6 @@ class TestApp(unittest.TestCase):
 
         # event is_set True and demo_anumation_true
         app.window.start.event.is_set = lambda: True
-        app._demo_animation = demo_animation_true
         with captured_stdout() as stdout:
             app._Reversi__demo()
 
@@ -354,9 +350,6 @@ class TestApp(unittest.TestCase):
 
                     def turn_disc(self, color, captures):
                         print('put_disc', color, captures)
-
-                    def win(self, player):
-                        print('win', player)
 
                 class Menu:
                     def __init__(self):
