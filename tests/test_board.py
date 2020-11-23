@@ -1587,3 +1587,22 @@ class TestBoard(unittest.TestCase):
         AbstractBoard.get_bitboard_info("self")
         AbstractBoard.get_bit_count("self", "bits")
         AbstractBoard.undo("self")
+
+    def test_bitboard_force_import_error(self):
+        import os
+        import importlib
+        import reversi
+
+        # switch environ and reload BitBoardMethods
+        os.environ['FORCE_BITBOARD_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.BitBoardMethods)
+
+        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE1, True)
+        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE2, True)
+        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE3, True)
+        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE4, True)
+        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE5, True)
+
+        # recover environment
+        del os.environ['FORCE_BITBOARD_IMPORT_ERROR']
+        importlib.reload(reversi.BitBoardMethods)
