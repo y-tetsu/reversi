@@ -1603,6 +1603,59 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(reversi.BitBoardMethods.SLOW_MODE4, True)
         self.assertEqual(reversi.BitBoardMethods.SLOW_MODE5, True)
 
+        #-------------------------------
+        # get_board_info
+        board = BitBoard()
+        board.put_disc('black', 5, 4)
+        board.put_disc('white', 5, 5)
+        board.put_disc('black', 4, 5)
+        board.put_disc('white', 3, 5)
+        board.put_disc('black', 2, 6)
+        board.put_disc('white', 5, 3)
+        board.put_disc('black', 6, 2)
+        board.put_disc('white', 3, 6)
+        board.put_disc('black', 2, 2)
+
+        board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
+        board_info_ret[2][2] = 1
+        board_info_ret[2][6] = 1
+        board_info_ret[3][3] = 1
+        board_info_ret[3][4] = -1
+        board_info_ret[3][5] = 1
+        board_info_ret[4][3] = -1
+        board_info_ret[4][4] = 1
+        board_info_ret[4][5] = -1
+        board_info_ret[5][3] = -1
+        board_info_ret[5][4] = -1
+        board_info_ret[5][5] = -1
+        board_info_ret[6][2] = 1
+        board_info_ret[6][3] = -1
+
+        self.assertEqual(board.get_board_info(), board_info_ret)
+
+        # illegal pattern of reversi.BitBoardMethods.GetFlippableDiscs.get_next_put
+        self.assertEqual(reversi.BitBoardMethods.GetFlippableDiscs.get_next_put(0, 0, 0, 0), 0)
+
+        # get_legal_moves
+        board = BitBoard(8)
+        legal_moves = board.get_legal_moves('black')
+        legal_moves_bits = board.get_legal_moves_bits('black')
+        self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
+
+        # illegal pattern of reversi.BitBoardMethods.PutDisc.put_disc
+        self.assertEqual(reversi.BitBoardMethods.PutDisc.put_disc(board, 'black', 16, 16), 0)
+
+        # undo
+        board = BitBoard(8)
+        board.put_disc('black', 3, 2)
+        reversi.BitBoardMethods.Undo.undo(board)
+        self.assertEqual(board._black_bitboard, 0x0000000810000000)
+        self.assertEqual(board._white_bitboard, 0x0000001008000000)
+        self.assertEqual(board._black_score, 2)
+        self.assertEqual(board._white_score, 2)
+
+        #-------------------------------
         # recover environment
         del os.environ['FORCE_BITBOARD_IMPORT_ERROR']
         importlib.reload(reversi.BitBoardMethods)
