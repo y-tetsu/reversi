@@ -613,6 +613,25 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(app.state, Reversi.INIT)
 
+    def test_reversi__reinit(self):
+        class TestWindow:
+            def init_screen(self):
+                print('init_screen')
+
+        app = Reversi()
+        app.window = TestWindow()
+
+        with captured_stdout() as stdout:
+            app._Reversi__reinit()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'init_screen')
+
+        with self.assertRaises(IndexError):
+            print(lines[1])
+
+        self.assertEqual(app.state, Reversi.PLAY)
+
     # for Reversic
     def test_reversic_init(self):
         app = Reversic()
