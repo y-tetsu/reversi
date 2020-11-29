@@ -293,7 +293,8 @@ class Reversic:
         アプリ開始
         """
         while True:
-            self.game()
+            if self.game():
+                break
 
     def __start(self):
         """

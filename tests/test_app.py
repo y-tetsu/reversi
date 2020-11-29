@@ -706,3 +706,21 @@ class TestApp(unittest.TestCase):
         self.assertIsInstance(app.players_info['black']['User1'], ConsoleUserInput)
         self.assertTrue('User2' in app.players_info['white'])
         self.assertIsInstance(app.players_info['white']['User2'], ConsoleUserInput)
+
+    def test_reversic_state(self):
+        app = Reversic()
+        app.state = 'START'
+        self.assertEqual(app.state, app.START)
+        self.assertEqual(app.game, app._Reversic__start)
+
+        app.state = 'MENU'
+        self.assertEqual(app.state, app.MENU)
+        self.assertEqual(app.game, app._Reversic__menu)
+
+        app.state = 'PLAY'
+        self.assertEqual(app.state, app.PLAY)
+        self.assertEqual(app.game, app._Reversic__play)
+
+        app.state = 'ANOTHER'
+        self.assertEqual(app.state, 'ANOTHER')
+        self.assertEqual(app.game, app._Reversic__play)
