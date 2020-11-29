@@ -39,7 +39,7 @@ $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 ```
 
 ## アンインストール方法
-下記を実行して**reversi**をアンインストールしてください。
+**reversi**をアンインストールする場合は下記を実行してください。
 ```
 $ py -3.7 -m pip uninstall reversi
 ```
