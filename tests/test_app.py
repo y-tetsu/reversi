@@ -632,6 +632,70 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(app.state, Reversi.PLAY)
 
+    def test_reversi_setting_changed(self):
+        class TestWindow:
+            def __init__(self):
+                class Menu:
+                    def __init__(self):
+                        class Event:
+                            def is_set(self):
+                                return False
+
+                            def clear(self):
+                                print('clear')
+
+                        self.event = Event()
+                        self.size = 8
+                        self.black_player = 'BLACK2'
+                        self.white_player = 'WHITE2'
+                        self.assist = True
+                        self.language = 'Japanese'
+
+                self.menu = Menu()
+
+                self.size = 4
+                self.player = {'black': 'BLACK', 'white': 'WHITE'}
+                self.assist = False
+                self.language = 'English'
+
+        app = Reversi()
+        app.window = TestWindow()
+
+        # return False
+        with captured_stdout() as stdout:
+            ret = app._setting_changed()
+
+        lines = stdout.getvalue().splitlines()
+
+        with self.assertRaises(IndexError):
+            print(lines[0])
+
+        self.assertEqual(app.window.size, 4)
+        self.assertEqual(app.window.player['black'], 'BLACK')
+        self.assertEqual(app.window.player['white'], 'WHITE')
+        self.assertEqual(app.window.assist, False)
+        self.assertEqual(app.window.language, 'English')
+        self.assertEqual(ret, False)
+
+        # return True
+        app.window.menu.event.is_set = lambda: True
+
+        with captured_stdout() as stdout:
+            ret = app._setting_changed()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'clear')
+
+        with self.assertRaises(IndexError):
+            print(lines[1])
+
+        self.assertEqual(app.window.size, 8)
+        self.assertEqual(app.window.player['black'], 'BLACK2')
+        self.assertEqual(app.window.player['white'], 'WHITE2')
+        self.assertEqual(app.window.assist, True)
+        self.assertEqual(app.window.language, 'Japanese')
+        self.assertEqual(ret, True)
+
     # for Reversic
     def test_reversic_init(self):
         app = Reversic()
