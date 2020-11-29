@@ -724,3 +724,28 @@ class TestApp(unittest.TestCase):
         app.state = 'ANOTHER'
         self.assertEqual(app.state, 'ANOTHER')
         self.assertEqual(app.game, app._Reversic__play)
+
+    def test_reversic_start(self):
+        def test_game():
+            x = 0
+            def _test_game():
+                nonlocal x
+                print('test_game', x)
+                if x > 1:
+                    return True
+                x += 1
+                return False
+
+            return _test_game
+
+        app = Reversic()
+        app.game = test_game()
+        with captured_stdout() as stdout:
+            app.start()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'test_game 0')
+        self.assertEqual(lines[1], 'test_game 1')
+        self.assertEqual(lines[2], 'test_game 2')
+        with self.assertRaises(IndexError):
+            print(lines[3])
