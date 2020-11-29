@@ -561,6 +561,58 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(app.state, Reversi.END)
 
+    def test_reversi__end(self):
+        class TestWindow:
+            def __init__(self):
+                class Start:
+                    def __init__(self):
+                        class Event:
+                            def is_set(self):
+                                return True
+
+                            def clear(self):
+                                print('clear')
+
+                        self.event = Event()
+
+                self.start = Start()
+
+            def set_state(self, state):
+                print(state)
+
+        app = Reversi()
+        app.window = TestWindow()
+
+        # REINIT
+        app._setting_changed = lambda: False
+
+        with captured_stdout() as stdout:
+            app._Reversi__end()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'normal')
+        self.assertEqual(lines[1], 'clear')
+
+        with self.assertRaises(IndexError):
+            print(lines[2])
+
+        self.assertEqual(app.state, Reversi.REINIT)
+
+        # INIT
+        app.window.start.event.is_set = lambda: False
+        app._setting_changed = lambda: True
+
+        with captured_stdout() as stdout:
+            app._Reversi__end()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'normal')
+
+        with self.assertRaises(IndexError):
+            print(lines[1])
+
+        self.assertEqual(app.state, Reversi.INIT)
+
     # for Reversic
     def test_reversic_init(self):
         app = Reversic()
