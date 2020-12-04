@@ -2,11 +2,8 @@
 """
 
 import unittest
-import os
-import time
 
 from reversi.board import BitBoard
-from reversi.strategies.common import Timer, Measure, CPU_TIME
 from reversi.strategies import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI
 
 

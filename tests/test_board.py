@@ -1166,7 +1166,7 @@ class TestBoard(unittest.TestCase):
                     self.display.progress(self.board, self.black_player, self.white_player)
 
                     while True:
-                        playable, foul_player = 0, None
+                        playable = 0
 
                         for player in self.players:
                             legal_moves1 = self.board.get_legal_moves(player.color)
@@ -1603,7 +1603,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(reversi.BitBoardMethods.SLOW_MODE4, True)
         self.assertEqual(reversi.BitBoardMethods.SLOW_MODE5, True)
 
-        #-------------------------------
+        # -------------------------------
         # get_board_info
         board = BitBoard()
         board.put_disc('black', 5, 4)
@@ -1655,7 +1655,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 2)
 
-        #-------------------------------
+        # -------------------------------
         # recover environment
         del os.environ['FORCE_BITBOARD_IMPORT_ERROR']
         importlib.reload(reversi.BitBoardMethods)

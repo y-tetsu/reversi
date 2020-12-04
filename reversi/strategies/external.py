@@ -5,7 +5,6 @@
 import subprocess
 from subprocess import PIPE, TimeoutExpired
 import re
-import tkinter as tk
 
 from reversi.strategies.common import AbstractStrategy
 from reversi.error_message import ErrorMessage

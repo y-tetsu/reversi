@@ -2,8 +2,6 @@
 """
 
 import unittest
-import os
-import time
 
 from reversi.strategies.common import AbstractStrategy, AbstractScorer, AbstractEvaluator, AbstractOrderer, AbstractSelector
 

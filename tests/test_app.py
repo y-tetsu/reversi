@@ -220,8 +220,10 @@ class TestApp(unittest.TestCase):
                         class Event:
                             def __init__(self):
                                 self.is_set = None
+
                             def clear(self):
                                 print('clear')
+
                         self.event = Event()
                 self.start = Start()
 
@@ -728,6 +730,7 @@ class TestApp(unittest.TestCase):
     def test_reversic_start(self):
         def test_game():
             x = 0
+
             def _test_game():
                 nonlocal x
                 print('test_game', x)
