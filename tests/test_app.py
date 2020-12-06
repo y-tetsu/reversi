@@ -752,3 +752,21 @@ class TestApp(unittest.TestCase):
         self.assertEqual(lines[2], 'test_game 2')
         with self.assertRaises(IndexError):
             print(lines[3])
+
+    def test_reversic__start(self):
+        app = Reversic()
+        with captured_stdout() as stdout:
+            app._Reversic__start()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], '')
+        self.assertEqual(lines[1], '=============================')
+        self.assertEqual(lines[2], 'BoardSize   = 8')
+        self.assertEqual(lines[3], 'BlackPlayer = User1')
+        self.assertEqual(lines[4], 'WhitePlayer = User2')
+        self.assertEqual(lines[5], '=============================')
+        self.assertEqual(lines[6], '')
+        with self.assertRaises(IndexError):
+            print(lines[7])
+
+        self.assertEqual(app.state, Reversic.MENU)
