@@ -2,7 +2,7 @@
 """
 
 import unittest
-from test.support import captured_stdout
+from test.support import captured_stdin, captured_stdout
 import os
 
 from reversi import Reversi, Reversic, Window, ErrorMessage
@@ -770,3 +770,105 @@ class TestApp(unittest.TestCase):
             print(lines[7])
 
         self.assertEqual(app.state, Reversic.MENU)
+
+    def test_reversic__menu(self):
+        app = Reversic()
+        app.players_info = {'black': 'BLACK', 'white': 'WHITE'}
+        app._get_board_size = lambda: 26
+        app._get_player = lambda x: x
+
+        # play
+        app.state = None
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('\n')
+                stdin.seek(0)
+                app._Reversic__menu()
+
+        lines = stdout.getvalue().splitlines()
+
+        def check_header(self, lines):
+            self.assertEqual(lines[0], 'press any key')
+            self.assertEqual(lines[1], '-----------------------------')
+            self.assertEqual(lines[2], ' enter  : start game')
+            self.assertEqual(lines[3], ' s      : change board size')
+            self.assertEqual(lines[4], ' b      : change black player')
+            self.assertEqual(lines[5], ' w      : change white player')
+            self.assertEqual(lines[6], ' q      : quit')
+            self.assertEqual(lines[7], '-----------------------------')
+
+        check_header(self, lines)
+        self.assertEqual(lines[8], '>> ')
+        with self.assertRaises(IndexError):
+            print(lines[9])
+
+        self.assertEqual(app.state, Reversic.PLAY)
+
+        # size
+        app.state = None
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('s')
+                stdin.seek(0)
+                app._Reversic__menu()
+
+        lines = stdout.getvalue().splitlines()
+        check_header(self, lines)
+        self.assertEqual(lines[8], '>> ')
+        with self.assertRaises(IndexError):
+            print(lines[9])
+
+        self.assertEqual(app.board_size, 26)
+        self.assertEqual(app.state, Reversic.START)
+
+        # black
+        app.state = None
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('b')
+                stdin.seek(0)
+                app._Reversic__menu()
+
+        lines = stdout.getvalue().splitlines()
+        check_header(self, lines)
+        self.assertEqual(lines[8], '>> ')
+        with self.assertRaises(IndexError):
+            print(lines[9])
+
+        self.assertEqual(app.player_names['black'], 'BLACK')
+        self.assertEqual(app.state, Reversic.START)
+
+        # white
+        app.state = None
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('w')
+                stdin.seek(0)
+                app._Reversic__menu()
+
+        lines = stdout.getvalue().splitlines()
+        check_header(self, lines)
+        self.assertEqual(lines[8], '>> ')
+        with self.assertRaises(IndexError):
+            print(lines[9])
+
+        self.assertEqual(app.player_names['white'], 'WHITE')
+        self.assertEqual(app.state, Reversic.START)
+
+        # invalid keyword & quit
+        app.state = None
+        ret = False
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('invalid keyword\nq')
+                stdin.seek(0)
+                ret = app._Reversic__menu()
+
+        lines = stdout.getvalue().splitlines()
+        check_header(self, lines)
+        self.assertEqual(lines[8], '>> >> See you!')
+        with self.assertRaises(IndexError):
+            print(lines[9])
+
+        self.assertTrue(ret)
+        self.assertIsNone(app.state)

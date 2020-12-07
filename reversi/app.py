@@ -1,7 +1,6 @@
 """Application
 """
 
-import sys
 import os
 import time
 import tkinter as tk
@@ -340,7 +339,7 @@ class Reversic:
                 break
             elif user_in == 'q':
                 print('See you!')
-                sys.exit()
+                return True
 
     def _get_board_size(self):
         """
