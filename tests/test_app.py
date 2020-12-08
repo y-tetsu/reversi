@@ -5,7 +5,7 @@ import unittest
 from test.support import captured_stdin, captured_stdout
 import os
 
-from reversi import Reversi, Reversic, Window, ErrorMessage
+from reversi import Reversi, Reversic, Window, ErrorMessage, MIN_BOARD_SIZE, MAX_BOARD_SIZE
 from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
 
 
@@ -872,3 +872,52 @@ class TestApp(unittest.TestCase):
 
         self.assertTrue(ret)
         self.assertIsNone(app.state)
+
+    def test_reversic_get_board_size(self):
+        app = Reversic()
+
+        # normal pattern
+        for i in range(MIN_BOARD_SIZE, MAX_BOARD_SIZE+1, 2):
+            with captured_stdout() as stdout:
+                with captured_stdin() as stdin:
+                    stdin.write(str(i))
+                    stdin.seek(0)
+                    ret = app._get_board_size()
+
+            lines = stdout.getvalue().splitlines()
+            self.assertEqual(lines[0], 'press board size')
+            self.assertEqual(lines[1], '>> ')
+            with self.assertRaises(IndexError):
+                print(lines[2])
+
+            self.assertEqual(ret, i)
+
+        # illegal pattern
+        for i in range(MIN_BOARD_SIZE-1, MAX_BOARD_SIZE+2, 2):
+            with captured_stdout() as stdout:
+                with captured_stdin() as stdin:
+                    stdin.write(str(i) + '\n' + str(MIN_BOARD_SIZE))
+                    stdin.seek(0)
+                    ret = app._get_board_size()
+
+            lines = stdout.getvalue().splitlines()
+            self.assertEqual(lines[0], 'press board size')
+            self.assertEqual(lines[1], '>> >> ')
+            with self.assertRaises(IndexError):
+                print(lines[2])
+
+            self.assertEqual(ret, MIN_BOARD_SIZE)
+
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('a\n08\n１\nあ\n' + str(MAX_BOARD_SIZE))
+                stdin.seek(0)
+                ret = app._get_board_size()
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'press board size')
+        self.assertEqual(lines[1], '>> >> >> >> >> ')
+        with self.assertRaises(IndexError):
+            print(lines[2])
+
+        self.assertEqual(ret, MAX_BOARD_SIZE)

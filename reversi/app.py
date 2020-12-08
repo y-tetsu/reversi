@@ -3,6 +3,7 @@
 
 import os
 import time
+import re
 import tkinter as tk
 import json
 import threading
@@ -348,10 +349,11 @@ class Reversic:
         print('press board size')
 
         while True:
-            user_in = int(input('>> '))
-
-            if MIN_BOARD_SIZE <= user_in <= MAX_BOARD_SIZE and not user_in % 2:
-                return user_in
+            user_in = input('>> ')
+            if re.match(r'^[1-9]+\d*$', user_in):
+                size = int(user_in)
+                if MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and not size % 2:
+                    return size
 
     def _get_player(self, players):
         """
