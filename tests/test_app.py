@@ -921,3 +921,65 @@ class TestApp(unittest.TestCase):
             print(lines[2])
 
         self.assertEqual(ret, MAX_BOARD_SIZE)
+
+    def test_reversic_get_player(self):
+        app = Reversic()
+        test_players = {'Test1': None, 'Test2': None}
+
+        # normal pattern
+        for i in range(1, 3):
+            with captured_stdout() as stdout:
+                with captured_stdin() as stdin:
+                    stdin.write(str(i))
+                    stdin.seek(0)
+                    ret = app._get_player(test_players)
+
+            lines = stdout.getvalue().splitlines()
+            self.assertEqual(lines[0], 'select number for player')
+            self.assertEqual(lines[1], '-----------------------------')
+            self.assertEqual(lines[2], '  1 : Test1')
+            self.assertEqual(lines[3], '  2 : Test2')
+            self.assertEqual(lines[4], '-----------------------------')
+            self.assertEqual(lines[5], '>> ')
+            with self.assertRaises(IndexError):
+                print(lines[6])
+
+            self.assertEqual(ret, list(test_players.keys())[i-1])
+
+        # illegal pattern
+        for i in range(0, 4, 3):
+            with captured_stdout() as stdout:
+                with captured_stdin() as stdin:
+                    stdin.write(str(i) + '\n' + str(1))
+                    stdin.seek(0)
+                    ret = app._get_player(test_players)
+
+            lines = stdout.getvalue().splitlines()
+            self.assertEqual(lines[0], 'select number for player')
+            self.assertEqual(lines[1], '-----------------------------')
+            self.assertEqual(lines[2], '  1 : Test1')
+            self.assertEqual(lines[3], '  2 : Test2')
+            self.assertEqual(lines[4], '-----------------------------')
+            self.assertEqual(lines[5], '>> >> ')
+            with self.assertRaises(IndexError):
+                print(lines[6])
+
+            self.assertEqual(ret, 'Test1')
+
+        with captured_stdout() as stdout:
+            with captured_stdin() as stdin:
+                stdin.write('a\n08\n１\nあ\n' + str(2))
+                stdin.seek(0)
+                ret = app._get_player(test_players)
+
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], 'select number for player')
+        self.assertEqual(lines[1], '-----------------------------')
+        self.assertEqual(lines[2], '  1 : Test1')
+        self.assertEqual(lines[3], '  2 : Test2')
+        self.assertEqual(lines[4], '-----------------------------')
+        self.assertEqual(lines[5], '>> >> >> >> >> ')
+        with self.assertRaises(IndexError):
+            print(lines[6])
+
+        self.assertEqual(ret, 'Test2')

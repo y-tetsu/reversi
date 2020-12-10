@@ -368,10 +368,11 @@ class Reversic:
         print('-----------------------------')
 
         while True:
-            user_in = int(input('>> '))
-
-            if 1 <= user_in <= len(player_list):
-                return player_list[user_in-1]
+            user_in = input('>> ')
+            if re.match(r'^[1-9]+\d*$', user_in):
+                index = int(user_in)
+                if 1 <= index <= len(player_list):
+                    return player_list[index-1]
 
     def __play(self):
         """
