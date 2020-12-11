@@ -983,3 +983,50 @@ class TestApp(unittest.TestCase):
             print(lines[6])
 
         self.assertEqual(ret, 'Test2')
+
+    def test_reversic__play(self):
+        class BlackFoul(AbstractStrategy):
+            def next_move(self, color, board):
+                depth = board._black_score + board._white_score - 4
+                move = None
+                if depth == 0:
+                    move = (0, 0)
+
+                return move
+
+        app = Reversic({'BLACK_FOUL': BlackFoul()})
+        app.player_names = {'black': 'BLACK_FOUL', 'white': 'BLACK_FOUL'}
+        app.board_size = 4
+        app.state = None
+        with captured_stdout() as stdout:
+            app._Reversic__play()
+
+        lines = stdout.getvalue().splitlines()
+        expected = """
+〇BLACK_FOUL:2 ●BLACK_FOUL:2
+   a b c d
+ 1□□□□
+ 2□●〇□
+ 3□〇●□
+ 4□□□□
+
+〇BLACK_FOUL's turn
+ 1: ('b', '1')
+ 2: ('a', '2')
+ 3: ('d', '3')
+ 4: ('c', '4')
+putted on ('a', '1') 
+
+〇BLACK_FOUL:3 ●BLACK_FOUL:2
+   a b c d
+ 1〇□□□
+ 2□●〇□
+ 3□〇●□
+ 4□□□□
+
+〇BLACK_FOUL foul
+●BLACK_FOUL win
+""".split('\n')[1:-1]
+
+        self.assertEqual(lines, expected)
+        self.assertEqual(app.state, Reversic.START)
