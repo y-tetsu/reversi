@@ -58,7 +58,8 @@ class ConsoleDisplay(AbstractDisplay):
         x = chr(player.move[0] + 97)
         y = str(player.move[1] + 1)
 
-        print('putted on', (x, y), '\n')
+        print('putted on', (x, y))
+        print()
         time.sleep(1)
 
     def foul(self, player):
