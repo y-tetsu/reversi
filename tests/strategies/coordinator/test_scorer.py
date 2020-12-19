@@ -167,6 +167,11 @@ class TestScorer(unittest.TestCase):
         score = scorer.get_score(board=board)
         self.assertEqual(score, -2200)
 
+        # board size is not 8
+        board = BitBoard(4)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 0)
+
     def test_corner_scorer(self):
         board = BitBoard(8)
         scorer = coord.CornerScorer()
@@ -220,3 +225,9 @@ class TestScorer(unittest.TestCase):
         board._white_bitboard = 0x000000000F1F3F7F
         score = scorer.get_score(board=board)
         self.assertEqual(score, 0)
+
+        # board size is not 8
+        board = BitBoard(4)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 0)
+
