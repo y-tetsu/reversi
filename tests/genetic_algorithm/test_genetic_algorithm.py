@@ -119,10 +119,10 @@ class Test3(Chromosome):
         return Test3(100)
 
     def mutate(self):
-        pass
+        self.parameter = 999
 
     def large_mutate(self):
-        pass
+        self.parameter = 9999
 
 
 class RandomSum77(Chromosome):
@@ -275,6 +275,23 @@ class TestGeneticAlgorithm(unittest.TestCase):
         ga = GeneticAlgorithm(self.json_file2, Test3)
         ga._generation_change()
         self.assertEqual([i.parameter for i in ga._population], [100, 100])
+
+    def test_genetic_algorithm_mutate(self):
+        ga = GeneticAlgorithm(self.json_file2, Test3)
+        with captured_stdout() as stdout:
+            ga._mutate()
+        lines = stdout.getvalue().splitlines()
+        expected = [' + mutate', ' + mutate']
+        self.assertEqual(lines, expected)
+        self.assertEqual([i.parameter for i in ga._population], [999, 999])
+
+        ga._generation = ga._setting['large_mutation']
+        with captured_stdout() as stdout:
+            ga._mutate()
+        lines = stdout.getvalue().splitlines()
+        expected = [' + large_mutate', ' + large_mutate']
+        self.assertEqual(lines, expected)
+        self.assertEqual([i.parameter for i in ga._population], [9999, 9999])
 
     def test_genetic_algorithm_randomsum77(self):
         ga = GeneticAlgorithm(self.json_file, RandomSum77)
