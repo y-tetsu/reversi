@@ -230,4 +230,3 @@ class TestScorer(unittest.TestCase):
         board = BitBoard(4)
         score = scorer.get_score(board=board)
         self.assertEqual(score, 0)
-
