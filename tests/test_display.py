@@ -53,7 +53,7 @@ class TestDisplay(unittest.TestCase):
             self.assertEqual(lines[13], " 2: ('c', '4')")
             self.assertEqual(lines[14], " 3: ('f', '5')")
             self.assertEqual(lines[15], " 4: ('e', '6')")
-            self.assertEqual(lines[16], "putted on ('d', '3') ")
+            self.assertEqual(lines[16], "putted on ('d', '3')")
             self.assertEqual(lines[17], "")
             self.assertEqual(lines[18], "〇Test:4 ●User:1")
             self.assertEqual(lines[19], "   a b c d e f g h")

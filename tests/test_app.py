@@ -1015,7 +1015,7 @@ class TestApp(unittest.TestCase):
  2: ('a', '2')
  3: ('d', '3')
  4: ('c', '4')
-putted on ('a', '1') 
+putted on ('a', '1')
 
 〇BLACK_FOUL:3 ●BLACK_FOUL:2
    a b c d
