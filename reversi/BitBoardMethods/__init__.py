@@ -11,8 +11,8 @@ SLOW_MODE5 = True
 
 
 try:
-    if 'FORCE_BITBOARD_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BITBOARD_IMPORT_ERROR'] == 'RAISE':
+    if 'FORCE_BITBOARDMETHODS_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
     from reversi.BitBoardMethods.GetLegalMovesFast import get_legal_moves, get_legal_moves_bits, get_bit_count
@@ -21,8 +21,8 @@ except ImportError:
     from reversi.BitBoardMethods.GetLegalMoves import get_legal_moves, get_legal_moves_bits, get_bit_count
 
 try:
-    if 'FORCE_BITBOARD_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BITBOARD_IMPORT_ERROR'] == 'RAISE':
+    if 'FORCE_BITBOARDMETHODS_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
     from reversi.BitBoardMethods.GetFlippableDiscsFast import get_flippable_discs
@@ -31,8 +31,8 @@ except ImportError:
     from reversi.BitBoardMethods.GetFlippableDiscs import get_flippable_discs
 
 try:
-    if 'FORCE_BITBOARD_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BITBOARD_IMPORT_ERROR'] == 'RAISE':
+    if 'FORCE_BITBOARDMETHODS_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
     from reversi.BitBoardMethods.GetBoardInfoFast import get_board_info
@@ -41,8 +41,8 @@ except ImportError:
     from reversi.BitBoardMethods.GetBoardInfo import get_board_info
 
 try:
-    if 'FORCE_BITBOARD_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BITBOARD_IMPORT_ERROR'] == 'RAISE':
+    if 'FORCE_BITBOARDMETHODS_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
     from reversi.BitBoardMethods.UndoFast import undo
@@ -51,8 +51,8 @@ except ImportError:
     from reversi.BitBoardMethods.Undo import undo
 
 try:
-    if 'FORCE_BITBOARD_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BITBOARD_IMPORT_ERROR'] == 'RAISE':
+    if 'FORCE_BITBOARDMETHODS_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
     from reversi.BitBoardMethods.PutDiscFast import put_disc
