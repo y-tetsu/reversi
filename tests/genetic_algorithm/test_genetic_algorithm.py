@@ -93,7 +93,7 @@ class Test2(Chromosome):
 
 
 class Test3(Chromosome):
-    """Test3:cross_over
+    """Test3:generation_change
     """
     cnt = 0
 
@@ -104,25 +104,58 @@ class Test3(Chromosome):
         return self.parameter
 
     def reset_fitness(self):
-        pass
+        print('reset')
 
     def is_optimal(self):
-        pass
+        return self.parameter == 9999
 
     @classmethod
     def random_instance(cls):
-        instance = Test3(Test3.cnt)
-        Test3.cnt += 1
+        instance = cls(cls.cnt)
+        cls.cnt += 1
         return instance
 
     def crossover(self, other):
-        return Test3(100)
+        return type(self)(100)
 
     def mutate(self):
         self.parameter = 999
 
     def large_mutate(self):
         self.parameter = 9999
+
+    def save_population(self, fname):
+        print(fname)
+
+    def __str__(self):
+        return "parameter=" + str(self.parameter)
+
+
+class Test4(Test3):
+    """Test4:mutate
+    """
+    cnt = 0
+
+
+class Test5(Test3):
+    """Test5:reset_fitness
+    """
+    cnt = 0
+
+
+class Test6(Test3):
+    """Test6:run
+    """
+    cnt = 0
+
+
+class Test7(Test3):
+    """Test7:run
+    """
+    cnt = 0
+
+    def is_optimal(self):
+        return self.parameter == 10000
 
 
 class RandomSum77(Chromosome):
@@ -186,7 +219,7 @@ class TestGeneticAlgorithm(unittest.TestCase):
         self.ga_setting2 = {
             "population_num": 2,
             "offspring_num": 2,
-            "max_generations": 10000,
+            "max_generations": 3,
             "mutation_chance": 1,
             "large_mutation": 2
         }
@@ -277,7 +310,7 @@ class TestGeneticAlgorithm(unittest.TestCase):
         self.assertEqual([i.parameter for i in ga._population], [100, 100])
 
     def test_genetic_algorithm_mutate(self):
-        ga = GeneticAlgorithm(self.json_file2, Test3)
+        ga = GeneticAlgorithm(self.json_file2, Test4)
         with captured_stdout() as stdout:
             ga._mutate()
         lines = stdout.getvalue().splitlines()
@@ -293,9 +326,109 @@ class TestGeneticAlgorithm(unittest.TestCase):
         self.assertEqual(lines, expected)
         self.assertEqual([i.parameter for i in ga._population], [9999, 9999])
 
+    def test_genetic_algorithm_reset_fitness(self):
+        ga = GeneticAlgorithm(self.json_file2, Test5)
+        with captured_stdout() as stdout:
+            ga._reset_fitness()
+        lines = stdout.getvalue().splitlines()
+        expected = ['reset', 'reset']
+        self.assertEqual(lines, expected)
+
+    def test_genetic_algorithm_run(self):
+        # found optimal
+        ga = GeneticAlgorithm(self.json_file2, Test6)
+        with captured_stdout() as stdout:
+            result = ga.run()
+        lines = stdout.getvalue().splitlines()
+        expected = """
+Generation 0 Best 1 Avg 0.5
+best: parameter=1
+
+./population0.json
+ + mutate
+ + mutate
+reset
+reset
+Generation 1 Best 999 Avg 999
+best: parameter=999
+
+./population1.json
+ + large_mutate
+ + large_mutate
+reset
+reset
+Generation 2 Best 9999 Avg 9999
+best: parameter=9999
+
+----- optimal pattern is found! -----
+./population.json
+""".split('\n')[1:-1]
+        self.assertEqual(lines, expected)
+        self.assertEqual(str(result), 'parameter=9999')
+
+        # not found optimal
+        ga = GeneticAlgorithm(self.json_file2, Test7)
+        with captured_stdout() as stdout:
+            result = ga.run()
+        lines = stdout.getvalue().splitlines()
+        expected = """
+Generation 0 Best 1 Avg 0.5
+best: parameter=1
+
+./population0.json
+ + mutate
+ + mutate
+reset
+reset
+Generation 1 Best 999 Avg 999
+best: parameter=999
+
+./population1.json
+ + large_mutate
+ + large_mutate
+reset
+reset
+Generation 2 Best 9999 Avg 9999
+best: parameter=9999
+
+./population2.json
+ + mutate
+ + mutate
+reset
+reset
+Generation 3 Best 999 Avg 999
+./population.json
+""".split('\n')[1:-1]
+        self.assertEqual(lines, expected)
+        self.assertEqual(str(result), 'parameter=999')
+
     def test_genetic_algorithm_randomsum77(self):
         ga = GeneticAlgorithm(self.json_file, RandomSum77)
         result = ga.run()
         print('result:', result)
 
         self.assertTrue("parameter=77" in str(result))
+
+    def test_genetic_algorithm_test(self):
+        test1 = Test1(10)
+        self.assertEqual(test1.fitness(), 10)
+        self.assertIsNone(test1.reset_fitness())
+        self.assertIsNone(test1.is_optimal())
+        self.assertIsNone(test1.crossover(None))
+        self.assertIsNone(test1.mutate())
+        self.assertIsNone(test1.large_mutate())
+
+        test2 = Test2(10)
+        self.assertIsNone(test2.reset_fitness())
+        self.assertIsNone(test2.is_optimal())
+        self.assertIsNone(test2.crossover(None))
+        self.assertIsNone(test2.mutate())
+        self.assertIsNone(test2.large_mutate())
+
+        randomsum77 = RandomSum77(10)
+        randomsum77.mutate()
+        self.assertEqual(randomsum77.parameter, 11)
+        randomsum77.large_mutate()
+        self.assertGreaterEqual(randomsum77.parameter, 0)
+        self.assertLess(randomsum77.parameter, 100)
+        self.assertEqual(randomsum77.name, str(randomsum77.parameter))
