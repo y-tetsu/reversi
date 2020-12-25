@@ -6,8 +6,8 @@ pyximport.install()
 SLOW_MODE = True
 
 try:
-    if 'FORCE_BITBOARD_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BITBOARD_IMPORT_ERROR'] == 'RAISE':
+    if 'FORCE_TABLEMETHODS_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
     from ...strategies.TableMethods.GetScoreFast import get_score

@@ -138,14 +138,14 @@ class TestTable(unittest.TestCase):
 
         self.assertEqual(table.table, init)
 
-    def test_table_import_error(self):
+    def test_table_force_import_error(self):
         import os
         import importlib
         import reversi
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_BITBOARD_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR'] = 'RAISE'
         importlib.reload(reversi.strategies.TableMethods)
         self.assertTrue(reversi.strategies.TableMethods.SLOW_MODE)
         # -------------------------------
@@ -163,7 +163,7 @@ class TestTable(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_BITBOARD_IMPORT_ERROR']
+        del os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR']
         importlib.reload(reversi.strategies.TableMethods)
         self.assertFalse(reversi.strategies.TableMethods.SLOW_MODE)
         # -------------------------------
