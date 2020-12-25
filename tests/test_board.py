@@ -1593,17 +1593,17 @@ class TestBoard(unittest.TestCase):
         import importlib
         import reversi
 
+        # -------------------------------
         # switch environ and reload BitBoardMethods
         os.environ['FORCE_BITBOARD_IMPORT_ERROR'] = 'RAISE'
         importlib.reload(reversi.BitBoardMethods)
-
-        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE1, True)
-        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE2, True)
-        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE3, True)
-        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE4, True)
-        self.assertEqual(reversi.BitBoardMethods.SLOW_MODE5, True)
-
+        self.assertTrue(reversi.BitBoardMethods.SLOW_MODE1)
+        self.assertTrue(reversi.BitBoardMethods.SLOW_MODE2)
+        self.assertTrue(reversi.BitBoardMethods.SLOW_MODE3)
+        self.assertTrue(reversi.BitBoardMethods.SLOW_MODE4)
+        self.assertTrue(reversi.BitBoardMethods.SLOW_MODE5)
         # -------------------------------
+
         # get_board_info
         board = BitBoard()
         board.put_disc('black', 5, 4)
@@ -1659,3 +1659,9 @@ class TestBoard(unittest.TestCase):
         # recover environment
         del os.environ['FORCE_BITBOARD_IMPORT_ERROR']
         importlib.reload(reversi.BitBoardMethods)
+        self.assertFalse(reversi.BitBoardMethods.SLOW_MODE1)
+        self.assertFalse(reversi.BitBoardMethods.SLOW_MODE2)
+        self.assertFalse(reversi.BitBoardMethods.SLOW_MODE3)
+        self.assertFalse(reversi.BitBoardMethods.SLOW_MODE4)
+        self.assertFalse(reversi.BitBoardMethods.SLOW_MODE5)
+        # -------------------------------
