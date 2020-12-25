@@ -137,3 +137,33 @@ class TestTable(unittest.TestCase):
         ]
 
         self.assertEqual(table.table, init)
+
+    def test_table_import_error(self):
+        import os
+        import importlib
+        import reversi
+
+        # -------------------------------
+        # switch environ and reload module
+        os.environ['FORCE_BITBOARD_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.strategies.TableMethods)
+        self.assertTrue(reversi.strategies.TableMethods.SLOW_MODE)
+        # -------------------------------
+
+        # size8
+        table = Table(8)
+        board = Board(8)
+        board.put_disc('black', 3, 2)
+        board.put_disc('white', 2, 2)
+        board.put_disc('black', 2, 3)
+        board.put_disc('white', 4, 2)
+        board.put_disc('black', 1, 1)
+        board.put_disc('white', 0, 0)
+        self.assertEqual(table.get_score(board), -22)
+
+        # -------------------------------
+        # recover environment and reload module
+        del os.environ['FORCE_BITBOARD_IMPORT_ERROR']
+        importlib.reload(reversi.strategies.TableMethods)
+        self.assertFalse(reversi.strategies.TableMethods.SLOW_MODE)
+        # -------------------------------
