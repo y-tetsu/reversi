@@ -48,14 +48,18 @@ class TestFullReading(unittest.TestCase):
                 return (3, 3)
 
         board = BitBoard()
-        fullreading = _FullReading(remain=8, base=Test())
 
         color = 'white'
         board._black_bitboard = 0x3FFFEE3E192CC07E
         board._white_bitboard = 0x400011C0E4523900
         board.update_score()
 
+
         # remain = 9 : base
+        fullreading = FullReading(remain=8, base=Test())
+        self.assertEqual(fullreading.next_move(color, board), (3, 3))
+
+        fullreading = _FullReading(remain=8, base=Test())
         self.assertEqual(fullreading.next_move(color, board), (3, 3))
 
         # remain = 8 : fullreading

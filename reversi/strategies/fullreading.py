@@ -62,18 +62,3 @@ class FullReading(_FullReading_):
         """次の一手
         """
         return super().next_move(color, board)
-
-
-class FullReading_old(_FullReading_):
-    """終盤完全読み + Measure + Timer
-    """
-    def __init__(self, remain=None, base=None):
-        self.remain = remain
-        self.fullreading = AlphaBetaN_old(depth=remain)
-        self.base = base
-
-    @Measure.time
-    def next_move(self, color, board):
-        """次の一手
-        """
-        return super().next_move(color, board)
