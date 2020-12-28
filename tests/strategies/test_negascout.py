@@ -189,3 +189,104 @@ class TestNegaScout(unittest.TestCase):
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
         print('(7000)', Measure.count[pid])
+
+    def test_negascout_force_import_error(self):
+        import os
+        import importlib
+        import reversi
+
+        # -------------------------------
+        # switch environ and reload module
+        os.environ['FORCE_NEGASCOUTMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.strategies.NegaScoutMethods)
+        self.assertTrue(reversi.strategies.NegaScoutMethods.SLOW_MODE)
+        # -------------------------------
+
+        # measure
+        pid = 'IMPORT_ERROR_MEASURE'
+        if pid in Measure.count:
+            Measure.count.pop(pid)
+
+        for _ in range(3):
+            reversi.strategies.NegaScoutMethods.GetScore.measure(pid)
+        self.assertEqual(Measure.count[pid], 3)
+
+        # timer
+        pid = 'IMPORT_ERROR_TIMER'
+        Timer.deadline[pid] = 0
+        Timer.timeout_value[pid] = 100
+        self.assertIsNone(reversi.strategies.NegaScoutMethods.GetScore.timer(None))
+        self.assertEqual(reversi.strategies.NegaScoutMethods.GetScore.timer(pid), 100)
+        self.assertTrue(Timer.timeout_flag[pid])
+
+        # get_score
+        negascout = NegaScout(depth=2, evaluator=coord.Evaluator_N())
+        color = 'black'
+        board = BitBoard(4)
+        alpha = -10
+        beta = 1
+        depth = 0
+        pid = 'IMPORT_ERROR_GET_SCORE'
+
+        # - depth == 0
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, 0)
+
+        # - pass and score
+        depth = 1
+        board._black_bitboard = 0x4000
+        board._white_bitboard = 0x8000
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, -3)
+
+        # - alpha >= beta
+        beta = -10
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, -10)
+
+        # - tmp <= null_wndow
+        board = BitBoard(8)
+        board.put_disc('black', 5, 4)
+        board.put_disc('white', 3, 5)
+        board.put_disc('black', 2, 5)
+        depth = 3
+        alpha = -100
+        beta = 100
+        Timer.timeout_flag[pid] = True
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, 6)
+
+        # get_score_measure
+        board = BitBoard(4)
+        board._black_bitboard = 0x4000
+        board._white_bitboard = 0x8000
+        beta = 1
+        Measure.count[pid] = 0
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score_measure(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, -3)
+        self.assertEqual(Measure.count[pid], 3)
+
+        # get_score_timer
+        Timer.deadline[pid] = 0
+        Timer.timeout_value[pid] = 100
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score_timer(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, 100)
+        self.assertTrue(Timer.timeout_flag[pid])
+
+        Timer.deadline[pid] = time.time() + 1
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score_timer(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, -3)
+
+        # get_score_measure_timer
+        Measure.count[pid] = 0
+        Timer.deadline[pid] = time.time() + 1
+        score = reversi.strategies.NegaScoutMethods.GetScore.get_score_measure_timer(negascout, color, board, alpha, beta, depth, pid)
+        self.assertEqual(score, -3)
+        self.assertEqual(Measure.count[pid], 3)
+
+        # -------------------------------
+        # recover environment and reload module
+        del os.environ['FORCE_NEGASCOUTMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.strategies.NegaScoutMethods)
+        self.assertFalse(reversi.strategies.NegaScoutMethods.SLOW_MODE)
+        # -------------------------------
