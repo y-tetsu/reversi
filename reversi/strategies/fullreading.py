@@ -2,7 +2,7 @@
 """
 
 from reversi.strategies.common import Measure, AbstractStrategy
-from reversi.strategies import _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN, AlphaBetaN_old
+from reversi.strategies import _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN
 
 
 class _FullReading_(AbstractStrategy):

@@ -54,7 +54,6 @@ class TestFullReading(unittest.TestCase):
         board._white_bitboard = 0x400011C0E4523900
         board.update_score()
 
-
         # remain = 9 : base
         fullreading = FullReading(remain=8, base=Test())
         self.assertEqual(fullreading.next_move(color, board), (3, 3))
