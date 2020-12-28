@@ -4,6 +4,7 @@
 import unittest
 
 from reversi.board import BitBoard
+from reversi.strategies.common import Timer
 from reversi.strategies import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI
 
 
@@ -62,6 +63,47 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(negamax3._MAX, 10000000)
         self.assertEqual(negamax3.depth, 3)
 
+    def test_proto_negamax3_next_move(self):
+        negamax3 = NegaMax3()
+        board = BitBoard()
+
+        board.put_disc('black', 3, 2)
+        self.assertEqual(negamax3.next_move('white', board), (2, 4))
+
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 1, 5)
+        board.put_disc('white', 1, 4)
+        self.assertEqual(negamax3.next_move('black', board), (2, 5))
+
+    def test_proto_negamax3_get_score(self):
+        negamax3 = NegaMax3()
+        board = BitBoard(4)
+        board._black_bitboard = 0x0400
+        board._white_bitboard = 0x8030
+
+        self.assertEqual(negamax3.get_score('white', board, 2), -2)
+
+    def test_proto_negamax3_evaluate(self):
+        negamax3 = NegaMax3()
+        board = BitBoard(4)
+
+        self.assertEqual(negamax3.evaluate('black', board, [], []), 0)
+
+        board._black_score = 3
+        self.assertEqual(negamax3.evaluate('black', board, [], []), 10001)
+
+        board._white_score = 4
+        self.assertEqual(negamax3.evaluate('black', board, [], []), -10001)
+
+    def test_proto_negamax3_timeout(self):
+        negamax3 = NegaMax3()
+        board = BitBoard()
+        board._black_bitboard = 0xC001
+        board._white_bitboard = 0x2002
+        Timer.timeout_flag[negamax3] = True
+        self.assertEqual(negamax3.next_move('black', board), (3, 6))
+        self.assertEqual(negamax3.get_score('black', board, 2), -10000000)
+
     def test_proto_alphabeta4_init(self):
         alphabeta4 = AlphaBeta4()
 
@@ -71,6 +113,51 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(alphabeta4._MIN, -10000000)
         self.assertEqual(alphabeta4._MAX, 10000000)
         self.assertEqual(alphabeta4.depth, 4)
+
+    def test_proto_alphabeta4_next_move(self):
+        alphabeta4 = AlphaBeta4()
+        board = BitBoard()
+
+        board.put_disc('black', 3, 2)
+        self.assertEqual(alphabeta4.next_move('white', board), (2, 4))
+
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 1, 5)
+        board.put_disc('white', 1, 4)
+        self.assertEqual(alphabeta4.next_move('black', board), (2, 5))
+
+        board._black_bitboard = 0xC001
+        board._white_bitboard = 0x2002
+        self.assertEqual(alphabeta4.next_move('black', board), (3, 6))
+
+    def test_proto_alphabeta4_timeout(self):
+        alphabeta4 = AlphaBeta4()
+        board = BitBoard()
+        board._black_bitboard = 0xC001
+        board._white_bitboard = 0x2002
+        Timer.timeout_flag[alphabeta4] = True
+        self.assertEqual(alphabeta4.get_best_move('black', board, [(3, 6)], 0), (3, 6))
+        self.assertEqual(alphabeta4._get_score('black', board, 1000, -1000, 2), 1000)
+
+    def test_proto_alphabeta4_get_score(self):
+        alphabeta4 = AlphaBeta4()
+        board = BitBoard(4)
+        board._black_bitboard = 0x0400
+        board._white_bitboard = 0x8030
+
+        self.assertEqual(alphabeta4.get_score((3, 3), 'white', board, 1000, -1000, 2), 10001)
+
+    def test_proto_alphabeta4_evaluate(self):
+        alphabeta4 = AlphaBeta4()
+        board = BitBoard(4)
+
+        self.assertEqual(alphabeta4.evaluate('black', board, [], []), 0)
+
+        board._black_score = 3
+        self.assertEqual(alphabeta4.evaluate('black', board, [], []), 10001)
+
+        board._white_score = 4
+        self.assertEqual(alphabeta4.evaluate('black', board, [], []), -10001)
 
     def test_proto_ab_t4_init(self):
         ab_t4 = AB_T4()

@@ -127,14 +127,14 @@ class NegaMax_(MinMax_):
         moves, max_score = {}, self._MIN
 
         # 打てる手の中から評価値の最も高い手を選ぶ
-        for move in board.get_legal_moves(color, cache=True).keys():
+        for move in board.get_legal_moves(color):
             board.put_disc(color, *move)                              # 一手打つ
             score = -self.get_score(next_color, board, self.depth-1)  # 評価値を取得
             board.undo()                                              # 打った手を戻す
 
             if Timer.is_timeout(self):      # タイムアウト発生時
                 if max_score not in moves:  # 候補がない場合は現在の手を返す
-                    return move
+                    moves[max_score] = [move]
                 break
             else:
                 max_score = max(max_score, score)  # 最大値を選択
@@ -168,7 +168,7 @@ class NegaMax_(MinMax_):
         # 評価値を算出
         max_score = self._MIN
 
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board.put_disc(color, *move)
             score = -self.get_score(next_color, board, depth-1)
             board.undo()
@@ -199,7 +199,7 @@ class AlphaBeta_(NegaMax_):
         """
         次の一手
         """
-        moves = board.get_legal_moves(color, cache=True).keys()  # 手の候補
+        moves = board.get_legal_moves(color)  # 手の候補
 
         return self.get_best_move(color, board, moves, self.depth)
 
@@ -256,7 +256,7 @@ class AlphaBeta_(NegaMax_):
             return -self._get_score(next_color, board, -beta, -alpha, depth)
 
         # 評価値を算出
-        for move in legal_moves.keys():
+        for move in legal_moves:
             board.put_disc(color, *move)
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
