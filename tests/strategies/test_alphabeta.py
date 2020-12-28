@@ -236,13 +236,13 @@ class TestAlphaBeta(unittest.TestCase):
         # -------------------------------
 
         # measure
-        pid = 'IMPORT_ERROR_MEASURE'
+        pid = 'ALPHABETA_IMPORT_ERROR_MEASURE'
         for _ in range(3):
             reversi.strategies.AlphaBetaMethods.GetScore.measure(pid)
         self.assertEqual(Measure.count[pid], 3)
 
         # timer
-        pid = 'IMPORT_ERROR_TIMER'
+        pid = 'ALPHABETA_IMPORT_ERROR_TIMER'
         Timer.deadline[pid] = 0
         Timer.timeout_value[pid] = 100
         self.assertIsNone(reversi.strategies.AlphaBetaMethods.GetScore.timer(None))
@@ -256,7 +256,7 @@ class TestAlphaBeta(unittest.TestCase):
         alpha = 1
         beta = 1
         depth = 0
-        pid = 'IMPORT_ERROR_GET_SCORE'
+        pid = 'ALPHABETA_IMPORT_ERROR_GET_SCORE'
 
         # - depth == 0
         score = reversi.strategies.AlphaBetaMethods.GetScore.get_score(alphabeta, color, board, alpha, beta, depth, pid)
