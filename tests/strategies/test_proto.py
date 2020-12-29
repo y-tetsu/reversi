@@ -2,6 +2,7 @@
 """
 
 import unittest
+import time
 
 from reversi.board import BitBoard
 from reversi.strategies.common import Timer
@@ -132,12 +133,15 @@ class TestAlphaBeta(unittest.TestCase):
 
     def test_proto_alphabeta4_timeout(self):
         alphabeta4 = AlphaBeta4()
+        pid = 'ALPHABETA4_TIMEOUT'
         board = BitBoard()
         board._black_bitboard = 0xC001
         board._white_bitboard = 0x2002
-        Timer.timeout_flag[alphabeta4] = True
-        self.assertEqual(alphabeta4.get_best_move('black', board, [(3, 6)], 0), (3, 6))
-        self.assertEqual(alphabeta4._get_score('black', board, 1000, -1000, 2), 1000)
+        Timer.deadline[pid] = 0
+        Timer.timeout_value[pid] = -999
+        self.assertEqual(alphabeta4.get_best_move('black', board, [(3, 6)], 0, pid=pid), (3, 6))
+        Timer.deadline[pid] = time.time() + 0.01
+        self.assertEqual(alphabeta4._get_score('black', board, 1000, -1000, 2, pid=pid), 1000)
 
     def test_proto_alphabeta4_get_score(self):
         alphabeta4 = AlphaBeta4()
@@ -181,6 +185,21 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(ab_t4.table._O2, -5)
         self.assertEqual(ab_t4._W4, 0.5)
 
+    def test_proto_ab_t4_next_move(self):
+        ab_t4 = AB_T4()
+        board = BitBoard()
+
+        board.put_disc('black', 3, 2)
+        self.assertEqual(ab_t4.next_move('white', board), (2, 4))
+
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 1, 5)
+        board.put_disc('white', 1, 4)
+        self.assertEqual(ab_t4.next_move('black', board), (2, 5))
+
+        board = BitBoard(4)
+        self.assertEqual(ab_t4.next_move('black', board), (1, 0))
+
     def test_proto_ab_ti_init(self):
         ab_ti = AB_TI()
 
@@ -202,3 +221,24 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(ab_ti.table._O1, -5)
         self.assertEqual(ab_ti.table._O2, -5)
         self.assertEqual(ab_ti._W4, 0.5)
+
+    def test_proto_ab_ti_next_move(self):
+        ab_ti = AB_TI()
+        board = BitBoard()
+        board.put_disc('black', 3, 2)
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 1, 5)
+        board.put_disc('white', 1, 4)
+        board.put_disc('black', 1, 3)
+        board.put_disc('white', 0, 6)
+        board.put_disc('black', 1, 6)
+        board.put_disc('white', 2, 6)
+        board.put_disc('black', 1, 7)
+        board.put_disc('white', 0, 4)
+        board.put_disc('black', 2, 5)
+        board.put_disc('white', 3, 5)
+        board.put_disc('black', 3, 6)
+        self.assertEqual(ab_ti.next_move('white', board), (0, 7))
+
+        board = BitBoard(4)
+        self.assertEqual(ab_ti.next_move('black', board), (1, 0))

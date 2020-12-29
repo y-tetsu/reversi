@@ -199,11 +199,13 @@ class AlphaBeta_(NegaMax_):
         """
         次の一手
         """
+        pid = Timer.get_pid(self)             # タイムアウト監視用のプロセスID
         moves = board.get_legal_moves(color)  # 手の候補
+        best_move = self.get_best_move(color, board, moves, self.depth, pid)
 
-        return self.get_best_move(color, board, moves, self.depth)
+        return best_move
 
-    def get_best_move(self, color, board, moves, depth):
+    def get_best_move(self, color, board, moves, depth, pid=None):
         """
         最善手を選ぶ
         """
@@ -211,9 +213,9 @@ class AlphaBeta_(NegaMax_):
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in moves:
-            score = self.get_score(move, color, board, alpha, beta, depth)
+            score = self.get_score(move, color, board, alpha, beta, depth, pid)
 
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(pid):
                 best_move = move if best_move is None else best_move
                 break
             else:
@@ -223,20 +225,20 @@ class AlphaBeta_(NegaMax_):
 
         return best_move
 
-    def get_score(self, move, color, board, alpha, beta, depth):
+    def get_score(self, move, color, board, alpha, beta, depth, pid=None):
         """
         手を打った時の評価値を取得
         """
-        board.put_disc(color, *move)                                         # 一手打つ
-        next_color = 'white' if color == 'black' else 'black'                # 相手の色
-        score = -self._get_score(next_color, board, -beta, -alpha, depth-1)  # 評価値を取得
-        board.undo()                                                         # 打った手を戻す
+        board.put_disc(color, *move)                                                  # 一手打つ
+        next_color = 'white' if color == 'black' else 'black'                         # 相手の色
+        score = -self._get_score(next_color, board, -beta, -alpha, depth-1, pid=pid)  # 評価値を取得
+        board.undo()                                                                  # 打った手を戻す
 
         return score
 
     @Measure.countup
     @Timer.timeout
-    def _get_score(self, color, board, alpha, beta, depth):
+    def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """
         評価値の取得
         """
@@ -261,7 +263,7 @@ class AlphaBeta_(NegaMax_):
             score = -self._get_score(next_color, board, -beta, -alpha, depth-1)
             board.undo()
 
-            if Timer.is_timeout(self):
+            if Timer.is_timeout(pid):
                 break
             else:
                 alpha = max(alpha, score)  # 最大値を選択
@@ -296,7 +298,7 @@ class AB_T(AlphaBeta_):
         評価値の算出
         """
         ret = super().evaluate(color, board, legal_moves_b, legal_moves_w)  # 元の評価
-        ret += self.table.get_score(color, board) * self._W4            # テーブル評価を追加
+        ret += self.table.get_score(board) * self._W4                       # テーブル評価を追加
 
         return ret
 
@@ -346,13 +348,15 @@ class AB_TI(AB_T):
         """
         次の一手
         """
+        pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
+
         if self.table.size != board.size:  # テーブルサイズの調整
             self.table.set_table(board.size)
 
         depth, best_move = self.depth, None
 
         while True:
-            moves = list(board.get_legal_moves(color, cache=True).keys())
+            moves = list(board.get_legal_moves(color))
 
             # 前回の最善手を優先的に
             if best_move is not None:
@@ -365,9 +369,9 @@ class AB_TI(AB_T):
                     moves.remove(corner)
                     moves.insert(0, corner)
 
-            best_move = super().get_best_move(color, board, moves, depth)  # 最善手
+            best_move = super().get_best_move(color, board, moves, depth, pid)  # 最善手
 
-            if Timer.is_timeout(self):  # タイムアウト
+            if Timer.is_timeout(pid):  # タイムアウト
                 break
 
             depth += 1  # 次の読みの深さ
