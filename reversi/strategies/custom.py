@@ -140,59 +140,11 @@ class MinMax1_TPW(MinMax):
         super().__init__(depth, evaluator)
 
 
-class MinMax1_TPW2(MinMax):
-    """
-    MinMax法でEvaluator_TPWにより次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1, evaluator=Evaluator_TPW(corner=50, c=-20, a1=0, a2=22, b1=-1, b2=-1, b3=-1, x=-35, o1=-5, o2=-5, wp=5, ww=10000)):
-        super().__init__(depth, evaluator)
-
-
-class MinMax1_PWE(MinMax):
-    """
-    MinMax法でEvaluator_PWEにより次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1, evaluator=Evaluator_PWE()):
-        super().__init__(depth, evaluator)
-
-
-class MinMax1_TPWE(MinMax):
-    """
-    MinMax法でEvaluator_TPWEにより次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1, evaluator=Evaluator_TPWE()):
-        super().__init__(depth, evaluator)
-
-
-class MinMax1_TPWEC(MinMax):
-    """
-    MinMax法でEvaluator_TPWECにより次の手を決める(1手読み)
-    """
-    def __init__(self, depth=1, evaluator=Evaluator_TPWEC()):
-        super().__init__(depth, evaluator)
-
-
 class MinMax2_TPW(MinMax):
     """
     MinMax法でEvaluator_TPWにより次の手を決める(2手読み)
     """
     def __init__(self, depth=2, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class MinMax2_TPWE(MinMax):
-    """
-    MinMax法でEvaluator_TPWEにより次の手を決める(2手読み)
-    """
-    def __init__(self, depth=2, evaluator=Evaluator_TPWE()):
-        super().__init__(depth, evaluator)
-
-
-class MinMax2_TPWEC(MinMax):
-    """
-    MinMax法でEvaluator_TPWECにより次の手を決める(2手読み)
-    """
-    def __init__(self, depth=2, evaluator=Evaluator_TPWEC()):
         super().__init__(depth, evaluator)
 
 
@@ -241,6 +193,102 @@ class MinMax4_TPOW(MinMax):
     MinMax法でEvaluator_TPOWにより次の手を決める(4手読み)
     """
     def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax1_TPWE(MinMax):
+    """
+    MinMax法でEvaluator_TPWEにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_TPWE(MinMax):
+    """
+    MinMax法でEvaluator_TPWEにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax3_TPWE(MinMax):
+    """
+    MinMax法でEvaluator_TPWEにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax4_TPWE(MinMax):
+    """
+    MinMax法でEvaluator_TPWEにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax1_TPWEC(MinMax):
+    """
+    MinMax法でEvaluator_TPWECにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPWEC()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_TPWEC(MinMax):
+    """
+    MinMax法でEvaluator_TPWECにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPWEC()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax3_TPWEC(MinMax):
+    """
+    MinMax法でEvaluator_TPWECにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPWEC()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax4_TPWEC(MinMax):
+    """
+    MinMax法でEvaluator_TPWECにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPWEC()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax1_PWE(MinMax):
+    """
+    MinMax法でEvaluator_PWEにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_PWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax2_PWE(MinMax):
+    """
+    MinMax法でEvaluator_PWEにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_PWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax3_PWE(MinMax):
+    """
+    MinMax法でEvaluator_PWEにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_PWE()):
+        super().__init__(depth, evaluator)
+
+
+class MinMax4_PWE(MinMax):
+    """
+    MinMax法でEvaluator_PWEにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_PWE()):
         super().__init__(depth, evaluator)
 
 
@@ -990,14 +1038,6 @@ class SwitchNsIF10J_B_TPWE_Type2(Hitsuji):
 # ------------- #
 # RandomOpening #
 # ------------- #
-class MinMax1Ro_TPW2(RandomOpening):
-    """
-    RandamOpening(8手) + MinMax1_TPW2
-    """
-    def __init__(self, depth=8, base=MinMax1_TPW2()):
-        super().__init__(depth, base)
-
-
 class MinMax1Ro_TPW(RandomOpening):
     """
     RandamOpening(8手) + MinMax1_TPW
