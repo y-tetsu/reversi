@@ -12,7 +12,7 @@ from reversi.strategies import MinMax1_TPOW, MinMax2_TPOW, MinMax3_TPOW, MinMax4
 from reversi.strategies import MinMax1_TPWE, MinMax2_TPWE, MinMax3_TPWE, MinMax4_TPWE
 from reversi.strategies import MinMax1_TPWEC, MinMax2_TPWEC, MinMax3_TPWEC, MinMax4_TPWEC
 from reversi.strategies import MinMax1_PWE, MinMax2_PWE, MinMax3_PWE, MinMax4_PWE
-from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE
+from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 
 
 class TestCustom(unittest.TestCase):
