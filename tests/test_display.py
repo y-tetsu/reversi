@@ -25,6 +25,12 @@ class TestDisplay(unittest.TestCase):
 
         display = ConsoleDisplay()
 
+        self.assertEqual(display.sleep_time_turn, 1)
+        self.assertEqual(display.sleep_time_move, 1)
+
+        display.sleep_time_turn = 0.001
+        display.sleep_time_move = 0.001
+
         with captured_stdout() as stdout:
             display.progress(board8x8, black_player, white_player)
             legal_moves = board8x8.get_legal_moves('black')

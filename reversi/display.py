@@ -36,6 +36,10 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
 
 class ConsoleDisplay(AbstractDisplay):
     """Console Display"""
+    def __init__(self):
+        self.sleep_time_turn = 1  # (sec)
+        self.sleep_time_move = 1  # (sec)
+
     def progress(self, board, black_player, white_player):
         """display progress"""
         score_b = str(black_player) + ':' + str(board._black_score)
@@ -46,7 +50,7 @@ class ConsoleDisplay(AbstractDisplay):
 
     def turn(self, player, legal_moves):
         """display turn"""
-        time.sleep(1)
+        time.sleep(self.sleep_time_turn)
         print(str(player) + "'s turn")
 
         for index, value in enumerate(legal_moves, 1):
@@ -60,7 +64,7 @@ class ConsoleDisplay(AbstractDisplay):
 
         print('putted on', (x, y))
         print()
-        time.sleep(1)
+        time.sleep(self.sleep_time_move)
 
     def foul(self, player):
         """display foul player"""
