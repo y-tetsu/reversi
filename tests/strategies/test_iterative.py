@@ -131,30 +131,6 @@ class TestIterativeDeepning(unittest.TestCase):
             selector=coord.Selector(),
             orderer=coord.Orderer_B(),
             search=AlphaBeta(
-                evaluator=coord.Evaluator(
-                    separated=[coord.WinLoseScorer()],
-                    combined=[coord.TableScorer(), coord.PossibilityScorer(), coord.EdgeScorer()],
-                ),
-            ),
-        )
-
-        key = iterative.__class__.__name__ + str(os.getpid())
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
-        key2 = iterative.search.__class__.__name__ + str(os.getpid())
-        Measure.count[key2] = 0
-        iterative.next_move('black', board)
-
-        print()
-        print(key)
-        print('AlphaBeta-TPWE_Scorer : (9000)', Measure.count[key2])
-        print('(max_depth=6)', iterative.max_depth)
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-
-        iterative = IterativeDeepning(
-            depth=2,
-            selector=coord.Selector(),
-            orderer=coord.Orderer_B(),
-            search=AlphaBeta(
                 evaluator=coord.Evaluator_TPWE(),
             ),
         )
@@ -169,30 +145,6 @@ class TestIterativeDeepning(unittest.TestCase):
         print(key)
         print('AlphaBeta-Evaluator_TPWE : (9500)', Measure.count[key2])
         print('(max_depth=6)', iterative.max_depth)
-        print(' max :', Measure.elp_time[key]['max'], '(s)')
-
-        iterative = IterativeDeepning(
-            depth=2,
-            selector=coord.Selector(),
-            orderer=coord.Orderer_B(),
-            search=NegaScout(
-                evaluator=coord.Evaluator(
-                    separated=[coord.WinLoseScorer()],
-                    combined=[coord.TableScorer(), coord.PossibilityScorer(), coord.EdgeScorer()],
-                ),
-            ),
-        )
-
-        key = iterative.__class__.__name__ + str(os.getpid())
-        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
-        key2 = iterative.search.__class__.__name__ + str(os.getpid())
-        Measure.count[key2] = 0
-        iterative.next_move('black', board)
-
-        print()
-        print(key)
-        print('NegaScout-TPWE_Scorer : (10000)', Measure.count[key2])
-        print('(max_depth=7)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
 
         iterative = IterativeDeepning(
