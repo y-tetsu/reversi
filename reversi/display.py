@@ -105,6 +105,8 @@ class WindowDisplay(AbstractDisplay):
     def __init__(self, window):
         self.info = window.info
         self.board = window.board
+        self.sleep_time_turn = 0.3  # (sec)
+        self.sleep_time_move = 0.3  # (sec)
 
     def progress(self, board, black_player, white_player):
         """display progress"""
@@ -115,7 +117,7 @@ class WindowDisplay(AbstractDisplay):
         """display turn"""
         self.info.set_turn_text_on(player.color)  # 手番の表示
         self.board.enable_moves(legal_moves)      # 打てる候補を表示
-        time.sleep(0.3)
+        time.sleep(self.sleep_time_turn)
 
     def move(self, player, legal_moves):
         """display move"""
@@ -129,7 +131,7 @@ class WindowDisplay(AbstractDisplay):
         self.board.disable_moves(legal_moves)                # 打てる候補のハイライトをなくす
         self.board.enable_move(*player.move)                 # 打った手をハイライト
         self.board.put_disc(player.color, *player.move)      # 石を置く
-        time.sleep(0.3)
+        time.sleep(self.sleep_time_move)
         self.info.set_move_text_on(player.color, x, y)       # 打った手を表示
         self.board.turn_disc(player.color, player.captures)  # 石をひっくり返すアニメーション
         self.board.disable_move(*player.move)

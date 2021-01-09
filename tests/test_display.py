@@ -158,6 +158,11 @@ class TestDisplay(unittest.TestCase):
         # init
         self.assertIsInstance(display.info, TestInfo)
         self.assertIsInstance(display.board, TestBoard)
+        self.assertEqual(display.sleep_time_turn, 0.3)
+        self.assertEqual(display.sleep_time_move, 0.3)
+
+        display.sleep_time_turn = 0.001
+        display.sleep_time_move = 0.001
 
         # progress
         with captured_stdout() as stdout:
