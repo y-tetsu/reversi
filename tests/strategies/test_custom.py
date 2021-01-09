@@ -14,6 +14,9 @@ from reversi.strategies import MinMax1_TPWEC, MinMax2_TPWEC, MinMax3_TPWEC, MinM
 from reversi.strategies import MinMax1_PWE, MinMax2_PWE, MinMax3_PWE, MinMax4_PWE
 from reversi.strategies import NegaMax1_TPW, NegaMax2_TPW, NegaMax3_TPW, NegaMax4_TPW
 from reversi.strategies import NegaMax1_TPOW, NegaMax2_TPOW, NegaMax3_TPOW, NegaMax4_TPOW
+from reversi.strategies import AlphaBeta1_TPW, AlphaBeta2_TPW, AlphaBeta3_TPW, AlphaBeta4_TPW
+from reversi.strategies import AlphaBeta1_TPWE, AlphaBeta2_TPWE, AlphaBeta3_TPWE, AlphaBeta4_TPWE
+from reversi.strategies import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWE_, AlphaBeta_TPWEC
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 
 
@@ -49,6 +52,25 @@ class TestCustom(unittest.TestCase):
         patterns = [
             ((NegaMax1_TPW(), NegaMax2_TPW(), NegaMax3_TPW(), NegaMax4_TPW()), Evaluator_TPW),
             ((NegaMax1_TPOW(), NegaMax2_TPOW(), NegaMax3_TPOW(), NegaMax4_TPOW()), Evaluator_TPOW),
+        ]
+        for strategies, evaluator in patterns:
+            for depth, obj in enumerate(strategies, 1):
+                self.assertEqual(obj.depth, depth)
+                self.assertIsInstance(obj.evaluator, evaluator)
+
+    def test_alphabeta(self):
+        patterns = [
+            ((AlphaBeta_TPW(),), Evaluator_TPW),
+            ((AlphaBeta_TPWE(), AlphaBeta_TPWE_()), Evaluator_TPWE),
+            ((AlphaBeta_TPWEC(),), Evaluator_TPWEC),
+        ]
+        for strategies, evaluator in patterns:
+            for obj in strategies:
+                self.assertIsInstance(obj.evaluator, evaluator)
+
+        patterns = [
+            ((AlphaBeta1_TPW(), AlphaBeta2_TPW(), AlphaBeta3_TPW(), AlphaBeta4_TPW()), Evaluator_TPW),
+            ((AlphaBeta1_TPWE(), AlphaBeta2_TPWE(), AlphaBeta3_TPWE(), AlphaBeta4_TPWE()), Evaluator_TPWE),
         ]
         for strategies, evaluator in patterns:
             for depth, obj in enumerate(strategies, 1):

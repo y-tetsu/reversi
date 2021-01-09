@@ -2,7 +2,7 @@
 """
 
 from reversi.strategies.common import Measure
-from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, AlphaBeta_old, NegaScout, Switch, FullReading_, _FullReading, FullReading, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
+from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, NegaScout, Switch, FullReading_, _FullReading, FullReading, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
 from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
@@ -378,14 +378,6 @@ class AlphaBeta_TPWE(AlphaBeta):
         super().__init__(evaluator=evaluator)
 
 
-class AlphaBeta_TPWE_old(AlphaBeta_old):
-    """
-    AlphaBeta_old法でEvaluator_TPWEにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPWE()):
-        super().__init__(evaluator=evaluator)
-
-
 class AlphaBeta_TPWE_(AlphaBeta_):
     """
     AlphaBeta法でEvaluator_TPWEにより次の手を決める(メジャーなし)
@@ -402,6 +394,22 @@ class AlphaBeta_TPWEC(AlphaBeta):
         super().__init__(evaluator=evaluator)
 
 
+class AlphaBeta1_TPW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta2_TPW(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
 class AlphaBeta3_TPW(AlphaBeta):
     """
     AlphaBeta法でEvaluator_TPWにより次の手を決める(3手読み)
@@ -415,6 +423,30 @@ class AlphaBeta4_TPW(AlphaBeta):
     AlphaBeta法でEvaluator_TPWにより次の手を決める(4手読み)
     """
     def __init__(self, depth=4, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta1_TPWE(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWEにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta2_TPWE(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWEにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class AlphaBeta3_TPWE(AlphaBeta):
+    """
+    AlphaBeta法でEvaluator_TPWEにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPWE()):
         super().__init__(depth, evaluator)
 
 
@@ -517,14 +549,6 @@ class AbI_PCB_TPWE(IterativeDeepning):
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:PCB、評価関数:TPWE)
     """
     def __init__(self, depth=2, selector=Selector(), orderer=Orderer_PCB(), search=AlphaBeta_TPWE()):
-        super().__init__(depth, selector, orderer, search)
-
-
-class AbI_B_TPWE_old(IterativeDeepning):
-    """
-    AlphaBeta_old法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
-    """
-    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=AlphaBeta_TPWE_old()):
         super().__init__(depth, selector, orderer, search)
 
 
