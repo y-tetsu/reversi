@@ -17,7 +17,7 @@ class Reversi:
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, players_info={}):
+    def __init__(self, players_info={}, turn_disc_wait=0.1, sleep_time_play=1.5):
         root = tk.Tk()
         root.withdraw()  # 表示が整うまで隠す
 
@@ -33,7 +33,8 @@ class Reversi:
 
         self.err_msg = ErrorMessage()
 
-        self.turn_disc_wait = 0.1  # sec
+        self.turn_disc_wait = turn_disc_wait    # sec
+        self.sleep_time_play = sleep_time_play  # sec
 
     @property
     def state(self):
@@ -209,7 +210,7 @@ class Reversi:
         game = Game(board, players['black'], players['white'], WindowDisplay(self.window), cancel=self.window.menu)
         game.play()
 
-        time.sleep(1.5)  # 少し待って終了状態へ
+        time.sleep(self.sleep_time_play)  # 少し待って終了状態へ
         self.state = Reversi.END
 
     def __end(self):
