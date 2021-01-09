@@ -469,14 +469,6 @@ class NegaScout_TPW(NegaScout):
         super().__init__(evaluator=evaluator)
 
 
-class NegaScout_TPW2(NegaScout):
-    """
-    NegaScout法でEvaluator_TPWにより次の手を決める
-    """
-    def __init__(self, evaluator=Evaluator_TPW(corner=50, c=-20, a1=0, a2=22, b1=-1, b2=-1, b3=-1, x=-35, o1=-5, o2=-5, wp=5, ww=10000)):
-        super().__init__(evaluator=evaluator)
-
-
 class NegaScout_TPWE(NegaScout):
     """
     NegaScout法でEvaluator_TPWEにより次の手を決める
@@ -485,19 +477,27 @@ class NegaScout_TPWE(NegaScout):
         super().__init__(evaluator=evaluator)
 
 
+class NegaScout1_TPW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout2_TPW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
 class NegaScout3_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(3手読み)
     """
     def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaScout3_TPOW(NegaScout):
-    """
-    NegaScout法でEvaluator_TPOWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
         super().__init__(depth, evaluator)
 
 
@@ -509,11 +509,27 @@ class NegaScout4_TPW(NegaScout):
         super().__init__(depth, evaluator)
 
 
-class NegaScout4_TPWE(NegaScout):
+class NegaScout1_TPOW(NegaScout):
     """
-    NegaScout法でEvaluator_TPWEにより次の手を決める(4手読み)
+    NegaScout法でEvaluator_TPOWにより次の手を決める(1手読み)
     """
-    def __init__(self, depth=4, evaluator=Evaluator_TPWE()):
+    def __init__(self, depth=1, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout2_TPOW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPOWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout3_TPOW(NegaScout):
+    """
+    NegaScout法でEvaluator_TPOWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPOW()):
         super().__init__(depth, evaluator)
 
 
@@ -522,6 +538,38 @@ class NegaScout4_TPOW(NegaScout):
     NegaScout法でEvaluator_TPOWにより次の手を決める(4手読み)
     """
     def __init__(self, depth=4, evaluator=Evaluator_TPOW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout1_TPWE(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWEにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout2_TPWE(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWEにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout3_TPWE(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWEにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPWE()):
+        super().__init__(depth, evaluator)
+
+
+class NegaScout4_TPWE(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWEにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPWE()):
         super().__init__(depth, evaluator)
 
 
@@ -581,14 +629,6 @@ class NsI_B_TPWE(IterativeDeepning):
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
     def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPWE()):
-        super().__init__(depth, selector, orderer, search)
-
-
-class NsI_B_TPW2(IterativeDeepning):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPW2)
-    """
-    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPW2()):
         super().__init__(depth, selector, orderer, search)
 
 
@@ -788,15 +828,6 @@ class NsIF9_B_TPW(FullReading):
     (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
     """
     def __init__(self, remain=9, base=NsI_B_TPW()):
-        super().__init__(remain, base)
-
-
-class NsIF9_B_TPW2(FullReading):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, remain=9, base=NsI_B_TPW2()):
         super().__init__(remain, base)
 
 
@@ -1000,15 +1031,6 @@ class NsIF9J_B_TPW(Ushi):
     (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
     """
     def __init__(self, base=NsIF9_B_TPW()):
-        super().__init__(base)
-
-
-class NsIF9J_B_TPW2(Ushi):
-    """
-    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
-    (選択的探索:なし、並べ替え:B、評価関数:TPW, 完全読み開始:残り9手)
-    """
-    def __init__(self, base=NsIF9_B_TPW2()):
         super().__init__(base)
 
 
@@ -1307,14 +1329,6 @@ class NsIF9JRo_B_TPW(RandomOpening):
     RandamOpening(8手) + NsIF9J_B_TPW
     """
     def __init__(self, depth=8, base=NsIF9J_B_TPW()):
-        super().__init__(depth, base)
-
-
-class NsIF9JRo_B_TPW2(RandomOpening):
-    """
-    RandamOpening(8手) + NsIF9J_B_TPW2
-    """
-    def __init__(self, depth=8, base=NsIF9J_B_TPW2()):
         super().__init__(depth, base)
 
 

@@ -14,9 +14,13 @@ from reversi.strategies import MinMax1_TPWEC, MinMax2_TPWEC, MinMax3_TPWEC, MinM
 from reversi.strategies import MinMax1_PWE, MinMax2_PWE, MinMax3_PWE, MinMax4_PWE
 from reversi.strategies import NegaMax1_TPW, NegaMax2_TPW, NegaMax3_TPW, NegaMax4_TPW
 from reversi.strategies import NegaMax1_TPOW, NegaMax2_TPOW, NegaMax3_TPOW, NegaMax4_TPOW
+from reversi.strategies import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWE_, AlphaBeta_TPWEC
 from reversi.strategies import AlphaBeta1_TPW, AlphaBeta2_TPW, AlphaBeta3_TPW, AlphaBeta4_TPW
 from reversi.strategies import AlphaBeta1_TPWE, AlphaBeta2_TPWE, AlphaBeta3_TPWE, AlphaBeta4_TPWE
-from reversi.strategies import AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWE_, AlphaBeta_TPWEC
+from reversi.strategies import NegaScout_TPW, NegaScout_TPWE
+from reversi.strategies import NegaScout1_TPW, NegaScout2_TPW, NegaScout3_TPW, NegaScout4_TPW
+from reversi.strategies import NegaScout1_TPOW, NegaScout2_TPOW, NegaScout3_TPOW, NegaScout4_TPOW
+from reversi.strategies import NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE, NegaScout4_TPWE
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 
 
@@ -71,6 +75,25 @@ class TestCustom(unittest.TestCase):
         patterns = [
             ((AlphaBeta1_TPW(), AlphaBeta2_TPW(), AlphaBeta3_TPW(), AlphaBeta4_TPW()), Evaluator_TPW),
             ((AlphaBeta1_TPWE(), AlphaBeta2_TPWE(), AlphaBeta3_TPWE(), AlphaBeta4_TPWE()), Evaluator_TPWE),
+        ]
+        for strategies, evaluator in patterns:
+            for depth, obj in enumerate(strategies, 1):
+                self.assertEqual(obj.depth, depth)
+                self.assertIsInstance(obj.evaluator, evaluator)
+
+    def test_custom_negascout(self):
+        patterns = [
+            ((NegaScout_TPW(),), Evaluator_TPW),
+            ((NegaScout_TPWE(),), Evaluator_TPWE),
+        ]
+        for strategies, evaluator in patterns:
+            for obj in strategies:
+                self.assertIsInstance(obj.evaluator, evaluator)
+
+        patterns = [
+            ((NegaScout1_TPW(), NegaScout2_TPW(), NegaScout3_TPW(), NegaScout4_TPW()), Evaluator_TPW),
+            ((NegaScout1_TPOW(), NegaScout2_TPOW(), NegaScout3_TPOW(), NegaScout4_TPOW()), Evaluator_TPOW),
+            ((NegaScout1_TPWE(), NegaScout2_TPWE(), NegaScout3_TPWE(), NegaScout4_TPWE()), Evaluator_TPWE),
         ]
         for strategies, evaluator in patterns:
             for depth, obj in enumerate(strategies, 1):
