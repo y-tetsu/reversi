@@ -36,9 +36,9 @@ class AbstractDisplay(metaclass=abc.ABCMeta):
 
 class ConsoleDisplay(AbstractDisplay):
     """Console Display"""
-    def __init__(self):
-        self.sleep_time_turn = 1  # (sec)
-        self.sleep_time_move = 1  # (sec)
+    def __init__(self, sleep_time_turn=1, sleep_time_move=1):
+        self.sleep_time_turn = sleep_time_turn  # sec
+        self.sleep_time_move = sleep_time_move  # sec
 
     def progress(self, board, black_player, white_player):
         """display progress"""
@@ -102,11 +102,11 @@ class NoneDisplay(AbstractDisplay):
 
 class WindowDisplay(AbstractDisplay):
     """GUI Window Display"""
-    def __init__(self, window):
+    def __init__(self, window, sleep_time_turn=0.3, sleep_time_move=0.3):
         self.info = window.info
         self.board = window.board
-        self.sleep_time_turn = 0.3  # (sec)
-        self.sleep_time_move = 0.3  # (sec)
+        self.sleep_time_turn = sleep_time_turn  # sec
+        self.sleep_time_move = sleep_time_move  # sec
 
     def progress(self, board, black_player, white_player):
         """display progress"""

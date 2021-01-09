@@ -24,12 +24,12 @@ class TestDisplay(unittest.TestCase):
         white_player = Player('white', 'User', ConsoleUserInput())
 
         display = ConsoleDisplay()
-
         self.assertEqual(display.sleep_time_turn, 1)
         self.assertEqual(display.sleep_time_move, 1)
 
-        display.sleep_time_turn = 0.001
-        display.sleep_time_move = 0.001
+        display = ConsoleDisplay(sleep_time_turn=0.001, sleep_time_move=0.001)
+        self.assertEqual(display.sleep_time_turn, 0.001)
+        self.assertEqual(display.sleep_time_move, 0.001)
 
         with captured_stdout() as stdout:
             display.progress(board8x8, black_player, white_player)
@@ -161,8 +161,9 @@ class TestDisplay(unittest.TestCase):
         self.assertEqual(display.sleep_time_turn, 0.3)
         self.assertEqual(display.sleep_time_move, 0.3)
 
-        display.sleep_time_turn = 0.001
-        display.sleep_time_move = 0.001
+        display = WindowDisplay(TestWindow(), sleep_time_turn=0.001, sleep_time_move=0.001)
+        self.assertEqual(display.sleep_time_turn, 0.001)
+        self.assertEqual(display.sleep_time_move, 0.001)
 
         # progress
         with captured_stdout() as stdout:
