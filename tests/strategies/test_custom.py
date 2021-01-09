@@ -23,7 +23,7 @@ from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_
 class TestCustom(unittest.TestCase):
     """custom
     """
-    def test_montecarlo(self):
+    def test_custom_montecarlo(self):
         patterns = [
             (MonteCarlo30(), 30),
             (MonteCarlo100(), 100),
@@ -32,7 +32,7 @@ class TestCustom(unittest.TestCase):
         for obj, count in patterns:
             self.assertEqual(obj.count, count)
 
-    def test_minmax(self):
+    def test_custom_minmax(self):
         patterns = [
             ((MinMax1_T(), MinMax2_T(), MinMax3_T(), MinMax4_T()), Evaluator_T),
             ((MinMax1_TP(), MinMax2_TP(), MinMax3_TP(), MinMax4_TP()), Evaluator_TP),
@@ -48,7 +48,7 @@ class TestCustom(unittest.TestCase):
                 self.assertEqual(obj.depth, depth)
                 self.assertIsInstance(obj.evaluator, evaluator)
 
-    def test_negamax(self):
+    def test_custom_negamax(self):
         patterns = [
             ((NegaMax1_TPW(), NegaMax2_TPW(), NegaMax3_TPW(), NegaMax4_TPW()), Evaluator_TPW),
             ((NegaMax1_TPOW(), NegaMax2_TPOW(), NegaMax3_TPOW(), NegaMax4_TPOW()), Evaluator_TPOW),
@@ -58,7 +58,7 @@ class TestCustom(unittest.TestCase):
                 self.assertEqual(obj.depth, depth)
                 self.assertIsInstance(obj.evaluator, evaluator)
 
-    def test_alphabeta(self):
+    def test_custom_alphabeta(self):
         patterns = [
             ((AlphaBeta_TPW(),), Evaluator_TPW),
             ((AlphaBeta_TPWE(), AlphaBeta_TPWE_()), Evaluator_TPWE),
