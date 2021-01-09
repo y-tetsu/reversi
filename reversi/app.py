@@ -11,9 +11,6 @@ import threading
 from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies
 
 
-TURN_DISC_WAIT = 0.1
-
-
 class Reversi:
     """
     リバーシゲーム
@@ -35,6 +32,8 @@ class Reversi:
         self.players_info = players_info
 
         self.err_msg = ErrorMessage()
+
+        self.turn_disc_wait = 0.1  # sec
 
     @property
     def state(self):
@@ -185,7 +184,7 @@ class Reversi:
                     return False
 
                 # アニメーション処理
-                time.sleep(TURN_DISC_WAIT)
+                time.sleep(self.turn_disc_wait)
                 self.window.board.remove_disc(remove_color, x, y)
                 self.window.board.put_disc(put_color, x, y)
 

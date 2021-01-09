@@ -42,6 +42,7 @@ class TestApp(unittest.TestCase):
         self.assertTrue('User2' in app.players_info)
         self.assertIsInstance(app.players_info['User2'], WindowUserInput)
         self.assertIsInstance(app.err_msg, ErrorMessage)
+        self.assertEqual(app.turn_disc_wait, 0.1)
 
     def test_reversi_state(self):
         app = Reversi()
