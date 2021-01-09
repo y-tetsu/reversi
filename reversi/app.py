@@ -17,7 +17,7 @@ class Reversi:
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, players_info={}, turn_disc_wait=0.1, sleep_time_play=1.5, sleep_time_end=0.01):
+    def __init__(self, players_info={}, turn_disc_wait=0.1, sleep_time_play=1.5, sleep_time_end=0.01, sleep_time_turn=0.3, sleep_time_move=0.3):
         root = tk.Tk()
         root.withdraw()  # 表示が整うまで隠す
 
@@ -37,6 +37,8 @@ class Reversi:
         self.turn_disc_wait = turn_disc_wait
         self.sleep_time_play = sleep_time_play
         self.sleep_time_end = sleep_time_end
+        self.sleep_time_turn = sleep_time_turn
+        self.sleep_time_move = sleep_time_move
 
     @property
     def state(self):
@@ -209,8 +211,13 @@ class Reversi:
         # ウィンドウの設定をゲームに反映
         strategies.common.Timer.time_limit = self.window.cputime
 
-        game = Game(board, players['black'], players['white'], WindowDisplay(self.window), cancel=self.window.menu)
-        game.play()
+        Game(
+            board,
+            players['black'],
+            players['white'],
+            WindowDisplay(self.window, sleep_time_turn=self.sleep_time_turn, sleep_time_move=self.sleep_time_move),
+            cancel=self.window.menu,
+        ).play()
 
         time.sleep(self.sleep_time_play)  # 少し待って終了状態へ
         self.state = Reversi.END
@@ -263,7 +270,7 @@ class Reversic:
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
-    def __init__(self, players_info={}, sleep_time_play=2):
+    def __init__(self, players_info={}, sleep_time_play=2, sleep_time_turn=1, sleep_time_move=1):
         self.board_size = 8
         self.player_names = {'black': 'User1', 'white': 'User2'}
         self.state = Reversic.START
@@ -277,6 +284,8 @@ class Reversic:
 
         # sleep time(sec)
         self.sleep_time_play = sleep_time_play
+        self.sleep_time_turn = sleep_time_turn
+        self.sleep_time_move = sleep_time_move
 
     @property
     def state(self):
@@ -394,8 +403,12 @@ class Reversic:
             selected_players[color] = Player(color, name, self.players_info[color][name])
 
         # ゲーム開始
-        game = Game(board, selected_players['black'], selected_players['white'], ConsoleDisplay())
-        game.play()
+        Game(
+            board,
+            selected_players['black'],
+            selected_players['white'],
+            ConsoleDisplay(sleep_time_turn=self.sleep_time_turn, sleep_time_move=self.sleep_time_move),
+        ).play()
 
         # 少し待ってスタートに戻る
         time.sleep(self.sleep_time_play)

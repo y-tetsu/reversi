@@ -45,12 +45,16 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.turn_disc_wait, 0.1)
         self.assertEqual(app.sleep_time_play, 1.5)
         self.assertEqual(app.sleep_time_end, 0.01)
+        self.assertEqual(app.sleep_time_turn, 0.3)
+        self.assertEqual(app.sleep_time_move, 0.3)
 
     def test_reversi_keyword_arg(self):
-        app = Reversi(turn_disc_wait=0.001, sleep_time_play=0.002, sleep_time_end=0.003)
+        app = Reversi(turn_disc_wait=0.001, sleep_time_play=0.002, sleep_time_end=0.003, sleep_time_turn=0.004, sleep_time_move=0.005)
         self.assertEqual(app.turn_disc_wait, 0.001)
         self.assertEqual(app.sleep_time_play, 0.002)
         self.assertEqual(app.sleep_time_end, 0.003)
+        self.assertEqual(app.sleep_time_turn, 0.004)
+        self.assertEqual(app.sleep_time_move, 0.005)
 
     def test_reversi_state(self):
         app = Reversi()
@@ -718,10 +722,14 @@ class TestApp(unittest.TestCase):
         self.assertTrue('User2' in app.players_info['white'])
         self.assertIsInstance(app.players_info['white']['User2'], ConsoleUserInput)
         self.assertEqual(app.sleep_time_play, 2)
+        self.assertEqual(app.sleep_time_turn, 1)
+        self.assertEqual(app.sleep_time_move, 1)
 
     def test_reversic_keyword_arg(self):
-        app = Reversic(sleep_time_play=0.001)
+        app = Reversic(sleep_time_play=0.001, sleep_time_turn=0.002, sleep_time_move=0.003)
         self.assertEqual(app.sleep_time_play, 0.001)
+        self.assertEqual(app.sleep_time_turn, 0.002)
+        self.assertEqual(app.sleep_time_move, 0.003)
 
     def test_reversic_state(self):
         app = Reversic()
