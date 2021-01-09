@@ -5,7 +5,7 @@ import unittest
 import os
 import time
 
-from reversi.board import Board, BitBoard
+from reversi.board import BitBoard
 from reversi.strategies.common import Timer, Measure, CPU_TIME
 from reversi.strategies import _AlphaBeta, AlphaBeta
 import reversi.strategies.coordinator as coord
@@ -40,19 +40,6 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertTrue(isinstance(alphabeta.evaluator, coord.Evaluator_T))
 
     def test_alphabeta_get_score(self):
-        board = Board()
-        alphabeta = _AlphaBeta(evaluator=coord.Evaluator_T())
-        self.assertEqual(alphabeta._get_score('black', board, alphabeta._MIN, alphabeta._MAX, 1), -3)
-        self.assertEqual(alphabeta._get_score('black', board, alphabeta._MIN, alphabeta._MAX, 2), -1)
-        self.assertEqual(alphabeta._get_score('black', board, alphabeta._MIN, alphabeta._MAX, 3), -4)
-        self.assertEqual(alphabeta._get_score('black', board, alphabeta._MIN, alphabeta._MAX, 4), 0)
-
-        board.put_disc('black', 3, 2)
-        self.assertEqual(alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 1), 1)
-        self.assertEqual(alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 2), 4)
-        self.assertEqual(alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 3), 0)
-        self.assertEqual(alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 4), 3)
-
         board = BitBoard()
         alphabeta = _AlphaBeta(evaluator=coord.Evaluator_T())
         self.assertEqual(alphabeta._get_score('black', board, alphabeta._MIN, alphabeta._MAX, 1), -3)
@@ -67,19 +54,6 @@ class TestAlphaBeta(unittest.TestCase):
         self.assertEqual(alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 4), 3)
 
     def test_alphabeta_next_move(self):
-        board = Board()
-        alphabeta = _AlphaBeta(evaluator=coord.Evaluator_TPOW())
-
-        board.put_disc('black', 3, 2)
-        self.assertEqual(alphabeta.next_move('white', board), (2, 4))
-
-        board.put_disc('white', 2, 4)
-        board.put_disc('black', 5, 5)
-        board.put_disc('white', 4, 2)
-        board.put_disc('black', 5, 2)
-        board.put_disc('white', 5, 4)
-        self.assertEqual(alphabeta.next_move('black', board), (2, 2))
-
         board = BitBoard()
         alphabeta = _AlphaBeta(evaluator=coord.Evaluator_TPOW())
 
