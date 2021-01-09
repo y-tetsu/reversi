@@ -2,7 +2,7 @@
 """
 
 from reversi.strategies.common import Measure
-from reversi.strategies import Random, MonteCarlo, MinMax, _NegaMax, NegaMax, AlphaBeta_, AlphaBeta, AlphaBeta_old, NegaScout, Switch, FullReading_, _FullReading, FullReading, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
+from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, AlphaBeta_old, NegaScout, Switch, FullReading_, _FullReading, FullReading, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, RandomOpening, AB_TI  # noqa: E501
 from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
@@ -295,6 +295,38 @@ class MinMax4_PWE(MinMax):
 # ------- #
 # NegaMax #
 # ------- #
+class NegaMax1_TPW(NegaMax):
+    """
+    NegaMax法でEvaluator_TPWにより次の手を決める(1手読み)
+    """
+    def __init__(self, depth=1, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaMax2_TPW(NegaMax):
+    """
+    NegaMax法でEvaluator_TPWにより次の手を決める(2手読み)
+    """
+    def __init__(self, depth=2, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaMax3_TPW(NegaMax):
+    """
+    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
+    """
+    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
+class NegaMax4_TPW(NegaMax):
+    """
+    NegaMax法でEvaluator_TPWにより次の手を決める(4手読み)
+    """
+    def __init__(self, depth=4, evaluator=Evaluator_TPW()):
+        super().__init__(depth, evaluator)
+
+
 class NegaMax1_TPOW(NegaMax):
     """
     NegaMax法でEvaluator_TPOWにより次の手を決める(1手読み)
@@ -308,22 +340,6 @@ class NegaMax2_TPOW(NegaMax):
     NegaMax法でEvaluator_TPOWにより次の手を決める(2手読み)
     """
     def __init__(self, depth=2, evaluator=Evaluator_TPOW()):
-        super().__init__(depth, evaluator)
-
-
-class _NegaMax3_TPW(_NegaMax):
-    """
-    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
-        super().__init__(depth, evaluator)
-
-
-class NegaMax3_TPW(NegaMax):
-    """
-    NegaMax法でEvaluator_TPWにより次の手を決める(3手読み)
-    """
-    def __init__(self, depth=3, evaluator=Evaluator_TPW()):
         super().__init__(depth, evaluator)
 
 
@@ -1139,14 +1155,6 @@ class MinMax3Ro_TPOW(RandomOpening):
     RandamOpening(8手) + MinMax3_TPOW
     """
     def __init__(self, depth=8, base=MinMax3_TPOW()):
-        super().__init__(depth, base)
-
-
-class _NegaMax3Ro_TPW(RandomOpening):
-    """
-    RandamOpening(8手) + _NegaMax3_TPW
-    """
-    def __init__(self, depth=8, base=_NegaMax3_TPW()):
         super().__init__(depth, base)
 
 

@@ -12,6 +12,8 @@ from reversi.strategies import MinMax1_TPOW, MinMax2_TPOW, MinMax3_TPOW, MinMax4
 from reversi.strategies import MinMax1_TPWE, MinMax2_TPWE, MinMax3_TPWE, MinMax4_TPWE
 from reversi.strategies import MinMax1_TPWEC, MinMax2_TPWEC, MinMax3_TPWEC, MinMax4_TPWEC
 from reversi.strategies import MinMax1_PWE, MinMax2_PWE, MinMax3_PWE, MinMax4_PWE
+from reversi.strategies import NegaMax1_TPW, NegaMax2_TPW, NegaMax3_TPW, NegaMax4_TPW
+from reversi.strategies import NegaMax1_TPOW, NegaMax2_TPOW, NegaMax3_TPOW, NegaMax4_TPOW
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 
 
@@ -37,6 +39,16 @@ class TestCustom(unittest.TestCase):
             ((MinMax1_TPWE(), MinMax2_TPWE(), MinMax3_TPWE(), MinMax4_TPWE()), Evaluator_TPWE),
             ((MinMax1_TPWEC(), MinMax2_TPWEC(), MinMax3_TPWEC(), MinMax4_TPWEC()), Evaluator_TPWEC),
             ((MinMax1_PWE(), MinMax2_PWE(), MinMax3_PWE(), MinMax4_PWE()), Evaluator_PWE),
+        ]
+        for strategies, evaluator in patterns:
+            for depth, obj in enumerate(strategies, 1):
+                self.assertEqual(obj.depth, depth)
+                self.assertIsInstance(obj.evaluator, evaluator)
+
+    def test_negamax(self):
+        patterns = [
+            ((NegaMax1_TPW(), NegaMax2_TPW(), NegaMax3_TPW(), NegaMax4_TPW()), Evaluator_TPW),
+            ((NegaMax1_TPOW(), NegaMax2_TPOW(), NegaMax3_TPOW(), NegaMax4_TPOW()), Evaluator_TPOW),
         ]
         for strategies, evaluator in patterns:
             for depth, obj in enumerate(strategies, 1):
