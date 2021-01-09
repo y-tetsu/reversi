@@ -717,6 +717,11 @@ class TestApp(unittest.TestCase):
         self.assertIsInstance(app.players_info['black']['User1'], ConsoleUserInput)
         self.assertTrue('User2' in app.players_info['white'])
         self.assertIsInstance(app.players_info['white']['User2'], ConsoleUserInput)
+        self.assertEqual(app.sleep_time_play, 2)
+
+    def test_reversic_keyword_arg(self):
+        app = Reversic(sleep_time_play=0.001)
+        self.assertEqual(app.sleep_time_play, 0.001)
 
     def test_reversic_state(self):
         app = Reversic()

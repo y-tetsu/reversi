@@ -263,7 +263,7 @@ class Reversic:
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
-    def __init__(self, players_info={}):
+    def __init__(self, players_info={}, sleep_time_play=2):
         self.board_size = 8
         self.player_names = {'black': 'User1', 'white': 'User2'}
         self.state = Reversic.START
@@ -274,6 +274,9 @@ class Reversic:
         w['User2'] = strategies.ConsoleUserInput()
         w.update(players_info)
         self.players_info = {'black': b, 'white': w}
+
+        # sleep time(sec)
+        self.sleep_time_play = sleep_time_play
 
     @property
     def state(self):
@@ -395,5 +398,5 @@ class Reversic:
         game.play()
 
         # 少し待ってスタートに戻る
-        time.sleep(2)
+        time.sleep(self.sleep_time_play)
         self.state = Reversic.START
