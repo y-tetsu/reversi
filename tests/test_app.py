@@ -266,7 +266,7 @@ class TestApp(unittest.TestCase):
             print(lines[0])
         self.assertEqual(app.state, Reversi.INIT)
 
-    def test_reversi_demo_animaion(self):
+    def test_reversi_demo_animation(self):
         class TestWindow:
             def __init__(self):
                 class Board:
@@ -281,7 +281,7 @@ class TestApp(unittest.TestCase):
 
                 self.board = Board()
 
-        app = Reversi()
+        app = Reversi(turn_disc_wait=0.001)
         app.window = TestWindow()
 
         # setting_changed Falase
@@ -430,7 +430,7 @@ class TestApp(unittest.TestCase):
 
                 return move
 
-        app = Reversi(sleep_time_turn=0.001, sleep_time_move=0.001)
+        app = Reversi(sleep_time_play=0.001, sleep_time_turn=0.001, sleep_time_move=0.001)
         app.window = TestWindow()
         app.players_info = {'WhiteWin': WhiteWin()}
 
@@ -1016,7 +1016,7 @@ class TestApp(unittest.TestCase):
 
                 return move
 
-        app = Reversic({'BLACK_FOUL': BlackFoul()}, sleep_time_turn=0.001, sleep_time_move=0.001)
+        app = Reversic({'BLACK_FOUL': BlackFoul()}, sleep_time_play=0.001, sleep_time_turn=0.001, sleep_time_move=0.001)
         app.player_names = {'black': 'BLACK_FOUL', 'white': 'BLACK_FOUL'}
         app.board_size = 4
         app.state = None
