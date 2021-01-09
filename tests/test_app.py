@@ -430,7 +430,7 @@ class TestApp(unittest.TestCase):
 
                 return move
 
-        app = Reversi()
+        app = Reversi(sleep_time_turn=0.001, sleep_time_move=0.001)
         app.window = TestWindow()
         app.players_info = {'WhiteWin': WhiteWin()}
 
@@ -1016,7 +1016,7 @@ class TestApp(unittest.TestCase):
 
                 return move
 
-        app = Reversic({'BLACK_FOUL': BlackFoul()})
+        app = Reversic({'BLACK_FOUL': BlackFoul()}, sleep_time_turn=0.001, sleep_time_move=0.001)
         app.player_names = {'black': 'BLACK_FOUL', 'white': 'BLACK_FOUL'}
         app.board_size = 4
         app.state = None
