@@ -238,6 +238,7 @@ class TestGeneticAlgorithm(unittest.TestCase):
 
     def tearDown(self):
         os.remove(self.json_file)
+        os.remove(self.json_file2)
 
     def test_genetic_algorithm_init(self):
         with captured_stdout() as stdout:
