@@ -135,7 +135,6 @@ class Board(AbstractBoard):
             (-1, -1), (0, -1), (1, -1)
         ]
         ret = []
-
         # 指定座標が範囲内 かつ 石が置いていない
         if self._in_range(x, y) and self._is_blank(x, y):
             # 8方向をチェック
@@ -154,10 +153,8 @@ class Board(AbstractBoard):
         ret = []
         next_x, next_y = x, y
         dx, dy = direction
-
         while True:
             next_x, next_y = next_x + dx, next_y + dy
-
             # 座標が範囲内 かつ 石が置かれている(ブランクではない)
             if self._in_range(next_x, next_y) and not self._is_blank(next_x, next_y):
                 # 置いた石と同じ色が見つかった場合
