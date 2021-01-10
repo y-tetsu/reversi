@@ -1666,3 +1666,9 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(reversi.BitBoardMethods.SLOW_MODE4)
         self.assertFalse(reversi.BitBoardMethods.SLOW_MODE5)
         # -------------------------------
+
+    def test_board_is_blank(self):
+        board = Board(4)
+        self.assertTrue(board._is_blank(0, 0))
+        self.assertFalse(board._is_blank(1, 1))
+        self.assertFalse(board._is_blank(2, 1))

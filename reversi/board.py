@@ -137,13 +137,12 @@ class Board(AbstractBoard):
         ret = []
 
         # 指定座標が範囲内 かつ 石が置いていない
-        if self._in_range(x, y) and self._board[y][x] == d[c.blank]:
+        if self._in_range(x, y) and self._is_blank(x, y):
             # 8方向をチェック
             for direction in directions:
-                tmp = self._get_flippable_discs_in_direction(color, x, y, direction)
-
-                if tmp:
-                    ret += tmp
+                discs = self._get_flippable_discs_in_direction(color, x, y, direction)
+                if discs:
+                    ret += discs
 
         return ret
 
@@ -176,6 +175,13 @@ class Board(AbstractBoard):
                 break
 
         return []
+
+    def _is_blank(self, x, y):
+        """_in_blank
+
+               座標上に石が置かれていない(ブランク)かどうかを返す
+        """
+        return self._board[y][x] == d[c.blank]
 
     def _in_range(self, x, y):
         """_in_range
