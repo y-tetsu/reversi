@@ -4,7 +4,7 @@
 import abc
 from collections import namedtuple
 
-from reversi.disc import DiscFactory
+from reversi.disc import D
 import reversi.BitBoardMethods as BitBoardMethods
 
 
@@ -66,12 +66,6 @@ class Board(AbstractBoard):
         # ボードサイズの初期設定
         self.size = size
 
-        # 石とスコアの初期設定
-        self.disc = {}
-        factory = DiscFactory()
-        for color in ('black', 'white', 'blank'):
-            self.disc[color] = factory.create(color)
-
         # スコアの初期設定
         self._black_score = 2
         self._white_score = 2
@@ -81,11 +75,11 @@ class Board(AbstractBoard):
 
         # 盤面の初期設定
         center = size // 2
-        self._board = [[self.disc['blank'] for _ in range(size)] for _ in range(size)]
-        self._board[center][center-1] = self.disc['black']
-        self._board[center-1][center] = self.disc['black']
-        self._board[center-1][center-1] = self.disc['white']
-        self._board[center][center] = self.disc['white']
+        self._board = [[D['blank'] for _ in range(size)] for _ in range(size)]
+        self._board[center][center-1] = D['black']
+        self._board[center-1][center] = D['black']
+        self._board[center-1][center-1] = D['white']
+        self._board[center][center] = D['white']
 
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
@@ -146,7 +140,7 @@ class Board(AbstractBoard):
         ret = []
 
         # 指定座標が範囲内 かつ 石が置いていない
-        if self._in_range(x, y) and self._board[y][x] == self.disc['blank']:
+        if self._in_range(x, y) and self._board[y][x] == D['blank']:
             # 8方向をチェック
             for direction in directions:
                 tmp = self._get_flippable_discs_in_direction(color, x, y, direction)
@@ -173,9 +167,9 @@ class Board(AbstractBoard):
                 next_value = self._board[next_y][next_x]
 
                 # 石が置かれている
-                if next_value != self.disc['blank']:
+                if next_value != D['blank']:
                     # 置いた石と同じ色が見つかった場合
-                    if next_value == self.disc[color]:
+                    if next_value == D[color]:
                         return ret
 
                     ret += [(next_x, next_y)]
@@ -207,11 +201,11 @@ class Board(AbstractBoard):
         flippable_discs = self.get_flippable_discs(color, x, y)
 
         # 指定座標に石を置く
-        self._board[y][x] = self.disc[color]
+        self._board[y][x] = D[color]
 
         # ひっくり返せる場所に石を置く
         for tmp_x, tmp_y, in flippable_discs:
-            self._board[tmp_y][tmp_x] = self.disc[color]
+            self._board[tmp_y][tmp_x] = D[color]
 
         self.update_score()
 
@@ -233,8 +227,8 @@ class Board(AbstractBoard):
     def update_score(self):
         """update_score
         """
-        self._black_score = sum([row.count(self.disc['black']) for row in self._board])
-        self._white_score = sum([row.count(self.disc['white']) for row in self._board])
+        self._black_score = sum([row.count(D['black']) for row in self._board])
+        self._white_score = sum([row.count(D['white']) for row in self._board])
 
     def get_board_info(self):
         """get_board_info
@@ -244,11 +238,11 @@ class Board(AbstractBoard):
             tmp = []
 
             for col in row:
-                if col == self.disc['black']:
+                if col == D['black']:
                     tmp += [1]
-                elif col == self.disc['white']:
+                elif col == D['white']:
                     tmp += [-1]
-                elif col == self.disc['blank']:
+                elif col == D['blank']:
                     tmp += [0]
 
             board_info += [tmp]
@@ -276,9 +270,9 @@ class Board(AbstractBoard):
         put = 1 << size * size - 1
         for y in range(self.size):
             for x in range(self.size):
-                if self._board[y][x] == self.disc['black']:
+                if self._board[y][x] == D['black']:
                     black_bitboard |= put
-                if self._board[y][x] == self.disc['white']:
+                if self._board[y][x] == D['white']:
                     white_bitboard |= put
                 put >>= 1
 
@@ -294,10 +288,10 @@ class Board(AbstractBoard):
             x = prev['x']
             y = prev['y']
             flippable_discs = prev['flippable_discs']
-            self._board[y][x] = self.disc['blank']
+            self._board[y][x] = D['blank']
 
             for prev_x, prev_y in flippable_discs:
-                self._board[prev_y][prev_x] = self.disc[prev_color]
+                self._board[prev_y][prev_x] = D[prev_color]
 
             self.update_score()
 
@@ -311,12 +305,6 @@ class BitBoard(AbstractBoard):
 
         # ボードサイズの初期設定
         self.size = size
-
-        # 石の初期設定
-        self.disc = {}
-        factory = DiscFactory()
-        for color in ('black', 'white', 'blank'):
-            self.disc[color] = factory.create(color)
 
         # スコアの初期設定
         self._black_score = 2
@@ -352,14 +340,14 @@ class BitBoard(AbstractBoard):
     def __str__(self):
         size = self.size
         header = '   ' + ' '.join([chr(97 + i) for i in range(size)]) + '\n'
-        board = [[self.disc['blank'] for _ in range(size)] for _ in range(size)]
+        board = [[D['blank'] for _ in range(size)] for _ in range(size)]
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
                 if self._black_bitboard & mask:
-                    board[y][x] = self.disc['black']
+                    board[y][x] = D['black']
                 elif self._white_bitboard & mask:
-                    board[y][x] = self.disc['white']
+                    board[y][x] = D['white']
                 mask >>= 1
 
         body = ''

@@ -1,7 +1,7 @@
 """Player
 """
 
-from reversi.disc import DiscFactory
+from reversi.disc import D
 
 
 class Player:
@@ -9,8 +9,7 @@ class Player:
     """
     def __init__(self, color, name, strategy):
         self.color = color
-        factory = DiscFactory()
-        self.disc = factory.create(color)
+        self.disc = D[color]
         self.name = name
         self.strategy = strategy
         self.move = (None, None)

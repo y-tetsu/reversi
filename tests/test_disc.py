@@ -3,7 +3,7 @@
 
 import unittest
 
-from reversi.disc import Black, White, Blank, DiscFactory
+from reversi.disc import Black, White, Blank, DiscFactory, D
 
 
 class TestDisc(unittest.TestCase):
@@ -38,3 +38,8 @@ class TestDisc(unittest.TestCase):
         f = DiscFactory()
         blank = f.create('blank')
         self.assertEqual(blank, '□')
+
+    def test_disc_discs(self):
+        self.assertEqual(D['black'], '〇')
+        self.assertEqual(D['white'], '●')
+        self.assertEqual(D['blank'], '□')

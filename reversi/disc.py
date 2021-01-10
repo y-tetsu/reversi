@@ -33,3 +33,7 @@ class DiscFactory:
             ret = Blank('□')
 
         return ret
+
+
+factory = DiscFactory()
+D = {color: factory.create(color) for color in ('black', 'white', 'blank')}
