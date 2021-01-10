@@ -115,11 +115,10 @@ class Board(AbstractBoard):
         Returns:
             legal_moves bits
         """
-        legal_moves = self.get_legal_moves(color)
-        legal_moves_bits = 0
         size = self.size
         mask = 1 << ((size**2)-1)
-        for x, y in legal_moves:
+        legal_moves_bits = 0
+        for x, y in self.get_legal_moves(color):
             bits = mask >> (y*size+x)
             legal_moves_bits |= bits
 
