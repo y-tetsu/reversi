@@ -61,7 +61,7 @@ class Board(AbstractBoard):
     """Board
     """
     def __init__(self, size=8):
-        if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):  # 意図しないサイズの場合エラー
+        if self._is_invalid_size(size):
             raise BoardSizeError(str(size) + ' is invalid size!')
 
         self.size = size                                 # ボードサイズ
@@ -79,6 +79,13 @@ class Board(AbstractBoard):
         ]
         for x, y, color in init_discs:  # 中央の4石を置く
             self._board[y][x] = d[color]
+
+    def _is_invalid_size(self, size):
+        """_is_invalid_size
+
+               無効なボードサイズの場合
+        """
+        return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
 
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
@@ -290,7 +297,7 @@ class BitBoard(AbstractBoard):
     """BitBoard
     """
     def __init__(self, size=8):
-        if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
+        if self._is_invalid_size(size):
             raise BoardSizeError(str(size) + ' is invalid size!')
 
         # ボードサイズの初期設定
@@ -326,6 +333,13 @@ class BitBoard(AbstractBoard):
             int(''.join((['1'] * (size-1) + ['0']) * size), 2),                                              # 左方向のマスク値
             int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
         )
+
+    def _is_invalid_size(self, size):
+        """_is_invalid_size
+
+               無効なボードサイズの場合
+        """
+        return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
 
     def __str__(self):
         size = self.size
