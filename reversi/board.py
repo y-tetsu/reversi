@@ -158,19 +158,13 @@ class Board(AbstractBoard):
         while True:
             next_x, next_y = next_x + dx, next_y + dy
 
-            # 座標が範囲内
-            if self._in_range(next_x, next_y):
-                next_value = self._board[next_y][next_x]
+            # 座標が範囲内 かつ 石が置かれている(ブランクではない)
+            if self._in_range(next_x, next_y) and not self._is_blank(next_x, next_y):
+                # 置いた石と同じ色が見つかった場合
+                if self._is_same_color(next_x, next_y, color):
+                    return ret
 
-                # 石が置かれている
-                if next_value != d[c.blank]:
-                    # 置いた石と同じ色が見つかった場合
-                    if next_value == d[color]:
-                        return ret
-
-                    ret += [(next_x, next_y)]
-                else:
-                    break
+                ret += [(next_x, next_y)]
             else:
                 break
 
@@ -187,11 +181,18 @@ class Board(AbstractBoard):
         return False
 
     def _is_blank(self, x, y):
-        """_in_blank
+        """_is_blank
 
                座標上に石が置かれていない(ブランク)かどうかを返す
         """
         return self._board[y][x] == d[c.blank]
+
+    def _is_same_color(self, x, y, color):
+        """_is_same_color
+
+               座標上に同じ色の石が置かれているかどうかを返す
+        """
+        return self._board[y][x] == d[color]
 
     def put_disc(self, color, x, y):
         """put_disc
