@@ -83,7 +83,7 @@ class Board(AbstractBoard):
     def _is_invalid_size(self, size):
         """_is_invalid_size
 
-               無効なボードサイズの場合
+               無効なボードサイズの場合Trueを返す
         """
         return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
 
