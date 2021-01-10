@@ -4,7 +4,7 @@
 import unittest
 
 from reversi.board import Board, BitBoard
-from reversi.disc import D
+from reversi.disc import D as d
 from reversi.player import Player
 
 
@@ -31,14 +31,14 @@ class TestPlayer(unittest.TestCase):
 
         # init
         self.assertEqual(p.color, 'black')
-        self.assertEqual(p.disc, D[p.color])
+        self.assertEqual(p.disc, d[p.color])
         self.assertEqual(p.name, 'TestPlayer')
         self.assertIsInstance(p.strategy, TestStrategy)
         self.assertEqual(p.move, (None, None))
         self.assertEqual(p.captures, [])
 
         # str
-        self.assertEqual(str(p), D[p.color] + 'TestPlayer')
+        self.assertEqual(str(p), d[p.color] + 'TestPlayer')
 
         # put_disc
         p.put_disc(board)
@@ -57,14 +57,14 @@ class TestPlayer(unittest.TestCase):
 
         # init
         self.assertEqual(p.color, 'black')
-        self.assertEqual(p.disc, D[p.color])
+        self.assertEqual(p.disc, d[p.color])
         self.assertEqual(p.name, 'TestPlayer')
         self.assertIsInstance(p.strategy, TestStrategy)
         self.assertEqual(p.move, (None, None))
         self.assertEqual(p.captures, [])
 
         # str
-        self.assertEqual(str(p), D[p.color] + 'TestPlayer')
+        self.assertEqual(str(p), d[p.color] + 'TestPlayer')
 
         # put_disc
         p.put_disc(board)

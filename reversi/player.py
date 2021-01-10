@@ -1,7 +1,7 @@
 """Player
 """
 
-from reversi.disc import D
+from reversi.disc import D as d
 
 
 class Player:
@@ -9,7 +9,7 @@ class Player:
     """
     def __init__(self, color, name, strategy):
         self.color = color
-        self.disc = D[color]
+        self.disc = d[color]
         self.name = name
         self.strategy = strategy
         self.move = (None, None)

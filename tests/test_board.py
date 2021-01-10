@@ -4,7 +4,7 @@
 import unittest
 
 from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard
-from reversi.disc import D
+from reversi.disc import D as d
 from reversi.game import Game
 from reversi.player import Player
 from reversi.strategies import Random
@@ -56,11 +56,11 @@ class TestBoard(unittest.TestCase):
         for size in range(4, 26+1, 2):
             center1, center2 = size // 2, (size // 2) - 1
             board = Board(size)
-            board_ini = [[D['blank'] for _ in range(size)] for _ in range(size)]
-            board_ini[center1][center2] = D['black']
-            board_ini[center2][center1] = D['black']
-            board_ini[center1][center1] = D['white']
-            board_ini[center2][center2] = D['white']
+            board_ini = [[d['blank'] for _ in range(size)] for _ in range(size)]
+            board_ini[center1][center2] = d['black']
+            board_ini[center2][center1] = d['black']
+            board_ini[center1][center1] = d['white']
+            board_ini[center2][center2] = d['white']
 
             self.assertEqual(board._board, board_ini)
 
@@ -139,20 +139,20 @@ class TestBoard(unittest.TestCase):
  8□□□□□□□□
 """
 
-        board_ret = [[D['blank'] for _ in range(8)] for _ in range(8)]
-        board_ret[2][2] = D['black']
-        board_ret[2][6] = D['black']
-        board_ret[3][3] = D['black']
-        board_ret[3][4] = D['white']
-        board_ret[3][5] = D['black']
-        board_ret[4][3] = D['white']
-        board_ret[4][4] = D['black']
-        board_ret[4][5] = D['white']
-        board_ret[5][3] = D['white']
-        board_ret[5][4] = D['white']
-        board_ret[5][5] = D['white']
-        board_ret[6][2] = D['black']
-        board_ret[6][3] = D['white']
+        board_ret = [[d['blank'] for _ in range(8)] for _ in range(8)]
+        board_ret[2][2] = d['black']
+        board_ret[2][6] = d['black']
+        board_ret[3][3] = d['black']
+        board_ret[3][4] = d['white']
+        board_ret[3][5] = d['black']
+        board_ret[4][3] = d['white']
+        board_ret[4][4] = d['black']
+        board_ret[4][5] = d['white']
+        board_ret[5][3] = d['white']
+        board_ret[5][4] = d['white']
+        board_ret[5][5] = d['white']
+        board_ret[6][2] = d['black']
+        board_ret[6][3] = d['white']
 
         board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
         board_info_ret[2][2] = 1
@@ -184,7 +184,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 2)
 
-        board._board[0][0] = D['white']
+        board._board[0][0] = d['white']
         board.update_score()
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 3)
@@ -196,7 +196,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 2)
 
-        board._board[0][0] = D['white']
+        board._board[0][0] = d['white']
         board.update_score()
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 3)
@@ -208,7 +208,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 2)
 
-        board._board[0][0] = D['white']
+        board._board[0][0] = d['white']
         board.update_score()
         self.assertEqual(board._black_score, 2)
         self.assertEqual(board._white_score, 3)
@@ -396,7 +396,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_legal_moves_bits(self):
         board = Board(4)
-        blank, black, white = D['blank'], D['black'], D['white']
+        blank, black, white = d['blank'], d['black'], d['white']
 
         board._board = [
             [blank, blank, blank, blank],
@@ -411,7 +411,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_legal_moves(self):
         board = Board(4)
-        blank, black, white = D['blank'], D['black'], D['white']
+        blank, black, white = d['blank'], d['black'], d['white']
 
         board._board = [
             [blank, blank, blank, blank],
@@ -459,7 +459,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_flippable_discs(self):
         board = Board(4)
-        blank, black, white = D['blank'], D['black'], D['white']
+        blank, black, white = d['blank'], d['black'], d['white']
 
         board._board = [
             [blank, blank, blank, blank],
@@ -515,7 +515,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_bit_count(self):
         board = Board(4)
-        blank, black, white = D['blank'], D['black'], D['white']
+        blank, black, white = d['blank'], d['black'], d['white']
 
         board._board = [
             [blank, blank, blank, blank],
@@ -535,7 +535,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_legal_moves(self):
         board = Board(8)
-        blank, black, white = D['blank'], D['black'], D['white']
+        blank, black, white = d['blank'], d['black'], d['white']
         legal_moves = board.get_legal_moves('black')
         self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
 
@@ -639,7 +639,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_flippable_discs(self):
         board = Board(8)
-        blank, black, white = D['blank'], D['black'], D['white']
+        blank, black, white = d['blank'], d['black'], d['white']
 
         self.assertEqual(board.get_flippable_discs('black', 3, 2), [(3, 3)])
         self.assertEqual(board.get_flippable_discs('black', 2, 3), [(3, 3)])
