@@ -135,7 +135,7 @@ class Board(AbstractBoard):
             (-1, -1), (0, -1), (1, -1)
         ]
         ret = []
-        # 指定座標が範囲内 かつ 石が置いていない
+        # 指定座標が範囲内 かつ 石が置かれていない(ブランクである)
         if self._in_range(x, y) and self._is_blank(x, y):
             # 8方向をチェック
             for direction in directions:
