@@ -101,7 +101,6 @@ class Board(AbstractBoard):
         for y in range(self.size):
             for x in range(self.size):
                 flippable_discs = self.get_flippable_discs(color, x, y)
-
                 if flippable_discs:
                     legal_moves += [(x, y)]
 
