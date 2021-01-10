@@ -4,6 +4,7 @@
 import abc
 from collections import namedtuple
 
+from reversi.color import C as c
 from reversi.disc import D as d
 import reversi.BitBoardMethods as BitBoardMethods
 
@@ -75,11 +76,11 @@ class Board(AbstractBoard):
 
         # 盤面の初期設定
         center = size // 2
-        self._board = [[d['blank'] for _ in range(size)] for _ in range(size)]
-        self._board[center][center-1] = d['black']
-        self._board[center-1][center] = d['black']
-        self._board[center-1][center-1] = d['white']
-        self._board[center][center] = d['white']
+        self._board = [[d[c.blank] for _ in range(size)] for _ in range(size)]
+        self._board[center][center-1] = d[c.black]
+        self._board[center-1][center] = d[c.black]
+        self._board[center-1][center-1] = d[c.white]
+        self._board[center][center] = d[c.white]
 
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
@@ -140,7 +141,7 @@ class Board(AbstractBoard):
         ret = []
 
         # 指定座標が範囲内 かつ 石が置いていない
-        if self._in_range(x, y) and self._board[y][x] == d['blank']:
+        if self._in_range(x, y) and self._board[y][x] == d[c.blank]:
             # 8方向をチェック
             for direction in directions:
                 tmp = self._get_flippable_discs_in_direction(color, x, y, direction)
@@ -167,7 +168,7 @@ class Board(AbstractBoard):
                 next_value = self._board[next_y][next_x]
 
                 # 石が置かれている
-                if next_value != d['blank']:
+                if next_value != d[c.blank]:
                     # 置いた石と同じ色が見つかった場合
                     if next_value == d[color]:
                         return ret
@@ -227,8 +228,8 @@ class Board(AbstractBoard):
     def update_score(self):
         """update_score
         """
-        self._black_score = sum([row.count(d['black']) for row in self._board])
-        self._white_score = sum([row.count(d['white']) for row in self._board])
+        self._black_score = sum([row.count(d[c.black]) for row in self._board])
+        self._white_score = sum([row.count(d[c.white]) for row in self._board])
 
     def get_board_info(self):
         """get_board_info
@@ -238,11 +239,11 @@ class Board(AbstractBoard):
             tmp = []
 
             for col in row:
-                if col == d['black']:
+                if col == d[c.black]:
                     tmp += [1]
-                elif col == d['white']:
+                elif col == d[c.white]:
                     tmp += [-1]
-                elif col == d['blank']:
+                elif col == d[c.blank]:
                     tmp += [0]
 
             board_info += [tmp]
@@ -270,9 +271,9 @@ class Board(AbstractBoard):
         put = 1 << size * size - 1
         for y in range(self.size):
             for x in range(self.size):
-                if self._board[y][x] == d['black']:
+                if self._board[y][x] == d[c.black]:
                     black_bitboard |= put
-                if self._board[y][x] == d['white']:
+                if self._board[y][x] == d[c.white]:
                     white_bitboard |= put
                 put >>= 1
 
@@ -284,11 +285,11 @@ class Board(AbstractBoard):
         prev = self.prev.pop()
         if prev:
             color = prev['color']
-            prev_color = 'white' if color == 'black' else 'black'
+            prev_color = c.white if color == c.black else c.black
             x = prev['x']
             y = prev['y']
             flippable_discs = prev['flippable_discs']
-            self._board[y][x] = d['blank']
+            self._board[y][x] = d[c.blank]
 
             for prev_x, prev_y in flippable_discs:
                 self._board[prev_y][prev_x] = d[prev_color]
@@ -340,14 +341,14 @@ class BitBoard(AbstractBoard):
     def __str__(self):
         size = self.size
         header = '   ' + ' '.join([chr(97 + i) for i in range(size)]) + '\n'
-        board = [[d['blank'] for _ in range(size)] for _ in range(size)]
+        board = [[d[c.blank] for _ in range(size)] for _ in range(size)]
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
                 if self._black_bitboard & mask:
-                    board[y][x] = d['black']
+                    board[y][x] = d[c.black]
                 elif self._white_bitboard & mask:
-                    board[y][x] = d['white']
+                    board[y][x] = d[c.white]
                 mask >>= 1
 
         body = ''
