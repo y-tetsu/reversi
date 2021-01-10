@@ -281,16 +281,11 @@ class Board(AbstractBoard):
     def undo(self):
         """undo
         """
-        prev = self.prev.pop()
-        if prev:
-            color = prev['color']
-            prev_color = c.white if color == c.black else c.black
-            x = prev['x']
-            y = prev['y']
-            flippable_discs = prev['flippable_discs']
-            self._board[y][x] = d[c.blank]
-            for prev_x, prev_y in flippable_discs:
-                self._board[prev_y][prev_x] = d[prev_color]
+        if self.prev:
+            prev = self.prev.pop()
+            self._board[prev['y']][prev['x']] = d[c.blank]  # 置いた石を取り除く
+            for prev_x, prev_y in prev['flippable_discs']:  # ひっくり返された石を反転させる
+                self._board[prev_y][prev_x] = d[c.next_color(prev['color'])]
             self.update_score()
 
 
