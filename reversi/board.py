@@ -194,42 +194,44 @@ class Board(AbstractBoard):
     def put_disc(self, color, x, y):
         """put_disc
 
-               指定座標に石を置いて返せる場所をひっくり返し、取れた石の座標を返す
+               指定座標に石を置いて返せる場所をひっくり返し、取れた石のビット位置を返す
         """
         if not self._in_range(x, y):
             return 0
 
-        flippable_discs = self.get_flippable_discs(color, x, y)
-
-        # 指定座標に石を置く
-        self._board[y][x] = d[color]
+        flippable_discs = self.get_flippable_discs(color, x, y)  # ひっくり返せる場所を取得
+        self._board[y][x] = d[color]                             # 指定座標に石を置く
 
         # ひっくり返せる場所に石を置く
         for tmp_x, tmp_y, in flippable_discs:
             self._board[tmp_y][tmp_x] = d[color]
 
-        self.update_score()
+        self.update_score()                                                                  # スコア更新
+        self.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs}]  # 打った手の記録
 
-        # 打った手の記録
-        self.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs}]
-
-        # 返した石のビット
-        ret = 0
-        size = self.size
-        mask = 1 << (size*size-1)
-        for y in range(self.size):
-            for x in range(self.size):
-                if (x, y) in flippable_discs:
-                    ret |= mask
-                mask >>= 1
-
-        return ret
+        return self._get_bit_pos(flippable_discs)
 
     def update_score(self):
         """update_score
         """
         self._black_score = sum([row.count(d[c.black]) for row in self._board])
         self._white_score = sum([row.count(d[c.white]) for row in self._board])
+
+    def _get_bit_pos(self, discs):
+        """_get_bit_pos
+
+               discs配列の石が置いてあるビット位置を返す
+        """
+        ret = 0
+        size = self.size
+        mask = 1 << (size*size-1)
+        for y in range(self.size):
+            for x in range(self.size):
+                if (x, y) in discs:
+                    ret |= mask
+                mask >>= 1
+
+        return ret
 
     def get_board_info(self):
         """get_board_info

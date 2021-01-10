@@ -1684,3 +1684,8 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(board._is_same_color(2, 1, 'black'))
         self.assertFalse(board._is_same_color(2, 1, 'white'))
         self.assertFalse(board._is_same_color(2, 1, 'blank'))
+
+    def test_board_get_bit_pos(self):
+        board = Board(4)
+        flippable_discs = board.get_flippable_discs('black', 1, 0)
+        self.assertEqual(board._get_bit_pos(flippable_discs), 0x0400)
