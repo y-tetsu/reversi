@@ -176,13 +176,6 @@ class Board(AbstractBoard):
 
         return []
 
-    def _is_blank(self, x, y):
-        """_in_blank
-
-               座標上に石が置かれていない(ブランク)かどうかを返す
-        """
-        return self._board[y][x] == d[c.blank]
-
     def _in_range(self, x, y):
         """_in_range
 
@@ -192,6 +185,13 @@ class Board(AbstractBoard):
             return True
 
         return False
+
+    def _is_blank(self, x, y):
+        """_in_blank
+
+               座標上に石が置かれていない(ブランク)かどうかを返す
+        """
+        return self._board[y][x] == d[c.blank]
 
     def put_disc(self, color, x, y):
         """put_disc
