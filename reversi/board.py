@@ -61,26 +61,24 @@ class Board(AbstractBoard):
     """Board
     """
     def __init__(self, size=8):
-        if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):
+        if not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0):  # 意図しないサイズの場合エラー
             raise BoardSizeError(str(size) + ' is invalid size!')
 
-        # ボードサイズの初期設定
-        self.size = size
+        self.size = size                                 # ボードサイズ
+        (self._black_score, self._white_score) = (2, 2)  # スコア
+        self.prev = []                                   # 前回の手
 
-        # スコアの初期設定
-        self._black_score = 2
-        self._white_score = 2
-
-        # 前回の手
-        self.prev = []
-
-        # 盤面の初期設定
+        # 盤面
+        self._board = [[d[c.blank] for _ in range(size)] for _ in range(size)]  # 一旦ブランクで埋める
         center = size // 2
-        self._board = [[d[c.blank] for _ in range(size)] for _ in range(size)]
-        self._board[center][center-1] = d[c.black]
-        self._board[center-1][center] = d[c.black]
-        self._board[center-1][center-1] = d[c.white]
-        self._board[center][center] = d[c.white]
+        init_discs = [
+            (center,   center-1, c.black),
+            (center-1, center,   c.black),
+            (center-1, center-1, c.white),
+            (center,   center,   c.white),
+        ]
+        for x, y, color in init_discs:  # 中央の4石を置く
+            self._board[y][x] = d[color]
 
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
