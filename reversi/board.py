@@ -172,10 +172,7 @@ class Board(AbstractBoard):
 
                座標がボードの範囲内かどうかを返す
         """
-        if 0 <= x < self.size and 0 <= y < self.size:
-            return True
-
-        return False
+        return 0 <= x < self.size and 0 <= y < self.size
 
     def _is_blank(self, x, y):
         """_is_blank
