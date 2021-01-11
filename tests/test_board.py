@@ -860,6 +860,54 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (0, 1)), [(3, 3), (3, 4), (3, 5)])
         self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (1, 1)), [])
 
+    def test_board_in_range(self):
+        any_minus_value = -1
+        min_size = 4
+        max_size = 26
+        step = 2
+        for size in range(min_size, max_size+1, step):
+            board = Board(size)
+            self.assertFalse(board._in_range(any_minus_value, any_minus_value))
+            self.assertFalse(board._in_range(any_minus_value, 0))
+            self.assertFalse(board._in_range(0, any_minus_value))
+            self.assertTrue(board._in_range(0, 0))
+            self.assertTrue(board._in_range(size-1, 0))
+            self.assertTrue(board._in_range(0, size-1))
+            self.assertTrue(board._in_range(size-1, size-1))
+            self.assertFalse(board._in_range(size, size-1))
+            self.assertFalse(board._in_range(size-1, size))
+            self.assertFalse(board._in_range(size, size))
+
+    def test_board_is_blank(self):
+        board = Board(4)
+        self.assertTrue(board._is_blank(0, 0))
+        self.assertFalse(board._is_blank(1, 1))
+        self.assertFalse(board._is_blank(2, 1))
+
+    def test_board_is_black(self):
+        board = Board(4)
+        self.assertFalse(board._is_black(0, 0))
+        self.assertFalse(board._is_black(1, 1))
+        self.assertTrue(board._is_black(2, 1))
+
+    def test_board_is_white(self):
+        board = Board(4)
+        self.assertFalse(board._is_white(0, 0))
+        self.assertTrue(board._is_white(1, 1))
+        self.assertFalse(board._is_white(2, 1))
+
+    def test_board_is_same_color(self):
+        board = Board(4)
+        self.assertFalse(board._is_same_color(0, 0, c.black))
+        self.assertFalse(board._is_same_color(0, 0, c.white))
+        self.assertTrue(board._is_same_color(0, 0, c.blank))
+        self.assertFalse(board._is_same_color(1, 1, c.black))
+        self.assertTrue(board._is_same_color(1, 1, c.white))
+        self.assertFalse(board._is_same_color(1, 1, c.blank))
+        self.assertTrue(board._is_same_color(2, 1, c.black))
+        self.assertFalse(board._is_same_color(2, 1, c.white))
+        self.assertFalse(board._is_same_color(2, 1, c.blank))
+
     def test_board_size_4_put_disc(self):
         board = Board(4)
 
@@ -1721,36 +1769,6 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(reversi.BitBoardMethods.SLOW_MODE4)
         self.assertFalse(reversi.BitBoardMethods.SLOW_MODE5)
         # -------------------------------
-
-    def test_board_is_blank(self):
-        board = Board(4)
-        self.assertTrue(board._is_blank(0, 0))
-        self.assertFalse(board._is_blank(1, 1))
-        self.assertFalse(board._is_blank(2, 1))
-
-    def test_board_is_black(self):
-        board = Board(4)
-        self.assertFalse(board._is_black(0, 0))
-        self.assertFalse(board._is_black(1, 1))
-        self.assertTrue(board._is_black(2, 1))
-
-    def test_board_is_white(self):
-        board = Board(4)
-        self.assertFalse(board._is_white(0, 0))
-        self.assertTrue(board._is_white(1, 1))
-        self.assertFalse(board._is_white(2, 1))
-
-    def test_board_is_same_color(self):
-        board = Board(4)
-        self.assertFalse(board._is_same_color(0, 0, c.black))
-        self.assertFalse(board._is_same_color(0, 0, c.white))
-        self.assertTrue(board._is_same_color(0, 0, c.blank))
-        self.assertFalse(board._is_same_color(1, 1, c.black))
-        self.assertTrue(board._is_same_color(1, 1, c.white))
-        self.assertFalse(board._is_same_color(1, 1, c.blank))
-        self.assertTrue(board._is_same_color(2, 1, c.black))
-        self.assertFalse(board._is_same_color(2, 1, c.white))
-        self.assertFalse(board._is_same_color(2, 1, c.blank))
 
     def test_board_get_bit_pos(self):
         board = Board(4)
