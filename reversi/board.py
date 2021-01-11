@@ -176,21 +176,21 @@ class Board(AbstractBoard):
     def _in_range(self, x, y):
         """_in_range
 
-               座標がボードの範囲内かどうかを返す
+               座標がボードの範囲内の場合True
         """
         return 0 <= x < self.size and 0 <= y < self.size
 
     def _is_blank(self, x, y):
         """_is_blank
 
-               座標上に石が置かれていない(ブランク)かどうかを返す
+               座標上に石が置かれていない(ブランク)場合True
         """
         return self._board[y][x] == d[c.blank]
 
     def _is_same_color(self, x, y, color):
         """_is_same_color
 
-               座標上に同じ色の石が置かれているかどうかを返す
+               座標上に同じ色の石が置かれている場合True
         """
         return self._board[y][x] == d[color]
 
