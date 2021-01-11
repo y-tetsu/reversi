@@ -313,16 +313,9 @@ class BitBoard(AbstractBoard):
         if self._is_invalid_size(size):
             raise BoardSizeError(str(size) + ' is invalid size!')
 
-        # ボードサイズの初期設定
-        self.size = size
-
-        # スコアの初期設定
-        self._black_score = 2
-        self._white_score = 2
-
-        # 前回の手
-        self.prev = []
-        self._flippable_discs_num = 0
+        self.size = size                                 # ボードサイズ
+        (self._black_score, self._white_score) = (2, 2)  # スコア
+        self.prev = []                                   # 前回の手
 
         # ビットボードの初期配置
         center = size // 2
@@ -331,7 +324,7 @@ class BitBoard(AbstractBoard):
         self._white_bitboard = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
         self._white_bitboard |= 1 << ((size*size-1)-(size*center+center))
 
-        # 置ける場所の検出用
+        # 置ける場所の検出用マスク
         BitMask = namedtuple('BitMask', 'h v d u ur r br b bl l ul')
         self._mask = BitMask(
             int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2),                                      # 水平方向のマスク値
