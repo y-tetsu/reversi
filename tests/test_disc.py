@@ -30,7 +30,10 @@ class TestDisc(unittest.TestCase):
         self.assertIsInstance(unknown, Disc)
         self.assertEqual(unknown, '')
 
-    def test_disc_d(self):
+    def test_disc_dict(self):
         self.assertEqual(D[c.black], '〇')
         self.assertEqual(D[c.white], '●')
         self.assertEqual(D[c.blank], '□')
+        self.assertEqual(D.black, '〇')
+        self.assertEqual(D.white, '●')
+        self.assertEqual(D.blank, '□')

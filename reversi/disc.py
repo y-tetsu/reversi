@@ -35,5 +35,13 @@ class DiscFactory:
         return Disc('')
 
 
+class DiscDict(dict):
+    """DiscDict"""
+    __slots__ = ()
+
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+
 factory = DiscFactory()
-D = {color: factory.create(color) for color in c.all}
+D = DiscDict({color: factory.create(color) for color in c.all})
