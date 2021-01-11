@@ -969,6 +969,17 @@ class TestBoard(unittest.TestCase):
         flippable_discs = board.get_flippable_discs(c.black, 1, 0)
         self.assertEqual(board._get_bit_pos(flippable_discs), 0x0400)
 
+    def test_board_get_board_info(self):
+        size = 8
+        board_info_ret = [[0 for _ in range(size)] for _ in range(size)]
+        board_info_ret[size//2][size//2-1] = 1
+        board_info_ret[size//2-1][size//2] = 1
+        board_info_ret[size//2-1][size//2-1] = -1
+        board_info_ret[size//2][size//2] = -1
+        for board_class in self.board_classes:
+            board = board_class(size)
+            self.assertEqual(board.get_board_info(), board_info_ret)
+
     def test_board_size_8_play_result(self):
         board = Board()
         board.put_disc(c.black, 5, 4)
