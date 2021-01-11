@@ -980,6 +980,45 @@ class TestBoard(unittest.TestCase):
             board = board_class(size)
             self.assertEqual(board.get_board_info(), board_info_ret)
 
+    def test_board_size_4_get_bit_count(self):
+        board = Board(4)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, black, black, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+        legal_moves_bits = board.get_legal_moves_bits(c.white)
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+
+    def test_bitboard_size_4_get_bit_count(self):
+        board = BitBoard(4)
+        board._black_bitboard = 0x640
+        board._white_bitboard = 0x020
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+        legal_moves_bits = board.get_legal_moves_bits(c.white)
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
+
+    def test_board_size_8_get_bit_count(self):
+        board = Board(8)
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
+
+    def test_bitboard_size_8_get_bit_count(self):
+        board = BitBoard(8)
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
+
+    def test_board_get_bitboard_info(self):
+        size = 4
+        for board_class in self.board_classes:
+            board = board_class(size)
+            self.assertEqual(board.get_bitboard_info(), (0x0240, 0x0420))
+
     def test_board_size_8_play_result(self):
         board = Board()
         board.put_disc(c.black, 5, 4)
@@ -1164,41 +1203,6 @@ class TestBoard(unittest.TestCase):
         board = BitBoard()
         with self.assertRaises(IndexError):
             board.undo()
-
-    def test_board_size_4_get_bit_count(self):
-        board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, black, black, blank],
-            [blank, black, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
-        legal_moves_bits = board.get_legal_moves_bits(c.white)
-        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
-
-    def test_board_size_8_get_bit_count(self):
-        board = Board(8)
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
-
-    def test_bitboard_size_4_get_bit_count(self):
-        board = BitBoard(4)
-
-        board._black_bitboard = 0x640
-        board._white_bitboard = 0x020
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
-        legal_moves_bits = board.get_legal_moves_bits(c.white)
-        self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
-
-    def test_bitboard_size_8_get_bit_count(self):
-        board = BitBoard(8)
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
 
     def test_board_random_play(self):
         class TestPlayer(Player):
