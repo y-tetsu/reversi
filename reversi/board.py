@@ -209,6 +209,7 @@ class Board(AbstractBoard):
         # ひっくり返せる場所に石を置く
         for tmp_x, tmp_y, in flippable_discs:
             self._board[tmp_y][tmp_x] = d[color]
+
         self.update_score()                                                                  # スコア更新
         self.prev += [{'color': color, 'x': x, 'y': y, 'flippable_discs': flippable_discs}]  # 打った手の記録
 
