@@ -4,7 +4,7 @@
 import unittest
 
 from reversi.color import C as c
-from reversi.disc import Disc, Black, White, Blank, DiscFactory, D
+from reversi.disc import Disc, Black, White, Blank, DiscFactory, DiscDictAttributeError, D
 
 
 class TestDisc(unittest.TestCase):
@@ -50,8 +50,28 @@ class TestDisc(unittest.TestCase):
         self.assertFalse(D.is_white('□'))
         self.assertFalse(D.is_white('＊'))
 
-    def test_disc_dict_is_blanck(self):
+    def test_disc_dict_is_blank(self):
         self.assertFalse(D.is_blank('〇'))
         self.assertFalse(D.is_blank('●'))
         self.assertTrue(D.is_blank('□'))
         self.assertFalse(D.is_blank('＊'))
+
+    def test_disc_dict_property(self):
+        with self.assertRaises(AttributeError):
+            D.black = 'another disc'
+        with self.assertRaises(AttributeError):
+            D.white = 'another disc'
+        with self.assertRaises(AttributeError):
+            D.blank = 'another disc'
+        with self.assertRaises(DiscDictAttributeError):
+            D[c.black] = 'another disc'
+        with self.assertRaises(DiscDictAttributeError):
+            D[c.white] = 'another disc'
+        with self.assertRaises(DiscDictAttributeError):
+            D[c.blank] = 'another disc'
+        with self.assertRaises(DiscDictAttributeError):
+            del D[c.black]
+        with self.assertRaises(DiscDictAttributeError):
+            del D[c.white]
+        with self.assertRaises(DiscDictAttributeError):
+            del D[c.blank]

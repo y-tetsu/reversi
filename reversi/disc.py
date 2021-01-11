@@ -35,12 +35,22 @@ class DiscFactory:
         return Disc('')
 
 
+class DiscDictAttributeError(Exception):
+    pass
+
+
 class DiscDict(dict):
     """DiscDict"""
     __slots__ = ()
 
     def __getattr__(self, attr):
         return self.get(attr)
+
+    def __setitem__(self, key, value):
+        raise DiscDictAttributeError("'DiscDict' object does not support item assignment.")
+
+    def __delitem__(self, key):
+        raise DiscDictAttributeError("'DiscDict' object does not support item deletion.")
 
     def is_black(self, disc):
         return disc == self.get(c.black)
