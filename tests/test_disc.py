@@ -37,3 +37,21 @@ class TestDisc(unittest.TestCase):
         self.assertEqual(D.black, '〇')
         self.assertEqual(D.white, '●')
         self.assertEqual(D.blank, '□')
+
+    def test_disc_dict_is_black(self):
+        self.assertTrue(D.is_black('〇'))
+        self.assertFalse(D.is_black('●'))
+        self.assertFalse(D.is_black('□'))
+        self.assertFalse(D.is_black('＊'))
+
+    def test_disc_dict_is_white(self):
+        self.assertFalse(D.is_white('〇'))
+        self.assertTrue(D.is_white('●'))
+        self.assertFalse(D.is_white('□'))
+        self.assertFalse(D.is_white('＊'))
+
+    def test_disc_dict_is_blanck(self):
+        self.assertFalse(D.is_blank('〇'))
+        self.assertFalse(D.is_blank('●'))
+        self.assertTrue(D.is_blank('□'))
+        self.assertFalse(D.is_blank('＊'))

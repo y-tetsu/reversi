@@ -42,6 +42,15 @@ class DiscDict(dict):
     def __getattr__(self, attr):
         return self.get(attr)
 
+    def is_black(self, disc):
+        return disc == self.get(c.black)
+
+    def is_white(self, disc):
+        return disc == self.get(c.white)
+
+    def is_blank(self, disc):
+        return disc == self.get(c.blank)
+
 
 factory = DiscFactory()
 D = DiscDict({color: factory.create(color) for color in c.all})
