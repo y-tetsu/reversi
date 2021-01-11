@@ -4,6 +4,7 @@
 import unittest
 
 from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard
+from reversi.color import C as c
 from reversi.disc import D as d
 from reversi.game import Game
 from reversi.player import Player
@@ -14,35 +15,29 @@ from reversi.display import NoneDisplay
 class TestBoard(unittest.TestCase):
     """board
     """
-    def test_board_size(self):
-        with self.assertRaises(BoardSizeError):
-            Board(-1)
+    def setUp(self):
+        self.board_classes = [Board, BitBoard]
 
-        for size in range(4):
+    def test_board_invalid_size(self):
+        minus_value = -1
+        under_min_value = 4
+        odd_value_start = 5
+        odd_value_step = 2
+        over_max_value = 28
+        for board_class in self.board_classes:
             with self.assertRaises(BoardSizeError):
-                Board(size)
+                board_class(minus_value)
 
-        for size in range(5, 28, 2):
+            for size in range(under_min_value):
+                with self.assertRaises(BoardSizeError):
+                    board_class(size)
+
+            for size in range(odd_value_start, over_max_value, odd_value_step):
+                with self.assertRaises(BoardSizeError):
+                    board_class(size)
+
             with self.assertRaises(BoardSizeError):
-                Board(size)
-
-        with self.assertRaises(BoardSizeError):
-            Board(28)
-
-    def test_bitboard_size(self):
-        with self.assertRaises(BoardSizeError):
-            BitBoard(-1)
-
-        for size in range(4):
-            with self.assertRaises(BoardSizeError):
-                BitBoard(size)
-
-        for size in range(5, 28, 2):
-            with self.assertRaises(BoardSizeError):
-                BitBoard(size)
-
-        with self.assertRaises(BoardSizeError):
-            BitBoard(28)
+                board_class(over_max_value)
 
     def test_board_size_default(self):
         board = Board()
