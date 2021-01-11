@@ -47,3 +47,16 @@ class TestColor(unittest.TestCase):
         self.assertEqual(c.next_color(c.black), c.white)
         self.assertEqual(c.next_color(c.white), c.black)
         self.assertEqual(c.next_color(c.blank), c.black)
+
+    def test_color_property(self):
+        c = Color()
+        with self.assertRaises(AttributeError):
+            c.black = 'another color'
+        with self.assertRaises(AttributeError):
+            c.white = 'another color'
+        with self.assertRaises(AttributeError):
+            c.blank = 'another color'
+        with self.assertRaises(AttributeError):
+            c.colors = []
+        with self.assertRaises(AttributeError):
+            c.all = []

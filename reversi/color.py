@@ -5,23 +5,43 @@
 class Color:
     """Color"""
     def __init__(self):
-        self.black = 'black'
-        self.white = 'white'
-        self.blank = 'blank'
-        self.colors = [self.black, self.white]
-        self.all = self.colors + [self.blank]
+        self.__black = 'black'
+        self.__white = 'white'
+        self.__blank = 'blank'
+        self.__colors = [self.__black, self.__white]
+        self.__all = self.colors + [self.__blank]
+
+    @property
+    def black(self):
+        return self.__black
+
+    @property
+    def white(self):
+        return self.__white
+
+    @property
+    def blank(self):
+        return self.__blank
+
+    @property
+    def colors(self):
+        return self.__colors
+
+    @property
+    def all(self):
+        return self.__all
 
     def is_black(self, color):
-        return color == self.black
+        return color == self.__black
 
     def is_white(self, color):
-        return color == self.white
+        return color == self.__white
 
     def is_blank(self, color):
-        return color == self.blank
+        return color == self.__blank
 
     def next_color(self, color):
-        return self.white if color == self.black else self.black
+        return self.__white if color == self.__black else self.__black
 
 
 C = Color()
