@@ -20,7 +20,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_invalid_size(self):
         minus_value = -1
-        under_min_value = 4
+        min_value = 4
         odd_value_start = 5
         step = 2
         over_max_value = 28
@@ -28,7 +28,7 @@ class TestBoard(unittest.TestCase):
             with self.assertRaises(BoardSizeError):
                 board_class(minus_value)
 
-            for size in range(under_min_value):
+            for size in range(min_value):
                 with self.assertRaises(BoardSizeError):
                     board_class(size)
 
@@ -50,9 +50,7 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board.prev, [])
 
     def test_board_initial_board(self):
-        min_size = 4
-        max_size = 4
-        step = 2
+        min_size, max_size, step = 4, 26, 2
         for size in range(min_size, max_size+1, step):
             center1, center2 = size // 2, (size // 2) - 1
             board = Board(size)
@@ -64,9 +62,7 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board._board, board_ini)
 
     def test_bitboard_initial_board(self):
-        min_size = 4
-        max_size = 4
-        step = 2
+        min_size, max_size, step = 4, 26, 2
         for size in range(min_size, max_size+1, step):
             board = BitBoard(size)
             black_bitboard = (0x1 << ((size * (size//2) + (size//2) - 1))) + (0x1 << ((size * (size//2-1) + (size//2))))
@@ -862,9 +858,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_in_range(self):
         any_minus_value = -1
-        min_size = 4
-        max_size = 26
-        step = 2
+        min_size, max_size, step = 4, 26, 2
         for size in range(min_size, max_size+1, step):
             board = Board(size)
             self.assertFalse(board._in_range(any_minus_value, any_minus_value))
@@ -909,48 +903,71 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(board._is_same_color(2, 1, c.blank))
 
     def test_board_size_4_put_disc(self):
+        size = 4
+        for board_class in self.board_classes:
+            board = board_class(size)
+            self.assertEqual(board.put_disc(c.black, 0, 0), 0x0)     # can not flippable
+            board.undo()
+            self.assertEqual(board.put_disc(c.black, 3, 5), 0x0)     # out of range
+            self.assertEqual(board.put_disc(c.black, 1, 0), 0x0400)
+            self.assertEqual(board.put_disc(c.white, 0, 0), 0x0400)
+            self.assertEqual(board.put_disc(c.black, 0, 1), 0x0400)
+            self.assertEqual(board.put_disc(c.white, 2, 0), 0x4200)
+            self.assertEqual(board.put_disc(c.black, 3, 0), 0x0200)
+            self.assertEqual(board.put_disc(c.white, 1, 3), 0x0440)
+            self.assertEqual(board.put_disc(c.black, 0, 3), 0x0040)
+            self.assertEqual(board.put_disc(c.white, 0, 2), 0x0840)
+            self.assertEqual(board.put_disc(c.black, 2, 3), 0x0024)
+            self.assertEqual(board.put_disc(c.white, 3, 2), 0x0220)
+            self.assertEqual(board.put_disc(c.black, 3, 1), 0x0020)
+            self.assertEqual(board.put_disc(c.white, 3, 3), 0x0020)
+            self.assertEqual(board.get_bitboard_info(), (4366, 61169))
+
+    def test_board_update_score(self):
+        min_size, max_size, step = 4, 26, 2
+        for size in range(min_size, max_size+1, step):
+            board = Board(size)
+            board._black_score = 0
+            board._white_score = 0
+            board.update_score()
+            self.assertEqual(board._black_score, 2)
+            self.assertEqual(board._white_score, 2)
+
+            board._board[0][0] = d[c.white]
+            board.update_score()
+            self.assertEqual(board._black_score, 2)
+            self.assertEqual(board._white_score, 3)
+
+            board._board[0][0] = d[c.black]
+            board.update_score()
+            self.assertEqual(board._black_score, 3)
+            self.assertEqual(board._white_score, 2)
+
+    def test_bitboard_update_score(self):
+        min_size, max_size, step = 4, 26, 2
+        for size in range(min_size, max_size+1, step):
+            board = BitBoard(size)
+            board._black_score = 0
+            board._white_score = 0
+            board.update_score()
+            self.assertEqual(board._black_score, 2)
+            self.assertEqual(board._white_score, 2)
+
+            board._white_bitboard |= 1
+            board.update_score()
+            self.assertEqual(board._black_score, 2)
+            self.assertEqual(board._white_score, 3)
+
+            board._white_bitboard ^= 1
+            board._black_bitboard |= 1
+            board.update_score()
+            self.assertEqual(board._black_score, 3)
+            self.assertEqual(board._white_score, 2)
+
+    def test_board_get_bit_pos(self):
         board = Board(4)
-
-        self.assertEqual(board.put_disc(c.black, 0, 0), 0x0)  # can not flippable
-        board.undo()
-
-        self.assertEqual(board.put_disc(c.black, 3, 5), 0x0)  # out of range
-
-        self.assertEqual(board.put_disc(c.black, 1, 0), 0x0400)
-        self.assertEqual(board.put_disc(c.white, 0, 0), 0x0400)
-        self.assertEqual(board.put_disc(c.black, 0, 1), 0x0400)
-        self.assertEqual(board.put_disc(c.white, 2, 0), 0x4200)
-        self.assertEqual(board.put_disc(c.black, 3, 0), 0x0200)
-        self.assertEqual(board.put_disc(c.white, 1, 3), 0x0440)
-        self.assertEqual(board.put_disc(c.black, 0, 3), 0x0040)
-        self.assertEqual(board.put_disc(c.white, 0, 2), 0x0840)
-        self.assertEqual(board.put_disc(c.black, 2, 3), 0x0024)
-        self.assertEqual(board.put_disc(c.white, 3, 2), 0x0220)
-        self.assertEqual(board.put_disc(c.black, 3, 1), 0x0020)
-        self.assertEqual(board.put_disc(c.white, 3, 3), 0x0020)
-        self.assertEqual(board.get_bitboard_info(), (4366, 61169))
-
-    def test_bitboard_size_4_put_disc(self):
-        board = BitBoard(4)
-
-        self.assertEqual(board.put_disc(c.black, 0, 0), 0x0)  # can not flippable
-        board.undo()
-
-        self.assertEqual(board.put_disc(c.black, 3, 5), 0x0)  # out of range
-
-        self.assertEqual(board.put_disc(c.black, 1, 0), 0x0400)
-        self.assertEqual(board.put_disc(c.white, 0, 0), 0x0400)
-        self.assertEqual(board.put_disc(c.black, 0, 1), 0x0400)
-        self.assertEqual(board.put_disc(c.white, 2, 0), 0x4200)
-        self.assertEqual(board.put_disc(c.black, 3, 0), 0x0200)
-        self.assertEqual(board.put_disc(c.white, 1, 3), 0x0440)
-        self.assertEqual(board.put_disc(c.black, 0, 3), 0x0040)
-        self.assertEqual(board.put_disc(c.white, 0, 2), 0x0840)
-        self.assertEqual(board.put_disc(c.black, 2, 3), 0x0024)
-        self.assertEqual(board.put_disc(c.white, 3, 2), 0x0220)
-        self.assertEqual(board.put_disc(c.black, 3, 1), 0x0020)
-        self.assertEqual(board.put_disc(c.white, 3, 3), 0x0020)
-        self.assertEqual(board.get_bitboard_info(), (4366, 61169))
+        flippable_discs = board.get_flippable_discs(c.black, 1, 0)
+        self.assertEqual(board._get_bit_pos(flippable_discs), 0x0400)
 
     def test_board_size_8_play_result(self):
         board = Board()
@@ -1011,80 +1028,6 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
         self.assertEqual(board._black_score, 6)
         self.assertEqual(board._white_score, 7)
-
-    def test_board_size_update_score(self):
-        board = Board(4)
-        board._black_score = 0
-        board._white_score = 0
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 2)
-
-        board._board[0][0] = d[c.white]
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 3)
-
-        board = Board(8)
-        board._black_score = 0
-        board._white_score = 0
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 2)
-
-        board._board[0][0] = d[c.white]
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 3)
-
-        board = Board(26)
-        board._black_score = 0
-        board._white_score = 0
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 2)
-
-        board._board[0][0] = d[c.white]
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 3)
-
-    def test_bitboard_update_score(self):
-        board = BitBoard(4)
-        board._black_score = 0
-        board._white_score = 0
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 2)
-
-        board._white_bitboard |= 1
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 3)
-
-        board = BitBoard(8)
-        board._black_score = 0
-        board._white_score = 0
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 2)
-
-        board._white_bitboard |= 1
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 3)
-
-        board = BitBoard(26)
-        board._black_score = 0
-        board._white_score = 0
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 2)
-
-        board._white_bitboard |= 1
-        board.update_score()
-        self.assertEqual(board._black_score, 2)
-        self.assertEqual(board._white_score, 3)
 
     def test_bitboard_size_8_play_result(self):
         board = BitBoard()
@@ -1769,8 +1712,3 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(reversi.BitBoardMethods.SLOW_MODE4)
         self.assertFalse(reversi.BitBoardMethods.SLOW_MODE5)
         # -------------------------------
-
-    def test_board_get_bit_pos(self):
-        board = Board(4)
-        flippable_discs = board.get_flippable_discs(c.black, 1, 0)
-        self.assertEqual(board._get_bit_pos(flippable_discs), 0x0400)
