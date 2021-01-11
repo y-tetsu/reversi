@@ -22,7 +22,7 @@ class TestBoard(unittest.TestCase):
         minus_value = -1
         under_min_value = 4
         odd_value_start = 5
-        odd_value_step = 2
+        step = 2
         over_max_value = 28
         for board_class in self.board_classes:
             with self.assertRaises(BoardSizeError):
@@ -32,21 +32,28 @@ class TestBoard(unittest.TestCase):
                 with self.assertRaises(BoardSizeError):
                     board_class(size)
 
-            for size in range(odd_value_start, over_max_value, odd_value_step):
+            for size in range(odd_value_start, over_max_value, step):
                 with self.assertRaises(BoardSizeError):
                     board_class(size)
 
             with self.assertRaises(BoardSizeError):
                 board_class(over_max_value)
 
-    def test_board_default_size(self):
-        default_size = 8
+    def test_board_initial(self):
+        initial_size = 8
+        initial_score = 2
         for board_class in self.board_classes:
             board = board_class()
-            self.assertEqual(board.size, default_size)
+            self.assertEqual(board.size, initial_size)
+            self.assertEqual(board._black_score, initial_score)
+            self.assertEqual(board._white_score, initial_score)
+            self.assertEqual(board.prev, [])
 
-    def test_board_initial(self):
-        for size in range(4, 26+1, 2):
+    def test_board_initial_board(self):
+        min_size = 4
+        max_size = 4
+        step = 2
+        for size in range(min_size, max_size+1, step):
             center1, center2 = size // 2, (size // 2) - 1
             board = Board(size)
             board_ini = [[d[c.blank] for _ in range(size)] for _ in range(size)]
@@ -54,16 +61,53 @@ class TestBoard(unittest.TestCase):
             board_ini[center2][center1] = d[c.black]
             board_ini[center1][center1] = d[c.white]
             board_ini[center2][center2] = d[c.white]
-
             self.assertEqual(board._board, board_ini)
 
-    def test_bitboard_initial(self):
-        for size in range(4, 26+1, 2):
+    def test_bitboard_initial_board(self):
+        min_size = 4
+        max_size = 4
+        step = 2
+        for size in range(min_size, max_size+1, step):
             board = BitBoard(size)
             black_bitboard = (0x1 << ((size * (size//2) + (size//2) - 1))) + (0x1 << ((size * (size//2-1) + (size//2))))
             white_bitboard = (0x1 << ((size * (size//2) + (size//2)))) + (0x1 << ((size * (size//2-1) + (size//2-1))))
             self.assertEqual(board._black_bitboard, black_bitboard)
             self.assertEqual(board._white_bitboard, white_bitboard)
+
+    def test_bitboard_initial_mask(self):
+        board = BitBoard(4)
+        self.assertEqual(board._mask.h, 0x6666)
+        self.assertEqual(board._mask.v, 0x0FF0)
+        self.assertEqual(board._mask.d, 0x0660)
+        self.assertEqual(board._mask.u, 0xFFF0)
+        self.assertEqual(board._mask.ur, 0x7770)
+        self.assertEqual(board._mask.r, 0x7777)
+        self.assertEqual(board._mask.br, 0x0777)
+        self.assertEqual(board._mask.b, 0x0FFF)
+        self.assertEqual(board._mask.bl, 0x0EEE)
+        self.assertEqual(board._mask.l, 0xEEEE)
+        self.assertEqual(board._mask.ul, 0xEEE0)
+
+        board = BitBoard(8)
+        self.assertEqual(board._mask.h, 0x7E7E7E7E7E7E7E7E)
+        self.assertEqual(board._mask.v, 0x00FFFFFFFFFFFF00)
+        self.assertEqual(board._mask.d, 0x007E7E7E7E7E7E00)
+        self.assertEqual(board._mask.u, 0xFFFFFFFFFFFFFF00)
+        self.assertEqual(board._mask.ur, 0x7F7F7F7F7F7F7F00)
+        self.assertEqual(board._mask.r, 0x7F7F7F7F7F7F7F7F)
+        self.assertEqual(board._mask.br, 0x007F7F7F7F7F7F7F)
+        self.assertEqual(board._mask.b, 0x00FFFFFFFFFFFFFF)
+        self.assertEqual(board._mask.bl, 0x00FEFEFEFEFEFEFE)
+        self.assertEqual(board._mask.l, 0xFEFEFEFEFEFEFEFE)
+        self.assertEqual(board._mask.ul, 0xFEFEFEFEFEFEFE00)
+
+    def test_board_is_invalid_size(self):
+        any_invalid_value = 100
+        any_valid_value = 10
+        for board_class in self.board_classes:
+            board = board_class()
+            self.assertTrue(board._is_invalid_size(any_invalid_value))
+            self.assertFalse(board._is_invalid_size(any_valid_value))
 
     def test_board_size_4_put_disc(self):
         board = Board(4)
@@ -367,33 +411,6 @@ class TestBoard(unittest.TestCase):
         board = BitBoard()
         with self.assertRaises(IndexError):
             board.undo()
-
-    def test_bitboard_mask(self):
-        board = BitBoard(4)
-        self.assertEqual(board._mask.h, 0x6666)
-        self.assertEqual(board._mask.v, 0x0FF0)
-        self.assertEqual(board._mask.d, 0x0660)
-        self.assertEqual(board._mask.u, 0xFFF0)
-        self.assertEqual(board._mask.ur, 0x7770)
-        self.assertEqual(board._mask.r, 0x7777)
-        self.assertEqual(board._mask.br, 0x0777)
-        self.assertEqual(board._mask.b, 0x0FFF)
-        self.assertEqual(board._mask.bl, 0x0EEE)
-        self.assertEqual(board._mask.l, 0xEEEE)
-        self.assertEqual(board._mask.ul, 0xEEE0)
-
-        board = BitBoard(8)
-        self.assertEqual(board._mask.h, 0x7E7E7E7E7E7E7E7E)
-        self.assertEqual(board._mask.v, 0x00FFFFFFFFFFFF00)
-        self.assertEqual(board._mask.d, 0x007E7E7E7E7E7E00)
-        self.assertEqual(board._mask.u, 0xFFFFFFFFFFFFFF00)
-        self.assertEqual(board._mask.ur, 0x7F7F7F7F7F7F7F00)
-        self.assertEqual(board._mask.r, 0x7F7F7F7F7F7F7F7F)
-        self.assertEqual(board._mask.br, 0x007F7F7F7F7F7F7F)
-        self.assertEqual(board._mask.b, 0x00FFFFFFFFFFFFFF)
-        self.assertEqual(board._mask.bl, 0x00FEFEFEFEFEFEFE)
-        self.assertEqual(board._mask.l, 0xFEFEFEFEFEFEFEFE)
-        self.assertEqual(board._mask.ul, 0xFEFEFEFEFEFEFE00)
 
     def test_board_size_4_get_legal_moves_bits(self):
         board = Board(4)
