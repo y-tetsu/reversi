@@ -187,6 +187,20 @@ class Board(AbstractBoard):
         """
         return self._board[y][x] == d[c.blank]
 
+    def _is_black(self, x, y):
+        """_is_black
+
+               座標上に黒が置かれている場合True
+        """
+        return self._board[y][x] == d[c.black]
+
+    def _is_white(self, x, y):
+        """_is_white
+
+               座標上に白が置かれている場合True
+        """
+        return self._board[y][x] == d[c.white]
+
     def _is_same_color(self, x, y, color):
         """_is_same_color
 
@@ -274,9 +288,9 @@ class Board(AbstractBoard):
         put = 1 << size * size - 1
         for y in range(self.size):
             for x in range(self.size):
-                if self._board[y][x] == d[c.black]:
+                if self._is_black(x, y):
                     black_bitboard |= put
-                if self._board[y][x] == d[c.white]:
+                if self._is_white(x, y):
                     white_bitboard |= put
                 put >>= 1
 

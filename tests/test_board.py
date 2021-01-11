@@ -1689,6 +1689,18 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(board._is_blank(1, 1))
         self.assertFalse(board._is_blank(2, 1))
 
+    def test_board_is_black(self):
+        board = Board(4)
+        self.assertFalse(board._is_black(0, 0))
+        self.assertFalse(board._is_black(1, 1))
+        self.assertTrue(board._is_black(2, 1))
+
+    def test_board_is_white(self):
+        board = Board(4)
+        self.assertFalse(board._is_white(0, 0))
+        self.assertTrue(board._is_white(1, 1))
+        self.assertFalse(board._is_white(2, 1))
+
     def test_board_is_same_color(self):
         board = Board(4)
         self.assertFalse(board._is_same_color(0, 0, 'black'))
