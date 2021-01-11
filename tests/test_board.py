@@ -54,11 +54,11 @@ class TestBoard(unittest.TestCase):
         for size in range(min_size, max_size+1, step):
             center1, center2 = size // 2, (size // 2) - 1
             board = Board(size)
-            board_ini = [[d[c.blank] for _ in range(size)] for _ in range(size)]
-            board_ini[center1][center2] = d[c.black]
-            board_ini[center2][center1] = d[c.black]
-            board_ini[center1][center1] = d[c.white]
-            board_ini[center2][center2] = d[c.white]
+            board_ini = [[d.blank for _ in range(size)] for _ in range(size)]
+            board_ini[center1][center2] = d.black
+            board_ini[center2][center1] = d.black
+            board_ini[center1][center1] = d.white
+            board_ini[center2][center2] = d.white
             self.assertEqual(board._board, board_ini)
 
     def test_bitboard_initial_board(self):
@@ -122,7 +122,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_legal_moves(self):
         board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
 
         board._board = [
             [blank, blank, blank, blank],
@@ -201,7 +201,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_legal_moves(self):
         board = Board(8)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
         legal_moves = board.get_legal_moves(c.black)
         self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
 
@@ -352,7 +352,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_legal_moves_bits(self):
         board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
 
         board._board = [
             [blank, blank, blank, blank],
@@ -387,7 +387,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_flippable_discs(self):
         board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
 
         board._board = [
             [blank, blank, blank, blank],
@@ -482,7 +482,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_flippable_discs(self):
         board = Board(8)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
 
         self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
         self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 3)])
@@ -836,7 +836,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_8_get_flippable_discs_in_direction(self):
         board = Board(8)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
         board._board = [
             [blank, blank, blank, blank, blank, blank, blank, blank],
             [blank, blank, blank, blank, blank, blank, blank, blank],
@@ -933,12 +933,12 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board._black_score, 2)
             self.assertEqual(board._white_score, 2)
 
-            board._board[0][0] = d[c.white]
+            board._board[0][0] = d.white
             board.update_score()
             self.assertEqual(board._black_score, 2)
             self.assertEqual(board._white_score, 3)
 
-            board._board[0][0] = d[c.black]
+            board._board[0][0] = d.black
             board.update_score()
             self.assertEqual(board._black_score, 3)
             self.assertEqual(board._white_score, 2)
@@ -982,7 +982,7 @@ class TestBoard(unittest.TestCase):
 
     def test_board_size_4_get_bit_count(self):
         board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        blank, black, white = d.blank, d.black, d.white
         board._board = [
             [blank, blank, blank, blank],
             [blank, black, black, blank],
