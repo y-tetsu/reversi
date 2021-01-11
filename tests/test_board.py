@@ -1019,19 +1019,23 @@ class TestBoard(unittest.TestCase):
             board = board_class(size)
             self.assertEqual(board.get_bitboard_info(), (0x0240, 0x0420))
 
-    def test_board_size_8_play_result(self):
-        board = Board()
-        board.put_disc(c.black, 5, 4)
-        board.put_disc(c.white, 5, 5)
-        board.put_disc(c.black, 4, 5)
-        board.put_disc(c.white, 3, 5)
-        board.put_disc(c.black, 2, 6)
-        board.put_disc(c.white, 5, 3)
-        board.put_disc(c.black, 6, 2)
-        board.put_disc(c.white, 3, 6)
-        board.put_disc(c.black, 2, 2)
+    def test_board_undo(self):
+        for board_class in self.board_classes:
+            board = board_class()
+            with self.assertRaises(IndexError):
+                board.undo()
 
-        board_str = """   a b c d e f g h
+            board.put_disc(c.black, 5, 4)
+            board.put_disc(c.white, 5, 5)
+            board.put_disc(c.black, 4, 5)
+            board.put_disc(c.white, 3, 5)
+            board.put_disc(c.black, 2, 6)
+            board.put_disc(c.white, 5, 3)
+            board.put_disc(c.black, 6, 2)
+            board.put_disc(c.white, 3, 6)
+            board.put_disc(c.black, 2, 2)
+
+            board_str = """   a b c d e f g h
  1□□□□□□□□
  2□□□□□□□□
  3□□〇□□□〇□
@@ -1041,112 +1045,9 @@ class TestBoard(unittest.TestCase):
  7□□〇●□□□□
  8□□□□□□□□
 """
+            self.assertEqual(str(board), board_str)
 
-        board_ret = [[d[c.blank] for _ in range(8)] for _ in range(8)]
-        board_ret[2][2] = d[c.black]
-        board_ret[2][6] = d[c.black]
-        board_ret[3][3] = d[c.black]
-        board_ret[3][4] = d[c.white]
-        board_ret[3][5] = d[c.black]
-        board_ret[4][3] = d[c.white]
-        board_ret[4][4] = d[c.black]
-        board_ret[4][5] = d[c.white]
-        board_ret[5][3] = d[c.white]
-        board_ret[5][4] = d[c.white]
-        board_ret[5][5] = d[c.white]
-        board_ret[6][2] = d[c.black]
-        board_ret[6][3] = d[c.white]
-
-        board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
-        board_info_ret[2][2] = 1
-        board_info_ret[2][6] = 1
-        board_info_ret[3][3] = 1
-        board_info_ret[3][4] = -1
-        board_info_ret[3][5] = 1
-        board_info_ret[4][3] = -1
-        board_info_ret[4][4] = 1
-        board_info_ret[4][5] = -1
-        board_info_ret[5][3] = -1
-        board_info_ret[5][4] = -1
-        board_info_ret[5][5] = -1
-        board_info_ret[6][2] = 1
-        board_info_ret[6][3] = -1
-
-        self.assertEqual(str(board), board_str)
-        self.assertEqual(board._board, board_ret)
-        self.assertEqual(board.get_board_info(), board_info_ret)
-        self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
-        self.assertEqual(board._black_score, 6)
-        self.assertEqual(board._white_score, 7)
-
-    def test_bitboard_size_8_play_result(self):
-        board = BitBoard()
-        board.put_disc(c.black, 5, 4)
-        board.put_disc(c.white, 5, 5)
-        board.put_disc(c.black, 4, 5)
-        board.put_disc(c.white, 3, 5)
-        board.put_disc(c.black, 2, 6)
-        board.put_disc(c.white, 5, 3)
-        board.put_disc(c.black, 6, 2)
-        board.put_disc(c.white, 3, 6)
-        board.put_disc(c.black, 2, 2)
-
-        board_str = """   a b c d e f g h
- 1□□□□□□□□
- 2□□□□□□□□
- 3□□〇□□□〇□
- 4□□□〇●〇□□
- 5□□□●〇●□□
- 6□□□●●●□□
- 7□□〇●□□□□
- 8□□□□□□□□
-"""
-        board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
-        board_info_ret[2][2] = 1
-        board_info_ret[2][6] = 1
-        board_info_ret[3][3] = 1
-        board_info_ret[3][4] = -1
-        board_info_ret[3][5] = 1
-        board_info_ret[4][3] = -1
-        board_info_ret[4][4] = 1
-        board_info_ret[4][5] = -1
-        board_info_ret[5][3] = -1
-        board_info_ret[5][4] = -1
-        board_info_ret[5][5] = -1
-        board_info_ret[6][2] = 1
-        board_info_ret[6][3] = -1
-
-        self.assertEqual(str(board), board_str)
-        self.assertEqual(board.get_board_info(), board_info_ret)
-        self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
-        self.assertEqual(board._black_score, 6)
-        self.assertEqual(board._white_score, 7)
-
-    def test_board_size_8_undo(self):
-        board = Board()
-        board.put_disc(c.black, 5, 4)
-        board.put_disc(c.white, 5, 5)
-        board.put_disc(c.black, 4, 5)
-        board.put_disc(c.white, 3, 5)
-        board.put_disc(c.black, 2, 6)
-        board.put_disc(c.white, 5, 3)
-        board.put_disc(c.black, 6, 2)
-        board.put_disc(c.white, 3, 6)
-        board.put_disc(c.black, 2, 2)
-
-        board_str = """   a b c d e f g h
- 1□□□□□□□□
- 2□□□□□□□□
- 3□□〇□□□〇□
- 4□□□〇●〇□□
- 5□□□●〇●□□
- 6□□□●●●□□
- 7□□〇●□□□□
- 8□□□□□□□□
-"""
-        self.assertEqual(str(board), board_str)
-
-        board_str = """   a b c d e f g h
+            board_str = """   a b c d e f g h
  1□□□□□□□□
  2□□□□□□□□
  3□□□□□□〇□
@@ -1156,26 +1057,23 @@ class TestBoard(unittest.TestCase):
  7□□〇●□□□□
  8□□□□□□□□
 """
-        board.undo()
-        self.assertEqual(str(board), board_str)
-
-        board = Board()
-        with self.assertRaises(IndexError):
             board.undo()
+            self.assertEqual(str(board), board_str)
 
-    def test_bitboard_size_8_undo(self):
-        board = BitBoard()
-        board.put_disc(c.black, 5, 4)
-        board.put_disc(c.white, 5, 5)
-        board.put_disc(c.black, 4, 5)
-        board.put_disc(c.white, 3, 5)
-        board.put_disc(c.black, 2, 6)
-        board.put_disc(c.white, 5, 3)
-        board.put_disc(c.black, 6, 2)
-        board.put_disc(c.white, 3, 6)
-        board.put_disc(c.black, 2, 2)
+    def test_board_play_result(self):
+        for board_class in self.board_classes:
+            board = board_class()
+            board.put_disc(c.black, 5, 4)
+            board.put_disc(c.white, 5, 5)
+            board.put_disc(c.black, 4, 5)
+            board.put_disc(c.white, 3, 5)
+            board.put_disc(c.black, 2, 6)
+            board.put_disc(c.white, 5, 3)
+            board.put_disc(c.black, 6, 2)
+            board.put_disc(c.white, 3, 6)
+            board.put_disc(c.black, 2, 2)
 
-        board_str = """   a b c d e f g h
+            board_str = """   a b c d e f g h
  1□□□□□□□□
  2□□□□□□□□
  3□□〇□□□〇□
@@ -1185,24 +1083,26 @@ class TestBoard(unittest.TestCase):
  7□□〇●□□□□
  8□□□□□□□□
 """
-        self.assertEqual(str(board), board_str)
+            board_info_ret = [[0 for _ in range(8)] for _ in range(8)]
+            board_info_ret[2][2] = 1
+            board_info_ret[2][6] = 1
+            board_info_ret[3][3] = 1
+            board_info_ret[3][4] = -1
+            board_info_ret[3][5] = 1
+            board_info_ret[4][3] = -1
+            board_info_ret[4][4] = 1
+            board_info_ret[4][5] = -1
+            board_info_ret[5][3] = -1
+            board_info_ret[5][4] = -1
+            board_info_ret[5][5] = -1
+            board_info_ret[6][2] = 1
+            board_info_ret[6][3] = -1
 
-        board_str = """   a b c d e f g h
- 1□□□□□□□□
- 2□□□□□□□□
- 3□□□□□□〇□
- 4□□□●●〇□□
- 5□□□●〇●□□
- 6□□□●●●□□
- 7□□〇●□□□□
- 8□□□□□□□□
-"""
-        board.undo()
-        self.assertEqual(str(board), board_str)
-
-        board = BitBoard()
-        with self.assertRaises(IndexError):
-            board.undo()
+            self.assertEqual(str(board), board_str)
+            self.assertEqual(board.get_board_info(), board_info_ret)
+            self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
+            self.assertEqual(board._black_score, 6)
+            self.assertEqual(board._white_score, 7)
 
     def test_board_random_play(self):
         class TestPlayer(Player):
