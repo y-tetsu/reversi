@@ -109,6 +109,757 @@ class TestBoard(unittest.TestCase):
             self.assertTrue(board._is_invalid_size(any_invalid_value))
             self.assertFalse(board._is_invalid_size(any_valid_value))
 
+    def test_board_str(self):
+        board_str = """   a b c d e f g h
+ 1□□□□□□□□
+ 2□□□□□□□□
+ 3□□□□□□□□
+ 4□□□●〇□□□
+ 5□□□〇●□□□
+ 6□□□□□□□□
+ 7□□□□□□□□
+ 8□□□□□□□□
+"""
+        for board_class in self.board_classes:
+            board = board_class()
+            self.assertEqual(str(board), board_str)
+
+    def test_board_size_4_get_legal_moves(self):
+        board = Board(4)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, black, black, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(3, 2), (2, 3), (3, 3)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(0, 0), (2, 0), (0, 2)])
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, white, white, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(1, 0), (3, 0), (3, 2)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(0, 2), (0, 3), (1, 3)])
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, white, black, blank],
+            [blank, black, black, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (1, 0), (0, 1)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(3, 1), (1, 3), (3, 3)])
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, white, black, blank],
+            [blank, white, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 1), (0, 3), (2, 3)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(2, 0), (3, 0), (3, 1)])
+
+    def test_bitboard_size_4_get_legal_moves(self):
+        board = BitBoard(4)
+
+        board._black_bitboard = 0x640
+        board._white_bitboard = 0x020
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(3, 2), (2, 3), (3, 3)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(0, 0), (2, 0), (0, 2)])
+
+        board._black_bitboard = 0x040
+        board._white_bitboard = 0x620
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(1, 0), (3, 0), (3, 2)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(0, 2), (0, 3), (1, 3)])
+
+        board._black_bitboard = 0x260
+        board._white_bitboard = 0x400
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (1, 0), (0, 1)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(3, 1), (1, 3), (3, 3)])
+
+        board._black_bitboard = 0x200
+        board._white_bitboard = 0x460
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 1), (0, 3), (2, 3)])
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(2, 0), (3, 0), (3, 1)])
+
+    def test_board_size_8_get_legal_moves(self):
+        board = Board(8)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
+
+        # pattern1
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, black, white, white, black, white, blank],
+            [blank, white, white, white, white, blank, white, blank],
+            [blank, white, blank, white, white, white, white, blank],
+            [blank, white, black, white, white, black, white, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (2, 0), (3, 0), (4, 0), (5, 0), (7, 0), (0, 2), (7, 2), (0, 3), (5, 3), (7, 3), (0, 4), (2, 4), (7, 4), (0, 5), (7, 5), (0, 7), (2, 7), (3, 7), (4, 7), (5, 7), (7, 7)])  # noqa: E501
+
+        # pattern2
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, white, white, blank, blank, white, blank, white],
+            [blank, white, white, white, blank, blank, white, white],
+            [blank, white, white, white, white, blank, blank, black],
+            [blank, white, white, white, white, white, blank, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, white, white, white, white, white, white],
+            [black, blank, black, black, black, black, black, black],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (2, 0), (4, 0), (7, 0), (0, 1), (3, 1), (0, 2), (4, 2), (5, 2), (0, 3), (5, 3), (6, 3), (0, 4), (6, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
+
+        # pattern3
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [black, blank, black, blank, blank, black, black, blank],
+            [black, black, blank, blank, black, black, black, blank],
+            [white, blank, blank, black, black, black, black, blank],
+            [blank, blank, black, black, black, black, black, blank],
+            [blank, black, black, black, black, black, black, blank],
+            [black, black, black, black, black, black, black, blank],
+            [white, white, white, white, white, white, blank, white],
+        ]
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(0, 0), (3, 0), (5, 0), (7, 0), (4, 1), (7, 1), (2, 2), (3, 2), (7, 2), (1, 3), (2, 3), (7, 3), (0, 4), (1, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
+
+        # pattern4
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, black],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, white, white, white, white, white, black],
+            [blank, blank, white, white, white, white, white, black],
+            [blank, blank, blank, white, white, white, white, black],
+            [blank, white, blank, blank, white, white, white, black],
+            [blank, blank, white, blank, blank, white, white, black],
+            [blank, white, white, black, blank, blank, white, black],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (0, 2), (1, 3), (0, 4), (2, 4), (2, 5), (3, 5), (3, 6), (4, 6), (0, 7), (4, 7), (5, 7)])  # noqa: E501
+
+        # pattern5
+        board._board = [
+            [black, blank, black, black, black, black, black, black],
+            [blank, white, white, white, white, white, white, white],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, white, white, white, white, blank, blank],
+            [blank, white, white, white, white, blank, blank, black],
+            [blank, white, white, white, blank, blank, white, white],
+            [blank, white, white, blank, blank, white, blank, white],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 2), (7, 2), (0, 3), (6, 3), (7, 3), (0, 4), (5, 4), (6, 4), (0, 5), (4, 5), (5, 5), (0, 6), (3, 6), (0, 7), (2, 7), (4, 7), (7, 7)])  # noqa: E501
+
+        # pattern6
+        board._board = [
+            [black, blank, blank, blank, blank, blank, blank, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [black, white, white, white, white, white, white, blank],
+            [black, white, white, white, white, white, blank, blank],
+            [black, white, white, white, white, blank, blank, blank],
+            [black, white, white, white, blank, blank, white, blank],
+            [black, white, white, blank, blank, white, blank, blank],
+            [black, white, blank, blank, black, white, white, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (7, 2), (6, 3), (5, 4), (7, 4), (4, 5), (5, 5), (3, 6), (4, 6), (2, 7), (3, 7), (7, 7)])  # noqa: E501
+
+        # pattern7
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, white, white, white, blank, blank],
+            [blank, blank, blank, white, white, white, blank, blank],
+            [blank, blank, blank, white, black, white, blank, blank],
+            [blank, blank, blank, black, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(3, 2), (4, 2), (2, 3), (6, 3), (2, 5), (6, 5)])
+
+    def test_bitboard_size_8_get_legal_moves(self):
+        board = BitBoard(8)
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
+
+        # pattern1
+        board._black_bitboard = 0x0000240000240000
+        board._white_bitboard = 0x007E5A7A5E5A7E00
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (2, 0), (3, 0), (4, 0), (5, 0), (7, 0), (0, 2), (7, 2), (0, 3), (5, 3), (7, 3), (0, 4), (2, 4), (7, 4), (0, 5), (7, 5), (0, 7), (2, 7), (3, 7), (4, 7), (5, 7), (7, 7)])  # noqa: E501
+
+        # pattern2
+        board._black_bitboard = 0x00000001000000BF
+        board._white_bitboard = 0x006573787C7E7F00
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (2, 0), (4, 0), (7, 0), (0, 1), (3, 1), (0, 2), (4, 2), (5, 2), (0, 3), (5, 3), (6, 3), (0, 4), (6, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
+
+        # pattern3
+        board._black_bitboard = 0x00A6CE1E3E7EFE00
+        board._white_bitboard = 0x00000080000000FD
+        legal_moves = board.get_legal_moves(c.white)
+        self.assertEqual(legal_moves, [(0, 0), (3, 0), (5, 0), (7, 0), (4, 1), (7, 1), (2, 2), (3, 2), (7, 2), (1, 3), (2, 3), (7, 3), (0, 4), (1, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
+
+        # pattern4
+        board._black_bitboard = 0x0100010101010111
+        board._white_bitboard = 0x007E7E3E1E4E2662
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (0, 2), (1, 3), (0, 4), (2, 4), (2, 5), (3, 5), (3, 6), (4, 6), (0, 7), (4, 7), (5, 7)])  # noqa: E501
+
+        # pattern5
+        board._black_bitboard = 0xBF00000001000000
+        board._white_bitboard = 0x007F7E7C78736500
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(0, 2), (7, 2), (0, 3), (6, 3), (7, 3), (0, 4), (5, 4), (6, 4), (0, 5), (4, 5), (5, 5), (0, 6), (3, 6), (0, 7), (2, 7), (4, 7), (7, 7)])  # noqa: E501
+
+        # pattern6
+        board._black_bitboard = 0x8000808080808088
+        board._white_bitboard = 0x007E7E7C78726446
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (7, 2), (6, 3), (5, 4), (7, 4), (4, 5), (5, 5), (3, 6), (4, 6), (2, 7), (3, 7), (7, 7)])  # noqa: E501
+
+        # pattern7
+        board._black_bitboard = 0x0000000000081000
+        board._white_bitboard = 0x0000001C1C140000
+        legal_moves = board.get_legal_moves(c.black)
+        self.assertEqual(legal_moves, [(3, 2), (4, 2), (2, 3), (6, 3), (2, 5), (6, 5)])
+
+    def test_board_size_4_get_legal_moves_bits(self):
+        board = Board(4)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, black, black, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(legal_moves_bits, 0x0013)
+        legal_moves_bits = board.get_legal_moves_bits(c.white)
+        self.assertEqual(legal_moves_bits, 0xA080)
+
+    def test_bitboard_size_4_get_legal_moves_bits(self):
+        board = BitBoard(4)
+
+        board._black_bitboard = 0x640
+        board._white_bitboard = 0x020
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(legal_moves_bits, 0x0013)
+        legal_moves_bits = board.get_legal_moves_bits(c.white)
+        self.assertEqual(legal_moves_bits, 0xA080)
+
+    def test_board_size_8_get_legal_moves_bits(self):
+        board = Board(8)
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(legal_moves_bits, 0x0000102004080000)
+
+    def test_bitboard_size_8_get_legal_moves_bits(self):
+        board = BitBoard(8)
+        legal_moves_bits = board.get_legal_moves_bits(c.black)
+        self.assertEqual(legal_moves_bits, 0x0000102004080000)
+
+    def test_board_size_4_get_flippable_discs(self):
+        board = Board(4)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, black, black, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 3), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, white, white, blank],
+            [blank, black, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 3), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, white, black, blank],
+            [blank, black, black, blank],
+            [blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 3), [(2, 2)])
+
+        board._board = [
+            [blank, blank, blank, blank],
+            [blank, white, black, blank],
+            [blank, white, white, blank],
+            [blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
+
+    def test_bitboard_size_4_get_flippable_discs(self):
+        board = BitBoard(4)
+
+        board._black_bitboard = 0x640
+        board._white_bitboard = 0x020
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 3), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
+
+        board._black_bitboard = 0x040
+        board._white_bitboard = 0x620
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 3), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
+
+        board._black_bitboard = 0x260
+        board._white_bitboard = 0x400
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 3), [(2, 2)])
+
+        board._black_bitboard = 0x200
+        board._white_bitboard = 0x460
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
+
+    def test_board_size_8_get_flippable_discs(self):
+        board = Board(8)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 4)])
+
+        # pattern1
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, black, white, white, black, white, blank],
+            [blank, white, white, white, white, blank, white, blank],
+            [blank, white, blank, white, white, white, white, blank],
+            [blank, white, black, white, white, black, white, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(5, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(2, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(6, 6)])
+
+        # pattern2
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, white, white, blank, blank, white, blank, white],
+            [blank, white, white, white, blank, blank, white, white],
+            [blank, white, white, white, white, blank, blank, black],
+            [blank, white, white, white, white, white, blank, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, white, white, white, white, white, white],
+            [black, blank, black, black, black, black, black, black],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(7, 1), (7, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 1), [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 3), (2, 4), (3, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4), (4, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 2), [(4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4), (2, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4), (5, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4), (4, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(5, 5), (4, 6), (6, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 6), (7, 6)])
+
+        # pattern3
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [black, blank, black, blank, blank, black, black, blank],
+            [black, black, blank, blank, black, black, black, blank],
+            [white, blank, blank, black, black, black, black, blank],
+            [blank, blank, black, black, black, black, black, blank],
+            [blank, black, black, black, black, black, black, blank],
+            [black, black, black, black, black, black, black, blank],
+            [white, white, white, white, white, white, blank, white],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(0, 1), (0, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1), (1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 5, 0), [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 4, 1), [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 1), [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 2), [(3, 3), (4, 4), (5, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 2), [(3, 3), (3, 4), (3, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 2), [(6, 3), (5, 4), (4, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(2, 4), (3, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 3), [(2, 4), (2, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 3), [(6, 4), (5, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 4), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 4), [(1, 5), (1, 6), (2, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 4), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 5), [(0, 6), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 5), [(6, 6)])
+
+        # pattern4
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, black],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, white, white, white, white, white, black],
+            [blank, blank, white, white, white, white, white, black],
+            [blank, blank, blank, white, white, white, white, black],
+            [blank, white, blank, blank, white, white, white, black],
+            [blank, blank, white, blank, blank, white, white, black],
+            [blank, white, white, black, blank, blank, white, black],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(3, 1), (4, 2), (5, 3), (6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1), (5, 2), (6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 3), [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(3, 4), (4, 4), (5, 4), (6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 4), (4, 3), (5, 2), (6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 5), [(4, 5), (5, 5), (6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(4, 5), (5, 4), (6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(5, 6), (6, 6), (5, 5), (6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 7), (2, 7)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(5, 6), (6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(6, 7), (6, 6)])
+
+        # pattern5
+        board._board = [
+            [black, blank, black, black, black, black, black, black],
+            [blank, white, white, white, white, white, white, white],
+            [blank, white, white, white, white, white, white, blank],
+            [blank, white, white, white, white, white, blank, blank],
+            [blank, white, white, white, white, blank, blank, black],
+            [blank, white, white, white, blank, blank, white, white],
+            [blank, white, white, blank, blank, white, blank, white],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 1), (7, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 2), (2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 2), (4, 1), (6, 2), (6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(6, 2), (5, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 3), (2, 2), (3, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(5, 3), (5, 2), (5, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(5, 3), (4, 2), (3, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 4), (2, 3), (3, 2), (4, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 4), (4, 3), (4, 2), (4, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(4, 4), (3, 3), (2, 2), (1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 6), [(1, 5), (2, 4), (3, 3), (4, 2), (5, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(3, 5), (3, 4), (3, 3), (3, 2), (3, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 6), (2, 5), (3, 4), (4, 3), (5, 2), (6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 6), (2, 5), (2, 4), (2, 3), (2, 2), (2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(5, 6), (6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(7, 6), (7, 5)])
+
+        # pattern6
+        board._board = [
+            [black, blank, blank, blank, blank, blank, blank, blank],
+            [blank, white, white, white, white, white, white, blank],
+            [black, white, white, white, white, white, white, blank],
+            [black, white, white, white, white, white, blank, blank],
+            [black, white, white, white, white, blank, blank, blank],
+            [black, white, white, white, blank, blank, white, blank],
+            [black, white, white, blank, blank, white, blank, blank],
+            [black, white, blank, blank, black, white, white, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1), (1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1), (2, 2), (1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(4, 1), (3, 2), (2, 3), (1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 0), [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 2), (5, 2), (4, 2), (3, 2), (2, 2), (1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 3), (4, 3), (3, 3), (2, 3), (1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(4, 4), (3, 4), (2, 4), (1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(3, 5), (2, 5), (1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(4, 4), (3, 3), (2, 2), (1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(2, 6), (1, 6), (2, 5), (1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(3, 5), (2, 4), (1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(1, 7), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(2, 6), (1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(6, 7), (5, 7)])
+
+        # pattern7
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, white, white, white, blank, blank],
+            [blank, blank, blank, white, white, white, blank, blank],
+            [blank, blank, blank, white, black, white, blank, blank],
+            [blank, blank, blank, black, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3), (3, 4), (3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 5), [(5, 5)])
+
+    def test_bitboard_size_8_get_flippable_discs(self):
+        board = BitBoard(8)
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 4)])
+
+        # pattern1
+        board._black_bitboard = 0x0000240000240000
+        board._white_bitboard = 0x007E5A7A5E5A7E00
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(5, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(2, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(6, 6)])
+
+        # pattern2
+        board._black_bitboard = 0x00000001000000BF
+        board._white_bitboard = 0x006573787C7E7F00
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(7, 1), (7, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 1), [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 3), (2, 4), (3, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4), (4, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 2), [(4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4), (2, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4), (5, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4), (4, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(5, 5), (6, 5), (4, 6), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 6), (7, 6)])
+
+        # pattern3
+        board._black_bitboard = 0x00A6CE1E3E7EFE00
+        board._white_bitboard = 0x00000080000000FD
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(0, 1), (0, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1), (1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.white, 5, 0), [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 4, 1), [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 1), [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 2), [(3, 3), (4, 4), (5, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 3, 2), [(3, 3), (3, 4), (3, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 2), [(6, 3), (5, 4), (4, 5), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(2, 4), (3, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 2, 3), [(2, 4), (2, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 3), [(6, 4), (5, 5), (4, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 4), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 1, 4), [(1, 5), (2, 5), (1, 6), (3, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 4), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 0, 5), [(0, 6), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.white, 7, 5), [(6, 6)])
+
+        # pattern4
+        board._black_bitboard = 0x0100010101010111
+        board._white_bitboard = 0x007E7E3E1E4E2662
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(3, 1), (4, 2), (5, 3), (6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1), (5, 2), (6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(6, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 1, 3), [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(3, 4), (4, 4), (5, 4), (6, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(6, 1), (5, 2), (4, 3), (3, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 5), [(4, 5), (5, 5), (6, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(6, 3), (5, 4), (4, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(6, 4), (5, 5), (5, 6), (6, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 7), (2, 7)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(6, 6), (6, 7)])
+
+        # pattern5
+        board._black_bitboard = 0xBF00000001000000
+        board._white_bitboard = 0x007F7E7C78736500
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 1), (7, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(2, 1), (1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(4, 1), (6, 1), (5, 2), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(5, 1), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(3, 1), (2, 2), (1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(5, 1), (5, 2), (5, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(3, 1), (4, 2), (5, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(4, 1), (3, 2), (2, 3), (1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 1), (4, 2), (4, 3), (4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(1, 1), (2, 2), (3, 3), (4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 6), [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(7, 5), (7, 6)])
+
+        # pattern6
+        board._black_bitboard = 0x8000808080808088
+        board._white_bitboard = 0x007E7E7C78726446
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(1, 1)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1), (1, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1), (2, 2), (1, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(4, 1), (3, 2), (2, 3), (1, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 0), [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(1, 3), (2, 3), (3, 3), (4, 3), (5, 3)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(1, 4), (2, 4), (3, 4), (4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(1, 5), (2, 5), (3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(1, 1), (2, 2), (3, 3), (4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(1, 4), (2, 5), (1, 6), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(1, 3), (2, 4), (3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(1, 6), (1, 7)])
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(1, 5), (2, 6)])
+        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(5, 7), (6, 7)])
+
+        # pattern7
+        board._black_bitboard = 0x0000000000081000
+        board._white_bitboard = 0x0000001C1C140000
+        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3), (3, 4), (3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4)])
+        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 5)])
+        self.assertEqual(board.get_flippable_discs(c.black, 6, 5), [(5, 5)])
+
+    def test_board_size_8_get_flippable_discs_in_direction(self):
+        board = Board(8)
+        blank, black, white = d[c.blank], d[c.black], d[c.white]
+        board._board = [
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+            [blank, blank, blank, white, white, white, blank, blank],
+            [blank, blank, blank, white, white, white, blank, blank],
+            [blank, blank, blank, white, black, white, blank, blank],
+            [blank, blank, blank, black, blank, blank, blank, blank],
+            [blank, blank, blank, blank, blank, blank, blank, blank],
+        ]
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (1, 0)), [])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (1, -1)), [])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (0, -1)), [])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (-1, -1)), [])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (-1, 0)), [])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (-1, 1)), [])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (0, 1)), [(3, 3), (3, 4), (3, 5)])
+        self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (1, 1)), [])
+
     def test_board_size_4_put_disc(self):
         board = Board(4)
 
@@ -412,125 +1163,6 @@ class TestBoard(unittest.TestCase):
         with self.assertRaises(IndexError):
             board.undo()
 
-    def test_board_size_4_get_legal_moves_bits(self):
-        board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, black, black, blank],
-            [blank, black, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(legal_moves_bits, 0x0013)
-        legal_moves_bits = board.get_legal_moves_bits(c.white)
-        self.assertEqual(legal_moves_bits, 0xA080)
-
-    def test_board_size_4_get_legal_moves(self):
-        board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, black, black, blank],
-            [blank, black, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(3, 2), (2, 3), (3, 3)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(0, 0), (2, 0), (0, 2)])
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, white, white, blank],
-            [blank, black, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(1, 0), (3, 0), (3, 2)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(0, 2), (0, 3), (1, 3)])
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, white, black, blank],
-            [blank, black, black, blank],
-            [blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (1, 0), (0, 1)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(3, 1), (1, 3), (3, 3)])
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, white, black, blank],
-            [blank, white, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 1), (0, 3), (2, 3)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(2, 0), (3, 0), (3, 1)])
-
-    def test_board_size_4_get_flippable_discs(self):
-        board = Board(4)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, black, black, blank],
-            [blank, black, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 3), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, white, white, blank],
-            [blank, black, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 3), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, white, black, blank],
-            [blank, black, black, blank],
-            [blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 3), [(2, 2)])
-
-        board._board = [
-            [blank, blank, blank, blank],
-            [blank, white, black, blank],
-            [blank, white, white, blank],
-            [blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
-
     def test_board_size_4_get_bit_count(self):
         board = Board(4)
         blank, black, white = d[c.blank], d[c.black], d[c.white]
@@ -546,405 +1178,10 @@ class TestBoard(unittest.TestCase):
         legal_moves_bits = board.get_legal_moves_bits(c.white)
         self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
 
-    def test_board_size_8_get_legal_moves_bits(self):
-        board = Board(8)
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(legal_moves_bits, 0x0000102004080000)
-
-    def test_board_size_8_get_legal_moves(self):
-        board = Board(8)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
-
-        # pattern1
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, black, white, white, black, white, blank],
-            [blank, white, white, white, white, blank, white, blank],
-            [blank, white, blank, white, white, white, white, blank],
-            [blank, white, black, white, white, black, white, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (2, 0), (3, 0), (4, 0), (5, 0), (7, 0), (0, 2), (7, 2), (0, 3), (5, 3), (7, 3), (0, 4), (2, 4), (7, 4), (0, 5), (7, 5), (0, 7), (2, 7), (3, 7), (4, 7), (5, 7), (7, 7)])  # noqa: E501
-
-        # pattern2
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, white, white, blank, blank, white, blank, white],
-            [blank, white, white, white, blank, blank, white, white],
-            [blank, white, white, white, white, blank, blank, black],
-            [blank, white, white, white, white, white, blank, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, white, white, white, white, white, white],
-            [black, blank, black, black, black, black, black, black],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (2, 0), (4, 0), (7, 0), (0, 1), (3, 1), (0, 2), (4, 2), (5, 2), (0, 3), (5, 3), (6, 3), (0, 4), (6, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
-
-        # pattern3
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [black, blank, black, blank, blank, black, black, blank],
-            [black, black, blank, blank, black, black, black, blank],
-            [white, blank, blank, black, black, black, black, blank],
-            [blank, blank, black, black, black, black, black, blank],
-            [blank, black, black, black, black, black, black, blank],
-            [black, black, black, black, black, black, black, blank],
-            [white, white, white, white, white, white, blank, white],
-        ]
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(0, 0), (3, 0), (5, 0), (7, 0), (4, 1), (7, 1), (2, 2), (3, 2), (7, 2), (1, 3), (2, 3), (7, 3), (0, 4), (1, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
-
-        # pattern4
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, black],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, white, white, white, white, white, black],
-            [blank, blank, white, white, white, white, white, black],
-            [blank, blank, blank, white, white, white, white, black],
-            [blank, white, blank, blank, white, white, white, black],
-            [blank, blank, white, blank, blank, white, white, black],
-            [blank, white, white, black, blank, blank, white, black],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (0, 2), (1, 3), (0, 4), (2, 4), (2, 5), (3, 5), (3, 6), (4, 6), (0, 7), (4, 7), (5, 7)])  # noqa: E501
-
-        # pattern5
-        board._board = [
-            [black, blank, black, black, black, black, black, black],
-            [blank, white, white, white, white, white, white, white],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, white, white, white, white, blank, blank],
-            [blank, white, white, white, white, blank, blank, black],
-            [blank, white, white, white, blank, blank, white, white],
-            [blank, white, white, blank, blank, white, blank, white],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 2), (7, 2), (0, 3), (6, 3), (7, 3), (0, 4), (5, 4), (6, 4), (0, 5), (4, 5), (5, 5), (0, 6), (3, 6), (0, 7), (2, 7), (4, 7), (7, 7)])  # noqa: E501
-
-        # pattern6
-        board._board = [
-            [black, blank, blank, blank, blank, blank, blank, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [black, white, white, white, white, white, white, blank],
-            [black, white, white, white, white, white, blank, blank],
-            [black, white, white, white, white, blank, blank, blank],
-            [black, white, white, white, blank, blank, white, blank],
-            [black, white, white, blank, blank, white, blank, blank],
-            [black, white, blank, blank, black, white, white, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (7, 2), (6, 3), (5, 4), (7, 4), (4, 5), (5, 5), (3, 6), (4, 6), (2, 7), (3, 7), (7, 7)])  # noqa: E501
-
-        # pattern7
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, blank, blank, white, white, white, blank, blank],
-            [blank, blank, blank, white, white, white, blank, blank],
-            [blank, blank, blank, white, black, white, blank, blank],
-            [blank, blank, blank, black, blank, blank, blank, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-        ]
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(3, 2), (4, 2), (2, 3), (6, 3), (2, 5), (6, 5)])
-
-    def test_board_size_8_get_flippable_discs(self):
-        board = Board(8)
-        blank, black, white = d[c.blank], d[c.black], d[c.white]
-
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 4)])
-
-        # pattern1
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, black, white, white, black, white, blank],
-            [blank, white, white, white, white, blank, white, blank],
-            [blank, white, blank, white, white, white, white, blank],
-            [blank, white, black, white, white, black, white, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(5, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(2, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(6, 6)])
-
-        # pattern2
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, white, white, blank, blank, white, blank, white],
-            [blank, white, white, white, blank, blank, white, white],
-            [blank, white, white, white, white, blank, blank, black],
-            [blank, white, white, white, white, white, blank, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, white, white, white, white, white, white],
-            [black, blank, black, black, black, black, black, black],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(7, 1), (7, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 1), [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 3), (2, 4), (3, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4), (4, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 2), [(4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4), (2, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4), (5, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4), (4, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(5, 5), (4, 6), (6, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 6), (7, 6)])
-
-        # pattern3
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [black, blank, black, blank, blank, black, black, blank],
-            [black, black, blank, blank, black, black, black, blank],
-            [white, blank, blank, black, black, black, black, blank],
-            [blank, blank, black, black, black, black, black, blank],
-            [blank, black, black, black, black, black, black, blank],
-            [black, black, black, black, black, black, black, blank],
-            [white, white, white, white, white, white, blank, white],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(0, 1), (0, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1), (1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 5, 0), [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 4, 1), [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 1), [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 2), [(3, 3), (4, 4), (5, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 2), [(3, 3), (3, 4), (3, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 2), [(6, 3), (5, 4), (4, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(2, 4), (3, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 3), [(2, 4), (2, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 3), [(6, 4), (5, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 4), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 4), [(1, 5), (1, 6), (2, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 4), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 5), [(0, 6), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 5), [(6, 6)])
-
-        # pattern4
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, black],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, white, white, white, white, white, black],
-            [blank, blank, white, white, white, white, white, black],
-            [blank, blank, blank, white, white, white, white, black],
-            [blank, white, blank, blank, white, white, white, black],
-            [blank, blank, white, blank, blank, white, white, black],
-            [blank, white, white, black, blank, blank, white, black],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(3, 1), (4, 2), (5, 3), (6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1), (5, 2), (6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 3), [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(3, 4), (4, 4), (5, 4), (6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 4), (4, 3), (5, 2), (6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 5), [(4, 5), (5, 5), (6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(4, 5), (5, 4), (6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(5, 6), (6, 6), (5, 5), (6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 7), (2, 7)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(5, 6), (6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(6, 7), (6, 6)])
-
-        # pattern5
-        board._board = [
-            [black, blank, black, black, black, black, black, black],
-            [blank, white, white, white, white, white, white, white],
-            [blank, white, white, white, white, white, white, blank],
-            [blank, white, white, white, white, white, blank, blank],
-            [blank, white, white, white, white, blank, blank, black],
-            [blank, white, white, white, blank, blank, white, white],
-            [blank, white, white, blank, blank, white, blank, white],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 1), (7, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 2), (2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 2), (4, 1), (6, 2), (6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(6, 2), (5, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 3), (2, 2), (3, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(5, 3), (5, 2), (5, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(5, 3), (4, 2), (3, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 4), (2, 3), (3, 2), (4, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 4), (4, 3), (4, 2), (4, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(4, 4), (3, 3), (2, 2), (1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 6), [(1, 5), (2, 4), (3, 3), (4, 2), (5, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(3, 5), (3, 4), (3, 3), (3, 2), (3, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 6), (2, 5), (3, 4), (4, 3), (5, 2), (6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 6), (2, 5), (2, 4), (2, 3), (2, 2), (2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(5, 6), (6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(7, 6), (7, 5)])
-
-        # pattern6
-        board._board = [
-            [black, blank, blank, blank, blank, blank, blank, blank],
-            [blank, white, white, white, white, white, white, blank],
-            [black, white, white, white, white, white, white, blank],
-            [black, white, white, white, white, white, blank, blank],
-            [black, white, white, white, white, blank, blank, blank],
-            [black, white, white, white, blank, blank, white, blank],
-            [black, white, white, blank, blank, white, blank, blank],
-            [black, white, blank, blank, black, white, white, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1), (1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1), (2, 2), (1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(4, 1), (3, 2), (2, 3), (1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 0), [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 2), (5, 2), (4, 2), (3, 2), (2, 2), (1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 3), (4, 3), (3, 3), (2, 3), (1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(4, 4), (3, 4), (2, 4), (1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(3, 5), (2, 5), (1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(4, 4), (3, 3), (2, 2), (1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(2, 6), (1, 6), (2, 5), (1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(3, 5), (2, 4), (1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(1, 7), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(2, 6), (1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(6, 7), (5, 7)])
-
-        # pattern7
-        board._board = [
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-            [blank, blank, blank, white, white, white, blank, blank],
-            [blank, blank, blank, white, white, white, blank, blank],
-            [blank, blank, blank, white, black, white, blank, blank],
-            [blank, blank, blank, black, blank, blank, blank, blank],
-            [blank, blank, blank, blank, blank, blank, blank, blank],
-        ]
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3), (3, 4), (3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 5), [(5, 5)])
-
     def test_board_size_8_get_bit_count(self):
         board = Board(8)
         legal_moves_bits = board.get_legal_moves_bits(c.black)
         self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
-
-    def test_bitboard_size_4_get_legal_moves_bits(self):
-        board = BitBoard(4)
-
-        board._black_bitboard = 0x640
-        board._white_bitboard = 0x020
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(legal_moves_bits, 0x0013)
-        legal_moves_bits = board.get_legal_moves_bits(c.white)
-        self.assertEqual(legal_moves_bits, 0xA080)
-
-    def test_bitboard_size_4_get_legal_moves(self):
-        board = BitBoard(4)
-
-        board._black_bitboard = 0x640
-        board._white_bitboard = 0x020
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(3, 2), (2, 3), (3, 3)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(0, 0), (2, 0), (0, 2)])
-
-        board._black_bitboard = 0x040
-        board._white_bitboard = 0x620
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(1, 0), (3, 0), (3, 2)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(0, 2), (0, 3), (1, 3)])
-
-        board._black_bitboard = 0x260
-        board._white_bitboard = 0x400
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (1, 0), (0, 1)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(3, 1), (1, 3), (3, 3)])
-
-        board._black_bitboard = 0x200
-        board._white_bitboard = 0x460
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 1), (0, 3), (2, 3)])
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(2, 0), (3, 0), (3, 1)])
-
-    def test_bitboard_size_4_get_flippable_discs(self):
-        board = BitBoard(4)
-
-        board._black_bitboard = 0x640
-        board._white_bitboard = 0x020
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 3), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
-
-        board._black_bitboard = 0x040
-        board._white_bitboard = 0x620
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 2), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 3), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
-
-        board._black_bitboard = 0x260
-        board._white_bitboard = 0x400
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 3), [(2, 2)])
-
-        board._black_bitboard = 0x200
-        board._white_bitboard = 0x460
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(2, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
 
     def test_bitboard_size_4_get_bit_count(self):
         board = BitBoard(4)
@@ -955,206 +1192,6 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
         legal_moves_bits = board.get_legal_moves_bits(c.white)
         self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
-
-    def test_bitboard_size_8_get_legal_moves_bits(self):
-        board = BitBoard(8)
-        legal_moves_bits = board.get_legal_moves_bits(c.black)
-        self.assertEqual(legal_moves_bits, 0x0000102004080000)
-
-    def test_bitboard_size_8_get_legal_moves(self):
-        board = BitBoard(8)
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
-
-        # pattern1
-        board._black_bitboard = 0x0000240000240000
-        board._white_bitboard = 0x007E5A7A5E5A7E00
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (2, 0), (3, 0), (4, 0), (5, 0), (7, 0), (0, 2), (7, 2), (0, 3), (5, 3), (7, 3), (0, 4), (2, 4), (7, 4), (0, 5), (7, 5), (0, 7), (2, 7), (3, 7), (4, 7), (5, 7), (7, 7)])  # noqa: E501
-
-        # pattern2
-        board._black_bitboard = 0x00000001000000BF
-        board._white_bitboard = 0x006573787C7E7F00
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (2, 0), (4, 0), (7, 0), (0, 1), (3, 1), (0, 2), (4, 2), (5, 2), (0, 3), (5, 3), (6, 3), (0, 4), (6, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
-
-        # pattern3
-        board._black_bitboard = 0x00A6CE1E3E7EFE00
-        board._white_bitboard = 0x00000080000000FD
-        legal_moves = board.get_legal_moves(c.white)
-        self.assertEqual(legal_moves, [(0, 0), (3, 0), (5, 0), (7, 0), (4, 1), (7, 1), (2, 2), (3, 2), (7, 2), (1, 3), (2, 3), (7, 3), (0, 4), (1, 4), (7, 4), (0, 5), (7, 5)])  # noqa: E501
-
-        # pattern4
-        board._black_bitboard = 0x0100010101010111
-        board._white_bitboard = 0x007E7E3E1E4E2662
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (0, 2), (1, 3), (0, 4), (2, 4), (2, 5), (3, 5), (3, 6), (4, 6), (0, 7), (4, 7), (5, 7)])  # noqa: E501
-
-        # pattern5
-        board._black_bitboard = 0xBF00000001000000
-        board._white_bitboard = 0x007F7E7C78736500
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(0, 2), (7, 2), (0, 3), (6, 3), (7, 3), (0, 4), (5, 4), (6, 4), (0, 5), (4, 5), (5, 5), (0, 6), (3, 6), (0, 7), (2, 7), (4, 7), (7, 7)])  # noqa: E501
-
-        # pattern6
-        board._black_bitboard = 0x8000808080808088
-        board._white_bitboard = 0x007E7E7C78726446
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (7, 2), (6, 3), (5, 4), (7, 4), (4, 5), (5, 5), (3, 6), (4, 6), (2, 7), (3, 7), (7, 7)])  # noqa: E501
-
-        # pattern7
-        board._black_bitboard = 0x0000000000081000
-        board._white_bitboard = 0x0000001C1C140000
-        legal_moves = board.get_legal_moves(c.black)
-        self.assertEqual(legal_moves, [(3, 2), (4, 2), (2, 3), (6, 3), (2, 5), (6, 5)])
-
-    def test_bitboard_size_8_get_flippable_discs(self):
-        board = BitBoard(8)
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 4)])
-
-        # pattern1
-        board._black_bitboard = 0x0000240000240000
-        board._white_bitboard = 0x007E5A7A5E5A7E00
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(5, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(2, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(6, 6)])
-
-        # pattern2
-        board._black_bitboard = 0x00000001000000BF
-        board._white_bitboard = 0x006573787C7E7F00
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(7, 1), (7, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 1), [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 1), [(3, 2), (3, 3), (3, 4), (3, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 3), (2, 4), (3, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4), (4, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 2), [(4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(1, 4), (2, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 3), [(5, 4), (5, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4), (4, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(5, 5), (6, 5), (4, 6), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 5), [(6, 6), (7, 6)])
-
-        # pattern3
-        board._black_bitboard = 0x00A6CE1E3E7EFE00
-        board._white_bitboard = 0x00000080000000FD
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 0), [(0, 1), (0, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1), (1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.white, 5, 0), [(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 4, 1), [(4, 2), (4, 3), (4, 4), (4, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 1), [(6, 2), (5, 3), (4, 4), (3, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 2), [(3, 3), (4, 4), (5, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 3, 2), [(3, 3), (3, 4), (3, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 2), [(6, 3), (5, 4), (4, 5), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 3), [(2, 4), (3, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 2, 3), [(2, 4), (2, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 3), [(6, 4), (5, 5), (4, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 4), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 1, 4), [(1, 5), (2, 5), (1, 6), (3, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 4), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 0, 5), [(0, 6), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.white, 7, 5), [(6, 6)])
-
-        # pattern4
-        board._black_bitboard = 0x0100010101010111
-        board._white_bitboard = 0x007E7E3E1E4E2662
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 0), [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 0), [(2, 1), (3, 2), (4, 3), (5, 4), (6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(3, 1), (4, 2), (5, 3), (6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(4, 1), (5, 2), (6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(5, 1), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(6, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 1, 3), [(2, 3), (3, 3), (4, 3), (5, 3), (6, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 4), [(3, 4), (4, 4), (5, 4), (6, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(6, 1), (5, 2), (4, 3), (3, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 5), [(4, 5), (5, 5), (6, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(6, 3), (5, 4), (4, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(6, 4), (5, 5), (5, 6), (6, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(1, 7), (2, 7)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 7), [(6, 6), (6, 7)])
-
-        # pattern5
-        board._black_bitboard = 0xBF00000001000000
-        board._white_bitboard = 0x007F7E7C78736500
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 2), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(6, 1), (7, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 3), [(2, 1), (1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(4, 1), (6, 1), (5, 2), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 3), [(5, 1), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 4), [(3, 1), (2, 2), (1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(5, 1), (5, 2), (5, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 4), [(3, 1), (4, 2), (5, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 5), [(4, 1), (3, 2), (2, 3), (1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(4, 1), (4, 2), (4, 3), (4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(1, 1), (2, 2), (3, 3), (4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 6), [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(3, 1), (3, 2), (3, 3), (3, 4), (3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 0, 7), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 7), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(7, 5), (7, 6)])
-
-        # pattern6
-        board._black_bitboard = 0x8000808080808088
-        board._white_bitboard = 0x007E7E7C78726446
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 0), [(1, 1)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 0), [(2, 1), (1, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 0), [(3, 1), (2, 2), (1, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 0), [(4, 1), (3, 2), (2, 3), (1, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 0), [(5, 1), (4, 2), (3, 3), (2, 4), (1, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 0), [(6, 1), (5, 2), (4, 3), (3, 4), (2, 5), (1, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 2), [(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(1, 3), (2, 3), (3, 3), (4, 3), (5, 3)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 4), [(1, 4), (2, 4), (3, 4), (4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 4), [(6, 5), (5, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 5), [(1, 5), (2, 5), (3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 5, 5), [(1, 1), (2, 2), (3, 3), (4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 6), [(1, 4), (2, 5), (1, 6), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 6), [(1, 3), (2, 4), (3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 7), [(1, 6), (1, 7)])
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 7), [(1, 5), (2, 6)])
-        self.assertEqual(board.get_flippable_discs(c.black, 7, 7), [(5, 7), (6, 7)])
-
-        # pattern7
-        board._black_bitboard = 0x0000000000081000
-        board._white_bitboard = 0x0000001C1C140000
-        self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3), (3, 4), (3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 4, 2), [(4, 3), (4, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 3), [(5, 4)])
-        self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 5)])
-        self.assertEqual(board.get_flippable_discs(c.black, 6, 5), [(5, 5)])
 
     def test_bitboard_size_8_get_bit_count(self):
         board = BitBoard(8)
