@@ -331,16 +331,8 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(str(board), board_str)
 
         board = Board()
-        board.undo()
-
-        center1, center2 = 8 // 2, (8 // 2) - 1
-        board_ini = [[d['blank'] for _ in range(8)] for _ in range(8)]
-        board_ini[center1][center2] = d['black']
-        board_ini[center2][center1] = d['black']
-        board_ini[center1][center1] = d['white']
-        board_ini[center2][center2] = d['white']
-
-        self.assertEqual(board._board, board_ini)
+        with self.assertRaises(IndexError):
+            board.undo()
 
     def test_bitboard_size_8_undo(self):
         board = BitBoard()
