@@ -69,7 +69,7 @@ class Board(AbstractBoard):
         self.prev = []                                   # 前回の手
 
         # 盤面
-        self._board = [[d[c.blank] for _ in range(size)] for _ in range(size)]  # 一旦ブランクで埋める
+        self._board = [[d.blank for _ in range(size)] for _ in range(size)]  # 一旦ブランクで埋める
         center = size // 2
         init_discs = [
             (center,   center-1, c.black),
@@ -185,21 +185,21 @@ class Board(AbstractBoard):
 
                座標上に石が置かれていない(ブランク)場合True
         """
-        return self._board[y][x] == d[c.blank]
+        return self._board[y][x] == d.blank
 
     def _is_black(self, x, y):
         """_is_black
 
                座標上に黒が置かれている場合True
         """
-        return self._board[y][x] == d[c.black]
+        return self._board[y][x] == d.black
 
     def _is_white(self, x, y):
         """_is_white
 
                座標上に白が置かれている場合True
         """
-        return self._board[y][x] == d[c.white]
+        return self._board[y][x] == d.white
 
     def _is_same_color(self, x, y, color):
         """_is_same_color
@@ -231,8 +231,8 @@ class Board(AbstractBoard):
     def update_score(self):
         """update_score
         """
-        self._black_score = sum([row.count(d[c.black]) for row in self._board])
-        self._white_score = sum([row.count(d[c.white]) for row in self._board])
+        self._black_score = sum([row.count(d.black) for row in self._board])
+        self._white_score = sum([row.count(d.white) for row in self._board])
 
     def _get_bit_pos(self, discs):
         """_get_bit_pos
@@ -257,11 +257,11 @@ class Board(AbstractBoard):
         for row in self._board:
             tmp = []
             for col in row:
-                if col == d[c.black]:
+                if d.is_black(col):
                     tmp += [1]
-                elif col == d[c.white]:
+                elif d.is_white(col):
                     tmp += [-1]
-                elif col == d[c.blank]:
+                elif d.is_blank(col):
                     tmp += [0]
             board_info += [tmp]
 
@@ -300,7 +300,7 @@ class Board(AbstractBoard):
         """undo
         """
         prev = self.prev.pop()
-        self._board[prev['y']][prev['x']] = d[c.blank]  # 置いた石を取り除く
+        self._board[prev['y']][prev['x']] = d.blank  # 置いた石を取り除く
         for prev_x, prev_y in prev['flippable_discs']:  # ひっくり返された石を反転させる
             self._board[prev_y][prev_x] = d[c.next_color(prev['color'])]
         self.update_score()
@@ -350,14 +350,14 @@ class BitBoard(AbstractBoard):
     def __str__(self):
         size = self.size
         header = '   ' + ' '.join([chr(97 + i) for i in range(size)]) + '\n'
-        board = [[d[c.blank] for _ in range(size)] for _ in range(size)]
+        board = [[d.blank for _ in range(size)] for _ in range(size)]
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
                 if self._black_bitboard & mask:
-                    board[y][x] = d[c.black]
+                    board[y][x] = d.black
                 elif self._white_bitboard & mask:
-                    board[y][x] = d[c.white]
+                    board[y][x] = d.white
                 mask >>= 1
 
         body = ''
