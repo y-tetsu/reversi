@@ -3,43 +3,34 @@
 
 import unittest
 
-from reversi.disc import Black, White, Blank, DiscFactory, D
+from reversi.color import C as c
+from reversi.disc import Disc, Black, White, Blank, DiscFactory, D
 
 
 class TestDisc(unittest.TestCase):
     """disc
     """
     def test_disc_black_class(self):
-        f = DiscFactory()
-        black = f.create('black')
+        black = DiscFactory().create(c.black)
         self.assertIsInstance(black, Black)
-
-    def test_disc_black_mark(self):
-        f = DiscFactory()
-        black = f.create('black')
         self.assertEqual(black, '〇')
 
-    def test_disc_white_class(self):
-        f = DiscFactory()
-        white = f.create('white')
+    def test_disc_white(self):
+        white = DiscFactory().create(c.white)
         self.assertIsInstance(white, White)
-
-    def test_disc_white_mark(self):
-        f = DiscFactory()
-        white = f.create('white')
         self.assertEqual(white, '●')
 
-    def test_disc_blank_class(self):
-        f = DiscFactory()
-        blank = f.create('blank')
+    def test_disc_blank(self):
+        blank = DiscFactory().create(c.blank)
         self.assertIsInstance(blank, Blank)
-
-    def test_disc_blank_mark(self):
-        f = DiscFactory()
-        blank = f.create('blank')
         self.assertEqual(blank, '□')
 
-    def test_disc_discs(self):
-        self.assertEqual(D['black'], '〇')
-        self.assertEqual(D['white'], '●')
-        self.assertEqual(D['blank'], '□')
+    def test_disc_unknown(self):
+        unknown = DiscFactory().create('unknown')
+        self.assertIsInstance(unknown, Disc)
+        self.assertEqual(unknown, '')
+
+    def test_disc_d(self):
+        self.assertEqual(D[c.black], '〇')
+        self.assertEqual(D[c.white], '●')
+        self.assertEqual(D[c.blank], '□')

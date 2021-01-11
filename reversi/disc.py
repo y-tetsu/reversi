@@ -1,6 +1,8 @@
 """Disc
 """
 
+from reversi.color import C as c
+
 
 class Disc(str):
     """Disc"""
@@ -23,17 +25,15 @@ class DiscFactory:
     """Disc Factory"""
     def create(self, color):
         """create disc object"""
-        ret = ''
+        if c.is_black(color):
+            return Black('〇')
+        elif c.is_white(color):
+            return White('●')
+        elif c.is_blank(color):
+            return Blank('□')
 
-        if color == 'black':
-            ret = Black('〇')
-        elif color == 'white':
-            ret = White('●')
-        elif color == 'blank':
-            ret = Blank('□')
-
-        return ret
+        return Disc('')
 
 
 factory = DiscFactory()
-D = {color: factory.create(color) for color in ('black', 'white', 'blank')}
+D = {color: factory.create(color) for color in c.all}
