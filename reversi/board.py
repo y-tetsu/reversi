@@ -290,7 +290,7 @@ class Board(AbstractBoard):
             for x in range(self.size):
                 if self._is_black(x, y):
                     black_bitboard |= put
-                if self._is_white(x, y):
+                elif self._is_white(x, y):
                     white_bitboard |= put
                 put >>= 1
 
