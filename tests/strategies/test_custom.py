@@ -105,15 +105,16 @@ class TestCustom(unittest.TestCase):
 
     def test_custom_iterative(self):
         patterns = [
-            (AbI_B_TPW(),    Selector, Orderer_B,   AlphaBeta_TPW),
-            (AbI_B_TPWE(),   Selector, Orderer_B,   AlphaBeta_TPWE),
-            (AbI_PCB_TPWE(), Selector, Orderer_PCB, AlphaBeta_TPWE),
-            (_AbI_B_TPWE_(), Selector, Orderer_B,   AlphaBeta_TPWE_),
-            (AbI_B_TPWEC(),  Selector, Orderer_B,   AlphaBeta_TPWEC),
-            (NsI_B_TPW(),    Selector, Orderer_B,   NegaScout_TPW),
-            (NsI_B_TPWE(),   Selector, Orderer_B,   NegaScout_TPWE),
+            (AbI_B_TPW(),    2, Selector, Orderer_B,   AlphaBeta_TPW),
+            (AbI_B_TPWE(),   2, Selector, Orderer_B,   AlphaBeta_TPWE),
+            (AbI_PCB_TPWE(), 2, Selector, Orderer_PCB, AlphaBeta_TPWE),
+            (_AbI_B_TPWE_(), 2, Selector, Orderer_B,   AlphaBeta_TPWE_),
+            (AbI_B_TPWEC(),  2, Selector, Orderer_B,   AlphaBeta_TPWEC),
+            (NsI_B_TPW(),    2, Selector, Orderer_B,   NegaScout_TPW),
+            (NsI_B_TPWE(),   2, Selector, Orderer_B,   NegaScout_TPWE),
         ]
-        for obj, selector, orderer, search in patterns:
+        for obj, depth, selector, orderer, search in patterns:
+            self.assertEqual(obj.depth, depth)
             self.assertIsInstance(obj.selector, selector)
             self.assertIsInstance(obj.orderer, orderer)
             self.assertIsInstance(obj.search, search)
