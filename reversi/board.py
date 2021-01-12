@@ -261,7 +261,7 @@ class Board(AbstractBoard):
                     tmp += [1]
                 elif d.is_white(col):
                     tmp += [-1]
-                elif d.is_blank(col):
+                else:
                     tmp += [0]
             board_info += [tmp]
 
