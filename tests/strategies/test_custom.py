@@ -21,7 +21,10 @@ from reversi.strategies import NegaScout_TPW, NegaScout_TPWE
 from reversi.strategies import NegaScout1_TPW, NegaScout2_TPW, NegaScout3_TPW, NegaScout4_TPW
 from reversi.strategies import NegaScout1_TPOW, NegaScout2_TPOW, NegaScout3_TPOW, NegaScout4_TPOW
 from reversi.strategies import NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE, NegaScout4_TPWE
+from reversi.strategies import AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, _AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
+from reversi.strategies.coordinator import Selector
+from reversi.strategies.coordinator import Orderer_B, Orderer_PCB
 
 
 class TestCustom(unittest.TestCase):
@@ -99,3 +102,18 @@ class TestCustom(unittest.TestCase):
             for depth, obj in enumerate(strategies, 1):
                 self.assertEqual(obj.depth, depth)
                 self.assertIsInstance(obj.evaluator, evaluator)
+
+    def test_custom_iterative(self):
+        patterns = [
+            (AbI_B_TPW(),    Selector, Orderer_B,   AlphaBeta_TPW),
+            (AbI_B_TPWE(),   Selector, Orderer_B,   AlphaBeta_TPWE),
+            (AbI_PCB_TPWE(), Selector, Orderer_PCB, AlphaBeta_TPWE),
+            (_AbI_B_TPWE_(), Selector, Orderer_B,   AlphaBeta_TPWE_),
+            (AbI_B_TPWEC(),  Selector, Orderer_B,   AlphaBeta_TPWEC),
+            (NsI_B_TPW(),    Selector, Orderer_B,   NegaScout_TPW),
+            (NsI_B_TPWE(),   Selector, Orderer_B,   NegaScout_TPWE),
+        ]
+        for obj, selector, orderer, search in patterns:
+            self.assertIsInstance(obj.selector, selector)
+            self.assertIsInstance(obj.orderer, orderer)
+            self.assertIsInstance(obj.search, search)
