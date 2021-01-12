@@ -300,7 +300,7 @@ class Board(AbstractBoard):
         """undo
         """
         prev = self.prev.pop()
-        self._board[prev['y']][prev['x']] = d.blank  # 置いた石を取り除く
+        self._board[prev['y']][prev['x']] = d.blank     # 置いた石を取り除く
         for prev_x, prev_y in prev['flippable_discs']:  # ひっくり返された石を反転させる
             self._board[prev_y][prev_x] = d[c.next_color(prev['color'])]
         self.update_score()
