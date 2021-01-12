@@ -22,6 +22,9 @@ from reversi.strategies import NegaScout1_TPW, NegaScout2_TPW, NegaScout3_TPW, N
 from reversi.strategies import NegaScout1_TPOW, NegaScout2_TPOW, NegaScout3_TPOW, NegaScout4_TPOW
 from reversi.strategies import NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE, NegaScout4_TPWE
 from reversi.strategies import AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, _AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE
+from reversi.strategies import IterativeDeepning
+from reversi.strategies import AlphaBeta, NegaScout
+from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_Type2
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 from reversi.strategies.coordinator import Selector
 from reversi.strategies.coordinator import Orderer_B, Orderer_PCB
@@ -118,3 +121,63 @@ class TestCustom(unittest.TestCase):
             self.assertIsInstance(obj.selector, selector)
             self.assertIsInstance(obj.orderer, orderer)
             self.assertIsInstance(obj.search, search)
+
+    def test_custom_switch(self):
+        patterns = [
+            (
+                SwitchAbI_B_TPWE(),
+                [12, 24, 36, 48, 60],
+                [
+                    (IterativeDeepning, 2, Selector, Orderer_B, AlphaBeta, Evaluator_TPWE, 50, -20, -10,  0, -4, -2, -2, -25, -13, -5, 4,  9999,  91),
+                    (IterativeDeepning, 2, Selector, Orderer_B, AlphaBeta, Evaluator_TPWE, 44, -18,  -4, -2, -2, -4, -3, -40, -10, -8, 4, 10001,  95),
+                    (IterativeDeepning, 2, Selector, Orderer_B, AlphaBeta, Evaluator_TPWE, 41, -14,  -1, -4, -4, -1,  2, -38,  -5, -5, 4,  9996, 103),
+                    (IterativeDeepning, 2, Selector, Orderer_B, AlphaBeta, Evaluator_TPWE, 62, -19,   1,  0, -1,  0,  1, -25,  -4, -2, 8,  9990,  94),
+                    (IterativeDeepning, 2, Selector, Orderer_B, AlphaBeta, Evaluator_TPWE, 50, -23,   0, -9, -2, -2, 16, -25,  -9, -8, 8,  9998,  93),
+                ],
+            ),
+            (
+                SwitchNsI_B_TPWE(),
+                [12, 24, 36, 48, 60],
+                [
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 50, -20, -10,  0, -4, -2, -2, -25, -13, -5, 4,  9999,  91),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 44, -18,  -4, -2, -2, -4, -3, -40, -10, -8, 4, 10001,  95),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 41, -14,  -1, -4, -4, -1,  2, -38,  -5, -5, 4,  9996, 103),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 62, -19,   1,  0, -1,  0,  1, -25,  -4, -2, 8,  9990,  94),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 50, -23,   0, -9, -2, -2, 16, -25,  -9, -8, 8,  9998,  93),
+                ],
+            ),
+            (
+                SwitchNsI_B_TPWE_Type2(),
+                [12, 24, 36, 48, 60],
+                [
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 42, -17,  -7,   2, -7, -6, -3, -26, -23,  -9,  4, 10002,  84),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 39, -12,  -3,  -3, -5, -4, -2, -34,  -9,  -7,  4, 10003,  82),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 43, -20,  -2,  -2, -2, -2,  3, -32,  -4,  -6,  4,  9996, 114),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 67, -19,  -6,   1, -1,  0,  3, -24,  -5,  -2, 10,  9993, 101),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE, 47, -37, -11, -15,  5, -3, 16, -24,  -6, -15, 12,  9999,  87),
+                ],
+            ),
+        ]
+        for obj, turns, strategies in patterns:
+            self.assertEqual(obj.turns, turns)
+            self.assertEqual(len(obj.strategies), len(strategies))
+            for index, strategy in enumerate(obj.strategies):
+                self.assertIsInstance(strategy, strategies[index][0])
+                self.assertEqual(strategy.depth, strategies[index][1])
+                self.assertIsInstance(strategy.selector, strategies[index][2])
+                self.assertIsInstance(strategy.orderer, strategies[index][3])
+                self.assertIsInstance(strategy.search, strategies[index][4])
+                self.assertIsInstance(strategy.search.evaluator, strategies[index][5])
+                self.assertEqual(strategy.search.evaluator.t.table._CORNER, strategies[index][6])
+                self.assertEqual(strategy.search.evaluator.t.table._C, strategies[index][7])
+                self.assertEqual(strategy.search.evaluator.t.table._A1, strategies[index][8])
+                self.assertEqual(strategy.search.evaluator.t.table._A2, strategies[index][9])
+                self.assertEqual(strategy.search.evaluator.t.table._B1, strategies[index][10])
+                self.assertEqual(strategy.search.evaluator.t.table._B2, strategies[index][11])
+                self.assertEqual(strategy.search.evaluator.t.table._B3, strategies[index][12])
+                self.assertEqual(strategy.search.evaluator.t.table._X, strategies[index][13])
+                self.assertEqual(strategy.search.evaluator.t.table._O1, strategies[index][14])
+                self.assertEqual(strategy.search.evaluator.t.table._O2, strategies[index][15])
+                self.assertEqual(strategy.search.evaluator.p._W, strategies[index][16])
+                self.assertEqual(strategy.search.evaluator.w._W, strategies[index][17])
+                self.assertEqual(strategy.search.evaluator.e._W, strategies[index][18])

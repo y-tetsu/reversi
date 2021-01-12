@@ -658,29 +658,6 @@ class SwitchAbI_B_TPWE(Switch):
         super().__init__(turns, strategies)
 
 
-class SwitchNsI_B_TPW(Switch):
-    """
-    NsI_B_TPWのパラーメータ切り替え型
-    """
-    def __init__(
-            self,
-            turns=[
-                15,
-                25,
-                35,
-                45,
-                60
-            ],
-            strategies=[
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=100, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=70,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=50,  c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=30,  c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=6))),  # noqa: E501
-                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPW(corner=5,   c=0,   a1=1, a2=1,  b1=1,  b2=1,  b3=1,  x=0,   o1=1,  o2=1,  wp=8)))   # noqa: E501
-            ]):
-        super().__init__(turns, strategies)
-
-
 class SwitchNsI_B_TPWE(Switch):
     """
     NsI_B_TPWEのパラーメータ切り替え型
@@ -876,14 +853,6 @@ class NsIF12_B_TPW(FullReading):
         super().__init__(remain, base)
 
 
-class SwitchNsIF9_B_TPW(FullReading):
-    """
-    SwitchNsI_B_TPW+完全読み開始:残り9手
-    """
-    def __init__(self, remain=9, base=SwitchNsI_B_TPW()):
-        super().__init__(remain, base)
-
-
 class SwitchAbIF9_B_TPWE(FullReading):
     """
     SwitchAbI_B_TPWE+完全読み開始:残り9手
@@ -1058,15 +1027,6 @@ class SwitchAbIF9J_B_TPWE(Ushi):
     (完全読み開始:残り9手)
     """
     def __init__(self, base=SwitchNsIF9_B_TPWE()):
-        super().__init__(base)
-
-
-class SwitchNsIF9J_B_TPW(Nezumi):
-    """
-    SwitchNsIF9_B_TPW+定石打ち
-    (完全読み開始:残り9手)
-    """
-    def __init__(self, base=SwitchNsIF9_B_TPW()):
         super().__init__(base)
 
 
