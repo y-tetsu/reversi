@@ -72,13 +72,13 @@ class Board(AbstractBoard):
         self._board = [[d.blank for _ in range(size)] for _ in range(size)]  # 一旦ブランクで埋める
         center = size // 2
         init_discs = [
-            (center,   center-1, c.black),
-            (center-1, center,   c.black),
-            (center-1, center-1, c.white),
-            (center,   center,   c.white),
+            (center,   center-1, d.black),
+            (center-1, center,   d.black),
+            (center-1, center-1, d.white),
+            (center,   center,   d.white),
         ]
-        for x, y, color in init_discs:  # 中央の4石を置く
-            self._board[y][x] = d[color]
+        for x, y, disc in init_discs:  # 中央の4石を置く
+            self._board[y][x] = disc
 
     def _is_invalid_size(self, size):
         """_is_invalid_size
