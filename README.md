@@ -35,11 +35,10 @@
     - [プレイヤー追加機能](#プレイヤー追加機能)
 - [参考書籍](#参考書籍)
 - [参考サイト](#参考サイト)
-- [脚注](#脚注)
 
 
 ## 概要
-**reversi**はPython<sup>[[1]](#note1)</sup><small id="return1"></small>で作られたPythonで使えるリバーシのライブラリです。<br>
+**reversi**はPythonで作られたPythonで使えるリバーシのライブラリです。<br>
 **reversi**を使うことで、以下が手軽に行えます。<br>
 - リバーシAIのプログラミング
 - リバーシAI同士の対戦シミュレート
@@ -734,8 +733,3 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 - 「オセロ･リバーシの勝ち方、必勝法」https://bassy84.net/
 - 「強いオセロプログラムの内部動作」http://www.amy.hi-ho.ne.jp/okuhara/howtoj.htm
 - 「オセロAI入門」https://qiita.com/na-o-ys/items/10d894635c2a6c07ac70
-
-
----
-## 脚注
-<small id="note1"></small>[1]: 一部でCythonを使用しています。<sup>[↑](#return1)</sup>
