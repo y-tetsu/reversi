@@ -2,24 +2,51 @@
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_v0_0_15.png" width="500px">
 </p>
 
+
 # reversi
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.en.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.md)]<br>
 **reversi**はPythonで使えるリバーシ(オセロ)のライブラリです。<br>
-手軽にリバーシAIをプログラミングして遊ぶ事ができます。<br>
+手軽にリバーシAIをプログラミングして、アプリケーションを作ることができます。<br>
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![Build Status](https://travis-ci.org/y-tetsu/reversi.svg?branch=master)](https://travis-ci.org/y-tetsu/reversi)
 [![codecov](https://codecov.io/gh/y-tetsu/reversi/branch/master/graph/badge.svg)](https://codecov.io/gh/y-tetsu/reversi)
 <br>
 
-## ダウンロード
-本ライブラリで作ったWindows版アプリケーション(exe)のサンプルを下記よりダウンロード可能です。<br>
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases)(リンク先でAssetsをクリックしてください)
 
-### ゲーム紹介
-盤面のサイズや対戦プレイヤーをいろいろ選べるリバーシです。
-難易度の異なる多種多様なAIがお相手いたします。<br>
-おまけ要素として、ご自分でプログラミングしたAIをゲームに追加して遊べる機能もございます。<br>
-詳しくは[コチラ](#GUIアプリケーションの説明)。
+## 目次
+- [概要](#概要)
+- [動作環境](#動作環境)
+- [インストール方法](#インストール方法)
+- [アンインストール方法](#アンインストール方法)
+- [ライブラリの使い方](#ライブラリの使い方)
+    - [アプリケーションの起動](#アプリケーションの起動)
+    - [アプリケーションにAIを追加する](#アプリケーションにAIを追加する)
+    - [AI戦略をプログラミングする](#AI戦略をプログラミングする)
+    - [AI対戦をシミュレートする](#AI対戦をシミュレートする)
+    - [Boardオブジェクトの使い方](#Boardオブジェクトの使い方)
+- [サンプル](#サンプル)
+- [デモ](#デモ)
+- [インストールがうまくいかない場合](#インストールがうまくいかない場合)
+- [Windows版アプリケーションについて](#Windows版アプリケーションについて)
+    - [ゲーム紹介](#ゲーム紹介)
+    - [ダウンロード](#ダウンロード)
+    - [メニュー一覧](#メニュー一覧)
+    - [プレイヤー紹介](#プレイヤー紹介)
+    - [プレイヤー追加機能](#プレイヤー追加機能)
+- [参考書籍](#参考書籍)
+- [参考サイト](#参考サイト)
+
+
+## 概要
+**reversi**はPythonで作られたPythonで使用可能なリバーシのライブラリです。<br>
+**reversi**を使うと、主に下記が手軽に行えます。<br>
+- リバーシAIのプログラミング
+- リバーシAI同士の対戦シミュレート
+- アプリケーションの作成
+
+また、本ライブラリで作成した[Windows版アプリケーション](#Windows版アプリケーションについて)もご用意しております。<br>
+ダウンロード後、インストール不要ですぐにリバーシを遊ぶ事ができます。
+
 
 ## 動作環境
 - Windows10 64bit<br>
@@ -29,7 +56,8 @@
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(開発時に使用)<br>
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(ライブラリ開発時のみ必要)<br>
+
 
 ## インストール方法
 1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールしてください。<br>
@@ -38,96 +66,35 @@
 $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 ```
 
+
 ## アンインストール方法
 **reversi**をアンインストールする場合は下記を実行してください。
 ```
 $ py -3.7 -m pip uninstall reversi
 ```
 
-## サンプル
-**reversi**をインストール後、任意のフォルダで下記コマンドを実行するとサンプルをコピーできます。
-```
-$ install_reversi_examples
-```
 
-コピーされるサンプルは下記のとおりです。
-
-- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション
-- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション
-- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
-- [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
-- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
-- [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) - テーブルによる重みづけで手を選ぶAIを実装するサンプル
-- [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
-- [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
-- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
-
-サンプルの実行方法はそれぞれ下記のとおりです。
-```
-$ cd reversi_examples
-$ py -3.7 01_tkinter_app.py
-$ py -3.7 02_console_app.py
-$ 03_create_exe.bat
-$ py -3.7 04_reversi_simulator.py
-$ py -3.7 05_manual_strategy.py
-$ py -3.7 06_table_strategy.py
-$ py -3.7 07_minmax_strategy.py
-$ py -3.7 08_alphabeta_strategy.py
-$ py -3.7 09_genetic_algorithm.py
-```
-
-### デモ
-#### 01_tkinter_app.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
-#### 02_console_app.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
-#### 04_reversi_simulator.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
-
-
-
-## 使い方
+## ライブラリの使い方
 本ライブラリの使い方を、コーディング例を元に説明します。
-
 
 ### アプリケーションの起動
 まず最初に、リバーシのGUIアプリケーションを起動する方法を示します。
 
-Pythonコード内で**reversi**より`Reversi`クラスをインポートしてください。
-`Reversi`クラスのインスタンスを作成し、`start`メソッドを呼び出すとアプリケーションが起動します。
-
+下記のコードを実行してください。
 ```Python
 from reversi import Reversi
 
 Reversi().start()
 ```
-上記のコードを実行すると、アプリケーションが起動しそのまま遊ぶ事ができます。
+アプリケーションが起動し、そのまま遊ぶ事ができます。<br>
 ただしこの場合、選択できるプレイヤーはユーザ操作のみとなります。
-
 
 ### アプリケーションにAIを追加する
 次はアプリケーションにAIを追加する方法を示します。
 
-`Reversi`クラスのインスタンス作成時の引数に、
-辞書(`dict`)型のAIプレイヤーの情報(以後、"プレイヤー情報"と呼びます)を指定することで、
-リバーシを自動でプレイするAIプレイヤーを追加することができます。
-
-"プレイヤー情報"は、キーに"AIプレイヤーの名前"(任意)、値に"AI戦略クラスのオブジェクト"、
-としたペアの情報を集めたものとなります。
-
-```Python
-{
-    'AIプレイヤー名1': AI戦略クラスのオブジェクト1,
-    'AIプレイヤー名2': AI戦略クラスのオブジェクト2,
-    'AIプレイヤー名3': AI戦略クラスのオブジェクト3,
-}
-```
-
-ライブラリにあらかじめ組み込まれている、ランダムな手を打つ`Random`戦略と、
-常にできるだけ多く取ろうとする`Greedy`戦略を、アプリケーションに追加する例を下記に示します。
-
-組み込みのAI戦略は、すべて`reversi.strategies`よりインポートすることができます。
-
+例として、ライブラリにあらかじめ組み込まれている下記AIをアプリケーションに追加します。
+- ランダムな手を打つ`Random`戦略のAI
+- 常にできるだけ多く取ろうとする`Greedy`戦略のAI
 ```Python
 from reversi import Reversi
 from reversi.strategies import Random, Greedy
@@ -141,47 +108,45 @@ Reversi(
 ```
 上記を実行すると、ユーザ操作に加えて"RANDOM"と"GREEDY"をプレイヤーとして選択できるようになります。
 
+組み込みのAI戦略は、すべて`reversi.strategies`よりインポートすることができます。<br>
+また、追加するAIプレイヤーの情報は、下記フォーマットに従ってください。
+```Python
+{
+    'AIプレイヤー名1': AI戦略クラスのオブジェクト1,
+    'AIプレイヤー名2': AI戦略クラスのオブジェクト2,
+    'AIプレイヤー名3': AI戦略クラスのオブジェクト3,
+}
+```
 
-### AI戦略を自作する
-続いて、本ライブラリを使って独自のAIを自作(プログラミング)し、アプリケーションに追加する方法を示します。
-
+### AI戦略をプログラミングする
+続いて、本ライブラリを使って独自のAIを自作し、アプリケーションに追加する方法を示します。
 
 #### 戦略クラスの作り方
-まず、`reversi.strategy`より`AbstractStrategy`をインポートしてください。
-次に、`AbstractStrategy`を継承した任意の名前のクラスを作成してください。
-このクラスに`next_move`という、"次の一手"を打つためのメソッドを実装してください。
-
+下記の通り`OriginalAI`をコーディングすると、AI戦略クラスが完成します。
 ```Python
 from reversi.strategies import AbstractStrategy
 
 class OriginalAI(AbstractStrategy):
     def next_move(self, color, board):
-        move = (X, Y)  ### 次の一手 ###
+        #
+        # 次の一手(X, Y)を決めるロジックをコーディングして下さい。
+        #
 
-        return move
+        return (X, Y)
 ```
-
-このようにすることで、AI戦略クラスが完成します。
-完成したAI戦略クラスをインスタンス化し"プレイヤー情報に指定することで、ゲームに参加させることができます。
-
-`next_move`メソッドは下記の、`color`変数と`board`オブジェクトを引数として受け取ります。
-
+`next_move`メソッドの引数は下記を参照してください。
  |引数|説明|
  |:---|:---|
  |`color`変数|`black`か`white`の`str`型の文字列が入り、それぞれ黒番か白番かを判別することができます。|
  |`board`オブジェクト|リバーシの盤面情報を持ったオブジェクトです。黒と白の石の配置情報のほか、リバーシのゲームを進行するために必要となる、パラメータやメソッドを持っています。|
 
-`next_move`の戻り値には、手番と盤面の情報を元に"次に打つ手の座標"を指定してください。
-座標を決定する方法が、自作の必要な部分となります。
-
-なお、座標は盤面左上を(0, 0)とした時の(x, y)のタプルとしてください。
+なお、戻り値の(X, Y)座標は盤面左上を(0, 0)とした時の値として下さい。
 盤面サイズが8の場合の各マス目の座標を下図に示します。
 
 ![coordinate](https://raw.githubusercontent.com/y-tetsu/reversi/images/coordinate.png)
 
 `board`オブジェクトについてはここでは簡単のため、
 石が置ける位置を取得する`get_legal_moves`メソッドと、盤面のサイズを取得する`size`パラメータの、2つのみを取り上げます。
-
 
 #### 石が置ける位置の取得方法
 ある盤面の石が置ける位置(座標)は`board`オブジェクトの`get_legal_moves`メソッドで取得できます。
@@ -239,8 +204,7 @@ Reversi({'CORNER': Corner()}).start()
 本ライブラリのシミュレータを使うと、AI対戦をシミュレートし結果を確認することができます。
 ここではシミュレータの使い方を示します。
 
-シミュレータを使う場合は、下記のように`Simulator`クラスをインポートしてください。
-
+シミュレータを使う場合は、下記のようにしてください。
 ```Python
 from reversi import Simulator
 ```
@@ -249,14 +213,7 @@ from reversi import Simulator
 これまでに登場した"RANDOM"、"GREEDY"、"CORNER"を総当たりで対戦させ、結果を表示するまでを示します。
 
 #### シミュレータの実行
-シミュレータは必ずメインモジュール(\_\_main\_\_)内で実行するようにしてください。
-Simulatorをインスタンス化する際の引数には"プレイヤー情報"と"設定ファイル名"の2つが必要となります。
-
-"プレイヤー情報"については先のアプリケーションの起動で指定したものと同様です。
-また、シミュレータの設定ファイルについては後述します。
-
-下記のとおり、シミュレータオブジェクトから`start`メソッドを呼ぶとシミュレーションを開始します。
-
+下記を実行すると、シミュレーションを開始します。
 ```Python
 from reversi import Simulator
 
@@ -271,6 +228,8 @@ if __name__ == '__main__':
     )
     simulator.start()
 ```
+シミュレータは必ずメインモジュール(\_\_main\_\_)内で実行するようにしてください。<br>
+シミュレータの引数には、AIプレイヤーの情報とシミュレータの設定ファイルを指定してください。
 
 #### シミュレータの設定ファイル
 シミュレータの設定ファイル(JSON形式)の作成例は下記のとおりです。
@@ -301,8 +260,7 @@ Simulatorの第二引数に、本ファイル名(上記例では`./simulator_set
  |player_names|対戦させたいAI名をリストアップして下さい。指定する場合は第一引数の"プレイヤー情報"に含まれるものの中から選択してください。省略すると第一引数の"プレイヤー情報"と同一と扱います。リストアップされた全てのAI同士の総当たり戦を行います。|
 
 #### 実行結果
-シミュレーション結果はシミュレータオブジェクトを`print`することで確認できます。
-
+シミュレーション結果は下記で確認できます。
 ```Python
 print(simulator)
 ```
@@ -362,18 +320,17 @@ CORNER                    |  72.2% |   289   102     9   400
 
 ランダムに打つよりも毎回多めに取る方が、さらにそれよりも角は必ず取る方が、より有利になりそうだという結果が得られました。
 
+### Boardオブジェクトの使い方
+ここでは、リバーシの盤面を管理する`Board`オブジェクトの使い方について説明します。
 
-### boardオブジェクトの使い方
-ここでは、リバーシの盤面を管理する`board`オブジェクトの使い方について説明します。
-
-#### boardオブジェクトの生成
-`board`オブジェクトは**reversi**より、`Board`クラスまたは`BitBoard`クラスを
+#### Boardオブジェクトの生成
+`Board`オブジェクトは**reversi**より、`Board`クラスまたは`BitBoard`クラスを
 インポートすることで、生成できるようになります。
 
 `Board`クラスと`BitBoard`クラスの違いは、盤面を表現する内部データの構造のみで、使い方は同じです。
 `BitBoard`クラスの方が処理速度がより高速なため、通常はこちらをご使用下さい。
 
-`board`オブジェクトをインスタンス化する際の引数に、数値を入れることで盤面のサイズを指定できます。
+`Board`オブジェクトをインスタンス化する際の引数に、数値を入れることで盤面のサイズを指定できます。
 サイズは4～26までの偶数としてください。省略時は8となります。
 また、`size`プロパティにて盤面のサイズを確認することができます。
 
@@ -395,8 +352,8 @@ print(bitboard.size)
 10
 ```
 
-#### boardオブジェクトの標準出力
-`board`オブジェクトを`print`すると盤面の状態が標準出力されます。
+#### Boardオブジェクトの標準出力
+`Board`オブジェクトを`print`すると盤面の状態が標準出力されます。
 
 ```Python
 from reversi import BitBoard
@@ -411,8 +368,8 @@ print(board)
 上記の実行結果は下記となります。<br>
 ![board_print](https://raw.githubusercontent.com/y-tetsu/reversi/images/board_print.png)
 
-#### boardオブジェクトのメソッド
-`board`オブジェクトの使用可能なメソッドを紹介します。
+#### Boardオブジェクトのメソッド
+`Board`オブジェクトの使用可能なメソッドを紹介します。
 
 ##### get_legal_moves
 黒番または白番での着手可能な位置を返します。
@@ -512,7 +469,129 @@ print(board)
 
 
 ---
-## GUIアプリケーションの説明
+## サンプル
+**reversi**をインストール後、任意のフォルダで下記コマンドを実行するとサンプルをコピーできます。
+```
+$ install_reversi_examples
+```
+
+コピーされるサンプルは下記のとおりです。
+
+- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション
+- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション
+- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
+- [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
+- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
+- [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) - テーブルによる重みづけで手を選ぶAIを実装するサンプル
+- [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
+- [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
+- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
+
+サンプルの実行方法はそれぞれ下記のとおりです。
+```
+$ cd reversi_examples
+$ py -3.7 01_tkinter_app.py
+$ py -3.7 02_console_app.py
+$ 03_create_exe.bat
+$ py -3.7 04_reversi_simulator.py
+$ py -3.7 05_manual_strategy.py
+$ py -3.7 06_table_strategy.py
+$ py -3.7 07_minmax_strategy.py
+$ py -3.7 08_alphabeta_strategy.py
+$ py -3.7 09_genetic_algorithm.py
+```
+
+### デモ
+#### 01_tkinter_app.py
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
+#### 02_console_app.py
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
+#### 04_reversi_simulator.py
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
+
+
+---
+## インストールがうまくいかない場合
+**reversi**のインストールがうまくいかない場合は
+下記の手順(1～5)に従って環境を準備して下さい。
+
+### 1. Pythonのインストール
+下記よりPythonの64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
+[Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
+
+インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
+```
+$ py -3.7 --version
+Python 3.7.6
+```
+
+### 2. pipの更新
+**reversi**をPythonから実行するためにはいくつかの外部パッケージが必要となります。<br>
+正しくインストールできるようにするために下記を実行してpipをアップデートして下さい。<br>
+```
+$ py -3.7 -m pip install --upgrade pip
+ :
+Successfully installed pip-20.0.2
+```
+※バージョンが異なる場合は上位であれば問題ないはずです
+
+### 3. 関連パッケージのインストール
+**reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
+事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいてください。<br>
+```
+$ py -3.7 -m pip install -r requirements.txt
+```
+もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行してください。
+
+### 4. Visual C++のインストール
+**reversi**の実行にはC言語のコンパイル環境が必要となります。<br>
+下記よりVisual C++をダウンロードして下さい。<br>
+[Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+### 5. 動作確認
+[サンプル](https://github.com/y-tetsu/reversi/blob/master/README.md#サンプル)を参照して、サンプルが動作するか確認してください。
+
+### (パッケージインストールの補足)
+#### cythonパッケージのインストール
+**reversi**を実行するためにはcythonという外部パッケージが必要となります。<br>
+下記を実行してインストールして下さい。
+```
+$ py -3.7 -m pip install cython
+ :
+Successfully installed cython-0.29.15
+```
+
+#### pyinstallerパッケージのインストール
+**reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
+下記を実行してインストールして下さい。不要な場合は省略しても構いません。
+```
+$ py -3.7 -m pip install pyinstaller
+ :
+Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
+```
+
+うまくいかない場合は下記を実行後に、再度上記を試してみて下さい。
+```
+$ py -3.7 -m pip install wheel
+```
+
+インストール完了後、pyinstallerを実行できるようにするために環境変数に下記を追加して下さい。
+```
+C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
+```
+
+
+---
+## Windows版アプリケーションについて
+### ゲーム紹介
+盤面のサイズや対戦プレイヤーをいろいろ選べるリバーシです。<br>
+難易度の異なる多種多様なAIがお相手いたします。<br>
+おまけ要素として、お好きなプログラミング言語で作ったAIをゲームに追加して遊べる機能もございます。
+
+### ダウンロード
+下記リンク先でAssetsをクリックし、"reversi.zip"をダウンロードしてください。<br>
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases)
+
 ### メニュー一覧
 選択可能なメニューの一覧です。<br>
 
@@ -645,75 +724,6 @@ print(board)
 }
 ```
 
----
-## インストールがうまくいかない場合
-**reversi**のインストールがうまくいかない場合は
-下記の手順(1～5)に従って環境を準備して下さい。
-
-### 1. Pythonのインストール
-下記よりPythonの64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
-[Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
-
-インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
-```
-$ py -3.7 --version
-Python 3.7.6
-```
-
-### 2. pipの更新
-**reversi**をPythonから実行するためにはいくつかの外部パッケージが必要となります。<br>
-正しくインストールできるようにするために下記を実行してpipをアップデートして下さい。<br>
-```
-$ py -3.7 -m pip install --upgrade pip
- :
-Successfully installed pip-20.0.2
-```
-※バージョンが異なる場合は上位であれば問題ないはずです
-
-### 3. 関連パッケージのインストール
-**reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
-事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいてください。<br>
-```
-$ py -3.7 -m pip install -r requirements.txt
-```
-もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行してください。
-
-### 4. Visual C++のインストール
-**reversi**の実行にはC言語のコンパイル環境が必要となります。<br>
-下記よりVisual C++をダウンロードして下さい。<br>
-[Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
-
-### 5. 動作確認
-[サンプル](https://github.com/y-tetsu/reversi/blob/master/README.md#サンプル)を参照して、サンプルが動作するか確認してください。
-
-### (パッケージインストールの補足)
-#### cythonパッケージのインストール
-**reversi**を実行するためにはcythonという外部パッケージが必要となります。<br>
-下記を実行してインストールして下さい。
-```
-$ py -3.7 -m pip install cython
- :
-Successfully installed cython-0.29.15
-```
-
-#### pyinstallerパッケージのインストール
-**reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
-下記を実行してインストールして下さい。不要な場合は省略しても構いません。
-```
-$ py -3.7 -m pip install pyinstaller
- :
-Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
-```
-
-うまくいかない場合は下記を実行後に、再度上記を試してみて下さい。
-```
-$ py -3.7 -m pip install wheel
-```
-
-インストール完了後、pyinstallerを実行できるようにするために環境変数に下記を追加して下さい。
-```
-C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
-```
 
 ---
 ## 参考書籍
@@ -722,6 +732,7 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 - 「日経ソフトウェア2019年11月号」 日経BP [ISSN1347-4685](https://books.google.co.jp/books?id=qhCxDwAAQBAJ&pg=PA146&lpg=PA146&dq=ISSN1347-4685&source=bl&ots=_3Z0k4Y_WE&sig=ACfU3U1urxBdw_srrg62Kr5UJD1sXLEQbQ&hl=ja&sa=X&ved=2ahUKEwjlkqzArY_nAhVTc3AKHXlBA6YQ6AEwAHoECAkQAQ#v=onepage&q=ISSN1347-4685&f=false)
 - 「Python計算機科学新教本」 David Kopec著 黒川 利明訳 株式会社オライリー・ジャパン [ISBN978-4-87311-881-9](https://www.oreilly.co.jp/books/9784873118819/)
 - 「Cython Cとの融合によるPythonの高速化」 Krurt W. Smith著 中田 秀基監訳 長尾 高弘訳 株式会社オライリー・ジャパン [ISBN978-4-87311-727-0](https://www.oreilly.co.jp/books/9784873117270/)
+
 
 ## 参考サイト
 - 「オセロ・リバーシプログラミング講座 ～勝ち方・考え方～」https://uguisu.skr.jp/othello/
