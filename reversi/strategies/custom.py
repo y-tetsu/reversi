@@ -2,7 +2,7 @@
 """
 
 from reversi.strategies.common import Measure
-from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, NegaScout, Switch, FullReading_, _FullReading, FullReading, _IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji  # noqa: E501
+from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, NegaScout, Switch, FullReading_, _FullReading, FullReading, IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji  # noqa: E501
 from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
@@ -600,7 +600,7 @@ class AbI_PCB_TPWE(IterativeDeepning):
         super().__init__(depth, selector, orderer, search)
 
 
-class _AbI_B_TPWE_(_IterativeDeepning_):
+class AbI_B_TPWE_(IterativeDeepning_):
     """
     AlphaBeta法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)(メジャーなし)
     """
@@ -786,7 +786,7 @@ class AbIF9_B_TPWE_(FullReading_):
     AlphaBeta法に反復深化法を適用して次の手を決める(メジャーなし)
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り9手)
     """
-    def __init__(self, remain=9, base=_AbI_B_TPWE_()):
+    def __init__(self, remain=9, base=AbI_B_TPWE_()):
         super().__init__(remain, base)
 
 

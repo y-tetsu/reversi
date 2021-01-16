@@ -4,7 +4,7 @@
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 
 
-class _IterativeDeepning_(AbstractStrategy):
+class IterativeDeepning_(AbstractStrategy):
     """IterativeDeepning + Timer
     """
     def __init__(self, depth=None, selector=None, orderer=None, search=None, limit=None):
@@ -42,7 +42,7 @@ class _IterativeDeepning_(AbstractStrategy):
         return best_move
 
 
-class IterativeDeepning(_IterativeDeepning_):
+class IterativeDeepning(IterativeDeepning_):
     """IterativeDeepning + Measure + Timer
     """
     @Measure.time

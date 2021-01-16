@@ -22,7 +22,7 @@ from reversi.strategies import NegaScout_TPW, NegaScout_TPWE
 from reversi.strategies import NegaScout1_TPW, NegaScout2_TPW, NegaScout3_TPW, NegaScout4_TPW
 from reversi.strategies import NegaScout1_TPOW, NegaScout2_TPOW, NegaScout3_TPOW, NegaScout4_TPOW
 from reversi.strategies import NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE, NegaScout4_TPWE
-from reversi.strategies import AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, _AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE
+from reversi.strategies import AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE
 from reversi.strategies import IterativeDeepning
 from reversi.strategies import AlphaBeta, NegaScout
 from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_Type2
@@ -114,7 +114,7 @@ class TestCustom(unittest.TestCase):
             (AbI_B_TPW(),    2, Selector, Orderer_B,   AlphaBeta_TPW),
             (AbI_B_TPWE(),   2, Selector, Orderer_B,   AlphaBeta_TPWE),
             (AbI_PCB_TPWE(), 2, Selector, Orderer_PCB, AlphaBeta_TPWE),
-            (_AbI_B_TPWE_(), 2, Selector, Orderer_B,   AlphaBeta_TPWE_),
+            (AbI_B_TPWE_(),  2, Selector, Orderer_B,   AlphaBeta_TPWE_),
             (AbI_B_TPWEC(),  2, Selector, Orderer_B,   AlphaBeta_TPWEC),
             (NsI_B_TPW(),    2, Selector, Orderer_B,   NegaScout_TPW),
             (NsI_B_TPWE(),   2, Selector, Orderer_B,   NegaScout_TPWE),
@@ -195,7 +195,7 @@ class TestCustom(unittest.TestCase):
             (AbIF9_PCB_TPWE(),             9, AbI_PCB_TPWE),
             (AbIF10_B_TPWE(),             10, AbI_B_TPWE),
             (AbIF10_PCB_TPWE(),           10, AbI_PCB_TPWE),
-            (AbIF9_B_TPWE_(),              9, _AbI_B_TPWE_),
+            (AbIF9_B_TPWE_(),              9, AbI_B_TPWE_),
             (AbIF9_B_TPWEC(),              9, AbI_B_TPWEC),
             (NsIF9_B_TPW(),                9, NsI_B_TPW),
             (NsIF9_B_TPWE(),               9, NsI_B_TPWE),
