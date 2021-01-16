@@ -3,6 +3,7 @@
 
 import unittest
 
+from reversi import BitBoard, C as c
 from reversi.strategies import MonteCarlo30, MonteCarlo100, MonteCarlo1000
 from reversi.strategies import MinMax1_T, MinMax2_T, MinMax3_T, MinMax4_T
 from reversi.strategies import MinMax1_TP, MinMax2_TP, MinMax3_TP, MinMax4_TP
@@ -25,6 +26,8 @@ from reversi.strategies import AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, _AbI_B_TPWE_
 from reversi.strategies import IterativeDeepning
 from reversi.strategies import AlphaBeta, NegaScout
 from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_Type2
+from reversi.strategies import Random
+from reversi.strategies import MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW,AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_Type2, RandomF11  # noqa: E501
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 from reversi.strategies.coordinator import Selector
 from reversi.strategies.coordinator import Orderer_B, Orderer_PCB
@@ -181,3 +184,40 @@ class TestCustom(unittest.TestCase):
                 self.assertEqual(strategy.search.evaluator.p._W, strategies[index][16])
                 self.assertEqual(strategy.search.evaluator.w._W, strategies[index][17])
                 self.assertEqual(strategy.search.evaluator.e._W, strategies[index][18])
+
+    def test_custom_fullreading(self):
+        patterns = [
+            (MinMax2F9_TPWE(),             9, MinMax2_TPWE),
+            (AlphaBeta4F9_TPW(),           9, AlphaBeta4_TPW),
+            (AlphaBeta4F10_TPW(),         10, AlphaBeta4_TPW),
+            (AbIF9_B_TPW(),                9, AbI_B_TPW),
+            (AbIF9_B_TPWE(),               9, AbI_B_TPWE),
+            (AbIF9_PCB_TPWE(),             9, AbI_PCB_TPWE),
+            (AbIF10_B_TPWE(),             10, AbI_B_TPWE),
+            (AbIF10_PCB_TPWE(),           10, AbI_PCB_TPWE),
+            (AbIF9_B_TPWE_(),              9, _AbI_B_TPWE_),
+            (AbIF9_B_TPWEC(),              9, AbI_B_TPWEC),
+            (NsIF9_B_TPW(),                9, NsI_B_TPW),
+            (NsIF9_B_TPWE(),               9, NsI_B_TPWE),
+            (NsIF10_B_TPWE(),             10, NsI_B_TPWE),
+            (NsIF10_B_TPW(),              10, NsI_B_TPW),
+            (NsIF11_B_TPW(),              11, NsI_B_TPW),
+            (NsIF12_B_TPW(),              12, NsI_B_TPW),
+            (SwitchAbIF9_B_TPWE(),         9, SwitchAbI_B_TPWE),
+            (SwitchNsIF9_B_TPWE(),         9, SwitchNsI_B_TPWE),
+            (SwitchNsIF10_B_TPWE(),       10, SwitchNsI_B_TPWE),
+            (SwitchNsIF10_B_TPWE_Type2(), 10, SwitchNsI_B_TPWE_Type2),
+            (RandomF11(),                 11, Random),
+        ]
+        for obj, remain, base in patterns:
+            self.assertEqual(obj.remain, remain)
+            self.assertIsInstance(obj.base, base)
+
+        randomf11 = RandomF11()
+        board = BitBoard(4)
+        moves_size4 = [(1, 0), (0, 1), (3, 2), (2, 3)]
+        self.assertTrue(randomf11.next_move(c.black, board) in moves_size4)
+
+        board = BitBoard(6)
+        moves_size6 = [(2, 1), (1, 2), (4, 3), (3, 4)]
+        self.assertTrue(randomf11.next_move(c.black, board) in moves_size6)
