@@ -6,7 +6,7 @@ import unittest
 from reversi.strategies.common import CPU_TIME
 
 
-class TestAbstract(unittest.TestCase):
+class TestCputime(unittest.TestCase):
     """cputime
     """
     def test_cputime(self):
