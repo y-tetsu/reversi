@@ -27,7 +27,7 @@ from reversi.strategies import IterativeDeepning
 from reversi.strategies import AlphaBeta, NegaScout
 from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_Type2
 from reversi.strategies import Random
-from reversi.strategies import MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW,AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_Type2, RandomF11  # noqa: E501
+from reversi.strategies import MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_Type2, RandomF11  # noqa: E501
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 from reversi.strategies.coordinator import Selector
 from reversi.strategies.coordinator import Orderer_B, Orderer_PCB
