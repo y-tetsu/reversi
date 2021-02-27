@@ -1272,56 +1272,6 @@ class Hitsuji(_Hitsuji_):
         return super().next_move(color, board)
 
 
-# if __name__ == '__main__':
-#     from board import BitBoard
-#
-#     def rotate_180(bbits, wbits, move):  # 180°回転
-#         bbits_tmp = [['0' for i in range(8)] for j in range(8)]
-#         wbits_tmp = [['0' for i in range(8)] for j in range(8)]
-#
-#         check = 1 << 63
-#         for y in range(8):
-#             for x in range(8):
-#                 if bbits & check:
-#                     bbits_tmp[y][x] = '1'
-#                 if wbits & check:
-#                     wbits_tmp[y][x] = '1'
-#                 check >>= 1
-#
-#         import numpy as np
-#
-#         bbits_tmp = np.rot90(np.rot90(np.array(bbits_tmp)))
-#         wbits_tmp = np.rot90(np.rot90(np.array(wbits_tmp)))
-#         bbits = int(''.join(bbits_tmp.flatten()), 2)
-#         wbits = int(''.join(wbits_tmp.flatten()), 2)
-#         move = 7 - move[0], 7 - move[1]
-#
-#         return bbits, wbits, move
-#
-#     def delta_swap(bits, mask, delta):
-#         x = (bits ^ (bits >> delta)) & mask
-#         return bits ^ x ^ (x << delta)
-#
-#     def flip_diag(bbits, wbits, move):  # 対角線を軸に反転
-#         bbits = delta_swap(bbits, 0x00000000F0F0F0F0, 28)
-#         bbits = delta_swap(bbits, 0x0000CCCC0000CCCC, 14)
-#         bbits = delta_swap(bbits, 0x00AA00AA00AA00AA,  7)
-#         wbits = delta_swap(wbits, 0x00000000F0F0F0F0, 28)
-#         wbits = delta_swap(wbits, 0x0000CCCC0000CCCC, 14)
-#         wbits = delta_swap(wbits, 0x00AA00AA00AA00AA,  7)
-#         move = move[1], move[0]
-#         return bbits, wbits, move
-#
-#     def rotate_flip(color, b, w, move):
-#         print(f"    ('{color}', 0x{b:016X}, 0x{w:016X}): {move},")
-#         b2, w2, move2 = rotate_180(b, w, move)
-#         print(f"    ('{color}', 0x{b2:016X}, 0x{w2:016X}): {move2},")
-#         b3, w3, move3 = flip_diag(b, w, move)
-#         print(f"    ('{color}', 0x{b3:016X}, 0x{w3:016X}): {move3},")
-#         b4, w4, move4 = flip_diag(b2, w2, move2)
-#         print(f"    ('{color}', 0x{b4:016X}, 0x{w4:016X}): {move4},")
-#
-#     # --------------------------------------------
 #     # 虎定石
 #     print('--- Test For Tora Strategy ---')
 #     joseki = AlphaBeta4F9J_TPW()
