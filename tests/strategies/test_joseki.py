@@ -170,3 +170,25 @@ class TestJoseki(unittest.TestCase):
         self.assertEqual(tora.joseki, joseki)
         self.assertIsInstance(tora.base, Random)
         self.assertTrue(key in Measure.elp_time)
+
+    def test_tora_next_move(self):
+        board = BitBoard()
+        usagi = Tora(Random())
+        patterns = [
+            # turn,   move
+            # --- 虎定石 ---
+            (c.black, (5, 4)),
+            (c.white, (3, 5)),
+            (c.black, (2, 2)),
+            # --- ローズビル基本形 ---
+            (c.white, (3, 2)),
+            (c.black, (2, 3)),
+            (c.white, (5, 3)),
+            (c.black, (2, 4)),
+            (c.white, (1, 2)),
+            (c.black, (2, 1)),
+        ]
+        for turn, expected in patterns:
+            move = usagi.next_move(turn, board)
+            board.put_disc(turn, *move)
+            self.assertEqual(move, expected)
