@@ -6,7 +6,7 @@ import os
 
 from reversi import C as c
 from reversi.board import BitBoard
-from reversi.strategies import AbstractStrategy, Random, _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi
+from reversi.strategies import AbstractStrategy, Random, _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi
 from reversi.strategies.common import Measure
 from reversi.strategies.joseki import MOUSE, BULL, TIGER, SROSE, ROSEVILLE, FASTBOAT, CAT, RABBIT
 
@@ -248,3 +248,34 @@ class TestJoseki(unittest.TestCase):
             move = usagi.next_move(turn, board)
             board.put_disc(turn, *move)
             self.assertEqual(move, expected)
+
+    def test_nezumi_init(self):
+        joseki = {}
+        joseki.update(RABBIT)
+        joseki.update(CAT)
+        joseki.update(TIGER)
+        joseki.update(BULL)
+        joseki.update(SROSE)
+        joseki.update(ROSEVILLE)
+        joseki.update(FASTBOAT)
+        joseki.update(MOUSE)
+
+        # no Measure
+        _tora_ = _Nezumi_(Random())
+        key = _tora_.__class__.__name__ + str(os.getpid())
+        board = BitBoard()
+        _tora_.next_move(c.black, board)
+
+        self.assertEqual(_tora_.joseki, joseki)
+        self.assertIsInstance(_tora_.base, Random)
+        self.assertFalse(key in Measure.elp_time)
+
+        # with Measure
+        tora = Nezumi(Random())
+        key = tora.__class__.__name__ + str(os.getpid())
+        board = BitBoard()
+        tora.next_move(c.black, board)
+
+        self.assertEqual(tora.joseki, joseki)
+        self.assertIsInstance(tora.base, Random)
+        self.assertTrue(key in Measure.elp_time)
