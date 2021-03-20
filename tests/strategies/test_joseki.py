@@ -6,9 +6,9 @@ import os
 
 from reversi import C as c
 from reversi.board import BitBoard
-from reversi.strategies import AbstractStrategy, Random, _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi
+from reversi.strategies import AbstractStrategy, Random, _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi, _Neko_, Neko
 from reversi.strategies.common import Measure
-from reversi.strategies.joseki import MOUSE, BULL, TIGER, SROSE, ROSEVILLE, FASTBOAT, CAT, RABBIT
+from reversi.strategies.joseki import MOUSE, BULL, TIGER, SROSE, ROSEVILLE, FASTBOAT, CAT, RABBIT, SHEEP
 
 
 # def rotate_180(bbits, wbits, move):  # 180°回転
@@ -307,5 +307,63 @@ class TestJoseki(unittest.TestCase):
         ]
         for turn, expected in patterns:
             move = usagi.next_move(turn, board)
+            board.put_disc(turn, *move)
+            self.assertEqual(move, expected)
+
+    def test_neko_init(self):
+        joseki = {}
+        joseki.update(BULL)
+        joseki.update(MOUSE)
+        joseki.update(RABBIT)
+        joseki.update(TIGER)
+        joseki.update(SROSE)
+        joseki.update(ROSEVILLE)
+        joseki.update(FASTBOAT)
+        joseki.update(SHEEP)
+        joseki.update(CAT)
+
+        # no Measure
+        _neko_ = _Neko_(Random())
+        key = _neko_.__class__.__name__ + str(os.getpid())
+        board = BitBoard()
+        _neko_.next_move(c.black, board)
+
+        self.assertEqual(_neko_.joseki, joseki)
+        self.assertIsInstance(_neko_.base, Random)
+        self.assertFalse(key in Measure.elp_time)
+
+        # with Measure
+        neko = Neko(Random())
+        key = neko.__class__.__name__ + str(os.getpid())
+        board = BitBoard()
+        neko.next_move(c.black, board)
+
+        self.assertEqual(neko.joseki, joseki)
+        self.assertIsInstance(neko.base, Random)
+        self.assertTrue(key in Measure.elp_time)
+
+    def test_neko_next_move(self):
+        board = BitBoard()
+        neko = Neko(Random())
+        patterns = [
+            # turn,   move
+            # --- 猫定石 ---
+            (c.black, (5, 4)),
+            (c.white, (3, 5)),
+            (c.black, (2, 3)),
+            (c.white, (3, 2)),
+            (c.black, (2, 4)),
+            (c.white, (5, 3)),
+            (c.black, (4, 2)),
+            (c.white, (5, 2)),
+            (c.black, (4, 1)),
+            (c.white, (2, 5)),
+            (c.black, (4, 5)),
+            (c.white, (5, 5)),
+            (c.black, (3, 6)),
+            (c.white, (2, 7)),
+        ]
+        for turn, expected in patterns:
+            move = neko.next_move(turn, board)
             board.put_disc(turn, *move)
             self.assertEqual(move, expected)
