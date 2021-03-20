@@ -173,7 +173,7 @@ class TestJoseki(unittest.TestCase):
 
     def test_tora_next_move(self):
         board = BitBoard()
-        usagi = Tora(Random())
+        tora = Tora(Random())
         patterns = [
             # turn,   move
             # --- 虎定石 ---
@@ -189,7 +189,7 @@ class TestJoseki(unittest.TestCase):
             (c.black, (2, 1)),
         ]
         for turn, expected in patterns:
-            move = usagi.next_move(turn, board)
+            move = tora.next_move(turn, board)
             board.put_disc(turn, *move)
             self.assertEqual(move, expected)
 
@@ -205,28 +205,28 @@ class TestJoseki(unittest.TestCase):
         joseki.update(BULL)
 
         # no Measure
-        _tora_ = _Ushi_(Random())
-        key = _tora_.__class__.__name__ + str(os.getpid())
+        _ushi_ = _Ushi_(Random())
+        key = _ushi_.__class__.__name__ + str(os.getpid())
         board = BitBoard()
-        _tora_.next_move(c.black, board)
+        _ushi_.next_move(c.black, board)
 
-        self.assertEqual(_tora_.joseki, joseki)
-        self.assertIsInstance(_tora_.base, Random)
+        self.assertEqual(_ushi_.joseki, joseki)
+        self.assertIsInstance(_ushi_.base, Random)
         self.assertFalse(key in Measure.elp_time)
 
         # with Measure
-        tora = Ushi(Random())
-        key = tora.__class__.__name__ + str(os.getpid())
+        ushi = Ushi(Random())
+        key = ushi.__class__.__name__ + str(os.getpid())
         board = BitBoard()
-        tora.next_move(c.black, board)
+        ushi.next_move(c.black, board)
 
-        self.assertEqual(tora.joseki, joseki)
-        self.assertIsInstance(tora.base, Random)
+        self.assertEqual(ushi.joseki, joseki)
+        self.assertIsInstance(ushi.base, Random)
         self.assertTrue(key in Measure.elp_time)
 
     def test_ushi_next_move(self):
         board = BitBoard()
-        usagi = Ushi(Random())
+        ushi = Ushi(Random())
         patterns = [
             # turn,   move
             # --- 牛定石 ---
@@ -245,7 +245,7 @@ class TestJoseki(unittest.TestCase):
             (c.white, (5, 1)),
         ]
         for turn, expected in patterns:
-            move = usagi.next_move(turn, board)
+            move = ushi.next_move(turn, board)
             board.put_disc(turn, *move)
             self.assertEqual(move, expected)
 
@@ -261,28 +261,28 @@ class TestJoseki(unittest.TestCase):
         joseki.update(MOUSE)
 
         # no Measure
-        _tora_ = _Nezumi_(Random())
-        key = _tora_.__class__.__name__ + str(os.getpid())
+        _nezumi_ = _Nezumi_(Random())
+        key = _nezumi_.__class__.__name__ + str(os.getpid())
         board = BitBoard()
-        _tora_.next_move(c.black, board)
+        _nezumi_.next_move(c.black, board)
 
-        self.assertEqual(_tora_.joseki, joseki)
-        self.assertIsInstance(_tora_.base, Random)
+        self.assertEqual(_nezumi_.joseki, joseki)
+        self.assertIsInstance(_nezumi_.base, Random)
         self.assertFalse(key in Measure.elp_time)
 
         # with Measure
-        tora = Nezumi(Random())
-        key = tora.__class__.__name__ + str(os.getpid())
+        nezumi = Nezumi(Random())
+        key = nezumi.__class__.__name__ + str(os.getpid())
         board = BitBoard()
-        tora.next_move(c.black, board)
+        nezumi.next_move(c.black, board)
 
-        self.assertEqual(tora.joseki, joseki)
-        self.assertIsInstance(tora.base, Random)
+        self.assertEqual(nezumi.joseki, joseki)
+        self.assertIsInstance(nezumi.base, Random)
         self.assertTrue(key in Measure.elp_time)
 
     def test_nezumi_next_move(self):
         board = BitBoard()
-        usagi = Nezumi(Random())
+        nezumi = Nezumi(Random())
         patterns = [
             # turn,   move
             # --- 鼠定石 ---
@@ -306,7 +306,7 @@ class TestJoseki(unittest.TestCase):
             (c.white, (4, 6)),
         ]
         for turn, expected in patterns:
-            move = usagi.next_move(turn, board)
+            move = nezumi.next_move(turn, board)
             board.put_disc(turn, *move)
             self.assertEqual(move, expected)
 
