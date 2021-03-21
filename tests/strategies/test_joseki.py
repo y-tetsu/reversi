@@ -6,7 +6,7 @@ import os
 
 from reversi import C as c
 from reversi.board import BitBoard
-from reversi.strategies import AbstractStrategy, Random, _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi, _Neko_, Neko
+from reversi.strategies import AbstractStrategy, Random, _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi, _Neko_, Neko, _Hitsuji_, Hitsuji  # noqa: E501
 from reversi.strategies.common import Measure
 from reversi.strategies.joseki import MOUSE, BULL, TIGER, SROSE, ROSEVILLE, FASTBOAT, CAT, RABBIT, SHEEP
 
@@ -367,3 +367,73 @@ class TestJoseki(unittest.TestCase):
             move = neko.next_move(turn, board)
             board.put_disc(turn, *move)
             self.assertEqual(move, expected)
+
+    def test_hitsuji_init(self):
+        joseki = {}
+        joseki.update(BULL)
+        joseki.update(MOUSE)
+        joseki.update(RABBIT)
+        joseki.update(TIGER)
+        joseki.update(SROSE)
+        joseki.update(ROSEVILLE)
+        joseki.update(FASTBOAT)
+        joseki.update(CAT)
+        joseki.update(SHEEP)
+
+        # no Measure
+        _hitsuji_ = _Hitsuji_(Random())
+        key = _hitsuji_.__class__.__name__ + str(os.getpid())
+        board = BitBoard()
+        _hitsuji_.next_move(c.black, board)
+
+        self.assertEqual(_hitsuji_.joseki, joseki)
+        self.assertIsInstance(_hitsuji_.base, Random)
+        self.assertFalse(key in Measure.elp_time)
+
+        # with Measure
+        hitsuji = Hitsuji(Random())
+        key = hitsuji.__class__.__name__ + str(os.getpid())
+        board = BitBoard()
+        hitsuji.next_move(c.black, board)
+
+        self.assertEqual(hitsuji.joseki, joseki)
+        self.assertIsInstance(hitsuji.base, Random)
+        self.assertTrue(key in Measure.elp_time)
+
+    def test_hitsuji_next_move(self):
+        board = BitBoard()
+        hitsuji = Hitsuji(Random())
+        patterns = [
+            # turn,   move
+            # --- 猫定石 ---
+            (c.black, (5, 4)),
+            (c.white, (3, 5)),
+            (c.black, (2, 3)),
+            (c.white, (3, 2)),
+            (c.black, (4, 5)),
+            (c.white, (5, 3)),
+            (c.black, (4, 2)),
+            (c.white, (5, 2)),
+            (c.black, (2, 5)),
+            (c.white, (5, 5)),
+            (c.black, (6, 4)),
+            (c.white, (6, 5)),
+            (c.black, (2, 2)),
+            (c.white, (7, 5)),
+            (c.black, (6, 3)),
+            (c.white, (7, 4)),
+            (c.black, (7, 2)),
+            (c.white, (2, 4)),
+        ]
+        for turn, expected in patterns:
+            move = hitsuji.next_move(turn, board)
+            board.put_disc(turn, *move)
+            self.assertEqual(move, expected)
+
+#     # -----------------------------------#
+#     color, move = 'white', (2, 4)
+#     b, w = bitboard8.get_bitboard_info()
+#     rotate_flip(color, b, w, move)
+#     import sys
+#     sys.exit()
+#     # -----------------------------------#
