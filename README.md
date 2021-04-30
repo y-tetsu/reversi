@@ -584,8 +584,10 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 おまけ要素として、お好きなプログラミング言語で作ったAIをゲームに追加して遊べる機能もございます。
 
 ### ダウンロード
-下記リンク先でAssetsをクリックし、"reversi.zip"をダウンロードしてください。<br>
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases)
+下記リンクをクリックし、"reversi.zip"をダウンロードしてください。<br>
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.18/reversi.zip)
+
+"reversi.zip"を解凍後、reversi.exeをダブルクリックするとアプリケーションで遊ぶ事ができます。
 
 ### メニュー一覧
 選択可能なメニューの一覧です。<br>
