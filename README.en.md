@@ -14,7 +14,7 @@ You can feel free to enjoy programming Reversi (Othello) AI.<br>
 
 ## Download
 For Windows OS, you can download the Reversi Application(using tkinter) from the following.<br>
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases)(Click Assets)
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.18/reversi.zip)
 
 ## Requirement
 - Windows10 64bit<br>
