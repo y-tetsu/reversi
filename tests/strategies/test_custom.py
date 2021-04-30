@@ -28,6 +28,8 @@ from reversi.strategies import AlphaBeta, NegaScout
 from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_Type2
 from reversi.strategies import Random
 from reversi.strategies import MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_Type2, RandomF11  # noqa: E501
+from reversi.strategies import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AlphaBeta4F10J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_PCB_TPWE, AbIF10J_B_TPWE, AbIF10J_PCB_TPWE, AbIF9J_B_TPWE_, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPWE, NsIF10J_B_TPWE, SwitchAbIF9J_B_TPWE, SwitchNsIF9J_B_TPWE, SwitchNsIF10J_B_TPWE, SwitchNsIF10J_B_TPWE_Type2  # noqa: E501
+from reversi.strategies import Usagi, Tora, Nezumi, Ushi, _Ushi_, Hitsuji, Neko
 from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 from reversi.strategies.coordinator import Selector
 from reversi.strategies.coordinator import Orderer_B, Orderer_PCB
@@ -221,3 +223,27 @@ class TestCustom(unittest.TestCase):
         board = BitBoard(6)
         moves_size6 = [(2, 1), (1, 2), (4, 3), (3, 4)]
         self.assertTrue(randomf11.next_move(c.black, board) in moves_size6)
+
+    def test_custom_joseki(self):
+        patterns = [
+            (AlphaBeta4J_TPW(),            Usagi,   AlphaBeta4_TPW),
+            (AlphaBeta4F9J_TPW(),          Tora,    AlphaBeta4F9_TPW),
+            (AlphaBeta4F10J_TPW(),         Tora,    AlphaBeta4F10_TPW),
+            (AbIF9J_B_TPW(),               Nezumi,  AbIF9_B_TPW),
+            (AbIF9J_B_TPWE(),              Ushi,    AbIF9_B_TPWE),
+            (AbIF9J_PCB_TPWE(),            Ushi,    AbIF9_PCB_TPWE),
+            (AbIF10J_B_TPWE(),             Ushi,    AbIF10_B_TPWE),
+            (AbIF10J_PCB_TPWE(),           Ushi,    AbIF10_PCB_TPWE),
+            (AbIF9J_B_TPWE_(),             _Ushi_,  AbIF9_B_TPWE_),
+            (AbIF9J_B_TPWEC(),             Hitsuji, AbIF9_B_TPWEC),
+            (NsIF9J_B_TPW(),               Ushi,    NsIF9_B_TPW),
+            (NsIF9J_B_TPWE(),              Nezumi,  NsIF9_B_TPWE),
+            (NsIF10J_B_TPWE(),             Neko,    NsIF10_B_TPWE),
+            (SwitchAbIF9J_B_TPWE(),        Ushi,    SwitchAbIF9_B_TPWE),
+            (SwitchNsIF9J_B_TPWE(),        Neko,    SwitchNsIF9_B_TPWE),
+            (SwitchNsIF10J_B_TPWE(),       Neko,    SwitchNsIF10_B_TPWE),
+            (SwitchNsIF10J_B_TPWE_Type2(), Hitsuji, SwitchNsIF10_B_TPWE_Type2),
+        ]
+        for obj, joseki, base in patterns:
+            self.assertIsInstance(obj, joseki)
+            self.assertIsInstance(obj.base, base)

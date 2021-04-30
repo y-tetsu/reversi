@@ -1026,7 +1026,7 @@ class SwitchAbIF9J_B_TPWE(Ushi):
     SwitchNsIF9_B_TPWE+定石打ち
     (完全読み開始:残り9手)
     """
-    def __init__(self, base=SwitchNsIF9_B_TPWE()):
+    def __init__(self, base=SwitchAbIF9_B_TPWE()):
         super().__init__(base)
 
 
