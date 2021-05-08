@@ -41,6 +41,18 @@ class TestMinMax(unittest.TestCase):
         self.assertEqual(minmax.get_score('white', board, 3), 0)
         self.assertEqual(minmax.get_score('white', board, 4), -3)
 
+    def test_minmax_get_score_pass(self):
+        board = BitBoard(4)
+        board.put_disc('black', 0, 1)
+        board.put_disc('white', 0, 2)
+        board.put_disc('black', 0, 3)
+        board.put_disc('white', 2, 0)
+        board.put_disc('black', 3, 0)
+        board.put_disc('white', 0, 0)
+        board.put_disc('black', 1, 0)
+        minmax = MinMax(evaluator=coord.Evaluator_N())
+        self.assertEqual(minmax.get_score('white', board, 1), 10)
+
     def test_minmax_next_move(self):
         board = BitBoard()
         minmax = MinMax(evaluator=coord.Evaluator_TPOW())
