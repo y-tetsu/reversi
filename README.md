@@ -47,11 +47,11 @@
 また、本ライブラリで作成した[Windows版アプリケーション](#Windows版アプリケーションについて)もご用意しております。<br>
 ダウンロード後、インストール不要で、すぐにリバーシを楽しむ事ができます。
 
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">]
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
 
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="550px">]
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="550px">
 
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">]
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">
 
 
 ## 動作環境
