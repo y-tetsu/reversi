@@ -79,7 +79,7 @@ $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 $ py -3.7 -m pip uninstall reversi
 ```
 
----
+
 ## サンプル
 **reversi**をインストール後、任意のフォルダで下記コマンドを実行すると、サンプルをコピーできます。
 ```
@@ -112,7 +112,7 @@ $ py -3.7 08_alphabeta_strategy.py
 $ py -3.7 09_genetic_algorithm.py
 ```
 
----
+
 ## ライブラリの使い方
 本ライブラリの使い方を、コーディング例を元に説明します。
 
