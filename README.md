@@ -18,14 +18,13 @@
 - [動作環境](#動作環境)
 - [インストール方法](#インストール方法)
 - [アンインストール方法](#アンインストール方法)
+- [サンプル](#サンプル)
 - [ライブラリの使い方](#ライブラリの使い方)
     - [アプリケーションを起動させる](#アプリケーションを起動させる)
     - [アプリケーションにAIを追加する](#アプリケーションにAIを追加する)
     - [AIの戦略をプログラミングする](#AIの戦略をプログラミングする)
     - [AI同士の対戦をシミュレートする](#AI同士の対戦をシミュレートする)
     - [boardオブジェクトの使い方](#boardオブジェクトの使い方)
-- [サンプル](#サンプル)
-- [デモ](#デモ)
 - [インストールがうまくいかない場合](#インストールがうまくいかない場合)
 - [Windows版アプリケーションについて](#Windows版アプリケーションについて)
     - [ゲーム紹介](#ゲーム紹介)
@@ -47,6 +46,12 @@
 
 また、本ライブラリで作成した[Windows版アプリケーション](#Windows版アプリケーションについて)もご用意しております。<br>
 ダウンロード後、インストール不要で、すぐにリバーシを楽しむ事ができます。
+
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="350px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
+
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="350px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
+
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="350px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
 
 ## 動作環境
@@ -74,7 +79,40 @@ $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 $ py -3.7 -m pip uninstall reversi
 ```
 
+---
+## サンプル
+**reversi**をインストール後、任意のフォルダで下記コマンドを実行すると、サンプルをコピーできます。
+```
+$ install_reversi_examples
+```
 
+コピーされるサンプルは下記のとおりです。
+
+- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション
+- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション
+- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
+- [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
+- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
+- [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) - テーブルによる重みづけで手を選ぶAIを実装するサンプル
+- [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
+- [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
+- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
+
+サンプルの実行方法はそれぞれ下記のとおりです。
+```
+$ cd reversi_examples
+$ py -3.7 01_tkinter_app.py
+$ py -3.7 02_console_app.py
+$ 03_create_exe.bat
+$ py -3.7 04_reversi_simulator.py
+$ py -3.7 05_manual_strategy.py
+$ py -3.7 06_table_strategy.py
+$ py -3.7 07_minmax_strategy.py
+$ py -3.7 08_alphabeta_strategy.py
+$ py -3.7 09_genetic_algorithm.py
+```
+
+---
 ## ライブラリの使い方
 本ライブラリの使い方を、コーディング例を元に説明します。
 
@@ -461,48 +499,6 @@ print(board)
 
 上記の実行結果は下記となります。<br>
 ![undo](https://raw.githubusercontent.com/y-tetsu/reversi/images/undo.png)
-
-
----
-## サンプル
-**reversi**をインストール後、任意のフォルダで下記コマンドを実行すると、サンプルをコピーできます。
-```
-$ install_reversi_examples
-```
-
-コピーされるサンプルは下記のとおりです。
-
-- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション
-- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション
-- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
-- [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
-- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
-- [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) - テーブルによる重みづけで手を選ぶAIを実装するサンプル
-- [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
-- [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
-- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
-
-サンプルの実行方法はそれぞれ下記のとおりです。
-```
-$ cd reversi_examples
-$ py -3.7 01_tkinter_app.py
-$ py -3.7 02_console_app.py
-$ 03_create_exe.bat
-$ py -3.7 04_reversi_simulator.py
-$ py -3.7 05_manual_strategy.py
-$ py -3.7 06_table_strategy.py
-$ py -3.7 07_minmax_strategy.py
-$ py -3.7 08_alphabeta_strategy.py
-$ py -3.7 09_genetic_algorithm.py
-```
-
-### デモ
-#### 01_tkinter_app.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
-#### 02_console_app.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
-#### 04_reversi_simulator.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
 
 ---
