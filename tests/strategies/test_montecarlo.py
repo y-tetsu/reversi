@@ -24,6 +24,13 @@ class TestMonteCarlo(unittest.TestCase):
         self.assertEqual(montecarlo._white_player.name, 'Random_W')
         self.assertIsInstance(montecarlo._white_player.strategy, Random)
 
+    def test_montecarlo_playout_large_size(self):
+        montecarlo = MonteCarlo()
+        montecarlo.remain = 4
+        board = BitBoard(4)
+
+        self.assertEqual(montecarlo._playout('black', board, (0, 1)), 0)
+
     def test_montecarlo_performance(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
