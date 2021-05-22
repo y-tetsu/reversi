@@ -7,7 +7,7 @@ import time
 
 from reversi.board import BitBoard
 from reversi.strategies.common import Timer, Measure, CPU_TIME
-from reversi.strategies import _NegaMax, NegaMax
+from reversi.strategies import _NegaMax_, _NegaMax, NegaMax_, NegaMax
 import reversi.strategies.coordinator as coord
 
 
@@ -15,54 +15,47 @@ class TestNegaMax(unittest.TestCase):
     """negamax
     """
     def test_negamax_init(self):
-        negamax = _NegaMax()
-        self.assertEqual(negamax._MIN, -10000000)
-        self.assertEqual(negamax.depth, 3)
-        self.assertEqual(negamax.evaluator, None)
+        for instance in [_NegaMax_, _NegaMax, NegaMax_, NegaMax]:
+            negamax = instance()
+            self.assertEqual(negamax._MIN, -10000000)
+            self.assertEqual(negamax.depth, 3)
+            self.assertEqual(negamax.evaluator, None)
 
-        negamax = _NegaMax(depth=4, evaluator=coord.Evaluator_T())
-        self.assertEqual(negamax._MIN, -10000000)
-        self.assertEqual(negamax.depth, 4)
-        self.assertTrue(isinstance(negamax.evaluator, coord.Evaluator_T))
-
-        negamax = NegaMax()
-        self.assertEqual(negamax._MIN, -10000000)
-        self.assertEqual(negamax.depth, 3)
-        self.assertEqual(negamax.evaluator, None)
-
-        negamax = NegaMax(depth=4, evaluator=coord.Evaluator_T())
-        self.assertEqual(negamax._MIN, -10000000)
-        self.assertEqual(negamax.depth, 4)
-        self.assertTrue(isinstance(negamax.evaluator, coord.Evaluator_T))
+            negamax = instance(depth=4, evaluator=coord.Evaluator_T())
+            self.assertEqual(negamax._MIN, -10000000)
+            self.assertEqual(negamax.depth, 4)
+            self.assertTrue(isinstance(negamax.evaluator, coord.Evaluator_T))
 
     def test_negamax_get_score(self):
-        board = BitBoard()
-        negamax = _NegaMax(evaluator=coord.Evaluator_T())
+        for instance in [_NegaMax_, _NegaMax, NegaMax_, NegaMax]:
+            board = BitBoard()
+            negamax = instance(evaluator=coord.Evaluator_T())
 
-        self.assertEqual(negamax.get_score('black', board, 1), -3)
-        self.assertEqual(negamax.get_score('black', board, 2), -1)
-        self.assertEqual(negamax.get_score('black', board, 3), -4)
-        self.assertEqual(negamax.get_score('black', board, 4), 0)
+            self.assertEqual(negamax.get_score('black', board, 1), -3)
+            self.assertEqual(negamax.get_score('black', board, 2), -1)
+            self.assertEqual(negamax.get_score('black', board, 3), -4)
+            self.assertEqual(negamax.get_score('black', board, 4), 0)
 
-        board.put_disc('black', 3, 2)
-        self.assertEqual(negamax.get_score('white', board, 1), 1)
-        self.assertEqual(negamax.get_score('white', board, 2), 4)
-        self.assertEqual(negamax.get_score('white', board, 3), 0)
-        self.assertEqual(negamax.get_score('white', board, 4), 3)
+            board.put_disc('black', 3, 2)
+            self.assertEqual(negamax.get_score('white', board, 1), 1)
+            self.assertEqual(negamax.get_score('white', board, 2), 4)
+            self.assertEqual(negamax.get_score('white', board, 3), 0)
+            self.assertEqual(negamax.get_score('white', board, 4), 3)
 
     def test_negamax_next_move(self):
-        board = BitBoard()
-        negamax = _NegaMax(evaluator=coord.Evaluator_TPOW())
+        for instance in [_NegaMax_, _NegaMax, NegaMax_, NegaMax]:
+            board = BitBoard()
+            negamax = instance(evaluator=coord.Evaluator_TPOW())
 
-        board.put_disc('black', 3, 2)
-        self.assertEqual(negamax.next_move('white', board), (2, 4))
+            board.put_disc('black', 3, 2)
+            self.assertEqual(negamax.next_move('white', board), (2, 4))
 
-        board.put_disc('white', 2, 4)
-        board.put_disc('black', 5, 5)
-        board.put_disc('white', 4, 2)
-        board.put_disc('black', 5, 2)
-        board.put_disc('white', 5, 4)
-        self.assertEqual(negamax.next_move('black', board), (2, 2))
+            board.put_disc('white', 2, 4)
+            board.put_disc('black', 5, 5)
+            board.put_disc('white', 4, 2)
+            board.put_disc('black', 5, 2)
+            board.put_disc('white', 5, 4)
+            self.assertEqual(negamax.next_move('black', board), (2, 2))
 
     def test_negamax_performance_of_get_score(self):
         board = BitBoard()
