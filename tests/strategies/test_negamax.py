@@ -57,6 +57,32 @@ class TestNegaMax(unittest.TestCase):
             board.put_disc('white', 5, 4)
             self.assertEqual(negamax.next_move('black', board), (2, 2))
 
+    def test_negamax_next_move_timeout_max_score(self):
+        def func():
+            score = 10
+
+            def decliment_score(next_color, board, depth, pid):
+                nonlocal score
+                score -= 1
+                if score == 8:
+                    Timer.timeout_flag[pid] = True
+
+                return score
+
+            return decliment_score
+
+        board = BitBoard()
+        board.put_disc('black', 3, 2)
+        negamax = NegaMax(evaluator=coord.Evaluator_TPOW())
+        pid = negamax.__class__.__name__ + str(os.getpid())
+        Measure.count[pid] = 0
+        Timer.timeout_flag[pid] = False
+        Timer.timeout_value[pid] = 0
+        Timer.deadline[pid] = time.time() + CPU_TIME
+        negamax.get_score = func()  # override get_score
+
+        self.assertEqual(negamax.next_move('white', board), (2, 2))
+
     def test_negamax_performance_of_get_score(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
