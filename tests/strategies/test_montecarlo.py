@@ -31,6 +31,22 @@ class TestMonteCarlo(unittest.TestCase):
 
         self.assertEqual(montecarlo._playout('black', board, (0, 1)), 0)
 
+    def test_montecarlo_playout_draw(self):
+        montecarlo = MonteCarlo()
+        board = BitBoard(4)
+        board.put_disc('black', 1, 0)
+        board.put_disc('white', 0, 2)
+        board.put_disc('black', 0, 3)
+        board.put_disc('white', 0, 0)
+        board.put_disc('black', 0, 1)
+        board.put_disc('white', 2, 0)
+        board.put_disc('black', 3, 2)
+        board.put_disc('white', 2, 3)
+        board.put_disc('black', 3, 0)
+        board.put_disc('white', 1, 3)
+
+        self.assertEqual(montecarlo._playout('black', board, (3, 3)), 0)
+
     def test_montecarlo_performance(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
