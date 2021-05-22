@@ -15,7 +15,7 @@ class TestAlphaBeta(unittest.TestCase):
     """alphabeta
     """
     def test_alphabeta_init(self):
-        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_]:
+        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta]:
             alphabeta = instance()
             self.assertEqual(alphabeta._MIN, -10000000)
             self.assertEqual(alphabeta._MAX, 10000000)
@@ -29,7 +29,7 @@ class TestAlphaBeta(unittest.TestCase):
             self.assertTrue(isinstance(alphabeta.evaluator, coord.Evaluator_T))
 
     def test_alphabeta_get_score(self):
-        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_]:
+        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta]:
             board = BitBoard()
             alphabeta = instance(evaluator=coord.Evaluator_T())
             self.assertEqual(alphabeta._get_score('black', board, alphabeta._MIN, alphabeta._MAX, 1), -3)
@@ -44,7 +44,7 @@ class TestAlphaBeta(unittest.TestCase):
             self.assertEqual(alphabeta._get_score('white', board, alphabeta._MIN, alphabeta._MAX, 4), 3)
 
     def test_alphabeta_next_move(self):
-        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_]:
+        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta]:
             board = BitBoard()
             alphabeta = instance(evaluator=coord.Evaluator_TPOW())
 
@@ -59,7 +59,7 @@ class TestAlphaBeta(unittest.TestCase):
             self.assertEqual(alphabeta.next_move('black', board), (2, 2))
 
     def test_alphabeta_get_best_move(self):
-        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_]:
+        for instance in [_AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta]:
             board = BitBoard()
             alphabeta = instance(evaluator=coord.Evaluator_TPW())
 
