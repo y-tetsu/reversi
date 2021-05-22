@@ -22,7 +22,7 @@
 - [ライブラリの使い方](#ライブラリの使い方)
     - [アプリケーションを起動させる](#アプリケーションを起動させる)
     - [アプリケーションにAIを追加する](#アプリケーションにAIを追加する)
-    - [AIの戦略をプログラミングする](#AIの戦略をプログラミングする)
+    - [AIをプログラミングする](#AIをプログラミングする)
     - [AI同士の対戦をシミュレートする](#AI同士の対戦をシミュレートする)
     - [boardオブジェクトの使い方](#boardオブジェクトの使い方)
 - [インストールがうまくいかない場合](#インストールがうまくいかない場合)
@@ -39,13 +39,14 @@
 
 ## 概要
 **reversi**は<a id="return1">Python</a>で作られた<sup>[[1]](#note1)</sup>Pythonで使えるリバーシのライブラリです。<br>
-**reversi**を使うことで、以下が手軽に行えます。<br>
-- リバーシAIのプログラミング
+**reversi**をインストールすると、PythonでリバーシAIのプログラミングを手軽に試せます。<br>
+
+他にも、以下のような用途に使えます。
 - リバーシAI同士の対戦シミュレート
 - アプリケーションの作成
 
-また、本ライブラリで作成した[Windows版アプリケーション](#Windows版アプリケーションについて)もご用意しております。<br>
-ダウンロード後、インストール不要で、すぐにリバーシを楽しむ事ができます。
+また、本ライブラリを使って作成した[Windows版アプリケーション](#Windows版アプリケーションについて)も用意しております。<br>
+こちらはダウンロード後、インストール不要で、すぐにリバーシのゲームをプレイできます(無料)。
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
 
@@ -59,7 +60,7 @@
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
+- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(ライブラリインストール時のみ必要)<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(ライブラリ開発時のみ必要)<br>
@@ -132,8 +133,8 @@ Reversi().start()
 次に、AIをアプリケーションに追加する方法を示します。
 
 例として、ライブラリにあらかじめ組み込まれている下記AIをアプリケーションに追加します。
-- ランダムな手を打つ`Random`戦略のAI
-- 常にできるだけ多く取ろうとする`Greedy`戦略のAI
+- ランダムな手を打つAI : `Random`
+- できるだけ多く石が取れる手を打つAI : `Greedy`
 ```Python
 from reversi import Reversi
 from reversi.strategies import Random, Greedy
@@ -147,21 +148,21 @@ Reversi(
 ```
 上記を実行すると、ユーザ操作に加えて"RANDOM"と"GREEDY"をプレイヤーとして選択できるようになります。
 
-組み込みのAI戦略は、すべて`reversi.strategies`よりインポートすることができます。<br>
-また、追加するAIプレイヤーの情報(以後、"プレイヤー情報")は、下記フォーマットに従ってください。
+組み込みのAIは、すべて`reversi.strategies`よりインポートすることができます。<br>
+また、追加するプレイヤーの情報(以後、"プレイヤー情報")は、下記フォーマットに従ってください。
 ```Python
 {
-    'AIプレイヤー名1': AI戦略クラスのオブジェクト1,
-    'AIプレイヤー名2': AI戦略クラスのオブジェクト2,
-    'AIプレイヤー名3': AI戦略クラスのオブジェクト3,
+    'プレイヤー名1': AIクラスのオブジェクト1,
+    'プレイヤー名2': AIクラスのオブジェクト2,
+    'プレイヤー名3': AIクラスのオブジェクト3,
 }
 ```
 
-### AIの戦略をプログラミングする
+### AIをプログラミングする
 続いて、本ライブラリを使って独自のAIを自作し、アプリケーションに追加する方法を示します。
 
-#### 戦略クラスの作り方
-下記の`OriginalAI`のようにコーディングすると、AIの戦略クラスが完成します。
+#### AIクラスの作り方
+下記のようにコーディングすると、AIクラスが完成します。
 ```Python
 from reversi.strategies import AbstractStrategy
 
@@ -213,9 +214,9 @@ legal_moves = board.get_legal_moves(color)
 size = board.size
 ```
 
-#### 「角が取れる時は必ず取る」戦略の実装
+#### 「角が取れる時は必ず取る」AIの実装
 それでは、AIの作成例として4角が取れる時は必ず取り、
-そうでない時はランダムに打つ、`Corner`という戦略(プレイヤー名は"CORNER"とします)を実装する例を示します。
+そうでない時はランダムに打つ、`Corner`というAI(プレイヤー名は"CORNER"とします)を実装する例を示します。
 
 ```Python
 import random
@@ -299,8 +300,8 @@ print(simulator)
 ```
 
 #### 実行例
-ライブラリ組み込みのAI戦略を用いたプレイヤー"RANDOM"、"GREEDY"と、
-自作のAI戦略による"CORNER"の、それぞれを対戦させるようシミュレータを実行して、
+ライブラリ組み込みのAIを用いたプレイヤー"RANDOM"、"GREEDY"と、
+自作のAIによる"CORNER"の、それぞれを対戦させるようシミュレータを実行して、
 結果を出力するまでのコード例を下記に示します。
 
 ```Python
