@@ -83,6 +83,18 @@ class TestNegaMax(unittest.TestCase):
 
         self.assertEqual(negamax.next_move('white', board), (2, 2))
 
+    def test_negamax_get_score_pass(self):
+        board = BitBoard(4)
+        board.put_disc('black', 0, 1)
+        board.put_disc('white', 0, 2)
+        board.put_disc('black', 0, 3)
+        board.put_disc('white', 2, 0)
+        board.put_disc('black', 3, 0)
+        board.put_disc('white', 0, 0)
+        board.put_disc('black', 1, 0)
+        negamax = _NegaMax_(evaluator=coord.Evaluator_N())
+        self.assertEqual(negamax.get_score('white', board, 1), -10)
+
     def test_negamax_performance_of_get_score(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
