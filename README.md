@@ -29,6 +29,7 @@
         - [boardオブジェクトの使い方](#boardオブジェクトの使い方)
     - [AIクラス編](#AIクラス編)
         - [単純思考なAI](#単純思考なAI)
+        - [マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)
 - [インストールがうまくいかない場合](#インストールがうまくいかない場合)
 - [Windows版アプリケーションについて](#Windows版アプリケーションについて)
     - [ゲーム紹介](#ゲーム紹介)
@@ -562,6 +563,43 @@ from reversi import Reversi
 from reversi.strategies import SlowStarter
 Reversi({"SLOWSTARTER": SlowStarter()}).start()
 ```
+
+#### マス目の位置に応じて手を選ぶAI
+#### Table
+盤面のマス目の位置に重み(重要度)を設定し、<br>
+その重みを元に盤面を評価し、スコアが最も高くなる手を選びます。<br>
+マス目の重みは使用例の通り、パラメータにて自由に設定が可能です。<br>
+ただし、パラメータの値には整数値(負の値も可)を設定してください。
+
+(使用例)
+```Python
+from reversi import Reversi
+from reversi.strategies import Table
+Reversi(
+    {
+        'TABLE': Table(
+            corner=100,
+            c=30,
+            a1=50,
+            a2=50,
+            b1=50,
+            b2=50,
+            b3=50,
+            x=-25,
+            o1=45,
+            o2=45,
+        ),
+    }
+).start()
+```
+
+(パラメータ)<br>
+各パラメータに対応するマス目の位置は下図のとおりです。<br>
+![table](https://raw.githubusercontent.com/y-tetsu/reversi/images/table.png)
+
+一般的にリバーシでは角を取ると有利で、Xに打つと不利といわれており<br>
+`corner`の値を大きくして角を狙わせ、`x`のパラメータを小さくしてXを避ける、といった調整が可能です。<br>
+
 
 ---
 ## インストールがうまくいかない場合
