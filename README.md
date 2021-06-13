@@ -53,7 +53,7 @@
 - リバーシAI同士の対戦シミュレート
 - アプリケーションの作成
 
-また、本ライブラリを使って作成した[Windows版アプリケーション](#Windows版アプリケーションについて)も用意しております。<br>
+また、本ライブラリを使って作成した[Windows版アプリケーション](#Windows版アプリケーションについて)も用意しています。<br>
 こちらはダウンロード後、インストール不要で、すぐにリバーシのゲームを無料でプレイできます。
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
@@ -740,7 +740,7 @@ from reversi.strategies import AlphaBeta
 from reversi.strategies.coordinator import Evaluator, TableScorer, PossibilityScorer, WinLoseScorer
 Reversi(
     {
-        'AlphaBeta': AlphaBeta(
+        'CUSTOMIZED': AlphaBeta(
             depth=4,
             evaluator=Evaluator(
                 separated=[
