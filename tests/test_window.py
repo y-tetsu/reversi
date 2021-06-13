@@ -219,5 +219,11 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.menu.menu_items['assist'], reversi.window.ASSIST_MENU)
         self.assertEqual(window.menu.menu_items['language'], reversi.window.LANGUAGE_MENU)
         self.assertEqual(window.menu.menu_items['cancel'], reversi.window.CANCEL_MENU)
+
+    def test_window_menu_create_menu_items(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
         for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'language', 'cancel']:
             self.assertIsInstance(window.menu.menus[item], tk.Menu)
