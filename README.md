@@ -30,6 +30,8 @@
     - [AIクラス編](#AIクラス編)
         - [単純思考なAI](#単純思考なAI)
         - [マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)
+        - [数手先の盤面を読んで手を選ぶAI](#数手先の盤面を読んで手を選ぶAI)
+        - [評価関数のカスタマイズ方法](#評価関数のカスタマイズ方法)
 - [Windows版アプリケーションについて](#Windows版アプリケーションについて)
     - [ゲーム紹介](#ゲーム紹介)
     - [ダウンロード](#ダウンロード)
@@ -567,7 +569,7 @@ Reversi({"SLOWSTARTER": SlowStarter()}).start()
 ```
 
 #### マス目の位置に応じて手を選ぶAI
-#### Table
+##### Table
 盤面のマス目の位置に重み(重要度)を設定して、<br>
 その重みを元に盤面を評価し、スコアが最も高くなる手を選びます。<br>
 マス目の重みは使用例の通り、パラメータにて自由に設定が可能です。<br>
@@ -601,6 +603,89 @@ Reversi(
 
 リバーシでは角を取ると有利になりやすく、Xを取ると不利になりやすいと言われています。<br>
 そこで、`corner`パラメータを大きくして角を狙い、`x`パラメータを小さくしてXを避ける、といった調整が可能です。<br>
+
+
+#### 数手先の盤面を読んで手を選ぶAI
+盤面の形勢を判断する評価関数を元に、相手も自分同様に最善を尽くすと仮定して、数手先の盤面を読み<br>
+その中で評価が最も良くなる手を選びます。<br>
+評価関数のカスタマイズ方法は[こちら](#評価関数のカスタマイズ方法)を参照して下さい。
+
+##### MinMax
+MinMax法で手を選びます。読む手数を大きくしすぎると処理が終わらない場合がありますのでご注意下さい。
+
+(使用例)
+```Python
+from reversi import Reversi
+from reversi.strategies import MinMax
+from reversi.strategies.coordinator import Evaluator
+Reversi(
+    {
+        'MINMAX': MinMax(
+            depth=2,                # 何手先まで読むかを指定
+            evaluator=Evaluator(),  # 評価関数を指定(カスタマイズ方法は後述)
+        ),
+    }
+).start()
+```
+
+##### NegaMax
+NegaMax法で手を選びます。MinMax法と性能は同じです。<br>
+こちらは一手0.5秒の持ち時間の中で手を読みます。
+
+(使用例)
+```Python
+from reversi import Reversi
+from reversi.strategies import NegaMax
+from reversi.strategies.coordinator import Evaluator
+Reversi(
+    {
+        'NEGAMAX': NegaMax(
+            depth=2,                # 何手先まで読むかを指定
+            evaluator=Evaluator(),  # 評価関数を指定(カスタマイズ方法は後述)
+        ),
+    }
+).start()
+```
+
+##### AlphaBeta
+AlphaBeta法で手を選びます。不要な手(悪手)の読みを枝刈りする(打ち切る)ことでMinMax法より効率よく手を読みます。<br>
+一手0.5秒の持ち時間の中で手を読みます。
+
+(使用例)
+```Python
+from reversi import Reversi
+from reversi.strategies import AlphaBeta
+from reversi.strategies.coordinator import Evaluator
+Reversi(
+    {
+        'ALPHABETA': AlphaBeta(
+            depth=2,                # 何手先まで読むかを指定
+            evaluator=Evaluator(),  # 評価関数を指定(カスタマイズ方法は後述)
+        ),
+    }
+).start()
+```
+
+##### NegaScout
+NegaScout法で手を選びます。AlphaBeta法の枝刈りに加えて自身の着手可能数がより多くなる手を優先的に読むよう設定しています。<br>
+一手0.5秒の持ち時間の中で手を読みます。
+
+(使用例)
+```Python
+from reversi import Reversi
+from reversi.strategies import NegaScout
+from reversi.strategies.coordinator import Evaluator
+Reversi(
+    {
+        'NEGASCOUT': NegaScout(
+            depth=2,                # 何手先まで読むかを指定
+            evaluator=Evaluator(),  # 評価関数を指定(カスタマイズ方法は後述)
+        ),
+    }
+).start()
+```
+
+#### 評価関数のカスタマイズ方法
 
 
 ---
