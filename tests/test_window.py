@@ -228,3 +228,107 @@ class TestWindow(unittest.TestCase):
         window = Window(root=root, black_players=b, white_players=w)
         for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'language', 'cancel']:
             self.assertIsInstance(window.menu.menus[item], tk.Menu)
+
+    def test_window_command(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+
+        # size
+        test_size = 12
+        command = window.menu._command('size', test_size)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.size, reversi.window.DEFAULT_BOARD_SIZE)
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.size, test_size)
+        window.menu.event.clear()
+
+        # black
+        test_black_player = 'Hard1'
+        command = window.menu._command('black', test_black_player)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.black_player, b[0])
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.black_player, test_black_player)
+        window.menu.event.clear()
+
+        # white
+        test_white_player = 'Hard2'
+        command = window.menu._command('white', test_white_player)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.white_player, w[0])
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.white_player, test_white_player)
+        window.menu.event.clear()
+
+        # cputime
+        command = window.menu._command('cputime', '')
+
+        self.assertFalse(window.menu.event.is_set())
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        window.menu.event.clear()
+
+        # extra
+        command = window.menu._command('extra', '')
+
+        self.assertFalse(window.menu.event.is_set())
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        window.menu.event.clear()
+
+        # assist
+        test_assist = 'ON'
+        command = window.menu._command('assist', test_assist)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.assist, reversi.window.ASSIST_MENU[1])
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.assist, test_assist)
+        window.menu.event.clear()
+
+        # language
+        test_language = 'JAPANESE'
+        command = window.menu._command('language', test_language)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.language, reversi.window.LANGUAGE_MENU[0])
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.language, test_language)
+        window.menu.event.clear()
+
+        # cancel
+        test_cancel = 'TEST_ON'
+        command = window.menu._command('cancel', test_cancel)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.cancel, 'OK')
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.cancel, test_cancel)
+        window.menu.event.clear()
