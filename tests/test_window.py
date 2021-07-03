@@ -148,6 +148,9 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.extra_file, '')
         self.assertIsInstance(window.menu, reversi.window.Menu)
         self.assertIsInstance(window.canvas, tk.Canvas)
+        self.assertEqual(window.canvas['width'], str(reversi.window.WINDOW_WIDTH))
+        self.assertEqual(window.canvas['height'], str(reversi.window.WINDOW_HEIGHT))
+        self.assertEqual(window.canvas['bg'], str(reversi.window.COLOR_SLATEGRAY))
 
     def test_window_init_screen(self):
         root = tk.Tk()
@@ -155,8 +158,6 @@ class TestWindow(unittest.TestCase):
         w = ['Easy2', 'Normal2', 'Hard2']
         window = Window(root=root, black_players=b, white_players=w)
         window.init_screen()
-        # canvas
-        # width and height 設定値と不一致:要調査
         # board
         self.assertEqual(window.board.size, reversi.window.DEFAULT_BOARD_SIZE)
         self.assertEqual(window.board.cputime, reversi.window.CPU_TIME)
