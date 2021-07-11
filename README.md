@@ -68,7 +68,7 @@
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(ライブラリインストール時のみ必要)<br>
+- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)以上<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(ライブラリ開発時のみ必要)<br>
@@ -123,10 +123,8 @@ $ py -3.7 09_genetic_algorithm.py
 
 
 ## ライブラリの使い方
-本ライブラリの使い方を、コーディング例を元に説明します。
-
 ### 基本編
-ここではライブラリを使ってできる基本的なプログラミング例を示します。
+本ライブラリの基本的な使い方を、コーディング例を元に説明します。
 
 #### アプリケーションを起動させる
 まず最初に、リバーシのGUIアプリケーションを起動させる方法を示します。
@@ -137,8 +135,8 @@ from reversi import Reversi
 
 Reversi().start()
 ```
-アプリケーションが起動し、そのまま遊ぶ事ができます。<br>
-ただしこの場合、選択できるプレイヤーはユーザ操作のみとなります。
+アプリケーションが起動し、そのまま二人対戦で遊ぶ事ができます。<br>
+(この場合、選択できるプレイヤーはユーザ操作のみとなります)
 
 #### アプリケーションにAIを追加する
 次に、AIをアプリケーションに追加する方法を示します。
