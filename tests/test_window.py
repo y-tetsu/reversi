@@ -332,3 +332,37 @@ class TestWindow(unittest.TestCase):
         self.assertTrue(window.menu.event.is_set())
         self.assertEqual(window.menu.cancel, test_cancel)
         window.menu.event.clear()
+
+    def test_window_menu_set_state(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+
+        # initial
+        expected = ['normal' for _ in window.menu.menu_items.keys()]
+        result = []
+        for name in window.menu.menu_items.keys():
+            index = window.menu.index(name.title())
+            result.append(window.menu.entrycget(index, 'state'))
+        self.assertEqual(result, expected)
+
+        # disable
+        window.menu.set_state('disable')
+        expected = ['disabled' for _ in window.menu.menu_items.keys()]
+        expected[-1] = 'normal'
+        result = []
+        for name in window.menu.menu_items.keys():
+            index = window.menu.index(name.title())
+            result.append(window.menu.entrycget(index, 'state'))
+        self.assertEqual(result, expected)
+
+        # normal
+        window.menu.set_state('normal')
+        expected = ['normal' for _ in window.menu.menu_items.keys()]
+        expected[-1] = 'disabled'
+        result = []
+        for name in window.menu.menu_items.keys():
+            index = window.menu.index(name.title())
+            result.append(window.menu.entrycget(index, 'state'))
+        self.assertEqual(result, expected)
