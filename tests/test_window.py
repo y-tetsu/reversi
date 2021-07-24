@@ -229,7 +229,7 @@ class TestWindow(unittest.TestCase):
         for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'language', 'cancel']:
             self.assertIsInstance(window.menu.menus[item], tk.Menu)
 
-    def test_window_command(self):
+    def test_window_menu_command(self):
         root = tk.Tk()
         b = ['Easy1', 'Normal1', 'Hard1']
         w = ['Easy2', 'Normal2', 'Hard2']
