@@ -9,6 +9,29 @@ import reversi
 from reversi import Window
 
 
+class TestCanvas:
+    def __init__(self):
+        self.created_text = []
+        self.created_oval = []
+        self.created_rectangle = []
+
+    def create_text(self, *args, **kwargs):
+        self.created_text.append((args, kwargs))
+
+    def create_line(self, *args, **kwargs):
+        return (args, kwargs)
+
+    def create_oval(self, *args, **kwargs):
+        self.created_oval.append((args, kwargs))
+
+    def create_rectangle(self, *args, **kwargs):
+        self.created_rectangle.append((args, kwargs))
+
+    def delete(self, *args, **kwargs):
+        self.created_oval = [i for i in self.created_oval if i[1]['tag'] != args[0]]
+        self.created_rectangle = [i for i in self.created_rectangle if i[1]['tag'] != args[0]]
+
+
 class TestWindow(unittest.TestCase):
     """window
     """
@@ -493,21 +516,6 @@ class TestWindow(unittest.TestCase):
             ((547.0, 177.0, 647.0, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b2'}),
             ((672.0, 302.0, 772.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_c3'}),
         ]
-
-        class TestCanvas:
-            def __init__(self):
-                self.created_text = []
-                self.created_oval = []
-
-            def create_text(self, *args, **kwargs):
-                self.created_text.append((args, kwargs))
-
-            def create_line(self, *args, **kwargs):
-                return (args, kwargs)
-
-            def create_oval(self, *args, **kwargs):
-                self.created_oval.append((args, kwargs))
-
         screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
         self.assertEqual(screenboard.size, test_size)
         self.assertEqual(screenboard.cputime, test_cputime)
@@ -654,21 +662,6 @@ class TestWindow(unittest.TestCase):
             ((642.5, 269.5, 657.5, 284.5), {'fill': 'white', 'outline': 'white', 'tag': 'white_m13'}),
             ((661.5, 288.5, 676.5, 303.5), {'fill': 'white', 'outline': 'white', 'tag': 'white_n14'}),
         ]
-
-        class TestCanvas:
-            def __init__(self):
-                self.created_text = []
-                self.created_oval = []
-
-            def create_text(self, *args, **kwargs):
-                self.created_text.append((args, kwargs))
-
-            def create_line(self, *args, **kwargs):
-                return (args, kwargs)
-
-            def create_oval(self, *args, **kwargs):
-                self.created_oval.append((args, kwargs))
-
         screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
         self.assertEqual(screenboard._squares, [[None for _ in range(test_size)] for _ in range(test_size)])
         self.assertEqual(screenboard.square_y_ini, test_square_y_ini)
@@ -695,27 +688,8 @@ class TestWindow(unittest.TestCase):
             ((585, 302.0, 597, 402.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnwhite1_b3'}),
             ((597, 302.0, 609, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnwhite2_b3'}),
         ]
-
-        class TestCanvas:
-            def __init__(self):
-                self.created_oval = []
-                self.created_rectangle = []
-
-            def create_text(self, *args, **kwargs):
-                pass
-
-            def create_line(self, *args, **kwargs):
-                return (args, kwargs)
-
-            def create_oval(self, *args, **kwargs):
-                self.created_oval.append((args, kwargs))
-
-            def create_rectangle(self, *args, **kwargs):
-                self.created_rectangle.append((args, kwargs))
-
-        canvas = TestCanvas()
-        screenboard = reversi.window.ScreenBoard(canvas, test_size, test_cputime, test_assist)
-        canvas.created_oval = []
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
+        screenboard.canvas.created_oval = []
         screenboard.put_disc('black', 1, 1)
         screenboard.put_disc('white', 1, 2)
         self.assertEqual(screenboard.canvas.created_oval, test_canvas_created_oval)
@@ -734,31 +708,8 @@ class TestWindow(unittest.TestCase):
             ((585, 177.0, 597, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnblack1_b2'}),
             ((597, 177.0, 609, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnblack2_b2'}),
         ]
-
-        class TestCanvas:
-            def __init__(self):
-                self.created_oval = []
-                self.created_rectangle = []
-
-            def create_text(self, *args, **kwargs):
-                pass
-
-            def create_line(self, *args, **kwargs):
-                return (args, kwargs)
-
-            def create_oval(self, *args, **kwargs):
-                self.created_oval.append((args, kwargs))
-
-            def create_rectangle(self, *args, **kwargs):
-                self.created_rectangle.append((args, kwargs))
-
-            def delete(self, *args, **kwargs):
-                self.created_oval = [i for i in self.created_oval if i[1]['tag'] != args[0]]
-                self.created_rectangle = [i for i in self.created_rectangle if i[1]['tag'] != args[0]]
-
-        canvas = TestCanvas()
-        screenboard = reversi.window.ScreenBoard(canvas, test_size, test_cputime, test_assist)
-        canvas.created_oval = []
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
+        screenboard.canvas.created_oval = []
         screenboard.put_disc('black', 1, 1)
         screenboard.put_disc('white', 1, 2)
         screenboard.remove_disc('black', 1, 1)
@@ -777,20 +728,5 @@ class TestWindow(unittest.TestCase):
         test_x = 2
         test_y = 3
         test_coordinate = (567, 257)
-
-        class TestCanvas:
-            def __init__(self):
-                pass
-
-            def create_text(self, *args, **kwargs):
-                pass
-
-            def create_line(self, *args, **kwargs):
-                pass
-
-            def create_oval(self, *args, **kwargs):
-                pass
-
-        canvas = TestCanvas()
-        screenboard = reversi.window.ScreenBoard(canvas, test_size, test_cputime, test_assist)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
         self.assertEqual(screenboard._get_coordinate(test_x, test_y), test_coordinate)
