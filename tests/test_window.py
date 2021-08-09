@@ -520,3 +520,163 @@ class TestWindow(unittest.TestCase):
         self.assertIsNone(screenboard.move)
         self.assertFalse(screenboard.event.is_set())
         reversi.BitBoardMethods.SLOW_MODE1 = False
+
+    def test_window_screenboard_draw_squares(self):
+        test_size = 26
+        test_cputime = 5.0
+        test_assist = 'ON'
+        test_square_y_ini = 40
+        test_square_w = 19
+        test_square_x_ini = 413
+        test_oval_w1 = 15
+        test_oval_w2 = 1
+        test_xlines = [
+            ((413, 40, 907, 40), {'fill': 'white'}),
+            ((413, 59, 907, 59), {'fill': 'white'}),
+            ((413, 78, 907, 78), {'fill': 'white'}),
+            ((413, 97, 907, 97), {'fill': 'white'}),
+            ((413, 116, 907, 116), {'fill': 'white'}),
+            ((413, 135, 907, 135), {'fill': 'white'}),
+            ((413, 154, 907, 154), {'fill': 'white'}),
+            ((413, 173, 907, 173), {'fill': 'white'}),
+            ((413, 192, 907, 192), {'fill': 'white'}),
+            ((413, 211, 907, 211), {'fill': 'white'}),
+            ((413, 230, 907, 230), {'fill': 'white'}),
+            ((413, 249, 907, 249), {'fill': 'white'}),
+            ((413, 268, 907, 268), {'fill': 'white'}),
+            ((413, 287, 907, 287), {'fill': 'white'}),
+            ((413, 306, 907, 306), {'fill': 'white'}),
+            ((413, 325, 907, 325), {'fill': 'white'}),
+            ((413, 344, 907, 344), {'fill': 'white'}),
+            ((413, 363, 907, 363), {'fill': 'white'}),
+            ((413, 382, 907, 382), {'fill': 'white'}),
+            ((413, 401, 907, 401), {'fill': 'white'}),
+            ((413, 420, 907, 420), {'fill': 'white'}),
+            ((413, 439, 907, 439), {'fill': 'white'}),
+            ((413, 458, 907, 458), {'fill': 'white'}),
+            ((413, 477, 907, 477), {'fill': 'white'}),
+            ((413, 496, 907, 496), {'fill': 'white'}),
+            ((413, 515, 907, 515), {'fill': 'white'}),
+            ((413, 534, 907, 534), {'fill': 'white'}),
+        ]
+        test_ylines = [
+            ((413, 40, 413, 534), {'fill': 'white'}),
+            ((432, 40, 432, 534), {'fill': 'white'}),
+            ((451, 40, 451, 534), {'fill': 'white'}),
+            ((470, 40, 470, 534), {'fill': 'white'}),
+            ((489, 40, 489, 534), {'fill': 'white'}),
+            ((508, 40, 508, 534), {'fill': 'white'}),
+            ((527, 40, 527, 534), {'fill': 'white'}),
+            ((546, 40, 546, 534), {'fill': 'white'}),
+            ((565, 40, 565, 534), {'fill': 'white'}),
+            ((584, 40, 584, 534), {'fill': 'white'}),
+            ((603, 40, 603, 534), {'fill': 'white'}),
+            ((622, 40, 622, 534), {'fill': 'white'}),
+            ((641, 40, 641, 534), {'fill': 'white'}),
+            ((660, 40, 660, 534), {'fill': 'white'}),
+            ((679, 40, 679, 534), {'fill': 'white'}),
+            ((698, 40, 698, 534), {'fill': 'white'}),
+            ((717, 40, 717, 534), {'fill': 'white'}),
+            ((736, 40, 736, 534), {'fill': 'white'}),
+            ((755, 40, 755, 534), {'fill': 'white'}),
+            ((774, 40, 774, 534), {'fill': 'white'}),
+            ((793, 40, 793, 534), {'fill': 'white'}),
+            ((812, 40, 812, 534), {'fill': 'white'}),
+            ((831, 40, 831, 534), {'fill': 'white'}),
+            ((850, 40, 850, 534), {'fill': 'white'}),
+            ((869, 40, 869, 534), {'fill': 'white'}),
+            ((888, 40, 888, 534), {'fill': 'white'}),
+            ((907, 40, 907, 534), {'fill': 'white'}),
+        ]
+        test_canvas_created_text = [
+            ((20, 20), {'anchor': 'w', 'fill': 'white', 'font': ('', 12), 'text': 'CPU_TIME(5.0s)'}),
+            ((20, 40), {'anchor': 'w', 'fill': 'white', 'font': ('', 12), 'text': 'Assist On'}),
+            ((398, 49), {'fill': 'white', 'font': ('', 20), 'text': '1'}),
+            ((422, 25), {'fill': 'white', 'font': ('', 20), 'text': 'a'}),
+            ((398, 68), {'fill': 'white', 'font': ('', 20), 'text': '2'}),
+            ((441, 25), {'fill': 'white', 'font': ('', 20), 'text': 'b'}),
+            ((398, 87), {'fill': 'white', 'font': ('', 20), 'text': '3'}),
+            ((460, 25), {'fill': 'white', 'font': ('', 20), 'text': 'c'}),
+            ((398, 106), {'fill': 'white', 'font': ('', 20), 'text': '4'}),
+            ((479, 25), {'fill': 'white', 'font': ('', 20), 'text': 'd'}),
+            ((398, 125), {'fill': 'white', 'font': ('', 20), 'text': '5'}),
+            ((498, 25), {'fill': 'white', 'font': ('', 20), 'text': 'e'}),
+            ((398, 144), {'fill': 'white', 'font': ('', 20), 'text': '6'}),
+            ((517, 25), {'fill': 'white', 'font': ('', 20), 'text': 'f'}),
+            ((398, 163), {'fill': 'white', 'font': ('', 20), 'text': '7'}),
+            ((536, 25), {'fill': 'white', 'font': ('', 20), 'text': 'g'}),
+            ((398, 182), {'fill': 'white', 'font': ('', 20), 'text': '8'}),
+            ((555, 25), {'fill': 'white', 'font': ('', 20), 'text': 'h'}),
+            ((398, 201), {'fill': 'white', 'font': ('', 20), 'text': '9'}),
+            ((574, 25), {'fill': 'white', 'font': ('', 20), 'text': 'i'}),
+            ((398, 220), {'fill': 'white', 'font': ('', 20), 'text': '10'}),
+            ((593, 25), {'fill': 'white', 'font': ('', 20), 'text': 'j'}),
+            ((398, 239), {'fill': 'white', 'font': ('', 20), 'text': '11'}),
+            ((612, 25), {'fill': 'white', 'font': ('', 20), 'text': 'k'}),
+            ((398, 258), {'fill': 'white', 'font': ('', 20), 'text': '12'}),
+            ((631, 25), {'fill': 'white', 'font': ('', 20), 'text': 'l'}),
+            ((398, 277), {'fill': 'white', 'font': ('', 20), 'text': '13'}),
+            ((650, 25), {'fill': 'white', 'font': ('', 20), 'text': 'm'}),
+            ((398, 296), {'fill': 'white', 'font': ('', 20), 'text': '14'}),
+            ((669, 25), {'fill': 'white', 'font': ('', 20), 'text': 'n'}),
+            ((398, 315), {'fill': 'white', 'font': ('', 20), 'text': '15'}),
+            ((688, 25), {'fill': 'white', 'font': ('', 20), 'text': 'o'}),
+            ((398, 334), {'fill': 'white', 'font': ('', 20), 'text': '16'}),
+            ((707, 25), {'fill': 'white', 'font': ('', 20), 'text': 'p'}),
+            ((398, 353), {'fill': 'white', 'font': ('', 20), 'text': '17'}),
+            ((726, 25), {'fill': 'white', 'font': ('', 20), 'text': 'q'}),
+            ((398, 372), {'fill': 'white', 'font': ('', 20), 'text': '18'}),
+            ((745, 25), {'fill': 'white', 'font': ('', 20), 'text': 'r'}),
+            ((398, 391), {'fill': 'white', 'font': ('', 20), 'text': '19'}),
+            ((764, 25), {'fill': 'white', 'font': ('', 20), 'text': 's'}),
+            ((398, 410), {'fill': 'white', 'font': ('', 20), 'text': '20'}),
+            ((783, 25), {'fill': 'white', 'font': ('', 20), 'text': 't'}),
+            ((398, 429), {'fill': 'white', 'font': ('', 20), 'text': '21'}),
+            ((802, 25), {'fill': 'white', 'font': ('', 20), 'text': 'u'}),
+            ((398, 448), {'fill': 'white', 'font': ('', 20), 'text': '22'}),
+            ((821, 25), {'fill': 'white', 'font': ('', 20), 'text': 'v'}),
+            ((398, 467), {'fill': 'white', 'font': ('', 20), 'text': '23'}),
+            ((840, 25), {'fill': 'white', 'font': ('', 20), 'text': 'w'}),
+            ((398, 486), {'fill': 'white', 'font': ('', 20), 'text': '24'}),
+            ((859, 25), {'fill': 'white', 'font': ('', 20), 'text': 'x'}),
+            ((398, 505), {'fill': 'white', 'font': ('', 20), 'text': '25'}),
+            ((878, 25), {'fill': 'white', 'font': ('', 20), 'text': 'y'}),
+            ((398, 524), {'fill': 'white', 'font': ('', 20), 'text': '26'}),
+            ((897, 25), {'fill': 'white', 'font': ('', 20), 'text': 'z'}),
+        ]
+        test_canvas_created_oval = [
+            ((621, 248, 623, 250), {'fill': 'white', 'outline': 'white', 'tag': 'mark'}),
+            ((621, 324, 623, 326), {'fill': 'white', 'outline': 'white', 'tag': 'mark'}),
+            ((697, 248, 699, 250), {'fill': 'white', 'outline': 'white', 'tag': 'mark'}),
+            ((697, 324, 699, 326), {'fill': 'white', 'outline': 'white', 'tag': 'mark'}),
+            ((661.5, 269.5, 676.5, 284.5), {'fill': 'black', 'outline': 'black', 'tag': 'black_n13'}),
+            ((642.5, 288.5, 657.5, 303.5), {'fill': 'black', 'outline': 'black', 'tag': 'black_m14'}),
+            ((642.5, 269.5, 657.5, 284.5), {'fill': 'white', 'outline': 'white', 'tag': 'white_m13'}),
+            ((661.5, 288.5, 676.5, 303.5), {'fill': 'white', 'outline': 'white', 'tag': 'white_n14'}),
+        ]
+
+        class TestCanvas:
+            def __init__(self):
+                self.created_text = []
+                self.created_oval = []
+
+            def create_text(self, *args, **kwargs):
+                self.created_text.append((args, kwargs))
+
+            def create_line(self, *args, **kwargs):
+                return (args, kwargs)
+
+            def create_oval(self, *args, **kwargs):
+                self.created_oval.append((args, kwargs))
+
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
+        self.assertEqual(screenboard._squares, [[None for _ in range(test_size)] for _ in range(test_size)])
+        self.assertEqual(screenboard.square_y_ini, test_square_y_ini)
+        self.assertEqual(screenboard.square_w, test_square_w)
+        self.assertEqual(screenboard.square_x_ini, test_square_x_ini)
+        self.assertEqual(screenboard.oval_w1, test_oval_w1)
+        self.assertEqual(screenboard.oval_w2, test_oval_w2)
+        self.assertEqual(screenboard.canvas.created_text, test_canvas_created_text)
+        self.assertEqual(screenboard.canvas.created_oval, test_canvas_created_oval)
+        self.assertEqual(screenboard._xlines, test_xlines)
+        self.assertEqual(screenboard._ylines, test_ylines)
