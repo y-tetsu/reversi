@@ -730,3 +730,14 @@ class TestWindow(unittest.TestCase):
         test_coordinate = (567, 257)
         screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
         self.assertEqual(screenboard._get_coordinate(test_x, test_y), test_coordinate)
+
+    def test_window_screenboard_get_label(self):
+        test_size = 8
+        test_cputime = 5.0
+        test_assist = 'ON'
+        test_name = 'black'
+        test_x = 2
+        test_y = 4
+        test_label = 'black_c5'
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
+        self.assertEqual(screenboard._get_label(test_name, test_x, test_y), test_label)
