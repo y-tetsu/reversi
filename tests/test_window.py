@@ -416,6 +416,7 @@ class TestWindow(unittest.TestCase):
         cputimedialog.parameter.set(new_cputime)
         cputimedialog.button.invoke()
         self.assertEqual(window.cputime, new_cputime)
+        self.assertTrue(cputimedialog.event.is_set())
 
     def test_window_extradialog_init(self):
         root = tk.Tk()
