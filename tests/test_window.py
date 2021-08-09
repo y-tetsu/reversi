@@ -722,3 +722,50 @@ class TestWindow(unittest.TestCase):
         screenboard.put_disc('turnblack', 1, 1)
         screenboard.put_disc('turnwhite', 1, 2)
         self.assertEqual(screenboard.canvas.created_rectangle, test_canvas_created_rectangle)
+
+    def test_window_screenboard_remove_disc(self):
+        test_size = 4
+        test_cputime = 5.0
+        test_assist = 'ON'
+        test_canvas_created_oval = [
+            ((547.0, 302.0, 647.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b3'}),
+        ]
+        test_canvas_created_rectangle = [
+            ((585, 177.0, 597, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnblack1_b2'}),
+            ((597, 177.0, 609, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnblack2_b2'}),
+        ]
+
+        class TestCanvas:
+            def __init__(self):
+                self.created_oval = []
+                self.created_rectangle = []
+
+            def create_text(self, *args, **kwargs):
+                pass
+
+            def create_line(self, *args, **kwargs):
+                return (args, kwargs)
+
+            def create_oval(self, *args, **kwargs):
+                self.created_oval.append((args, kwargs))
+
+            def create_rectangle(self, *args, **kwargs):
+                self.created_rectangle.append((args, kwargs))
+
+            def delete(self, *args, **kwargs):
+                self.created_oval = [i for i in self.created_oval if i[1]['tag'] != args[0]]
+                self.created_rectangle = [i for i in self.created_rectangle if i[1]['tag'] != args[0]]
+
+        canvas = TestCanvas()
+        screenboard = reversi.window.ScreenBoard(canvas, test_size, test_cputime, test_assist)
+        canvas.created_oval = []
+        screenboard.put_disc('black', 1, 1)
+        screenboard.put_disc('white', 1, 2)
+        screenboard.remove_disc('black', 1, 1)
+        screenboard.remove_disc('black', 1, 2)
+        self.assertEqual(screenboard.canvas.created_oval, test_canvas_created_oval)
+        screenboard.put_disc('turnblack', 1, 1)
+        screenboard.put_disc('turnwhite', 1, 2)
+        screenboard.remove_disc('turnwhite', 1, 1)
+        screenboard.remove_disc('turnwhite', 1, 2)
+        self.assertEqual(screenboard.canvas.created_rectangle, test_canvas_created_rectangle)
