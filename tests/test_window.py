@@ -469,3 +469,17 @@ class TestWindow(unittest.TestCase):
         extradialog.button1.invoke()
         self.assertEqual(extradialog.extra_file.get(), extra_file_ok)
         extradialog.dialog.destroy()
+
+    def test_window_extradialog_set_parameter(self):
+        new_extra_file = 'new_extra_file'
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        event = threading.Event()
+        language = 'Japanese'
+        extradialog = reversi.window.ExtraDialog(window, event, language)
+        extradialog.extra_file.set(new_extra_file)
+        extradialog.button2.invoke()
+        self.assertEqual(window.extra_file, new_extra_file)
+        self.assertTrue(extradialog.event.is_set())
