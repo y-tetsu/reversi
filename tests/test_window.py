@@ -175,10 +175,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.start.event.is_set(), False)
 
     def test_window_set_state(self):
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
         window.init_screen()
 
         class TestState:
@@ -224,10 +221,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.menu.menu_items['cancel'], reversi.window.CANCEL_MENU)
 
     def test_window_menu_create_menu_items(self):
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
         for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'language', 'cancel']:
             self.assertIsInstance(window.menu.menus[item], tk.Menu)
 
@@ -342,10 +336,7 @@ class TestWindow(unittest.TestCase):
         window.menu.event.clear()
 
     def test_window_menu_set_state(self):
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
 
         # initial
         expected = ['normal' for _ in window.menu.menu_items.keys()]
@@ -376,10 +367,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_window_cputimedialog_init(self):
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
         event = 'event'
         language = 'Japanese'
         cputimedialog = reversi.window.CpuTimeDialog(window, event, language)
@@ -394,13 +382,8 @@ class TestWindow(unittest.TestCase):
         cputimedialog.dialog.destroy()
 
     def test_window_cputimedialog_set_parameter(self):
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
-        event = threading.Event()
-        language = 'Japanese'
-        cputimedialog = reversi.window.CpuTimeDialog(window, event, language)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
+        cputimedialog = reversi.window.CpuTimeDialog(window, threading.Event(), 'Japanese')
         # NOT MATCH
         new_cputime = -1.0
         cputimedialog.parameter.set(new_cputime)
@@ -419,10 +402,7 @@ class TestWindow(unittest.TestCase):
         self.assertTrue(cputimedialog.event.is_set())
 
     def test_window_extradialog_init(self):
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
         event = 'event'
         language = 'Japanese'
         extradialog = reversi.window.ExtraDialog(window, event, language)
@@ -452,13 +432,8 @@ class TestWindow(unittest.TestCase):
         def test_askopenfilename_ng(filetypes, initialdir):
             return False
 
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
-        event = 'event'
-        language = 'Japanese'
-        extradialog = reversi.window.ExtraDialog(window, event, language)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
+        extradialog = reversi.window.ExtraDialog(window, threading.Event(), 'Japanese')
         # OK
         extradialog.askopenfilename = test_askopenfilename_ok
         extradialog.button1.invoke()
@@ -473,13 +448,8 @@ class TestWindow(unittest.TestCase):
 
     def test_window_extradialog_set_parameter(self):
         new_extra_file = 'new_extra_file'
-        root = tk.Tk()
-        b = ['Easy1', 'Normal1', 'Hard1']
-        w = ['Easy2', 'Normal2', 'Hard2']
-        window = Window(root=root, black_players=b, white_players=w)
-        event = threading.Event()
-        language = 'Japanese'
-        extradialog = reversi.window.ExtraDialog(window, event, language)
+        window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
+        extradialog = reversi.window.ExtraDialog(window, threading.Event(), 'Japanese')
         extradialog.extra_file.set(new_extra_file)
         extradialog.button2.invoke()
         self.assertEqual(window.extra_file, new_extra_file)
