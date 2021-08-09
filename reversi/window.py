@@ -333,6 +333,7 @@ class ExtraDialog:
     def __init__(self, window=None, event=None, language=None):
         self.window = window
         self.event = event
+        self.askopenfilename = filedialog.askopenfilename
         self.dialog = tk.Toplevel(master=self.window.root)
         self.dialog.title(EXTRA_DIALOG_TITLE)
         self.dialog.minsize(EXTRA_DIALOG_WIDTH, EXTRA_DIALOG_HEIGHT)  # 最小サイズ
@@ -363,8 +364,7 @@ class ExtraDialog:
         登録ファイルを選択する
         """
         ini_dir = os.path.abspath(os.path.dirname('./extra/'))
-        extra_file = filedialog.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
-
+        extra_file = self.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
         if extra_file:
             self.extra_file.set(extra_file)
 

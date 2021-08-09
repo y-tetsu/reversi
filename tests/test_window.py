@@ -435,3 +435,37 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(extradialog.button1['text'], reversi.window.TEXTS[language]['EXTRA_REF_TEXT'])
         self.assertEqual(extradialog.button2['text'], reversi.window.TEXTS[language]['EXTRA_LOAD_TEXT'])
         extradialog.dialog.destroy()
+
+    def test_window_extradialog_select_extra_file(self):
+        import os
+        test_filetypes = None
+        test_initialdir = None
+        extra_file_ok = 'extra_file_ok'
+
+        def test_askopenfilename_ok(filetypes, initialdir):
+            nonlocal test_filetypes, test_initialdir, extra_file_ok
+            test_filetypes = filetypes
+            test_initialdir = initialdir
+            return extra_file_ok
+
+        def test_askopenfilename_ng(filetypes, initialdir):
+            return False
+
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        event = 'event'
+        language = 'Japanese'
+        extradialog = reversi.window.ExtraDialog(window, event, language)
+        # OK
+        extradialog.askopenfilename = test_askopenfilename_ok
+        extradialog.button1.invoke()
+        self.assertEqual(test_filetypes, [("", "*.json")])
+        self.assertEqual(test_initialdir, os.path.abspath(os.path.dirname('./extra/')))
+        self.assertEqual(extradialog.extra_file.get(), extra_file_ok)
+        # NG
+        extradialog.askopenfilename = test_askopenfilename_ng
+        extradialog.button1.invoke()
+        self.assertEqual(extradialog.extra_file.get(), extra_file_ok)
+        extradialog.dialog.destroy()
