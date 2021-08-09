@@ -769,3 +769,28 @@ class TestWindow(unittest.TestCase):
         screenboard.remove_disc('turnwhite', 1, 1)
         screenboard.remove_disc('turnwhite', 1, 2)
         self.assertEqual(screenboard.canvas.created_rectangle, test_canvas_created_rectangle)
+
+    def test_window_screenboard_get_coordinate(self):
+        test_size = 8
+        test_cputime = 5.0
+        test_assist = 'ON'
+        test_x = 2
+        test_y = 3
+        test_coordinate = (567, 257)
+
+        class TestCanvas:
+            def __init__(self):
+                pass
+
+            def create_text(self, *args, **kwargs):
+                pass
+
+            def create_line(self, *args, **kwargs):
+                pass
+
+            def create_oval(self, *args, **kwargs):
+                pass
+
+        canvas = TestCanvas()
+        screenboard = reversi.window.ScreenBoard(canvas, test_size, test_cputime, test_assist)
+        self.assertEqual(screenboard._get_coordinate(test_x, test_y), test_coordinate)
