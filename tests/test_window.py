@@ -454,3 +454,69 @@ class TestWindow(unittest.TestCase):
         extradialog.button2.invoke()
         self.assertEqual(window.extra_file, new_extra_file)
         self.assertTrue(extradialog.event.is_set())
+
+    def test_window_screenboard_init(self):
+        reversi.BitBoardMethods.SLOW_MODE1 = True
+        test_size = 4
+        test_cputime = 5.0
+        test_assist = 'ON'
+        test_xlines = [
+            ((410, 40, 910, 40), {'fill': 'white'}),
+            ((410, 165, 910, 165), {'fill': 'white'}),
+            ((410, 290, 910, 290), {'fill': 'white'}),
+            ((410, 415, 910, 415), {'fill': 'white'}),
+            ((410, 540, 910, 540), {'fill': 'white'}),
+        ]
+        test_ylines = [
+            ((410, 40, 410, 540), {'fill': 'white'}),
+            ((535, 40, 535, 540), {'fill': 'white'}),
+            ((660, 40, 660, 540), {'fill': 'white'}),
+            ((785, 40, 785, 540), {'fill': 'white'}),
+            ((910, 40, 910, 540), {'fill': 'white'}),
+        ]
+        test_canvas_created_text = [
+            ((20, 20), {'anchor': 'w', 'fill': 'white', 'font': ('', 12), 'text': 'CPU_TIME(5.0s)'}),
+            ((20, 40), {'anchor': 'w', 'fill': 'white', 'font': ('', 12), 'text': 'Assist On'}),
+            ((1290, 20), {'text': '■', 'font': ('', 12), 'anchor': 'w', 'fill': 'tomato'}),
+            ((395, 102), {'fill': 'white', 'font': ('', 20), 'text': '1'}),
+            ((472, 25), {'fill': 'white', 'font': ('', 20), 'text': 'a'}),
+            ((395, 227), {'fill': 'white', 'font': ('', 20), 'text': '2'}),
+            ((597, 25), {'fill': 'white', 'font': ('', 20), 'text': 'b'}),
+            ((395, 352), {'fill': 'white', 'font': ('', 20), 'text': '3'}),
+            ((722, 25), {'fill': 'white', 'font': ('', 20), 'text': 'c'}),
+            ((395, 477), {'fill': 'white', 'font': ('', 20), 'text': '4'}),
+            ((847, 25), {'fill': 'white', 'font': ('', 20), 'text': 'd'}),
+        ]
+        test_canvas_created_oval = [
+            ((672.0, 177.0, 772.0, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'black_c2'}),
+            ((547.0, 302.0, 647.0, 402.0), {'fill': 'black', 'outline': 'black', 'tag': 'black_b3'}),
+            ((547.0, 177.0, 647.0, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b2'}),
+            ((672.0, 302.0, 772.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_c3'}),
+        ]
+
+        class TestCanvas:
+            def __init__(self):
+                self.created_text = []
+                self.created_oval = []
+
+            def create_text(self, *args, **kwargs):
+                self.created_text.append((args, kwargs))
+
+            def create_line(self, *args, **kwargs):
+                return (args, kwargs)
+
+            def create_oval(self, *args, **kwargs):
+                self.created_oval.append((args, kwargs))
+
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist)
+        self.assertEqual(screenboard.size, test_size)
+        self.assertEqual(screenboard.cputime, test_cputime)
+        self.assertEqual(screenboard.assist, test_assist)
+        self.assertEqual(screenboard.canvas.created_text, test_canvas_created_text)
+        self.assertEqual(screenboard.canvas.created_oval, test_canvas_created_oval)
+        self.assertEqual(screenboard._squares, [[None for _ in range(test_size)] for _ in range(test_size)])
+        self.assertEqual(screenboard._xlines, test_xlines)
+        self.assertEqual(screenboard._ylines, test_ylines)
+        self.assertIsNone(screenboard.move)
+        self.assertFalse(screenboard.event.is_set())
+        reversi.BitBoardMethods.SLOW_MODE1 = False
