@@ -341,22 +341,22 @@ class ExtraDialog:
 
         self.extra_file = tk.StringVar()
         self.extra_file.set(self.window.extra_file)
-        label = tk.Label(self.dialog, text=TEXTS[language]['EXTRA_PLAYER_TEXT'])
-        label.pack(anchor='w', padx='5')
+        self.label1 = tk.Label(self.dialog, text=TEXTS[language]['EXTRA_PLAYER_TEXT'])
+        self.label1.pack(anchor='w', padx='5')
 
         frame = tk.Frame(self.dialog)
         frame.pack(fill='x', pady='5')
-        label = tk.Label(frame, text=TEXTS[language]['EXTRA_FILE_TEXT'])
-        label.pack(side='left', padx='5')
+        self.label2 = tk.Label(frame, text=TEXTS[language]['EXTRA_FILE_TEXT'])
+        self.label2.pack(side='left', padx='5')
 
-        entry = tk.Entry(frame, textvariable=self.extra_file)
-        entry.pack(side='left', expand=1, fill='x', pady='5')
+        self.entry = tk.Entry(frame, textvariable=self.extra_file)
+        self.entry.pack(side='left', expand=1, fill='x', pady='5')
 
-        button = tk.Button(frame, text=TEXTS[language]['EXTRA_REF_TEXT'], command=self.select_extra_file)
-        button.pack(side='right', padx='5')
+        self.button1 = tk.Button(frame, text=TEXTS[language]['EXTRA_REF_TEXT'], command=self.select_extra_file)
+        self.button1.pack(side='right', padx='5')
 
-        button = tk.Button(self.dialog, text=TEXTS[language]['EXTRA_LOAD_TEXT'], command=self.set_parameter)
-        button.pack()
+        self.button2 = tk.Button(self.dialog, text=TEXTS[language]['EXTRA_LOAD_TEXT'], command=self.set_parameter)
+        self.button2.pack()
 
     def select_extra_file(self):
         """

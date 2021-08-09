@@ -416,3 +416,22 @@ class TestWindow(unittest.TestCase):
         cputimedialog.parameter.set(new_cputime)
         cputimedialog.button.invoke()
         self.assertEqual(window.cputime, new_cputime)
+
+    def test_window_extradialog_init(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        event = 'event'
+        language = 'Japanese'
+        extradialog = reversi.window.ExtraDialog(window, event, language)
+        self.assertEqual(extradialog.window, window)
+        self.assertEqual(extradialog.event, event)
+        self.assertEqual(extradialog.dialog.master, window.root)
+        self.assertEqual(extradialog.extra_file.get(), str(window.extra_file))
+        self.assertEqual(extradialog.label1['text'], reversi.window.TEXTS[language]['EXTRA_PLAYER_TEXT'])
+        self.assertEqual(extradialog.label2['text'], reversi.window.TEXTS[language]['EXTRA_FILE_TEXT'])
+        self.assertEqual(extradialog.entry['textvariable'], str(extradialog.extra_file))
+        self.assertEqual(extradialog.button1['text'], reversi.window.TEXTS[language]['EXTRA_REF_TEXT'])
+        self.assertEqual(extradialog.button2['text'], reversi.window.TEXTS[language]['EXTRA_LOAD_TEXT'])
+        extradialog.dialog.destroy()
