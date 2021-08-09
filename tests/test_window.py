@@ -211,6 +211,8 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.menu.assist, reversi.window.ASSIST_MENU[1])
         self.assertEqual(window.menu.language, reversi.window.LANGUAGE_MENU[0])
         self.assertEqual(window.menu.cancel, reversi.window.CANCEL_MENU[0])
+        self.assertIsNone(window.menu.cputimedialog)
+        self.assertIsNone(window.menu.extradialog)
         self.assertIsInstance(window.menu.event, threading.Event)
         self.assertEqual(window.menu.menu_items['size'], range(reversi.board.MIN_BOARD_SIZE, reversi.board.MAX_BOARD_SIZE + 1, 2))
         self.assertEqual(window.menu.menu_items['black'], b)
@@ -284,6 +286,9 @@ class TestWindow(unittest.TestCase):
         self.assertTrue(window.menu.event.is_set())
         window.menu.event.clear()
 
+        self.assertIsInstance(window.menu.cputimedialog, reversi.window.CpuTimeDialog)
+        window.menu.cputimedialog.dialog.destroy()
+
         # extra
         command = window.menu._command('extra', '')
 
@@ -293,6 +298,9 @@ class TestWindow(unittest.TestCase):
 
         self.assertTrue(window.menu.event.is_set())
         window.menu.event.clear()
+
+        self.assertIsInstance(window.menu.extradialog, reversi.window.ExtraDialog)
+        window.menu.extradialog.dialog.destroy()
 
         # assist
         test_assist = 'ON'
@@ -366,3 +374,21 @@ class TestWindow(unittest.TestCase):
             index = window.menu.index(name.title())
             result.append(window.menu.entrycget(index, 'state'))
         self.assertEqual(result, expected)
+
+    def test_window_cputimedialog_init(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        event = 'event'
+        language = 'Japanese'
+        cputimedialog = reversi.window.CpuTimeDialog(window, event, language)
+        self.assertEqual(cputimedialog.window, window)
+        self.assertEqual(cputimedialog.event, event)
+        self.assertEqual(cputimedialog.dialog.master, window.root)
+        self.assertEqual(cputimedialog.parameter.get(), str(window.cputime))
+        self.assertEqual(cputimedialog.label1['text'], reversi.window.TEXTS[language]['CPU_WAIT_TEXT'])
+        self.assertEqual(cputimedialog.entry['textvariable'], str(cputimedialog.parameter))
+        self.assertEqual(cputimedialog.label2['text'], reversi.window.TEXTS[language]['CPU_SECOND_TEXT'])
+        self.assertEqual(cputimedialog.button['text'], reversi.window.TEXTS[language]['CPU_SETTING_TEXT'])
+        cputimedialog.dialog.destroy()

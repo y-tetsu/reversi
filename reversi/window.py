@@ -216,6 +216,8 @@ class Menu(tk.Menu):
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
+        self.cputimedialog = None
+        self.extradialog = None
 
         # イベントの生成
         self.event = threading.Event()
@@ -257,10 +259,10 @@ class Menu(tk.Menu):
                 self.white_player = item if name == 'white' else self.white_player
 
                 if name == 'cputime':
-                    CpuTimeDialog(window=self.window, event=self.event, language=self.language)
+                    self.cputimedialog = CpuTimeDialog(window=self.window, event=self.event, language=self.language)
 
                 if name == 'extra':
-                    ExtraDialog(window=self.window, event=self.event, language=self.language)
+                    self.extradialog = ExtraDialog(window=self.window, event=self.event, language=self.language)
 
                 self.assist = item if name == 'assist' else self.assist
                 self.language = item if name == 'language' else self.language
@@ -294,20 +296,20 @@ class CpuTimeDialog:
 
         self.parameter = tk.StringVar()
         self.parameter.set(self.window.cputime)
-        label = tk.Label(self.dialog, text=TEXTS[language]['CPU_WAIT_TEXT'])
-        label.pack(anchor='w')
+        self.label1 = tk.Label(self.dialog, text=TEXTS[language]['CPU_WAIT_TEXT'])
+        self.label1.pack(anchor='w')
 
         frame = tk.Frame(self.dialog)
         frame.pack(fill='x', pady='5')
         label = tk.Label(frame, text='')
         label.pack(side='left', padx='5')
-        entry = tk.Entry(frame, textvariable=self.parameter)
-        entry.pack(side='left', expand=1, fill='x', pady='5')
-        label = tk.Label(frame, text=TEXTS[language]['CPU_SECOND_TEXT'])
-        label.pack(side='right', padx='5')
+        self.entry = tk.Entry(frame, textvariable=self.parameter)
+        self.entry.pack(side='left', expand=1, fill='x', pady='5')
+        self.label2 = tk.Label(frame, text=TEXTS[language]['CPU_SECOND_TEXT'])
+        self.label2.pack(side='right', padx='5')
 
-        button = tk.Button(self.dialog, text=TEXTS[language]['CPU_SETTING_TEXT'], command=self.set_parameter)
-        button.pack()
+        self.button = tk.Button(self.dialog, text=TEXTS[language]['CPU_SETTING_TEXT'], command=self.set_parameter)
+        self.button.pack()
 
     def set_parameter(self):
         """
