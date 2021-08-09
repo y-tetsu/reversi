@@ -392,3 +392,27 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(cputimedialog.label2['text'], reversi.window.TEXTS[language]['CPU_SECOND_TEXT'])
         self.assertEqual(cputimedialog.button['text'], reversi.window.TEXTS[language]['CPU_SETTING_TEXT'])
         cputimedialog.dialog.destroy()
+
+    def test_window_cputimedialog_set_parameter(self):
+        root = tk.Tk()
+        b = ['Easy1', 'Normal1', 'Hard1']
+        w = ['Easy2', 'Normal2', 'Hard2']
+        window = Window(root=root, black_players=b, white_players=w)
+        event = threading.Event()
+        language = 'Japanese'
+        cputimedialog = reversi.window.CpuTimeDialog(window, event, language)
+        # NOT MATCH
+        new_cputime = -1.0
+        cputimedialog.parameter.set(new_cputime)
+        cputimedialog.button.invoke()
+        self.assertNotEqual(window.cputime, new_cputime)
+        # IS ZERO
+        new_cputime = 00.0
+        cputimedialog.parameter.set(new_cputime)
+        cputimedialog.button.invoke()
+        self.assertNotEqual(window.cputime, new_cputime)
+        # OK
+        new_cputime = 1.0
+        cputimedialog.parameter.set(new_cputime)
+        cputimedialog.button.invoke()
+        self.assertEqual(window.cputime, new_cputime)

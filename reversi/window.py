@@ -316,16 +316,14 @@ class CpuTimeDialog:
         パラメータを設定する
         """
         value = self.parameter.get()
-
         # 入力値が数値である
-        if re.match(r'\d+(?:\.\d+)?', str(value)) is not None:
-            # floatに変換できる
-            try:
-                self.window.cputime = float(value)
+        if re.match(r'\d+(?:\.\d+)?', value) is not None:
+            # 0より大きい
+            float_value = float(value)
+            if float_value > 0:
+                self.window.cputime = float_value
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
                 self.dialog.destroy()
-            except ValueError:
-                pass
 
 
 class ExtraDialog:
