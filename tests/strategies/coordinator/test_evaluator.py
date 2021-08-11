@@ -139,6 +139,11 @@ class TestEvaluator(unittest.TestCase):
         score_b = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score_b, -6)
 
+        # Evaluator_N_Fast
+        evaluator = coord.Evaluator_N_Fast()
+        score_b = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score_b, -6)
+
         # Evaluator_E
         evaluator = coord.Evaluator_E()
         score_b = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
