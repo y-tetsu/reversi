@@ -95,7 +95,7 @@ cdef inline signed int _evaluate_tpwe(t, params, color, board, possibility_b, po
     score = 0
     b_bitboard, w_bitboard = board.get_bitboard_info()
     for maskvalue in EDGE_MASKVALUE:
-            score_b = params[2] if (b_bitboard & maskvalue) == maskvalue else 0
-            score_w = params[2] if (w_bitboard & maskvalue) == maskvalue else 0
-            score += score_b - score_w
+        score_b = params[2] if (b_bitboard & maskvalue) == maskvalue else 0
+        score_w = params[2] if (w_bitboard & maskvalue) == maskvalue else 0
+        score += score_b - score_w
     return t.get_score(board=board) + (possibility_b - possibility_w) * params[0] + score
