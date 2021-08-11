@@ -251,11 +251,11 @@ class Evaluator_TPW_Fast(AbstractEvaluator):
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000):
         self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
         self.params = [wp, ww]
 
     def evaluate(self, color, board, possibility_b, possibility_w):
-        """evaluate
-        """
         return EvaluatorMethods.evaluate_tpw(self.t, self.params, color, board, possibility_b, possibility_w)
 
 
@@ -320,6 +320,9 @@ class Evaluator_TPWE_Fast(AbstractEvaluator):
     """
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000, we=100):
         self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.e = EdgeScorer(we)
         self.params = [wp, ww, we]
 
     def evaluate(self, color, board, possibility_b, possibility_w):
