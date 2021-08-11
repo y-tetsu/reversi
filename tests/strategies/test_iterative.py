@@ -164,6 +164,6 @@ class TestIterativeDeepning(unittest.TestCase):
 
         print()
         print(key)
-        print('NegaScout-Evaluator_TPWE_Fast : (13500)', Measure.count[key2])
+        print('NegaScout-Evaluator_TPWE_Fast : (20000)', Measure.count[key2])
         print('(max_depth=7)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
