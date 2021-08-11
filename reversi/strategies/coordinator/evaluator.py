@@ -3,6 +3,7 @@
 
 from reversi.strategies.common import AbstractEvaluator
 from reversi.strategies.coordinator import TableScorer, PossibilityScorer, OpeningScorer, WinLoseScorer, NumberScorer, EdgeScorer, CornerScorer
+import reversi.strategies.coordinator.EvaluatorMethods as EvaluatorMethods
 
 
 class Evaluator(AbstractEvaluator):
@@ -95,6 +96,15 @@ class Evaluator_N(AbstractEvaluator):
         """evaluate
         """
         return self.scorer.get_score(board=board)
+
+
+class Evaluator_N_Fast(AbstractEvaluator):
+    """Specific Evaluator Number
+
+           盤面の評価値を石数で算出
+    """
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        return board._black_score - board._white_score
 
 
 class Evaluator_E(AbstractEvaluator):
@@ -234,6 +244,21 @@ class Evaluator_TPW(AbstractEvaluator):
         return score_t + score_p
 
 
+class Evaluator_TPW_Fast(AbstractEvaluator):
+    """Specific Evaluator Table + Possibility + WinLose
+
+           盤面の評価値をTable+配置可能数+勝敗で算出
+    """
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000):
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.params = [wp, ww]
+
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        return EvaluatorMethods.evaluate_tpw(self.t, self.params, color, board, possibility_b, possibility_w)
+
+
 class Evaluator_TPOW(AbstractEvaluator):
     """Specific Evaluator Table + Possibility + Opening + WinLose
 
@@ -286,6 +311,22 @@ class Evaluator_TPWE(AbstractEvaluator):
         score_e = self.e.get_score(board=board)
 
         return score_t + score_p + score_e
+
+
+class Evaluator_TPWE_Fast(AbstractEvaluator):
+    """Specific Evaluator Table + Possibility + WinLose + Edge
+
+           盤面の評価値をTable+配置可能数+勝敗+辺のパターンで算出
+    """
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000, we=100):
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.e = EdgeScorer(we)
+        self.params = [wp, ww, we]
+
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        return EvaluatorMethods.evaluate_tpwe(self.t, self.params, color, board, possibility_b, possibility_w)
 
 
 class Evaluator_TPWEC(AbstractEvaluator):

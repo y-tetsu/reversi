@@ -25,12 +25,12 @@ from reversi.strategies import NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE
 from reversi.strategies import AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE
 from reversi.strategies import IterativeDeepning
 from reversi.strategies import AlphaBeta, NegaScout
-from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_Type2
+from reversi.strategies import SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_F, SwitchNsI_B_TPWE_Type2
 from reversi.strategies import Random
-from reversi.strategies import MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_Type2, RandomF11  # noqa: E501
-from reversi.strategies import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AlphaBeta4F10J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_PCB_TPWE, AbIF10J_B_TPWE, AbIF10J_PCB_TPWE, AbIF9J_B_TPWE_, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPWE, NsIF10J_B_TPWE, SwitchAbIF9J_B_TPWE, SwitchNsIF9J_B_TPWE, SwitchNsIF10J_B_TPWE, SwitchNsIF10J_B_TPWE_Type2  # noqa: E501
+from reversi.strategies import MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_F, SwitchNsIF10_B_TPWE_Type2, RandomF11  # noqa: E501
+from reversi.strategies import AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AlphaBeta4F10J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_PCB_TPWE, AbIF10J_B_TPWE, AbIF10J_PCB_TPWE, AbIF9J_B_TPWE_, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPWE, NsIF10J_B_TPWE, SwitchAbIF9J_B_TPWE, SwitchNsIF9J_B_TPWE, SwitchNsIF10J_B_TPWE, SwitchNsIF10J_B_TPWE_F, SwitchNsIF10J_B_TPWE_Type2  # noqa: E501
 from reversi.strategies import Usagi, Tora, Nezumi, Ushi, _Ushi_, Hitsuji, Neko
-from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
+from reversi.strategies.coordinator import Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPOW, Evaluator_TPWE, Evaluator_TPWE_Fast, Evaluator_TPWEC, Evaluator_PWE  # noqa: E501
 from reversi.strategies.coordinator import Selector
 from reversi.strategies.coordinator import Orderer_B, Orderer_PCB
 
@@ -152,6 +152,17 @@ class TestCustom(unittest.TestCase):
                 ],
             ),
             (
+                SwitchNsI_B_TPWE_F(),
+                [12, 24, 36, 48, 60],
+                [
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE_Fast, 50, -20, -10,  0, -4, -2, -2, -25, -13, -5, 4,  9999,  91),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE_Fast, 44, -18,  -4, -2, -2, -4, -3, -40, -10, -8, 4, 10001,  95),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE_Fast, 41, -14,  -1, -4, -4, -1,  2, -38,  -5, -5, 4,  9996, 103),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE_Fast, 62, -19,   1,  0, -1,  0,  1, -25,  -4, -2, 8,  9990,  94),
+                    (IterativeDeepning, 2, Selector, Orderer_B, NegaScout, Evaluator_TPWE_Fast, 50, -23,   0, -9, -2, -2, 16, -25,  -9, -8, 8,  9998,  93),
+                ],
+            ),
+            (
                 SwitchNsI_B_TPWE_Type2(),
                 [12, 24, 36, 48, 60],
                 [
@@ -208,6 +219,7 @@ class TestCustom(unittest.TestCase):
             (SwitchAbIF9_B_TPWE(),         9, SwitchAbI_B_TPWE),
             (SwitchNsIF9_B_TPWE(),         9, SwitchNsI_B_TPWE),
             (SwitchNsIF10_B_TPWE(),       10, SwitchNsI_B_TPWE),
+            (SwitchNsIF10_B_TPWE_F(),     10, SwitchNsI_B_TPWE_F),
             (SwitchNsIF10_B_TPWE_Type2(), 10, SwitchNsI_B_TPWE_Type2),
             (RandomF11(),                 11, Random),
         ]
@@ -242,6 +254,7 @@ class TestCustom(unittest.TestCase):
             (SwitchAbIF9J_B_TPWE(),        Ushi,    SwitchAbIF9_B_TPWE),
             (SwitchNsIF9J_B_TPWE(),        Neko,    SwitchNsIF9_B_TPWE),
             (SwitchNsIF10J_B_TPWE(),       Neko,    SwitchNsIF10_B_TPWE),
+            (SwitchNsIF10J_B_TPWE_F(),     Neko,    SwitchNsIF10_B_TPWE_F),
             (SwitchNsIF10J_B_TPWE_Type2(), Hitsuji, SwitchNsIF10_B_TPWE_Type2),
         ]
         for obj, joseki, base in patterns:
