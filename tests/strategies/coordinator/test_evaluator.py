@@ -186,7 +186,25 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(score, -17)
 
         # Evaluator_TPW_Fast
+        board8 = BitBoard(8)
+        board8.put_disc('black', 3, 2)
+        board8.put_disc('white', 2, 2)
+        board8.put_disc('black', 2, 3)
+        board8.put_disc('white', 4, 2)
+        board8.put_disc('black', 1, 1)
+
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+
         evaluator = coord.Evaluator_TPW_Fast()
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, 10001)
+
+        board8.put_disc('white', 0, 0)
+
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+
         score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score, -10006)
         score = evaluator.evaluate(color=None, board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
@@ -215,7 +233,22 @@ class TestEvaluator(unittest.TestCase):
         self.assertEqual(score, -10006)
 
         # Evaluator_TPWE_Fast
+        board8 = BitBoard(8)
+        board8.put_disc('black', 3, 2)
+        board8.put_disc('white', 2, 2)
+        board8.put_disc('black', 2, 3)
+        board8.put_disc('white', 4, 2)
+        board8.put_disc('black', 1, 1)
+
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+
         evaluator = coord.Evaluator_TPWE_Fast()
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, 10001)
+
+        board8.put_disc('white', 0, 0)
+
         board8._black_bitboard = 0x0000002010003C7E
         possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
         possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
@@ -228,6 +261,14 @@ class TestEvaluator(unittest.TestCase):
 
         score = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score, -10006)
+
+        board4 = BitBoard(4)
+        possibility_b = board4.get_bit_count(board4.get_legal_moves_bits('black'))
+        possibility_w = board4.get_bit_count(board4.get_legal_moves_bits('white'))
+        score = evaluator.evaluate(color='black', board=board4, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, 0)
+
+        # -------------------------------
 
         # Evaluator_TPWEC
         evaluator = coord.Evaluator_TPWEC()
@@ -269,26 +310,48 @@ class TestEvaluator(unittest.TestCase):
         self.assertTrue(reversi.strategies.coordinator.EvaluatorMethods.SLOW_MODE)
         # -------------------------------
 
+        # Evaluator_TPW_Fast
         board8 = BitBoard(8)
         board8.put_disc('black', 3, 2)
         board8.put_disc('white', 2, 2)
         board8.put_disc('black', 2, 3)
         board8.put_disc('white', 4, 2)
         board8.put_disc('black', 1, 1)
+
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+
+        evaluator = coord.Evaluator_TPW_Fast()
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, 10001)
+
         board8.put_disc('white', 0, 0)
 
         possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
         possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
 
-        # Evaluator_TPW_Fast
-        evaluator = coord.Evaluator_TPW_Fast()
         score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score, -10006)
         score = evaluator.evaluate(color=None, board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
         self.assertEqual(score, -17)
 
         # Evaluator_TPWE_Fast
+        board8 = BitBoard(8)
+        board8.put_disc('black', 3, 2)
+        board8.put_disc('white', 2, 2)
+        board8.put_disc('black', 2, 3)
+        board8.put_disc('white', 4, 2)
+        board8.put_disc('black', 1, 1)
+
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+
         evaluator = coord.Evaluator_TPWE_Fast()
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, 10001)
+
+        board8.put_disc('white', 0, 0)
+
         board8._black_bitboard = 0x0000002010003C7E
         possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
         possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
@@ -301,6 +364,12 @@ class TestEvaluator(unittest.TestCase):
 
         score = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score, -10006)
+
+        board4 = BitBoard(4)
+        possibility_b = board4.get_bit_count(board4.get_legal_moves_bits('black'))
+        possibility_w = board4.get_bit_count(board4.get_legal_moves_bits('white'))
+        score = evaluator.evaluate(color='black', board=board4, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, 0)
 
         # -------------------------------
         # recover environment and reload module
