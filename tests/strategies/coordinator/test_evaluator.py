@@ -256,3 +256,55 @@ class TestEvaluator(unittest.TestCase):
 
         score = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score, -10006)
+
+    def test_evaluator_force_import_error(self):
+        import os
+        import importlib
+        import reversi
+
+        # -------------------------------
+        # switch environ and reload module
+        os.environ['FORCE_EVALUATORMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.strategies.coordinator.EvaluatorMethods)
+        self.assertTrue(reversi.strategies.coordinator.EvaluatorMethods.SLOW_MODE)
+        # -------------------------------
+
+        board8 = BitBoard(8)
+        board8.put_disc('black', 3, 2)
+        board8.put_disc('white', 2, 2)
+        board8.put_disc('black', 2, 3)
+        board8.put_disc('white', 4, 2)
+        board8.put_disc('black', 1, 1)
+        board8.put_disc('white', 0, 0)
+
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+
+        # Evaluator_TPW_Fast
+        evaluator = coord.Evaluator_TPW_Fast()
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, -10006)
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, -17)
+
+        # Evaluator_TPWE_Fast
+        evaluator = coord.Evaluator_TPWE_Fast()
+        board8._black_bitboard = 0x0000002010003C7E
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+        score = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, -81)
+
+        board8._black_bitboard = 0x0000002010003C7C
+        score = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, -61)
+
+        score = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, -10006)
+
+        # -------------------------------
+        # recover environment and reload module
+        del os.environ['FORCE_EVALUATORMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.strategies.coordinator.EvaluatorMethods)
+        self.assertFalse(reversi.strategies.coordinator.EvaluatorMethods.SLOW_MODE)
+        # -------------------------------
