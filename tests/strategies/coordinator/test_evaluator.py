@@ -164,12 +164,12 @@ class TestEvaluator(unittest.TestCase):
         score_b = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
         self.assertEqual(score_b, -25.25)
 
-        # Evaluator_TPOW
-        evaluator = coord.Evaluator_TPOW()
-        score_b = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
-        self.assertEqual(score_b, -10006)
-        score_b = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
-        self.assertEqual(score_b, -25.25)
+        # Evaluator_NW
+        evaluator = coord.Evaluator_NW()
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, -10006)
+        score = evaluator.evaluate(color=None, board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, -6)
 
         # Evaluator_PW
         evaluator = coord.Evaluator_PW()
@@ -178,12 +178,12 @@ class TestEvaluator(unittest.TestCase):
         score = evaluator.evaluate(color=None, board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
         self.assertEqual(score, 5)
 
-        # Evaluator_NW
-        evaluator = coord.Evaluator_NW()
-        score = evaluator.evaluate(color=None, board=board8, possibility_b=None, possibility_w=None)
-        self.assertEqual(score, -10006)
-        score = evaluator.evaluate(color=None, board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
-        self.assertEqual(score, -6)
+        # Evaluator_TPOW
+        evaluator = coord.Evaluator_TPOW()
+        score_b = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score_b, -10006)
+        score_b = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score_b, -25.25)
 
         # Evaluator_TPWE
         evaluator = coord.Evaluator_TPWE()
