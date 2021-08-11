@@ -427,9 +427,16 @@ Generation 3 Best 999 Avg 999
         self.assertIsNone(test2.large_mutate())
 
         randomsum77 = RandomSum77(10)
+        self.assertIsNone(randomsum77.reset_fitness())
         randomsum77.mutate()
         self.assertEqual(randomsum77.parameter, 11)
         randomsum77.large_mutate()
         self.assertGreaterEqual(randomsum77.parameter, 0)
         self.assertLess(randomsum77.parameter, 100)
         self.assertEqual(randomsum77.name, str(randomsum77.parameter))
+
+        parent1 = RandomSum77(0)
+        parent2 = RandomSum77(0)
+        child = parent1.crossover(parent2)
+        self.assertEqual(child.name, '(0&0)')
+        self.assertEqual(child.parameter, 0)
