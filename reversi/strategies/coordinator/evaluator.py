@@ -98,6 +98,15 @@ class Evaluator_N(AbstractEvaluator):
         return self.scorer.get_score(board=board)
 
 
+class Evaluator_N_Fast(AbstractEvaluator):
+    """Specific Evaluator Number
+
+           盤面の評価値を石数で算出
+    """
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        return board._black_score - board._white_score
+
+
 class Evaluator_E(AbstractEvaluator):
     """Specific Evaluator Edge
 
