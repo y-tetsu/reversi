@@ -65,7 +65,7 @@ class TestIterativeDeepning(unittest.TestCase):
             selector=coord.Selector(),
             orderer=coord.Orderer(),
             search=AlphaBeta(
-                evaluator=coord.Evaluator_N(),
+                evaluator=coord.Evaluator_N_Fast(),
             ),
         )
 
@@ -77,7 +77,7 @@ class TestIterativeDeepning(unittest.TestCase):
 
         print()
         print(key)
-        print('AlphaBeta-Evaluator_N : (33000)', Measure.count[key2])
+        print('AlphaBeta-Evaluator_N_Fast : (36000)', Measure.count[key2])
         print('(max_depth=7)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
 
@@ -152,7 +152,7 @@ class TestIterativeDeepning(unittest.TestCase):
             selector=coord.Selector(),
             orderer=coord.Orderer_B(),
             search=NegaScout(
-                evaluator=coord.Evaluator_TPWE(),
+                evaluator=coord.Evaluator_TPWE_Fast(),
             ),
         )
 
@@ -164,6 +164,6 @@ class TestIterativeDeepning(unittest.TestCase):
 
         print()
         print(key)
-        print('NegaScout-Evaluator_TPWE : (10500)', Measure.count[key2])
+        print('NegaScout-Evaluator_TPWE_Fast : (13500)', Measure.count[key2])
         print('(max_depth=7)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
