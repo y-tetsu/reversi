@@ -620,3 +620,64 @@ class CornerScorer(AbstractScorer):
         score_w = weight * self._W if (w_bitboard & maskvalue) == maskvalue else 0
 
         return score_b - score_w
+
+
+class BlankScorer(AbstractScorer):
+    """
+    空マスのパターンに基づいて算出
+    """
+    def __init__(self, w1=-1, w2=-4, w3=-2):
+        self._W1 = w1
+        self._W2 = w2
+        self._W3 = w3
+
+    def get_score(self, *args, **kwargs):
+        """
+        評価値の算出
+        """
+        board = kwargs['board']
+        size = board.size
+        black_bitboard = board._black_bitboard
+        white_bitboard = board._white_bitboard
+        all_bitboard = black_bitboard | white_bitboard
+        bit_pos = 1 << (size * size - 1)
+        directions = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
+        corners = [0, size-1, size*size-8, size*size-1]
+        score = 0
+        for i in range(size*size):
+            x, y = i%size, i//size
+            # 自分または相手の石が存在する
+            if bit_pos & all_bitboard:
+                value = 0
+                for index, (dx, dy) in enumerate(directions):
+                    d = dy * size + dx
+                    next_x1, next_y1 = x + dx, y + dy
+                    next_x2, next_y2 = x - dx, y - dy
+                    if 0 <= next_x1 < size and 0 <= next_y1 < size and 0 <= next_x2 < size and 0 <= next_y2 < size:
+                        blank_check = bit_pos
+                        if d > 0:
+                            blank_check >>= d
+                        else:
+                            blank_check <<= abs(d)
+                        # 空きマスに面している(ただし辺の場合は除外)
+                        if not (blank_check & all_bitboard):
+                            value += self._W1
+                            # 隅に接している場合
+                            if i+d in corners:
+                                if index in [0, 2, 5, 7]:
+                                    value += self._W2  # X打ち(チェック方向が斜め)の場合
+                                else:
+                                    blank_check = bit_pos
+                                    for k in range(1, 5):
+                                        if d > 0:
+                                            blank_check <<= d
+                                        else:
+                                            blank_check >>= abs(d)
+                                        if not (blank_check & all_bitboard):
+                                            value += self._W3  # 隅の反対の縦横方向に空きマスがある場合
+                if bit_pos & black_bitboard:
+                    score += value  # 黒の場合
+                else:
+                    score -= value  # 白の場合
+            bit_pos >>= 1
+        return score

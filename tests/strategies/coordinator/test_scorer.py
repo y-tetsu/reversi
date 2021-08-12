@@ -230,3 +230,55 @@ class TestScorer(unittest.TestCase):
         board = BitBoard(4)
         score = scorer.get_score(board=board)
         self.assertEqual(score, 0)
+
+    def test_blank_scorer(self):
+        board = BitBoard(8)
+        scorer = coord.BlankScorer()
+
+        # initial
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 0)
+
+        # test1
+        board.put_disc('black', 5, 4)
+        board.put_disc('white', 5, 3)
+        board.put_disc('black', 3, 2)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -20)
+
+        # test2
+        board.undo()
+        board.put_disc('black', 2, 2)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -16)
+
+        # test3
+        board.undo()
+        board.put_disc('black', 4, 2)
+        board.put_disc('white', 5, 5)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 8)
+
+        # test4(left-top)
+        board._black_bitboard = 0x2058082010000000
+        board._white_bitboard = 0x4020101C0C040000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 1)
+
+        # test5(right-bottom)
+        board._black_bitboard = 0x20583E3C1C060200
+        board._white_bitboard = 0x4020000000000000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -53)
+
+        # test6(right-top)
+        board._black_bitboard = 0x007A562C7C060200
+        board._white_bitboard = 0xFA84A8D080000000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -42)
+
+        # test7(left-bottom)
+        board._black_bitboard = 0x043A170C14320000
+        board._white_bitboard = 0xFAC4E8F1E8CCC241
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 8)
