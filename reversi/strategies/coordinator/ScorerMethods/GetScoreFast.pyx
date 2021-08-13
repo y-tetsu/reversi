@@ -1,14 +1,15 @@
-#cython: language_level=3
+#cython: language_level=3, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """GetScore
 """
-
-import sys
-
-MAXSIZE64 = 2**63 - 1
 
 
 def get_blank_score(board, w1, w2, w3):
     return _get_blank_score(board, w1, w2, w3)
+
+
+cdef:
+    signed int[8] directions_x = [-1, 0, 1, -1, 1, -1, 0, 1]
+    signed int[8] directions_y = [-1, -1, -1, 0, 0, 1, 1, 1]
 
 
 cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, signed int w3):
@@ -17,17 +18,7 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
         signed int size_x_size = size * size
         signed int i, x, y, value, j, dx, dy, next_x1, next_y1, next_x2, next_y2, d, dx_abs, dy_abs, k, next_x3, next_y3
         signed int score = 0
-        signed int directions[8][2]
         signed int board_info[26][26]
-
-    directions[0][0], directions[0][1] = -1, -1
-    directions[1][0], directions[1][1] = 0, -1
-    directions[2][0], directions[2][1] = 1, -1
-    directions[3][0], directions[3][1] = -1, 0
-    directions[4][0], directions[4][1] = 1, 0
-    directions[5][0], directions[5][1] = -1, 1
-    directions[6][0], directions[6][1] = 0, 1
-    directions[7][0], directions[7][1] = 1, 1
 
     board_info_tmp = board.get_board_info()
     for y in range(size):
@@ -41,10 +32,11 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
             if board_info[x][y]:
                 value = 0
                 for j in range(8):
-                    dx, dy = directions[j][0], directions[j][1]
+                    dx, dy = directions_x[j], directions_y[j]
                     next_x1, next_y1 = x + dx, y + dy
                     next_x2, next_y2 = x - dx, y - dy
                     if 0 <= next_x1 < size and 0 <= next_y1 < size and 0 <= next_x2 < size and 0 <= next_y2 < size:
+                        # 空きマスに面している(ただし反対側が盤面の範囲内)
                         if not board_info[next_x1][next_y1]:
                             value += w1
                             # 隅に接している場合
