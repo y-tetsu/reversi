@@ -645,7 +645,7 @@ class BlankScorer(AbstractScorer):
         corners = [0, size-1, size*size-8, size*size-1]
         score = 0
         for i in range(size*size):
-            x, y = i%size, i//size
+            x, y = i % size, i // size
             # 自分または相手の石が存在する
             if bit_pos & all_bitboard:
                 value = 0
