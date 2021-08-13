@@ -320,3 +320,66 @@ class TestScorer(unittest.TestCase):
         board._white_bitboard = 0x21497D7349050301
         score = scorer.get_score(board=board)
         self.assertEqual(score, -8)
+
+    def test_scorer_force_import_error(self):
+        import os
+        import importlib
+        import reversi
+
+        # -------------------------------
+        # switch environ and reload module
+        os.environ['FORCE_SCORERMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.strategies.coordinator.ScorerMethods)
+        self.assertTrue(reversi.strategies.coordinator.ScorerMethods.SLOW_MODE)
+        # -------------------------------
+
+        # BlankScorer
+        board = BitBoard(8)
+        scorer = coord.BlankScorer()
+
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 0)
+
+        board.put_disc('black', 5, 4)
+        board.put_disc('white', 5, 3)
+        board.put_disc('black', 3, 2)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -20)
+
+        board.undo()
+        board.put_disc('black', 2, 2)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -16)
+
+        board.undo()
+        board.put_disc('black', 4, 2)
+        board.put_disc('white', 5, 5)
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 8)
+
+        board._black_bitboard = 0x2058082010000000
+        board._white_bitboard = 0x4020101C0C040000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 1)
+
+        board._black_bitboard = 0x20583E3C1C060200
+        board._white_bitboard = 0x4020000000000000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -53)
+
+        board._black_bitboard = 0x007A562C7C060200
+        board._white_bitboard = 0xFA84A8D080000000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -42)
+
+        board._black_bitboard = 0x043A170C14320000
+        board._white_bitboard = 0xFAC4E8F1E8CCC241
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 8)
+
+        # -------------------------------
+        # recover environment and reload module
+        del os.environ['FORCE_SCORERMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.strategies.coordinator.EvaluatorMethods)
+        self.assertFalse(reversi.strategies.coordinator.EvaluatorMethods.SLOW_MODE)
+        # -------------------------------
