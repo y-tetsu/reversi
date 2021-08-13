@@ -336,6 +336,20 @@ class TestEvaluator(unittest.TestCase):
         score = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
         self.assertEqual(score, -10006)
 
+        # Evaluator_BWEc
+        evaluator = coord.Evaluator_BWEc()
+        board8._black_bitboard = 0x0000002010003C7C
+        possibility_b = board8.get_bit_count(board8.get_legal_moves_bits('black'))
+        possibility_w = board8.get_bit_count(board8.get_legal_moves_bits('white'))
+        score = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, -14)
+        board8._black_bitboard = 0x0703012010003C7E
+        score = evaluator.evaluate(color='black', board=board8, possibility_b=possibility_b, possibility_w=possibility_w)
+        self.assertEqual(score, -2)
+
+        score = evaluator.evaluate(color='black', board=board8, possibility_b=None, possibility_w=None)
+        self.assertEqual(score, -10006)
+
     def test_evaluator_force_import_error(self):
         import os
         import importlib
