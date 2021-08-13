@@ -282,3 +282,41 @@ class TestScorer(unittest.TestCase):
         board._white_bitboard = 0xFAC4E8F1E8CCC241
         score = scorer.get_score(board=board)
         self.assertEqual(score, 8)
+
+    def test_edgecorner_scorer(self):
+        board = BitBoard(8)
+        scorer = coord.EdgeCornerScorer()
+
+        # initial
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 0)
+
+        # test1(left-bottom)
+        board._black_bitboard = 0x00041800242014E0
+        board._white_bitboard = 0x0000201C08182808
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 16)
+
+        # test2(left-top)
+        board._black_bitboard = 0x8084B8D6AFDCFEFC
+        board._white_bitboard = 0x0000442850200000
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 24)
+
+        # test3(right-bottom)
+        board._black_bitboard = 0x1817A3DDADF4FBFF
+        board._white_bitboard = 0x20886C22620A0400
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 24)
+
+        # test4(right-top)
+        board._black_bitboard = 0x1815E3DDADF4FBFF
+        board._white_bitboard = 0x210A1C22520A0400
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, 8)
+
+        # test5(minus)
+        board._black_bitboard = 0x1A16828CB6FAFCFC
+        board._white_bitboard = 0x21497D7349050301
+        score = scorer.get_score(board=board)
+        self.assertEqual(score, -8)

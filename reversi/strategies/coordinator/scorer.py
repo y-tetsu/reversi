@@ -681,3 +681,63 @@ class BlankScorer(AbstractScorer):
                     score -= value  # 白の場合
             bit_pos >>= 1
         return score
+
+
+class EdgeCornerScorer(AbstractScorer):
+    """
+    辺と隅のパターンに基づいて算出
+    """
+    def __init__(self, w1=1, w2=8):
+        self._W1 = w1
+        self._W2 = w2
+
+    def get_score(self, *args, **kwargs):
+        """
+        評価値の算出
+        """
+        board = kwargs['board']
+        size = board.size
+        black_bitboard = board._black_bitboard
+        white_bitboard = board._white_bitboard
+        all_bitboard = black_bitboard | white_bitboard
+        bit_pos = 1 << (size * size - 1)
+        corners = [0, size-1, size*size-8, size*size-1]
+        score = 0
+        for index1, corner1 in enumerate(corners):
+            for index2, corner2 in enumerate(corners):
+                if index1+index2 == 3 or index1 >= index2:  # 斜め方向は除外し、4辺を1回ずつチェック
+                    continue
+                d = (corner2 - corner1) // 7
+                is_edge_full = True
+                edge = 0
+                blank_check = bit_pos >> corner1
+                # 辺の確定石
+                for k in range(size):  # 辺の方向をチェック
+                    if not (blank_check & all_bitboard):  # 空きマス発見時
+                        is_edge_full = False
+                        break
+                    if blank_check & black_bitboard:
+                        edge += self._W1  # 黒の場合
+                    else:
+                        edge -= self._W1  # 白の場合
+                    blank_check >>= d
+                # 四隅のパターン
+                corner = 0
+                corner_check1 = bit_pos >> corner1
+                corner_check2 = bit_pos >> corner2
+                if corner_check1 & black_bitboard:
+                    corner += 1
+                if corner_check2 & black_bitboard:
+                    corner += 1
+                if corner_check1 & white_bitboard:
+                    corner -= 1
+                if corner_check2 & white_bitboard:
+                    corner -= 1
+                # 算出
+                if is_edge_full:
+                    score += edge      # 辺がすべて埋まっている場合
+                elif corner > 0:
+                    score += self._W2  # 黒の隅が多い場合
+                elif corner < 0:
+                    score -= self._W2  # 白の隅が多い場合
+        return score
