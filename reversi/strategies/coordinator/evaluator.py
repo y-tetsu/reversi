@@ -439,8 +439,32 @@ class Evaluator_EcW(AbstractEvaluator):
 
            盤面の評価値を辺と隅のパターン+勝敗で算出
     """
-    def __init__(self, wb1=1, wb2=8, ww=10000):
-        self.b = EdgeCornerScorer(wb1, wb2)
+    def __init__(self, wec1=1, wec2=8, ww=10000):
+        self.ec = EdgeCornerScorer(wec1, wec2)
+        self.w = WinLoseScorer(ww)
+
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        """evaluate
+        """
+        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+
+        # 勝敗が決まっている場合
+        if score_w is not None:
+            return score_w
+
+        score_ec = self.ec.get_score(board=board)
+
+        return score_ec
+
+
+class Evaluator_BWEc(AbstractEvaluator):
+    """Specific Evaluator Blank + WinLose + EdgeCorner
+
+           盤面の評価値を空きマスと辺と隅のパターン+勝敗で算出
+    """
+    def __init__(self, wb1=-1, wb2=-4, wb3=-2, we1=1, we2=8, ww=10000):
+        self.b = BlankScorer(wb1, wb2, wb3)
+        self.ec = EdgeCornerScorer(we1, we2)
         self.w = WinLoseScorer(ww)
 
     def evaluate(self, color, board, possibility_b, possibility_w):
@@ -453,5 +477,6 @@ class Evaluator_EcW(AbstractEvaluator):
             return score_w
 
         score_b = self.b.get_score(board=board)
+        score_ec = self.ec.get_score(board=board)
 
-        return score_b
+        return score_b + score_ec
