@@ -158,79 +158,114 @@ class EdgeScorer(AbstractScorer):
         # □□□□□□□□
         # □□□□□□□□
         # □□□□□□□□
-        self.stable_maskvalue = [
-            0xC000000000000000,  # 上左2
-            0xE000000000000000,  # 上左3
-            0xF000000000000000,  # 上左4
-            0xF800000000000000,  # 上左5
-            0xFC00000000000000,  # 上左6
-            0xFE00000000000000,  # 上左7
-            0x0300000000000000,  # 上右2
-            0x0700000000000000,  # 上右3
-            0x0F00000000000000,  # 上右4
-            0x1F00000000000000,  # 上右5
-            0x3F00000000000000,  # 上右6
-            0x7F00000000000000,  # 上右7
-            0xFF00000000000000,  # 上8
-            0x0101000000000000,  # 右上2
-            0x0101010000000000,  # 右上3
-            0x0101010100000000,  # 右上4
-            0x0101010101000000,  # 右上5
-            0x0101010101010000,  # 右上6
-            0x0101010101010100,  # 右上7
-            0x0000000000000101,  # 右下2
-            0x0000000000010101,  # 右下3
-            0x0000000001010101,  # 右下4
-            0x0000000101010101,  # 右下5
-            0x0000010101010101,  # 右下6
-            0x0001010101010101,  # 右下7
-            0x0101010101010101,  # 右8
-            0x00000000000000C0,  # 下左2
-            0x00000000000000E0,  # 下左3
-            0x00000000000000F0,  # 下左4
-            0x00000000000000F8,  # 下左5
-            0x00000000000000FC,  # 下左6
-            0x00000000000000FE,  # 下左7
-            0x0000000000000003,  # 下右2
-            0x0000000000000007,  # 下右3
-            0x000000000000000F,  # 下右4
-            0x000000000000001F,  # 下右5
-            0x000000000000003F,  # 下右6
-            0x000000000000007F,  # 下右7
-            0x00000000000000FF,  # 下8
-            0x8080000000000000,  # 左上2
-            0x8080800000000000,  # 左上3
-            0x8080808000000000,  # 左上4
-            0x8080808080000000,  # 左上5
-            0x8080808080800000,  # 左上6
-            0x8080808080808000,  # 左上7
-            0x0000000000008080,  # 左下2
-            0x0000000000808080,  # 左下3
-            0x0000000080808080,  # 左下4
-            0x0000008080808080,  # 左下5
-            0x0000808080808080,  # 左下6
-            0x0080808080808080,  # 左下7
-            0x8080808080808080,  # 左8
-        ]
 
     def get_score(self, *args, **kwargs):
         """
         評価値の算出
         """
         board = kwargs['board']
+        size = board.size
+        weight = self._W
         score = 0
         b_bitboard, w_bitboard = board.get_bitboard_info()
-        weight = self._W
+        all_bitboard = b_bitboard | w_bitboard
+        bit_pos = 1 << (size * size - 1)
 
-        # ボードサイズ8以外は考慮なし
-        if board.size != 8:
-            return score
+        lt = bit_pos
+        rt = bit_pos >> size-1
+        lb = bit_pos >> size*(size-1)
+        rb = bit_pos >> size*size-1
 
-        # 確定石
-        for maskvalue in self.stable_maskvalue:
-            score_b = weight if (b_bitboard & maskvalue) == maskvalue else 0
-            score_w = weight if (w_bitboard & maskvalue) == maskvalue else 0
-            score += score_b - score_w
+        # 四隅のどこかに石がある場合
+        if (lt | rt | lb | rb) & all_bitboard:
+            # 左上
+            lt_board = b_bitboard
+            lt_sign = 1
+            if lt & w_bitboard:
+                lt_board = w_bitboard
+                lt_sign = -1
+            lt_r, lt_b = lt & lt_board, lt & lt_board
+            # 右上
+            rt_board = b_bitboard
+            rt_sign = 1
+            if rt & w_bitboard:
+                rt_board = w_bitboard
+                rt_sign = -1
+            rt_l, rt_b = rt & rt_board, rt & rt_board
+            # 左下
+            lb_board = b_bitboard
+            lb_sign = 1
+            if lb & w_bitboard:
+                lb_board = w_bitboard
+                lb_sign = -1
+            lb_r, lb_t = lb & lb_board, lb & lb_board
+            # 右下
+            rb_board = b_bitboard
+            rb_sign = 1
+            if rb & w_bitboard:
+                rb_board = w_bitboard
+                rb_sign = -1
+            rb_l, rb_t = rb & rb_board, rb & rb_board
+
+            # 確定石の連続数(2個～7個まで)をカウント
+            for i in range(size-2):
+                # 左上:右方向
+                lt_r >>= 1
+                lt_r &= lt_board
+                if lt_r & lt_board:
+                    score += weight * lt_sign
+                # 左上:下方向
+                lt_b >>= size
+                lt_b &= lt_board
+                if lt_b & lt_board:
+                    score += weight * lt_sign
+                # 右上:左方向
+                rt_l <<= 1
+                rt_l &= rt_board
+                if rt_l & rt_board:
+                    score += weight * rt_sign
+                # 右上:下方向
+                rt_b >>= size
+                rt_b &= rt_board
+                if rt_b & rt_board:
+                    score += weight * rt_sign
+                # 左下:右方向
+                lb_r >>= 1
+                lb_r &= lb_board
+                if lb_r & lb_board:
+                    score += weight * lb_sign
+                # 左下:上方向
+                lb_t <<= size
+                lb_t &= lb_board
+                if lb_t & lb_board:
+                    score += weight * lb_sign
+                # 右下:左方向
+                rb_l <<= 1
+                rb_l &= rb_board
+                if rb_l & rb_board:
+                    score += weight * rb_sign
+                # 右下:上方向
+                rb_t <<= size
+                rb_t &= rb_board
+                if rb_t & rb_board:
+                    score += weight * rb_sign
+
+            # 辺が同じ色で埋まっている場合はさらに加算
+            top = int(''.join(['1'] * size + ['0'] * (size*(size-1))), 2)
+            if lt_board & top == top:
+                score += weight * lt_sign
+
+            left = int(''.join((['1'] + ['0'] * (size-1)) * size), 2)
+            if lt_board & left == left:
+                score += weight * lt_sign
+
+            right = int(''.join((['0'] * (size-1) + ['1']) * size), 2)
+            if rb_board & right == right:
+                score += weight * rb_sign
+
+            bottom = int(''.join(['0'] * (size*(size-1)) + ['1'] * size), 2)
+            if rb_board & bottom == bottom:
+                score += weight * rb_sign
 
         return score
 
