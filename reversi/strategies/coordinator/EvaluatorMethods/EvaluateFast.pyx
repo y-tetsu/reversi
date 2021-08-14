@@ -1,119 +1,8 @@
-#cython: language_level=3
+#cython: language_level=3, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """Evaluate
 """
 
 import sys
-
-EDGE_MASKVALUE = [
-    0xC000000000000000,  # 上左2
-    0xE000000000000000,  # 上左3
-    0xF000000000000000,  # 上左4
-    0xF800000000000000,  # 上左5
-    0xFC00000000000000,  # 上左6
-    0xFE00000000000000,  # 上左7
-    0x0300000000000000,  # 上右2
-    0x0700000000000000,  # 上右3
-    0x0F00000000000000,  # 上右4
-    0x1F00000000000000,  # 上右5
-    0x3F00000000000000,  # 上右6
-    0x7F00000000000000,  # 上右7
-    0xFF00000000000000,  # 上8
-    0x0101000000000000,  # 右上2
-    0x0101010000000000,  # 右上3
-    0x0101010100000000,  # 右上4
-    0x0101010101000000,  # 右上5
-    0x0101010101010000,  # 右上6
-    0x0101010101010100,  # 右上7
-    0x0000000000000101,  # 右下2
-    0x0000000000010101,  # 右下3
-    0x0000000001010101,  # 右下4
-    0x0000000101010101,  # 右下5
-    0x0000010101010101,  # 右下6
-    0x0001010101010101,  # 右下7
-    0x0101010101010101,  # 右8
-    0x00000000000000C0,  # 下左2
-    0x00000000000000E0,  # 下左3
-    0x00000000000000F0,  # 下左4
-    0x00000000000000F8,  # 下左5
-    0x00000000000000FC,  # 下左6
-    0x00000000000000FE,  # 下左7
-    0x0000000000000003,  # 下右2
-    0x0000000000000007,  # 下右3
-    0x000000000000000F,  # 下右4
-    0x000000000000001F,  # 下右5
-    0x000000000000003F,  # 下右6
-    0x000000000000007F,  # 下右7
-    0x00000000000000FF,  # 下8
-    0x8080000000000000,  # 左上2
-    0x8080800000000000,  # 左上3
-    0x8080808000000000,  # 左上4
-    0x8080808080000000,  # 左上5
-    0x8080808080800000,  # 左上6
-    0x8080808080808000,  # 左上7
-    0x0000000000008080,  # 左下2
-    0x0000000000808080,  # 左下3
-    0x0000000080808080,  # 左下4
-    0x0000008080808080,  # 左下5
-    0x0000808080808080,  # 左下6
-    0x0080808080808080,  # 左下7
-    0x8080808080808080,  # 左8
-]
-
-cdef:
-    unsigned long long[52] edge_maskvalue = [
-        0xC000000000000000,  # 上左2
-        0xE000000000000000,  # 上左3
-        0xF000000000000000,  # 上左4
-        0xF800000000000000,  # 上左5
-        0xFC00000000000000,  # 上左6
-        0xFE00000000000000,  # 上左7
-        0x0300000000000000,  # 上右2
-        0x0700000000000000,  # 上右3
-        0x0F00000000000000,  # 上右4
-        0x1F00000000000000,  # 上右5
-        0x3F00000000000000,  # 上右6
-        0x7F00000000000000,  # 上右7
-        0xFF00000000000000,  # 上8
-        0x0101000000000000,  # 右上2
-        0x0101010000000000,  # 右上3
-        0x0101010100000000,  # 右上4
-        0x0101010101000000,  # 右上5
-        0x0101010101010000,  # 右上6
-        0x0101010101010100,  # 右上7
-        0x0000000000000101,  # 右下2
-        0x0000000000010101,  # 右下3
-        0x0000000001010101,  # 右下4
-        0x0000000101010101,  # 右下5
-        0x0000010101010101,  # 右下6
-        0x0001010101010101,  # 右下7
-        0x0101010101010101,  # 右8
-        0x00000000000000C0,  # 下左2
-        0x00000000000000E0,  # 下左3
-        0x00000000000000F0,  # 下左4
-        0x00000000000000F8,  # 下左5
-        0x00000000000000FC,  # 下左6
-        0x00000000000000FE,  # 下左7
-        0x0000000000000003,  # 下右2
-        0x0000000000000007,  # 下右3
-        0x000000000000000F,  # 下右4
-        0x000000000000001F,  # 下右5
-        0x000000000000003F,  # 下右6
-        0x000000000000007F,  # 下右7
-        0x00000000000000FF,  # 下8
-        0x8080000000000000,  # 左上2
-        0x8080800000000000,  # 左上3
-        0x8080808000000000,  # 左上4
-        0x8080808080000000,  # 左上5
-        0x8080808080800000,  # 左上6
-        0x8080808080808000,  # 左上7
-        0x0000000000008080,  # 左下2
-        0x0000000000808080,  # 左下3
-        0x0000000080808080,  # 左下4
-        0x0000008080808080,  # 左下5
-        0x0000808080808080,  # 左下6
-        0x0080808080808080,  # 左下7
-        0x8080808080808080,  # 左8
-    ]
 
 MAXSIZE64 = 2**63 - 1
 
@@ -134,57 +23,256 @@ cdef inline signed int _evaluate_tpw(t, params, color, board, possibility_b, pos
 
 
 def evaluate_tpwe(t, params, color, board, possibility_b, possibility_w):
-    if sys.maxsize == MAXSIZE64:
-        return _evaluate_tpwe_64bit(t, params, color, board, possibility_b, possibility_w)
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _evaluate_tpwe_size8_64bit(t, params, color, board, possibility_b, possibility_w)
     return _evaluate_tpwe(t, params, color, board, possibility_b, possibility_w)
 
 
-cdef inline signed int _evaluate_tpwe_64bit(t, params, color, board, possibility_b, possibility_w):
+cdef inline signed int _evaluate_tpwe_size8_64bit(t, params, color, board, possibility_b, possibility_w):
     cdef:
-        unsigned long long maskvalue = 0
-        unsigned long long b_bitboard, w_bitboard
-        signed int ret = 0
-        signed int score_t = 0
-        signed int score_p = 0
-        signed int score_e = 0
-        signed int tmp_b, tmp_w
         signed int wp = params[0]
         signed int ww = params[1]
         signed int we = params[2]
+        signed int score_w = 0
+        signed int score_t = 0
+        signed int score_p = 0
+        signed int score_e = 0
+        signed int lt_sign, lb_sign, rt_sign, rb_sign
+        unsigned int i
+        unsigned long long b_bitboard, w_bitboard, all_bitboard, bit_pos, lt, rt, lb, rb, lt_board, rt_board, lb_board, rb_board, top, left, right, bottom
 
-    if not possibility_b and not possibility_w:  # 勝敗が決まっている場合
-        ret = board._black_score - board._white_score
-        if ret > <signed int>0:    # 黒が勝った
-            ret += ww
-        elif ret < <signed int>0:  # 白が勝った
-            ret -= ww
-        return ret
-    score_t = t.get_score(board=board)
-    score_p = (possibility_b - possibility_w) * wp
-    if board.size != 8:
-        return score_t + score_p
+    # 勝敗が決まっている場合
+    if not possibility_b and not possibility_w:
+        score_w = board._black_score - board._white_score
+        if score_w > 0:    # 黒が勝った
+            score_w += ww
+        elif score_w < 0:  # 白が勝った
+            score_w -= ww
+        return score_w
+
+    score_t = t.get_score(board=board)  # テーブルによるスコア
+    score_p = (possibility_b - possibility_w) * wp    # 着手可能数によるスコア
+
+    # 辺のパターンによるスコア
     b_bitboard, w_bitboard = board.get_bitboard_info()
-    for maskvalue in edge_maskvalue:
-        tmp_b = we if (b_bitboard & maskvalue) == maskvalue else <signed int>0
-        tmp_w = we if (w_bitboard & maskvalue) == maskvalue else <signed int>0
-        score_e += tmp_b - tmp_w
+    all_bitboard = b_bitboard | w_bitboard
+    bit_pos = 0x8000000000000000
+
+    lt = 0x8000000000000000
+    rt = 0x0100000000000000
+    lb = 0x0000000000000080
+    rb = 0x0000000000000001
+
+    # 四隅のどこかに石がある場合
+    if (lt | rt | lb | rb) & all_bitboard:
+        # 左上
+        lt_board = b_bitboard
+        lt_sign = 1
+        if lt & w_bitboard:
+            lt_board = w_bitboard
+            lt_sign = -1
+        lt_r, lt_b = lt & lt_board, lt & lt_board
+        # 右上
+        rt_board = b_bitboard
+        rt_sign = 1
+        if rt & w_bitboard:
+            rt_board = w_bitboard
+            rt_sign = -1
+        rt_l, rt_b = rt & rt_board, rt & rt_board
+        # 左下
+        lb_board = b_bitboard
+        lb_sign = 1
+        if lb & w_bitboard:
+            lb_board = w_bitboard
+            lb_sign = -1
+        lb_r, lb_t = lb & lb_board, lb & lb_board
+        # 右下
+        rb_board = b_bitboard
+        rb_sign = 1
+        if rb & w_bitboard:
+            rb_board = w_bitboard
+            rb_sign = -1
+        rb_l, rb_t = rb & rb_board, rb & rb_board
+
+        # 確定石の連続数(2個～7個まで)をカウント
+        for i in range(<unsigned int>6):
+            # 左上:右方向
+            lt_r >>= 1
+            lt_r &= lt_board
+            if lt_r & lt_board:
+                score_e += we * lt_sign
+            # 左上:下方向
+            lt_b >>= 8
+            lt_b &= lt_board
+            if lt_b & lt_board:
+                score_e += we * lt_sign
+            # 右上:左方向
+            rt_l <<= 1
+            rt_l &= rt_board
+            if rt_l & rt_board:
+                score_e += we * rt_sign
+            # 右上:下方向
+            rt_b >>= 8
+            rt_b &= rt_board
+            if rt_b & rt_board:
+                score_e += we * rt_sign
+            # 左下:右方向
+            lb_r >>= 1
+            lb_r &= lb_board
+            if lb_r & lb_board:
+                score_e += we * lb_sign
+            # 左下:上方向
+            lb_t <<= 8
+            lb_t &= lb_board
+            if lb_t & lb_board:
+                score_e += we * lb_sign
+            # 右下:左方向
+            rb_l <<= 1
+            rb_l &= rb_board
+            if rb_l & rb_board:
+                score_e += we * rb_sign
+            # 右下:上方向
+            rb_t <<= 8
+            rb_t &= rb_board
+            if rb_t & rb_board:
+                score_e += we * rb_sign
+
+        # 辺がすべて同じ色で埋まっている場合はさらに加算
+        top = 0xFF00000000000000
+        if lt_board & top == top:
+            score_e += we * lt_sign
+        left = 0x8080808080808080
+        if lt_board & left == left:
+            score_e += we * lt_sign
+        right = 0x0101010101010101
+        if rb_board & right == right:
+            score_e += we * rb_sign
+        bottom = 0x00000000000000FF
+        if rb_board & bottom == bottom:
+            score_e += we * rb_sign
+
     return score_t + score_p + score_e
 
 
 cdef inline signed int _evaluate_tpwe(t, params, color, board, possibility_b, possibility_w):
-    if not possibility_b and not possibility_w:  # 勝敗が決まっている場合
-        ret = board._black_score - board._white_score
-        if ret > 0:    # 黒が勝った
-            ret += params[1]
-        elif ret < 0:  # 白が勝った
-            ret -= params[1]
-        return ret
-    if board.size != 8:
-        return t.get_score(board=board) + (possibility_b - possibility_w) * params[0]
-    score = 0
+    cdef:
+        signed int wp = params[0]
+        signed int ww = params[1]
+        signed int we = params[2]
+        signed int score_w = 0
+        signed int score_t = 0
+        signed int score_p = 0
+        signed int score_e = 0
+        signed int lt_sign, lb_sign, rt_sign, rb_sign
+        unsigned int i
+
+    # 勝敗が決まっている場合
+    if not possibility_b and not possibility_w:
+        score_w = board._black_score - board._white_score
+        if score_w > 0:    # 黒が勝った
+            score_w += ww
+        elif score_w < 0:  # 白が勝った
+            score_w -= ww
+        return score_w
+    score_t = t.get_score(board=board)              # テーブルによるスコア
+    score_p = (possibility_b - possibility_w) * wp  # 着手可能数によるスコア
+    # 辺のパターンによるスコア
+    size = board.size
     b_bitboard, w_bitboard = board.get_bitboard_info()
-    for maskvalue in EDGE_MASKVALUE:
-        score_b = params[2] if (b_bitboard & maskvalue) == maskvalue else 0
-        score_w = params[2] if (w_bitboard & maskvalue) == maskvalue else 0
-        score += score_b - score_w
-    return t.get_score(board=board) + (possibility_b - possibility_w) * params[0] + score
+    all_bitboard = b_bitboard | w_bitboard
+    bit_pos = 1 << (size * size - 1)
+
+    lt = bit_pos
+    rt = bit_pos >> size-1
+    lb = bit_pos >> size*(size-1)
+    rb = bit_pos >> size*size-1
+
+    # 四隅のどこかに石がある場合
+    if (lt | rt | lb | rb) & all_bitboard:
+        # 左上
+        lt_board = b_bitboard
+        lt_sign = 1
+        if lt & w_bitboard:
+            lt_board = w_bitboard
+            lt_sign = -1
+        lt_r, lt_b = lt & lt_board, lt & lt_board
+        # 右上
+        rt_board = b_bitboard
+        rt_sign = 1
+        if rt & w_bitboard:
+            rt_board = w_bitboard
+            rt_sign = -1
+        rt_l, rt_b = rt & rt_board, rt & rt_board
+        # 左下
+        lb_board = b_bitboard
+        lb_sign = 1
+        if lb & w_bitboard:
+            lb_board = w_bitboard
+            lb_sign = -1
+        lb_r, lb_t = lb & lb_board, lb & lb_board
+        # 右下
+        rb_board = b_bitboard
+        rb_sign = 1
+        if rb & w_bitboard:
+            rb_board = w_bitboard
+            rb_sign = -1
+        rb_l, rb_t = rb & rb_board, rb & rb_board
+
+        # 確定石の連続数(2個～7個まで)をカウント
+        for i in range(<unsigned int>(size-2)):
+            # 左上:右方向
+            lt_r >>= 1
+            lt_r &= lt_board
+            if lt_r & lt_board:
+                score_e += we * lt_sign
+            # 左上:下方向
+            lt_b >>= size
+            lt_b &= lt_board
+            if lt_b & lt_board:
+                score_e += we * lt_sign
+            # 右上:左方向
+            rt_l <<= 1
+            rt_l &= rt_board
+            if rt_l & rt_board:
+                score_e += we * rt_sign
+            # 右上:下方向
+            rt_b >>= size
+            rt_b &= rt_board
+            if rt_b & rt_board:
+                score_e += we * rt_sign
+            # 左下:右方向
+            lb_r >>= 1
+            lb_r &= lb_board
+            if lb_r & lb_board:
+                score_e += we * lb_sign
+            # 左下:上方向
+            lb_t <<= size
+            lb_t &= lb_board
+            if lb_t & lb_board:
+                score_e += we * lb_sign
+            # 右下:左方向
+            rb_l <<= 1
+            rb_l &= rb_board
+            if rb_l & rb_board:
+                score_e += we * rb_sign
+            # 右下:上方向
+            rb_t <<= size
+            rb_t &= rb_board
+            if rb_t & rb_board:
+                score_e += we * rb_sign
+
+        # 辺が同じ色で埋まっている場合はさらに加算
+        top = int(''.join(['1'] * size + ['0'] * (size*(size-1))), 2)
+        if lt_board & top == top:
+            score_e += we * lt_sign
+        left = int(''.join((['1'] + ['0'] * (size-1)) * size), 2)
+        if lt_board & left == left:
+            score_e += we * lt_sign
+        right = int(''.join((['0'] * (size-1) + ['1']) * size), 2)
+        if rb_board & right == right:
+            score_e += we * rb_sign
+        bottom = int(''.join(['0'] * (size*(size-1)) + ['1'] * size), 2)
+        if rb_board & bottom == bottom:
+            score_e += we * rb_sign
+
+    return score_t + score_p + score_e
