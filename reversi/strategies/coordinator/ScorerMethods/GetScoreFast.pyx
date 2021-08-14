@@ -68,8 +68,36 @@ cdef inline signed int _get_blank_score_size8_64bit(board, signed int w1, signed
     score += w1 * (_get_bit_count(lb_blank & black) - _get_bit_count(lb_blank & white))
     score += w1 * (_get_bit_count(rb_blank & black) - _get_bit_count(rb_blank & white))
 
+    # w2の計算
+    score2 = 0
+    lt_x = lt_blank & 0x0040000000000000  # 左上のX打ち
+    if lt_x:
+        if lt_x & black:
+            score2 += w2
+        else:
+            score2 -= w2
+    rt_x = rt_blank & 0x0002000000000000  # 右上のX打ち
+    if rt_x:
+        if rt_x & black:
+            score2 += w2
+        else:
+            score2 -= w2
+    lb_x = lb_blank & 0x0000000000004000  # 左下のX打ち
+    if lb_x:
+        if lb_x & black:
+            score2 += w2
+        else:
+            score2 -= w2
+    rb_x = rb_blank & 0x0000000000000200  # 右下のX打ち
+    if rb_x:
+        if rb_x & black:
+            score2 += w2
+        else:
+            score2 -= w2
+
     print(board)
     print('w1 new =', score)
+    print('w2 new =', score2)
 
 
 cdef inline signed int _get_bit_count(unsigned long long bits):
@@ -94,6 +122,7 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
 
     #####
     w1cnt = 0
+    w2cnt = 0
     #####
     board_info_tmp = board.get_board_info()
     for y in range(size):
@@ -108,6 +137,7 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
                 value = 0
                 ###
                 valuetmp = 0
+                valuetmp2 = 0
                 ###
                 for j in range(8):
                     dx, dy = directions_x[j], directions_y[j]
@@ -123,12 +153,12 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
                             # 隅に接している場合
                             d = dy * size + dx
                             if i+d == 0 or i+d == size-1 or i+d == size_x_size-8 or i+d == size_x_size-1:
-                                if dx != 0:
-                                    dx_abs = 1
-                                if dy != 0:
-                                    dy_abs = 1
-                                if dx_abs + dy_abs == 2:
+                                if abs(dx) + abs(dy) == 2:
                                     value += w2  # X打ち(チェック方向が斜め)の場合
+                                    #####
+                                    #print(j, '(', dx, dy, ')', '(', next_x1, next_y1, ')', '(', x, y, ')')
+                                    valuetmp2 += w2
+                                    #####
                                 else:
                                     for k in range(1, 5):
                                         next_x3, next_y3 = x - k * dx, y - k * dy
@@ -136,5 +166,7 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
                                             value += w3  # 隅の反対の縦横方向に空きマスがある場合
                 score += value * board_info[x][y]
                 w1cnt += valuetmp * board_info[x][y]
+                w2cnt += valuetmp2 * board_info[x][y]
     print('w1 org =', w1cnt)
+    print('w2 org =', w2cnt)
     return score
