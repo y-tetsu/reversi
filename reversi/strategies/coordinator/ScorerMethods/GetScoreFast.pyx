@@ -34,39 +34,43 @@ cdef inline signed int _get_blank_score_size8_64bit(board, signed int w1, signed
     vertical = blackwhite & 0x00FFFFFFFFFFFF00    # 上下チェック用マスク
     diagonal = blackwhite & 0x007E7E7E7E7E7E00    # 斜めチェック用マスク
 
+    not_blackwhite = ~blackwhite
+
     # 左方向に空がある(右方向が盤面の範囲内)
-    l_blank = horizontal & ((horizontal << 1) & (~blackwhite)) >> 1
+    l_blank = horizontal & ((horizontal << 1) & not_blackwhite) >> 1
 
     # 右方向に空がある(左方向が盤面の範囲内)
-    r_blank = horizontal & ((horizontal >> 1) & (~blackwhite)) << 1
+    r_blank = horizontal & ((horizontal >> 1) & not_blackwhite) << 1
 
     # 上方向に空がある(下方向が盤面の範囲内)
-    t_blank = vertical & ((vertical << 8) & (~blackwhite)) >> 8
+    t_blank = vertical & ((vertical << 8) & not_blackwhite) >> 8
 
     # 下方向に空がある(上方向が盤面の範囲内)
-    b_blank = vertical & ((vertical >> 8) & (~blackwhite)) << 8
+    b_blank = vertical & ((vertical >> 8) & not_blackwhite) << 8
 
     # 左上方向に空がある(右下方向が盤面の範囲内)
-    lt_blank = diagonal & ((diagonal << 9) & (~blackwhite)) >> 9
+    lt_blank = diagonal & ((diagonal << 9) & not_blackwhite) >> 9
 
     # 右上方向に空がある(左下方向が盤面の範囲内)
-    rt_blank = diagonal & ((diagonal << 7) & (~blackwhite)) >> 7
+    rt_blank = diagonal & ((diagonal << 7) & not_blackwhite) >> 7
 
     # 左下方向に空がある(右上方向が盤面の範囲内)
-    lb_blank = diagonal & ((diagonal >> 7) & (~blackwhite)) << 7
+    lb_blank = diagonal & ((diagonal >> 7) & not_blackwhite) << 7
 
     # 右下方向に空がある(左上方向が盤面の範囲内)
-    rb_blank = diagonal & ((diagonal >> 9) & (~blackwhite)) << 9
+    rb_blank = diagonal & ((diagonal >> 9) & not_blackwhite) << 9
 
     # w1の計算
-    score += w1 * (_get_bit_count(l_blank & black) - _get_bit_count(l_blank & white))
-    score += w1 * (_get_bit_count(r_blank & black) - _get_bit_count(r_blank & white))
-    score += w1 * (_get_bit_count(t_blank & black) - _get_bit_count(t_blank & white))
-    score += w1 * (_get_bit_count(b_blank & black) - _get_bit_count(b_blank & white))
-    score += w1 * (_get_bit_count(lt_blank & black) - _get_bit_count(lt_blank & white))
-    score += w1 * (_get_bit_count(rt_blank & black) - _get_bit_count(rt_blank & white))
-    score += w1 * (_get_bit_count(lb_blank & black) - _get_bit_count(lb_blank & white))
-    score += w1 * (_get_bit_count(rb_blank & black) - _get_bit_count(rb_blank & white))
+    score1 = 0
+    score1 += w1 * (_get_bit_count(l_blank & black) - _get_bit_count(l_blank & white))
+    score1 += w1 * (_get_bit_count(r_blank & black) - _get_bit_count(r_blank & white))
+    score1 += w1 * (_get_bit_count(t_blank & black) - _get_bit_count(t_blank & white))
+    score1 += w1 * (_get_bit_count(b_blank & black) - _get_bit_count(b_blank & white))
+    score1 += w1 * (_get_bit_count(lt_blank & black) - _get_bit_count(lt_blank & white))
+    score1 += w1 * (_get_bit_count(rt_blank & black) - _get_bit_count(rt_blank & white))
+    score1 += w1 * (_get_bit_count(lb_blank & black) - _get_bit_count(lb_blank & white))
+    score1 += w1 * (_get_bit_count(rb_blank & black) - _get_bit_count(rb_blank & white))
+    score += score1
 
     # w2の計算
     score2 = 0
@@ -94,10 +98,66 @@ cdef inline signed int _get_blank_score_size8_64bit(board, signed int w1, signed
             score2 += w2
         else:
             score2 -= w2
+    score += score2
+
+    # w3の計算
+    score3 = 0
+    lt_r = l_blank & 0x4000000000000000
+    lt_r_sign = 1 if lt_r & black else -1
+    lt_b = t_blank & 0x0080000000000000
+    lt_b_sign = 1 if lt_b & black else -1
+    rt_l = r_blank & 0x0200000000000000
+    rt_l_sign = 1 if rt_l & black else -1
+    rt_b = t_blank & 0x0001000000000000
+    rt_b_sign = 1 if rt_b & black else -1
+    lb_t = b_blank & 0x0000000000008000
+    lb_t_sign = 1 if lb_t & black else -1
+    lb_r = l_blank & 0x0000000000000040
+    lb_r_sign = 1 if lb_r & black else -1
+    rb_t = b_blank & 0x0000000000000100
+    rb_t_sign = 1 if rb_t & black else -1
+    rb_l = r_blank & 0x0000000000000002
+    rb_l_sign = 1 if rb_l & black else -1
+    for i in range(1, 5):
+        lt_r >>= 1
+        if lt_r & not_blackwhite:
+            print('lt_r')
+            score3 += w3 * lt_r_sign
+        lt_b >>= 8
+        if lt_b & not_blackwhite:
+            print('lt_b')
+            score3 += w3 * lt_b_sign
+        rt_l <<= 1
+        if rt_l & not_blackwhite:
+            print('rt_l')
+            score3 += w3 * rt_l_sign
+        rt_b >>= 8
+        if rt_b & not_blackwhite:
+            print('rt_b')
+            score3 += w3 * rt_b_sign
+        lb_t <<= 8
+        if lb_t & not_blackwhite:
+            print('lb_t')
+            score3 += w3 * lb_t_sign
+        lb_r >>= 1
+        if lb_r & not_blackwhite:
+            print('lb_r')
+            score3 += w3 * lb_r_sign
+        rb_t <<= 8
+        if rb_t & not_blackwhite:
+            print('rb_t')
+            score3 += w3 * rb_t_sign
+        rb_l <<= 1
+        if rb_l & not_blackwhite:
+            print('rb_l')
+            score3 += w3 * rb_l_sign
+    score += score3
 
     print(board)
-    print('w1 new =', score)
-    print('w2 new =', score2)
+    print('w1    new =', score1)
+    print('w2    new =', score2)
+    print('w3    new =', score3)
+    print('score new =', score)
 
 
 cdef inline signed int _get_bit_count(unsigned long long bits):
@@ -123,6 +183,7 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
     #####
     w1cnt = 0
     w2cnt = 0
+    w3cnt = 0
     #####
     board_info_tmp = board.get_board_info()
     for y in range(size):
@@ -138,6 +199,7 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
                 ###
                 valuetmp = 0
                 valuetmp2 = 0
+                valuetmp3 = 0
                 ###
                 for j in range(8):
                     dx, dy = directions_x[j], directions_y[j]
@@ -164,9 +226,16 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
                                         next_x3, next_y3 = x - k * dx, y - k * dy
                                         if not board_info[next_x3][next_y3]:
                                             value += w3  # 隅の反対の縦横方向に空きマスがある場合
+                                            #####
+                                            print(next_x3, next_y3)
+                                            valuetmp3 += w3
+                                            #####
                 score += value * board_info[x][y]
                 w1cnt += valuetmp * board_info[x][y]
                 w2cnt += valuetmp2 * board_info[x][y]
-    print('w1 org =', w1cnt)
-    print('w2 org =', w2cnt)
+                w3cnt += valuetmp3 * board_info[x][y]
+    print('w1    org =', w1cnt)
+    print('w2    org =', w2cnt)
+    print('w3    org =', w3cnt)
+    print('score org =', score)
     return score
