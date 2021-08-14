@@ -1,6 +1,7 @@
 """GetScore
 """
 
+
 def get_blank_score(board, w1, w2, w3):
     size = board.size
     board_info = board.get_board_info()
