@@ -3,7 +3,7 @@
 
 from reversi.strategies.common import Measure
 from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, NegaScout, Switch, FullReading_, _FullReading, FullReading, IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji  # noqa: E501
-from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWE_Fast, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
+from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEB, Evaluator_TPWE_Fast, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
 # ---------- #
@@ -477,6 +477,14 @@ class NegaScout_TPWE(NegaScout):
         super().__init__(evaluator=evaluator)
 
 
+class NegaScout_TPWEB(NegaScout):
+    """
+    NegaScout法でEvaluator_TPWEBにより次の手を決める
+    """
+    def __init__(self, evaluator=Evaluator_TPWEB()):
+        super().__init__(evaluator=evaluator)
+
+
 class NegaScout1_TPW(NegaScout):
     """
     NegaScout法でEvaluator_TPWにより次の手を決める(1手読み)
@@ -629,6 +637,14 @@ class NsI_B_TPWE(IterativeDeepning):
     NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWE)
     """
     def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPWE()):
+        super().__init__(depth, selector, orderer, search)
+
+
+class NsI_B_TPWEB(IterativeDeepning):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める(選択的探索:なし、並び替え:B、評価関数:TPWEB)
+    """
+    def __init__(self, depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout_TPWEB()):
         super().__init__(depth, selector, orderer, search)
 
 
@@ -850,6 +866,15 @@ class NsIF10_B_TPWE(FullReading):
         super().__init__(remain, base)
 
 
+class NsIF10_B_TPWEB(FullReading):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める
+    (選択的探索:なし、並べ替え:B、評価関数:TPWEB, 完全読み開始:残り10手)
+    """
+    def __init__(self, remain=10, base=NsI_B_TPWEB()):
+        super().__init__(remain, base)
+
+
 class NsIF10_B_TPW(FullReading):
     """
     NegaScout法に反復深化法を適用して次の手を決める
@@ -1050,6 +1075,15 @@ class NsIF10J_B_TPWE(Neko):
     (選択的探索:なし、並べ替え:B、評価関数:TPWE, 完全読み開始:残り10手)
     """
     def __init__(self, base=NsIF10_B_TPWE()):
+        super().__init__(base)
+
+
+class NsIF10J_B_TPWEB(Ushi):
+    """
+    NegaScout法に反復深化法を適用して次の手を決める+定石打ち
+    (選択的探索:なし、並べ替え:B、評価関数:TPWEB, 完全読み開始:残り10手)
+    """
+    def __init__(self, base=NsIF10_B_TPWEB()):
         super().__init__(base)
 
 
