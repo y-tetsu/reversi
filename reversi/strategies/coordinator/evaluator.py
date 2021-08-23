@@ -480,3 +480,60 @@ class Evaluator_BWEc(AbstractEvaluator):
         score_ec = self.ec.get_score(board=board)
 
         return score_b + score_ec
+
+
+class Evaluator_PBWEc(AbstractEvaluator):
+    """Specific Evaluator Possibility + Blank + WinLose + EdgeCorner
+
+           盤面の評価値を着手可能数+空きマスと辺と隅のパターン+勝敗で算出
+    """
+    def __init__(self, wp=5, wb1=-10, wb2=-40, wb3=-20, we1=10, we2=80, ww=10000):
+        self.p = PossibilityScorer(wp)
+        self.b = BlankScorer(wb1, wb2, wb3)
+        self.ec = EdgeCornerScorer(we1, we2)
+        self.w = WinLoseScorer(ww)
+
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        """evaluate
+        """
+        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+
+        # 勝敗が決まっている場合
+        if score_w is not None:
+            return score_w
+
+        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
+        score_b = self.b.get_score(board=board)
+        score_ec = self.ec.get_score(board=board)
+
+        return score_p + score_b + score_ec
+
+
+class Evaluator_TPWEB(AbstractEvaluator):
+    """Specific Evaluator Table + Possibility + WinLose + Edge + Blank
+
+           盤面の評価値をTable+配置可能数+勝敗+辺+空きマスのパターンで算出
+    """
+    def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5, wp=5, ww=10000, we=100, wb1=-5, wb2=-20, wb3=-10):
+        self.t = TableScorer(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)
+        self.p = PossibilityScorer(wp)
+        self.w = WinLoseScorer(ww)
+        self.e = EdgeScorer(we)
+        self.b = BlankScorer(wb1, wb2, wb3)
+        self.params = [wp, ww, we]
+
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        """evaluate
+        """
+        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+
+        # 勝敗が決まっている場合
+        if score_w is not None:
+            return score_w
+
+        score_t = self.t.get_score(board=board)
+        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
+        score_e = self.e.get_score(board=board)
+        score_b = self.b.get_score(board=board)
+
+        return score_t + score_p + score_e + score_b
