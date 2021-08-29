@@ -158,6 +158,31 @@ class EdgeScorer(AbstractScorer):
         # □□□□□□□□
         # □□□□□□□□
         # □□□□□□□□
+        self._get_table()
+
+    def _get_table(self):
+        self.edge_table8 = [0x00 for _ in range(0x100)]
+        l = 0x80
+        r = 0x01
+        for row in range(0x100):
+            score = 0
+            l_r = row & l
+            r_l = row & r
+            if l_r or r_l:
+                for _ in range(6):
+                    # 左:右方向
+                    l_r >>= 1
+                    l_r &= row
+                    if l_r:
+                        score += self._W
+                    # 右:左方向
+                    r_l <<= 1
+                    r_l &= row
+                    if r_l:
+                        score += self._W
+                if row == 0xFF:
+                    score += self._W
+            self.edge_table8[row] = score
 
     def get_score(self, *args, **kwargs):
         """
@@ -178,6 +203,85 @@ class EdgeScorer(AbstractScorer):
 
         # 四隅のどこかに石がある場合
         if (lt | rt | lb | rb) & all_bitboard:
+            if size == 8:
+                # 上辺
+                b_t = (0xFF00000000000000 & b_bitboard) >> 56
+                w_t = (0xFF00000000000000 & w_bitboard) >> 56
+                # 下辺
+                b_b = 0x00000000000000FF & b_bitboard
+                w_b = 0x00000000000000FF & w_bitboard
+                # 左辺
+                b_l = 0
+                if b_bitboard & 0x8000000000000000:
+                    b_l += 0x0000000000000080
+                if b_bitboard & 0x0080000000000000:
+                    b_l += 0x0000000000000040
+                if b_bitboard & 0x0000800000000000:
+                    b_l += 0x0000000000000020
+                if b_bitboard & 0x0000008000000000:
+                    b_l += 0x0000000000000010
+                if b_bitboard & 0x0000000080000000:
+                    b_l += 0x0000000000000008
+                if b_bitboard & 0x0000000000800000:
+                    b_l += 0x0000000000000004
+                if b_bitboard & 0x0000000000008000:
+                    b_l += 0x0000000000000002
+                if b_bitboard & 0x0000000000000080:
+                    b_l += 0x0000000000000001
+                w_l = 0
+                if w_bitboard & 0x8000000000000000:
+                    w_l += 0x0000000000000080
+                if w_bitboard & 0x0080000000000000:
+                    w_l += 0x0000000000000040
+                if w_bitboard & 0x0000800000000000:
+                    w_l += 0x0000000000000020
+                if w_bitboard & 0x0000008000000000:
+                    w_l += 0x0000000000000010
+                if w_bitboard & 0x0000000080000000:
+                    w_l += 0x0000000000000008
+                if w_bitboard & 0x0000000000800000:
+                    w_l += 0x0000000000000004
+                if w_bitboard & 0x0000000000008000:
+                    w_l += 0x0000000000000002
+                if w_bitboard & 0x0000000000000080:
+                    w_l += 0x0000000000000001
+                # 右辺
+                b_r = 0
+                if b_bitboard & 0x0100000000000000:
+                    b_r += 0x0000000000000080
+                if b_bitboard & 0x0001000000000000:
+                    b_r += 0x0000000000000040
+                if b_bitboard & 0x0000010000000000:
+                    b_r += 0x0000000000000020
+                if b_bitboard & 0x0000000100000000:
+                    b_r += 0x0000000000000010
+                if b_bitboard & 0x0000000001000000:
+                    b_r += 0x0000000000000008
+                if b_bitboard & 0x0000000000010000:
+                    b_r += 0x0000000000000004
+                if b_bitboard & 0x0000000000000100:
+                    b_r += 0x0000000000000002
+                if b_bitboard & 0x0000000000000001:
+                    b_r += 0x0000000000000001
+                w_r = 0
+                if w_bitboard & 0x0100000000000000:
+                    w_r += 0x0000000000000080
+                if w_bitboard & 0x0001000000000000:
+                    w_r += 0x0000000000000040
+                if w_bitboard & 0x0000010000000000:
+                    w_r += 0x0000000000000020
+                if w_bitboard & 0x0000000100000000:
+                    w_r += 0x0000000000000010
+                if w_bitboard & 0x0000000001000000:
+                    w_r += 0x0000000000000008
+                if w_bitboard & 0x0000000000010000:
+                    w_r += 0x0000000000000004
+                if w_bitboard & 0x0000000000000100:
+                    w_r += 0x0000000000000002
+                if w_bitboard & 0x0000000000000001:
+                    w_r += 0x0000000000000001
+                return (self.edge_table8[b_t] - self.edge_table8[w_t]) + (self.edge_table8[b_b] - self.edge_table8[w_b]) + (self.edge_table8[b_l] - self.edge_table8[w_l]) + (self.edge_table8[b_r] - self.edge_table8[w_r])
+
             # 左上
             lt_board = b_bitboard
             lt_sign = 1
