@@ -722,6 +722,30 @@ class SwitchNsI_B_TPWE_F(Switch):
         super().__init__(turns, strategies)
 
 
+class SwitchNsI_B_TPWEB(Switch):
+    """
+    NsI_B_TPWEBのパラーメータ切り替え型
+    """
+    def __init__(
+            self,
+            turns=[
+                12,
+                24,
+                36,
+                48,
+                60
+            ],
+            # generation 843
+            strategies=[
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWEB(corner=50, c=-20, a1=-10, a2=0,  b1=-4, b2=-2, b3=-2, x=-25, o1=-13, o2=-5, wp=4, ww=9999,  we=91, wb1=-5, wb2=-20, wb3=-10))),   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWEB(corner=44, c=-18, a1=-4,  a2=-2, b1=-2, b2=-4, b3=-3, x=-40, o1=-10, o2=-8, wp=4, ww=10001, we=95, wb1=-6, wb2=-24, wb3=-12))),   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWEB(corner=41, c=-14, a1=-1,  a2=-4, b1=-4, b2=-1, b3=2,  x=-38, o1=-5,  o2=-5, wp=4, ww=9996,  we=103, wb1=-7, wb2=-28, wb3=-14))),  # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWEB(corner=62, c=-19, a1=1,   a2=0,  b1=-1, b2=0,  b3=1,  x=-25, o1=-4,  o2=-2, wp=8, ww=9990,  we=94, wb1=-8, wb2=-32, wb3=-16))),   # noqa: E501
+                IterativeDeepning(depth=2, selector=Selector(), orderer=Orderer_B(), search=NegaScout(evaluator=Evaluator_TPWEB(corner=50, c=-23, a1=0,   a2=-9, b1=-2, b2=-2, b3=16, x=-25, o1=-9,  o2=-8, wp=8, ww=9998,  we=93, wb1=-9, wb2=-36, wb3=-18)))    # noqa: E501
+            ]):
+        super().__init__(turns, strategies)
+
+
 class SwitchNsI_B_TPWE_Type2(Switch):
     """
     NsI_B_TPWEのパラーメータ切り替え型
@@ -934,6 +958,14 @@ class SwitchNsIF10_B_TPWE_F(FullReading):
         super().__init__(remain, base)
 
 
+class SwitchNsIF10_B_TPWEB(FullReading):
+    """
+    SwitchNsI_B_TPWEB+完全読み開始:残り10手
+    """
+    def __init__(self, remain=10, base=SwitchNsI_B_TPWEB()):
+        super().__init__(remain, base)
+
+
 class SwitchNsIF10_B_TPWE_Type2(FullReading):
     """
     SwitchNsI_B_TPWE_Type2+完全読み開始:残り10手
@@ -1120,6 +1152,15 @@ class SwitchNsIF10J_B_TPWE_F(Neko):
     (完全読み開始:残り10手)
     """
     def __init__(self, base=SwitchNsIF10_B_TPWE_F()):
+        super().__init__(base)
+
+
+class SwitchNsIF10J_B_TPWEB(Neko):
+    """
+    SwitchNsIF10_B_TPWEB+定石打ち
+    (完全読み開始:残り10手)
+    """
+    def __init__(self, base=SwitchNsIF10_B_TPWEB()):
         super().__init__(base)
 
 

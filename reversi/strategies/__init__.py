@@ -14,7 +14,7 @@ from ..strategies.iterative import IterativeDeepning_, IterativeDeepning
 from ..strategies.randomopening import _RandomOpening_, RandomOpening
 from ..strategies.external import External
 from ..strategies.proto import MinMax2, NegaMax3, AlphaBeta4, AB_T4, AB_TI
-from ..strategies.custom import MonteCarlo30, MonteCarlo100, MonteCarlo1000, MinMax1_T, MinMax2_T, MinMax3_T, MinMax4_T, MinMax1_TP, MinMax2_TP, MinMax3_TP, MinMax4_TP, MinMax1_TPO, MinMax2_TPO, MinMax3_TPO, MinMax4_TPO, MinMax1_TPW, MinMax2_TPW, MinMax3_TPW, MinMax4_TPW, MinMax1_TPOW, MinMax2_TPOW, MinMax3_TPOW, MinMax4_TPOW, MinMax1_TPWE, MinMax2_TPWE, MinMax3_TPWE, MinMax4_TPWE, MinMax1_TPWEC, MinMax2_TPWEC, MinMax3_TPWEC, MinMax4_TPWEC, MinMax1_PWE, MinMax2_PWE, MinMax3_PWE, MinMax4_PWE, NegaMax1_TPW, NegaMax2_TPW, NegaMax3_TPW, NegaMax4_TPW, NegaMax1_TPOW, NegaMax2_TPOW, NegaMax3_TPOW, NegaMax4_TPOW, AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWE_, AlphaBeta_TPWEC, AlphaBeta1_TPW, AlphaBeta2_TPW, AlphaBeta3_TPW, AlphaBeta4_TPW, AlphaBeta1_TPWE, AlphaBeta2_TPWE, AlphaBeta3_TPWE, AlphaBeta4_TPWE, NegaScout_TPW, NegaScout_TPWE, NegaScout_TPWEB, NegaScout1_TPW, NegaScout2_TPW, NegaScout3_TPW, NegaScout4_TPW, NegaScout1_TPOW, NegaScout2_TPOW, NegaScout3_TPOW, NegaScout4_TPOW, NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE, NegaScout4_TPWE, AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE, NsI_B_TPWEB, SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_F, SwitchNsI_B_TPWE_Type2, MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPWEB, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_F, SwitchNsIF10_B_TPWE_Type2, RandomF11, AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AlphaBeta4F10J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_B_TPWE_, AbIF9J_PCB_TPWE, AbIF10J_B_TPWE, AbIF10J_PCB_TPWE, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPWE, NsIF10J_B_TPWE, NsIF10J_B_TPWEB, SwitchAbIF9J_B_TPWE, SwitchNsIF9J_B_TPWE, SwitchNsIF10J_B_TPWE, SwitchNsIF10J_B_TPWE_F, SwitchNsIF10J_B_TPWE_Type2  # noqa: E501
+from ..strategies.custom import MonteCarlo30, MonteCarlo100, MonteCarlo1000, MinMax1_T, MinMax2_T, MinMax3_T, MinMax4_T, MinMax1_TP, MinMax2_TP, MinMax3_TP, MinMax4_TP, MinMax1_TPO, MinMax2_TPO, MinMax3_TPO, MinMax4_TPO, MinMax1_TPW, MinMax2_TPW, MinMax3_TPW, MinMax4_TPW, MinMax1_TPOW, MinMax2_TPOW, MinMax3_TPOW, MinMax4_TPOW, MinMax1_TPWE, MinMax2_TPWE, MinMax3_TPWE, MinMax4_TPWE, MinMax1_TPWEC, MinMax2_TPWEC, MinMax3_TPWEC, MinMax4_TPWEC, MinMax1_PWE, MinMax2_PWE, MinMax3_PWE, MinMax4_PWE, NegaMax1_TPW, NegaMax2_TPW, NegaMax3_TPW, NegaMax4_TPW, NegaMax1_TPOW, NegaMax2_TPOW, NegaMax3_TPOW, NegaMax4_TPOW, AlphaBeta_TPW, AlphaBeta_TPWE, AlphaBeta_TPWE_, AlphaBeta_TPWEC, AlphaBeta1_TPW, AlphaBeta2_TPW, AlphaBeta3_TPW, AlphaBeta4_TPW, AlphaBeta1_TPWE, AlphaBeta2_TPWE, AlphaBeta3_TPWE, AlphaBeta4_TPWE, NegaScout_TPW, NegaScout_TPWE, NegaScout_TPWEB, NegaScout1_TPW, NegaScout2_TPW, NegaScout3_TPW, NegaScout4_TPW, NegaScout1_TPOW, NegaScout2_TPOW, NegaScout3_TPOW, NegaScout4_TPOW, NegaScout1_TPWE, NegaScout2_TPWE, NegaScout3_TPWE, NegaScout4_TPWE, AbI_B_TPW, AbI_B_TPWE, AbI_PCB_TPWE, AbI_B_TPWE_, AbI_B_TPWEC, NsI_B_TPW, NsI_B_TPWE, NsI_B_TPWEB, SwitchAbI_B_TPWE, SwitchNsI_B_TPWE, SwitchNsI_B_TPWE_F, SwitchNsI_B_TPWEB, SwitchNsI_B_TPWE_Type2, MinMax2F9_TPWE, AlphaBeta4F9_TPW, AlphaBeta4F10_TPW, AbIF9_B_TPW, AbIF9_B_TPWE, AbIF9_PCB_TPWE, AbIF10_B_TPWE, AbIF10_PCB_TPWE, AbIF9_B_TPWE_, AbIF9_B_TPWEC, NsIF9_B_TPW, NsIF9_B_TPWE, NsIF10_B_TPWE, NsIF10_B_TPWEB, NsIF10_B_TPW, NsIF11_B_TPW, NsIF12_B_TPW, SwitchAbIF9_B_TPWE, SwitchNsIF9_B_TPWE, SwitchNsIF10_B_TPWE, SwitchNsIF10_B_TPWE_F, SwitchNsIF10_B_TPWEB, SwitchNsIF10_B_TPWE_Type2, RandomF11, AlphaBeta4J_TPW, AlphaBeta4F9J_TPW, AlphaBeta4F10J_TPW, AbIF9J_B_TPW, AbIF9J_B_TPWE, AbIF9J_B_TPWE_, AbIF9J_PCB_TPWE, AbIF10J_B_TPWE, AbIF10J_PCB_TPWE, AbIF9J_B_TPWEC, NsIF9J_B_TPW, NsIF9J_B_TPWE, NsIF10J_B_TPWE, NsIF10J_B_TPWEB, SwitchAbIF9J_B_TPWE, SwitchNsIF9J_B_TPWE, SwitchNsIF10J_B_TPWE, SwitchNsIF10J_B_TPWE_F, SwitchNsIF10J_B_TPWEB, SwitchNsIF10J_B_TPWE_Type2  # noqa: E501
 
 
 __all__ = [
@@ -131,6 +131,7 @@ __all__ = [
     'SwitchAbI_B_TPWE',
     'SwitchNsI_B_TPWE',
     'SwitchNsI_B_TPWE_F',
+    'SwitchNsI_B_TPWEB',
     'SwitchNsI_B_TPWE_Type2',
     '_FullReading_',
     '_FullReading',
@@ -157,6 +158,7 @@ __all__ = [
     'SwitchNsIF9_B_TPWE',
     'SwitchNsIF10_B_TPWE',
     'SwitchNsIF10_B_TPWE_F',
+    'SwitchNsIF10_B_TPWEB',
     'SwitchNsIF10_B_TPWE_Type2',
     'RandomF11',
     '_Joseki_',
@@ -190,6 +192,7 @@ __all__ = [
     'SwitchNsIF9J_B_TPWE',
     'SwitchNsIF10J_B_TPWE',
     'SwitchNsIF10J_B_TPWE_F',
+    'SwitchNsIF10J_B_TPWEB',
     'SwitchNsIF10J_B_TPWE_Type2',
     'MonteCarlo',
     'MonteCarlo30',
