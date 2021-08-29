@@ -354,7 +354,7 @@ class Evaluator_TPWE_Fast(AbstractEvaluator):
         self.params = [wp, ww, we]
 
     def evaluate(self, color, board, possibility_b, possibility_w):
-        return EvaluatorMethods.evaluate_tpwe(self.t, self.params, color, board, possibility_b, possibility_w)
+        return EvaluatorMethods.evaluate_tpwe(self.t, self.t.table.table, self.params, color, board, possibility_b, possibility_w)
 
 
 class Evaluator_TPWEC(AbstractEvaluator):

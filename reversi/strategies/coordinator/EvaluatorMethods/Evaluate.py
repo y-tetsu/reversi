@@ -68,7 +68,7 @@ def evaluate_tpw(t, params, color, board, possibility_b, possibility_w):
     return t.get_score(board=board) + (possibility_b - possibility_w) * params[0]
 
 
-def evaluate_tpwe(t, params, color, board, possibility_b, possibility_w):
+def evaluate_tpwe(t, table, params, color, board, possibility_b, possibility_w):
     if not possibility_b and not possibility_w:  # 勝敗が決まっている場合
         ret = board._black_score - board._white_score
         if ret > 0:    # 黒が勝った
