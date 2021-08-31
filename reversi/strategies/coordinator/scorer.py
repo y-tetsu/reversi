@@ -162,12 +162,12 @@ class EdgeScorer(AbstractScorer):
 
     def _get_table(self):
         self.edge_table8 = [0x00 for _ in range(0x100)]
-        l = 0x80
-        r = 0x01
+        left = 0x80
+        right = 0x01
         for row in range(0x100):
             score = 0
-            l_r = row & l
-            r_l = row & r
+            l_r = row & left
+            r_l = row & right
             if l_r or r_l:
                 for _ in range(6):
                     # 左:右方向
@@ -280,7 +280,7 @@ class EdgeScorer(AbstractScorer):
                     w_r += 0x0000000000000002
                 if w_bitboard & 0x0000000000000001:
                     w_r += 0x0000000000000001
-                return (self.edge_table8[b_t] - self.edge_table8[w_t]) + (self.edge_table8[b_b] - self.edge_table8[w_b]) + (self.edge_table8[b_l] - self.edge_table8[w_l]) + (self.edge_table8[b_r] - self.edge_table8[w_r])
+                return (self.edge_table8[b_t] - self.edge_table8[w_t]) + (self.edge_table8[b_b] - self.edge_table8[w_b]) + (self.edge_table8[b_l] - self.edge_table8[w_l]) + (self.edge_table8[b_r] - self.edge_table8[w_r])  # noqa: E501
 
             # 左上
             lt_board = b_bitboard
