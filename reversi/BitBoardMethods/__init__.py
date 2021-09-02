@@ -8,6 +8,7 @@ SLOW_MODE2 = True
 SLOW_MODE3 = True
 SLOW_MODE4 = True
 SLOW_MODE5 = True
+CYBOARD_ERROR = True
 
 
 try:
@@ -60,6 +61,15 @@ try:
 except ImportError:
     from reversi.BitBoardMethods.PutDisc import put_disc
 
+try:
+    if 'FORCE_CYBOARD_IMPORT_ERROR' in os.environ:
+        if os.environ['FORCE_CYBOARD_IMPORT_ERROR'] == 'RAISE':
+            raise ImportError
+
+    from reversi.BitBoardMethods.CyBoard8_64bit import CythonBitBoard
+    CYBOARD_ERROR = False
+except ImportError:
+    pass
 
 __all__ = [
     'get_legal_moves',
@@ -69,4 +79,5 @@ __all__ = [
     'get_board_info',
     'undo',
     'put_disc',
+    'CythonBitBoard',
 ]

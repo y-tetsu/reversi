@@ -46,3 +46,12 @@ setup(
     cmdclass={'build_ext': build_ext},
     ext_modules=ext_modules
 )
+
+# CyBoard8_64bit
+ext_modules = [Extension("CyBoard8_64bit", ["CyBoard8_64bit.pyx"])]
+
+setup(
+    name='CyBoard8_64bit',
+    cmdclass={'build_ext': build_ext},
+    ext_modules=ext_modules
+)

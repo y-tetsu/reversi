@@ -1,6 +1,7 @@
 """Board
 """
 
+import sys
 import abc
 from collections import namedtuple
 
@@ -11,6 +12,8 @@ import reversi.BitBoardMethods as BitBoardMethods
 
 MIN_BOARD_SIZE = 4
 MAX_BOARD_SIZE = 26
+
+MAXSIZE64 = 2**63 - 1
 
 
 class AbstractBoard(metaclass=abc.ABCMeta):
@@ -435,3 +438,9 @@ class BitBoard(AbstractBoard):
         """undo
         """
         BitBoardMethods.undo(self)
+
+
+def CyBoard(size=8):
+    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
+        return BitBoardMethods.CythonBitBoard()
+    return BitBoard(size)
