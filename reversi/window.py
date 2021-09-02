@@ -419,7 +419,7 @@ class ScreenBoard:
 
         # 低速モードの表示
         slowmode_text = '■'
-        if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2 or BitBoardMethods.SLOW_MODE3 or BitBoardMethods.SLOW_MODE4 or BitBoardMethods.SLOW_MODE5 or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE:  # noqa: E501
+        if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2 or BitBoardMethods.SLOW_MODE3 or BitBoardMethods.SLOW_MODE4 or BitBoardMethods.SLOW_MODE5 or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE or  BitBoardMethods.CYBOARD_ERROR:  # noqa: E501
             self.canvas.create_text(
                 SLOWMODE_OFFSET_X,
                 SLOWMODE_OFFSET_Y,

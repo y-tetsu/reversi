@@ -8,7 +8,7 @@ import tkinter as tk
 import json
 import threading
 
-from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies
+from reversi import CyBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies
 
 
 class Reversi:
@@ -201,7 +201,7 @@ class Reversi:
         """
         self.window.set_state('disable')
 
-        board = BitBoard(self.window.board.size)
+        board = CyBoard(self.window.board.size)
         players = {}
 
         for color in ('black', 'white'):
@@ -393,7 +393,7 @@ class Reversic:
         ゲームプレイ
         """
         # ボード準備
-        board = BitBoard(self.board_size)
+        board = CyBoard(self.board_size)
 
         # プレイヤー準備
         selected_players = {}
