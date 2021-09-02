@@ -4,8 +4,8 @@
 
 from collections import namedtuple
 
-from reversi.disc import D as d
-from reversi.board import MIN_BOARD_SIZE, MAX_BOARD_SIZE
+MIN_BOARD_SIZE = 4
+MAX_BOARD_SIZE = 26
 
 
 class CythonBitBoard():
@@ -42,14 +42,14 @@ class CythonBitBoard():
 
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(8)]) + '\n'
-        board = [[d.blank for _ in range(8)] for _ in range(8)]
+        board = [['□' for _ in range(8)] for _ in range(8)]
         mask = 1 << 63
         for y in range(8):
             for x in range(8):
                 if self._black_bitboard & mask:
-                    board[y][x] = d.black
+                    board[y][x] = '〇'
                 elif self._white_bitboard & mask:
-                    board[y][x] = d.white
+                    board[y][x] = '●'
                 mask >>= 1
 
         body = ''

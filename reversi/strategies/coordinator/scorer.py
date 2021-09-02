@@ -6,6 +6,7 @@ from reversi.strategies.table import Table
 import reversi.strategies.coordinator.ScorerMethods as ScorerMethods
 
 from reversi.board import BitBoard
+from reversi.BitBoardMethods import CythonBitBoard
 
 
 class TableScorer(AbstractScorer):
@@ -61,7 +62,7 @@ class OpeningScorer(AbstractScorer):
         ]
 
         # 最後にひっくり返された石の場所を取得する
-        if isinstance(board, BitBoard):
+        if isinstance(board, BitBoard) or isinstance(board, CythonBitBoard):
             flippable_discs = board._flippable_discs_num
             discs = []
             mask = 1 << ((size * size) - 1)
