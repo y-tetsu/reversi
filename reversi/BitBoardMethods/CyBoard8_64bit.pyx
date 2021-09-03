@@ -1,4 +1,4 @@
-#cython: language_level=3
+#cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """CyBoard8_64bit
 """
 
@@ -8,9 +8,12 @@ MIN_BOARD_SIZE = 4
 MAX_BOARD_SIZE = 26
 
 
-class CythonBitBoard():
+cdef class CythonBitBoard():
     """Cython BitBoard
     """
+    cdef readonly size
+    cdef public _black_score, _white_score, prev, _black_bitboard, _white_bitboard, _mask, _flippable_discs_num
+
     def __init__(self):
         self.size = 8
         (self._black_score, self._white_score) = (2, 2)
