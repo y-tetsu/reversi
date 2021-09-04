@@ -1,9 +1,14 @@
 """AlphaBeta(NegaAlpha)
 """
 
+import sys
+
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.coordinator import Evaluator_N
 import reversi.strategies.AlphaBetaMethods as AlphaBetaMethods
+
+
+MAXSIZE64 = 2**63 - 1
 
 
 class _AlphaBeta_(AbstractStrategy):
@@ -17,11 +22,15 @@ class _AlphaBeta_(AbstractStrategy):
         self.depth = depth
         self.evaluator = evaluator
 
-    def next_move(self, color, board):
+    def next_move(self, color, board, timer=False, measure=False):
         """
         次の一手
         """
-        pid = Timer.get_pid(self)             # タイムアウト監視用のプロセスID
+        pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
+
+        if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR:
+            return AlphaBetaMethods.next_move(color, board, self._MIN, self._MAX, self.depth, self.evaluator, pid, timer, measure)
+
         moves = board.get_legal_moves(color)  # 手の候補
         best_move, _ = self.get_best_move(color, board, moves, self.depth, pid)
 
@@ -72,7 +81,7 @@ class _AlphaBeta(_AlphaBeta_):
     def next_move(self, color, board):
         """next_move
         """
-        return super().next_move(color, board)
+        return super().next_move(color, board, timer=False, measure=True)
 
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
@@ -87,7 +96,7 @@ class AlphaBeta_(_AlphaBeta_):
     def next_move(self, color, board):
         """next_move
         """
-        return super().next_move(color, board)
+        return super().next_move(color, board, timer=True, measure=False)
 
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
@@ -103,7 +112,7 @@ class AlphaBeta(_AlphaBeta_):
     def next_move(self, color, board):
         """next_move
         """
-        return super().next_move(color, board)
+        return super().next_move(color, board, timer=True, measure=True)
 
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
