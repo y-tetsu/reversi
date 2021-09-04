@@ -43,7 +43,46 @@ cdef:
     ]
 
 def evaluate_tpw(t, params, color, board, possibility_b, possibility_w):
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _evaluate_tpw_size8_64bit(t.table.table, params, color, board, possibility_b, possibility_w)
     return _evaluate_tpw(t, params, color, board, possibility_b, possibility_w)
+
+
+cdef inline signed int _evaluate_tpw_size8_64bit(table, params, color, board, possibility_b, possibility_w):
+    cdef:
+        signed int wp = params[0]
+        signed int ww = params[1]
+        signed int score_w = 0
+        signed int score_t = 0
+        signed int score_p = 0
+        unsigned int x, y
+        unsigned long long t_mask = 0x8000000000000000
+        unsigned long long b_bitboard, w_bitboard, all_bitboard, bit_pos, lt, rt, lb, rb, b_t, w_t, b_b, w_b, b_l, w_l, b_r, w_r
+
+    b_bitboard, w_bitboard = board.get_bitboard_info()
+
+    # 勝敗が決まっている場合
+    if not possibility_b and not possibility_w:
+        score_w = board._black_score - board._white_score
+        if score_w > 0:    # 黒が勝った
+            score_w += ww
+        elif score_w < 0:  # 白が勝った
+            score_w -= ww
+        return score_w
+
+    # テーブルによるスコア
+    for y in range(8):
+        for x in range(8):
+            if b_bitboard & t_mask:
+                score_t += <signed int>table[y][x]
+            elif w_bitboard & t_mask:
+                score_t -= <signed int>table[y][x]
+            t_mask >>= 1
+
+    # 着手可能数によるスコア
+    score_p = (possibility_b - possibility_w) * wp
+
+    return score_t + score_p
 
 
 cdef inline signed int _evaluate_tpw(t, params, color, board, possibility_b, possibility_w):
