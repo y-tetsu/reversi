@@ -3,7 +3,6 @@
 """
 
 import time
-from copy import deepcopy
 
 from reversi.strategies.common import Timer, Measure
 
@@ -75,7 +74,7 @@ cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64
     board_wb = wb
     board_bs = bs
     board_ws = ws
-    board_prev = deepcopy(board.prev)
+    board_prev = [(item[0], item[1], item[2], item[3]) for item in board.prev]
     # 各手のスコア取得
     for i in range(index):
         _put_disc(1 if color == 'black' else 0, moves_x[i], moves_y[i])
@@ -108,7 +107,7 @@ cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64
     board._white_bitboard = board_wb
     board._black_score = board_bs
     board._white_score = board_ws
-    board.prev = deepcopy(board_prev)
+    board.prev = [(item[0], item[1], item[2], item[3]) for item in board_prev]
     return (moves_x[best], moves_y[best]), scores
 
 
