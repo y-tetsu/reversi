@@ -1,4 +1,4 @@
-#cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: language_level=3, profile=True, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """Next Move(Size8,64bit) of AlphaBeta strategy
 """
 
@@ -202,8 +202,9 @@ cdef inline double _get_score(func, str color, board, double alpha, double beta,
                 _undo()
                 if score > alpha:
                     alpha = score
-                if Timer.is_timeout(pid):
-                    return alpha
+                if pid:
+                    if Timer.is_timeout(pid):
+                        return alpha
                 if alpha >= beta:  # 枝刈り
                     return alpha
             mask >>= 1
