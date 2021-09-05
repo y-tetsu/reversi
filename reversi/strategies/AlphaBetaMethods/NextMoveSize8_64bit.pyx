@@ -321,7 +321,7 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int color, unsi
     """_get_flippable_discs_size8_64bit
     """
     cdef:
-        unsigned int d1, d2
+        unsigned int d
         unsigned long long buff, next_put
         unsigned long long move = 0
         unsigned long long player, opponent, flippable_discs_num = 0
@@ -332,14 +332,14 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int color, unsi
         player = w
         opponent = b
     move = <unsigned long long>1 << lshift
-    for d1 in range(8):
+    for d in range(8):
         buff = 0
-        next_put = _get_next_put(move, d1)
+        next_put = _get_next_put(move, d)
         # get discs of consecutive opponents
-        for d2 in range(8):
+        for _ in range(8):
             if next_put & opponent:
                 buff |= next_put
-                next_put = _get_next_put(next_put, d1)
+                next_put = _get_next_put(next_put, d)
             else:
                 break
         # store result if surrounded by own disc
