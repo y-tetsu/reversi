@@ -21,15 +21,17 @@ class _AlphaBeta_(AbstractStrategy):
 
         self.depth = depth
         self.evaluator = evaluator
+        self.timer = False
+        self.measure = False
 
-    def next_move(self, color, board, timer=False, measure=False):
+    def next_move(self, color, board):
         """
         次の一手
         """
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
 
         if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR:
-            return AlphaBetaMethods.next_move(color, board, self._MIN, self._MAX, self.depth, self.evaluator, pid, timer, measure)
+            return AlphaBetaMethods.next_move(color, board, self._MIN, self._MAX, self.depth, self.evaluator, pid, self.timer, self.measure)
 
         moves = board.get_legal_moves(color)  # 手の候補
         best_move, _ = self.get_best_move(color, board, moves, self.depth, pid)
@@ -41,6 +43,9 @@ class _AlphaBeta_(AbstractStrategy):
         最善手を選ぶ
         """
         best_move, alpha, beta, scores = None, self._MIN, self._MAX, {}
+
+        if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR:
+            return AlphaBetaMethods.get_best_move(color, board, moves, alpha, beta, depth, self.evaluator, pid, self.timer, self.measure)
 
         # 打てる手の中から評価値の最も高い手を選ぶ
         for move in moves:
@@ -77,11 +82,16 @@ class _AlphaBeta_(AbstractStrategy):
 class _AlphaBeta(_AlphaBeta_):
     """AlphaBeta + Measure
     """
+    def __init__(self, depth=3, evaluator=None):
+        super().__init__(depth, evaluator)
+        self.timer = False
+        self.measure = True
+
     @Measure.time
     def next_move(self, color, board):
         """next_move
         """
-        return super().next_move(color, board, timer=False, measure=True)
+        return super().next_move(color, board)
 
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
@@ -92,11 +102,16 @@ class _AlphaBeta(_AlphaBeta_):
 class AlphaBeta_(_AlphaBeta_):
     """AlphaBeta + Timer
     """
+    def __init__(self, depth=3, evaluator=None):
+        super().__init__(depth, evaluator)
+        self.timer = True
+        self.measure = False
+
     @Timer.start(-10000000)
     def next_move(self, color, board):
         """next_move
         """
-        return super().next_move(color, board, timer=True, measure=False)
+        return super().next_move(color, board)
 
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score
@@ -107,12 +122,17 @@ class AlphaBeta_(_AlphaBeta_):
 class AlphaBeta(_AlphaBeta_):
     """AlphaBeta + Measure + Timer
     """
+    def __init__(self, depth=3, evaluator=None):
+        super().__init__(depth, evaluator)
+        self.timer = True
+        self.measure = True
+
     @Timer.start(-10000000)
     @Measure.time
     def next_move(self, color, board):
         """next_move
         """
-        return super().next_move(color, board, timer=True, measure=True)
+        return super().next_move(color, board)
 
     def _get_score(self, color, board, alpha, beta, depth, pid=None):
         """_get_score

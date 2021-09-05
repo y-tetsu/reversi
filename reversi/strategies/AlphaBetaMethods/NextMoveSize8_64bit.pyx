@@ -1,4 +1,4 @@
-#cython: language_level=3, profile=True, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """Next Move(Size8,64bit) of AlphaBeta strategy
 """
 
@@ -60,18 +60,21 @@ cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double be
 
 
 cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
-    global bb, wb
+    global bb, wb, bs, ws
     cdef:
         str next_color
         double score = alpha
         unsigned int i, best = 64
     scores = {}
+    # ボード情報取得
     bb, wb = board.get_bitboard_info()
+    bs = board._black_score
+    ws = board._white_score
     # ボード情報退避
-    board_bb = board._black_bitboard
-    board_wb = board._white_bitboard
-    board_bs = board._black_score
-    board_ws = board._white_score
+    board_bb = bb
+    board_wb = wb
+    board_bs = bs
+    board_ws = ws
     board_prev = deepcopy(board.prev)
     # 各手のスコア取得
     for i in range(index):
