@@ -321,57 +321,64 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int color, unsi
     """_get_flippable_discs_size8_64bit
     """
     cdef:
-        unsigned int d
-        unsigned long long buff, next_put
+        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
+        unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
         unsigned long long move = 0
-        unsigned long long player, opponent, flippable_discs_num = 0
+        unsigned long long player = w, opponent = b, flippable_discs_num = 0
     if color:
         player = b
         opponent = w
-    else:
-        player = w
-        opponent = b
     move = <unsigned long long>1 << lshift
-    for d in range(8):
-        buff = 0
-        next_put = _get_next_put(move, d)
-        # get discs of consecutive opponents
-        for _ in range(8):
-            if next_put & opponent:
-                buff |= next_put
-                next_put = _get_next_put(next_put, d)
-            else:
-                break
-        # store result if surrounded by own disc
-        if next_put & player:
-            flippable_discs_num |= buff
+    t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
+    rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
+    r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
+    rb = <unsigned long long>0x007F7F7F7F7F7F7F & (move >> <unsigned int>9)  # right-bottom
+    b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (move >> <unsigned int>8)  # bottom
+    lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
+    l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
+    lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
+    for _ in range(8):
+        if t_ & opponent:
+            bf_t_ |= t_
+            t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
+        if rt & opponent:
+            bf_rt |= rt
+            rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (rt << <unsigned int>7)
+        if r_ & opponent:
+            bf_r_ |= r_
+            r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)
+        if rb & opponent:
+            bf_rb |= rb
+            rb = <unsigned long long>0x007F7F7F7F7F7F7F & (rb >> <unsigned int>9)
+        if b_ & opponent:
+            bf_b_ |= b_
+            b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)
+        if lb & opponent:
+            bf_lb |= lb
+            lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (lb >> <unsigned int>7)
+        if l_ & opponent:
+            bf_l_ |= l_
+            l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (l_ << <unsigned int>1)
+        if lt & opponent:
+            bf_lt |= lt
+            lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)
+    if t_ & player:
+        flippable_discs_num |= bf_t_
+    if rt & player:
+        flippable_discs_num |= bf_rt
+    if r_ & player:
+        flippable_discs_num |= bf_r_
+    if rb & player:
+        flippable_discs_num |= bf_rb
+    if b_ & player:
+        flippable_discs_num |= bf_b_
+    if lb & player:
+        flippable_discs_num |= bf_lb
+    if l_ & player:
+        flippable_discs_num |= bf_l_
+    if lt & player:
+        flippable_discs_num |= bf_lt
     return flippable_discs_num
-
-
-cdef inline unsigned long long _get_next_put(unsigned long long put, unsigned int d):
-    """_get_next_put
-    """
-    cdef:
-        unsigned long long next_put
-    if d == 0:
-        next_put = <unsigned long long>0xFFFFFFFFFFFFFF00 & (put << <unsigned int>8)  # top
-    elif d == 1:
-        next_put = <unsigned long long>0x7F7F7F7F7F7F7F00 & (put << <unsigned int>7)  # right-top
-    elif d == 2:
-        next_put = <unsigned long long>0x7F7F7F7F7F7F7F7F & (put >> <unsigned int>1)  # right
-    elif d == 3:
-        next_put = <unsigned long long>0x007F7F7F7F7F7F7F & (put >> <unsigned int>9)  # right-bottom
-    elif d == 4:
-        next_put = <unsigned long long>0x00FFFFFFFFFFFFFF & (put >> <unsigned int>8)  # bottom
-    elif d == 5:
-        next_put = <unsigned long long>0x00FEFEFEFEFEFEFE & (put >> <unsigned int>7)  # left-bottom
-    elif d == 6:
-        next_put = <unsigned long long>0xFEFEFEFEFEFEFEFE & (put << <unsigned int>1)  # left
-    elif d == 7:
-        next_put = <unsigned long long>0xFEFEFEFEFEFEFE00 & (put << <unsigned int>9)  # left-top
-    else:
-        next_put = <unsigned long long>0                                              # unexpected
-    return next_put
 
 
 cdef inline void _undo():
