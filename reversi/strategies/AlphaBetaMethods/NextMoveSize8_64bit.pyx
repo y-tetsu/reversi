@@ -169,15 +169,13 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     cdef:
         double score
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
-        unsigned int is_game_end = 0, int_color_next = 1, x, y
+        unsigned int i, is_game_end = 0, int_color_next = 1, x, y
         signed int sign = -1
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
     # 前回パス and 打てる場所なし の場合ゲーム終了
-    #if pas and legal_moves_bits == <unsigned long long>0:
     if pas and not legal_moves_bits:
         is_game_end = <unsigned int>1
     # 最大深さに到達 or ゲーム終了
-    #if depth == <unsigned int>0 or is_game_end:
     if not depth or is_game_end:
         if int_color:
             legal_moves_b_bits = legal_moves_bits
@@ -196,12 +194,11 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
         board.prev = []
         for i in range(tail):
             board.prev += [(pbb[i], pwb[i], pbs[i], pws[i])]
-        return evaluator.evaluate(color=str_color, board=board, possibility_b=_get_bit_count(legal_moves_b_bits), possibility_w=_get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
+        return evaluator.evaluate(str_color, board, _get_bit_count(legal_moves_b_bits), _get_bit_count(legal_moves_w_bits)) * sign
     # 次の手番
     if int_color:
         int_color_next = <unsigned int>0
     # パスの場合
-    #if legal_moves_bits == <unsigned long long>0:
     if not legal_moves_bits:
         return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t, <unsigned int>1)
     # 評価値を算出

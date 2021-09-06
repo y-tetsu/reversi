@@ -13,17 +13,17 @@ class Evaluator(AbstractEvaluator):
         self.separated = separated
         self.combined = combined
 
-    def evaluate(self, *args, **kwargs):
+    def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
         for scorer in self.separated:
-            score = scorer.get_score(*args, **kwargs)
+            score = scorer.get_score(color, board, possibility_b, possibility_w)
             if score is not None:
                 return score
 
         score = 0
         for scorer in self.combined:
-            score += scorer.get_score(*args, **kwargs)
+            score += scorer.get_score(color, board, possibility_b, possibility_w)
 
         return score
 
@@ -39,7 +39,7 @@ class Evaluator_T(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_P(AbstractEvaluator):
@@ -53,7 +53,7 @@ class Evaluator_P(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_O(AbstractEvaluator):
@@ -67,7 +67,7 @@ class Evaluator_O(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_W(AbstractEvaluator):
@@ -81,7 +81,7 @@ class Evaluator_W(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_N(AbstractEvaluator):
@@ -95,7 +95,7 @@ class Evaluator_N(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_N_Fast(AbstractEvaluator):
@@ -118,7 +118,7 @@ class Evaluator_E(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_C(AbstractEvaluator):
@@ -132,7 +132,7 @@ class Evaluator_C(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_B(AbstractEvaluator):
@@ -146,7 +146,7 @@ class Evaluator_B(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_Ec(AbstractEvaluator):
@@ -160,7 +160,7 @@ class Evaluator_Ec(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        return self.scorer.get_score(board=board)
+        return self.scorer.get_score(color, board, possibility_b, possibility_w)
 
 
 class Evaluator_TP(AbstractEvaluator):
@@ -175,8 +175,8 @@ class Evaluator_TP(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p
 
@@ -194,9 +194,9 @@ class Evaluator_TPO(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_o = self.o.get_score(board=board)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_o = self.o.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p + score_o
 
@@ -213,13 +213,13 @@ class Evaluator_NW(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_n = self.n.get_score(board=board)
+        score_n = self.n.get_score(color, board, possibility_b, possibility_w)
 
         return score_n
 
@@ -236,13 +236,13 @@ class Evaluator_PW(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
 
         return score_p
 
@@ -260,14 +260,14 @@ class Evaluator_TPW(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p
 
@@ -301,15 +301,15 @@ class Evaluator_TPOW(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_o = self.o.get_score(board=board)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_o = self.o.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p + score_o
 
@@ -328,15 +328,15 @@ class Evaluator_TPWE(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_e = self.e.get_score(board=board)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_e = self.e.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p + score_e
 
@@ -372,16 +372,16 @@ class Evaluator_TPWEC(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_e = self.e.get_score(board=board)
-        score_c = self.c.get_score(board=board)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_e = self.e.get_score(color, board, possibility_b, possibility_w)
+        score_c = self.c.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p + score_e + score_c
 
@@ -399,14 +399,14 @@ class Evaluator_PWE(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_e = self.e.get_score(board=board)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_e = self.e.get_score(color, board, possibility_b, possibility_w)
 
         return score_p + score_e
 
@@ -423,13 +423,13 @@ class Evaluator_BW(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_b = self.b.get_score(board=board)
+        score_b = self.b.get_score(color, board, possibility_b, possibility_w)
 
         return score_b
 
@@ -446,13 +446,13 @@ class Evaluator_EcW(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_ec = self.ec.get_score(board=board)
+        score_ec = self.ec.get_score(color, board, possibility_b, possibility_w)
 
         return score_ec
 
@@ -470,14 +470,14 @@ class Evaluator_BWEc(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_b = self.b.get_score(board=board)
-        score_ec = self.ec.get_score(board=board)
+        score_b = self.b.get_score(color, board, possibility_b, possibility_w)
+        score_ec = self.ec.get_score(color, board, possibility_b, possibility_w)
 
         return score_b + score_ec
 
@@ -496,15 +496,15 @@ class Evaluator_PBWEc(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_b = self.b.get_score(board=board)
-        score_ec = self.ec.get_score(board=board)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_b = self.b.get_score(color, board, possibility_b, possibility_w)
+        score_ec = self.ec.get_score(color, board, possibility_b, possibility_w)
 
         return score_p + score_b + score_ec
 
@@ -525,15 +525,15 @@ class Evaluator_TPWEB(AbstractEvaluator):
     def evaluate(self, color, board, possibility_b, possibility_w):
         """evaluate
         """
-        score_w = self.w.get_score(board=board, possibility_b=possibility_b, possibility_w=possibility_w)
+        score_w = self.w.get_score(color, board, possibility_b, possibility_w)
 
         # 勝敗が決まっている場合
         if score_w is not None:
             return score_w
 
-        score_t = self.t.get_score(board=board)
-        score_p = self.p.get_score(possibility_b=possibility_b, possibility_w=possibility_w)
-        score_e = self.e.get_score(board=board)
-        score_b = self.b.get_score(board=board)
+        score_t = self.t.get_score(color, board, possibility_b, possibility_w)
+        score_p = self.p.get_score(color, board, possibility_b, possibility_w)
+        score_e = self.e.get_score(color, board, possibility_b, possibility_w)
+        score_b = self.b.get_score(color, board, possibility_b, possibility_w)
 
         return score_t + score_p + score_e + score_b

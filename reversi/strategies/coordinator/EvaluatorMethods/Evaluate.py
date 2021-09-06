@@ -65,7 +65,7 @@ def evaluate_tpw(t, params, color, board, possibility_b, possibility_w):
         elif ret < 0:  # 白が勝った
             ret -= params[1]
         return ret
-    return t.get_score(board=board) + (possibility_b - possibility_w) * params[0]
+    return t.get_score(None, board, None, None) + (possibility_b - possibility_w) * params[0]
 
 
 def evaluate_tpwe(t, table, params, color, board, possibility_b, possibility_w):
@@ -77,11 +77,11 @@ def evaluate_tpwe(t, table, params, color, board, possibility_b, possibility_w):
             ret -= params[1]
         return ret
     if board.size != 8:
-        return t.get_score(board=board) + (possibility_b - possibility_w) * params[0]
+        return t.get_score(None, board, None, None) + (possibility_b - possibility_w) * params[0]
     score = 0
     b_bitboard, w_bitboard = board.get_bitboard_info()
     for maskvalue in EDGE_MASKVALUE:
         score_b = params[2] if (b_bitboard & maskvalue) == maskvalue else 0
         score_w = params[2] if (w_bitboard & maskvalue) == maskvalue else 0
         score += score_b - score_w
-    return t.get_score(board=board) + (possibility_b - possibility_w) * params[0] + score
+    return t.get_score(None, board, None, None) + (possibility_b - possibility_w) * params[0] + score

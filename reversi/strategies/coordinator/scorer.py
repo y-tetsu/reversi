@@ -16,11 +16,10 @@ class TableScorer(AbstractScorer):
     def __init__(self, size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5):
         self.table = Table(size, corner, c, a1, a2, b1, b2, b3, x, o1, o2)  # Table戦略を利用する
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board = kwargs['board']
         if self.table.size != board.size:  # テーブルサイズの調整
             self.table.set_table(board.size)
 
@@ -34,11 +33,11 @@ class PossibilityScorer(AbstractScorer):
     def __init__(self, w=5):
         self._W = w
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        return (kwargs['possibility_b'] - kwargs['possibility_w']) * self._W
+        return (possibility_b - possibility_w) * self._W
 
 
 class OpeningScorer(AbstractScorer):
@@ -48,11 +47,10 @@ class OpeningScorer(AbstractScorer):
     def __init__(self, w=-0.75):
         self._W = w
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board = kwargs['board']
         size, board_info, opening = board.size, board.get_board_info(), 0
 
         directions = [
@@ -93,14 +91,12 @@ class WinLoseScorer(AbstractScorer):
     def __init__(self, w=10000):
         self._W = w
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board, possibility_b, possibility_w = kwargs['board'], kwargs['possibility_b'], kwargs['possibility_w']
-        ret = None
-
         # 対局終了時
+        ret = None
         if not possibility_b and not possibility_w:
             ret = board._black_score - board._white_score
 
@@ -116,12 +112,10 @@ class NumberScorer(AbstractScorer):
     """
     石数に基づいて算出
     """
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board = kwargs['board']
-
         return board._black_score - board._white_score
 
 
@@ -185,11 +179,10 @@ class EdgeScorer(AbstractScorer):
                     score += self._W
             self.edge_table8[row] = score
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board = kwargs['board']
         size = board.size
         weight = self._W
         score = 0
@@ -690,11 +683,10 @@ class CornerScorer(AbstractScorer):
             9, 9, 9
         ]
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board = kwargs['board']
         score = 0
         b_bitboard, w_bitboard = board.get_bitboard_info()
 
@@ -772,11 +764,11 @@ class BlankScorer(AbstractScorer):
         self._W2 = w2
         self._W3 = w3
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        return ScorerMethods.get_blank_score(kwargs['board'], self._W1, self._W2, self._W3)
+        return ScorerMethods.get_blank_score(board, self._W1, self._W2, self._W3)
 
 
 class EdgeCornerScorer(AbstractScorer):
@@ -787,11 +779,10 @@ class EdgeCornerScorer(AbstractScorer):
         self._W1 = w1
         self._W2 = w2
 
-    def get_score(self, *args, **kwargs):
+    def get_score(self, color, board, possibility_b, possibility_w):
         """
         評価値の算出
         """
-        board = kwargs['board']
         size = board.size
         black_bitboard = board._black_bitboard
         white_bitboard = board._white_bitboard

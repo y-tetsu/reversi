@@ -93,7 +93,7 @@ cdef inline signed int _evaluate_tpw(t, params, color, board, possibility_b, pos
         elif ret < 0:  # 白が勝った
             ret -= params[1]
         return ret
-    return t.get_score(board=board) + (possibility_b - possibility_w) * params[0]
+    return t.get_score(None, board, None, None) + (possibility_b - possibility_w) * params[0]
 
 
 def evaluate_tpwe(t, table, params, color, board, possibility_b, possibility_w):
@@ -254,7 +254,7 @@ cdef inline signed int _evaluate_tpwe(t, params, color, board, possibility_b, po
         elif score_w < 0:  # 白が勝った
             score_w -= ww
         return score_w
-    score_t = t.get_score(board=board)              # テーブルによるスコア
+    score_t = t.get_score(None, board, None, None)  # テーブルによるスコア
     score_p = (possibility_b - possibility_w) * wp  # 着手可能数によるスコア
     # 辺のパターンによるスコア
     size = board.size
