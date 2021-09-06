@@ -40,9 +40,12 @@ cdef inline tuple _next_move(str color, board, signed int param_min, signed int 
         double alpha = param_min, beta = param_max
         unsigned int index
         unsigned long long b, w
+        unsigned int int_color = 0
+    if color == 'black':
+        int_color = <unsigned int>1
     b, w = board.get_bitboard_info()
-    index = _get_legal_moves(color, b, w)
-    best_move, _ = _get_best_move(color, board, index, legal_moves_x, legal_moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
+    index = _get_legal_moves(int_color, b, w)
+    best_move, _ = _get_best_move(int_color, board, index, legal_moves_x, legal_moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
     return best_move
 
 
@@ -50,21 +53,25 @@ cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double be
     cdef:
         unsigned int[64] moves_x
         unsigned int[64] moves_y
-        unsigned int x, y, index = 0
+        unsigned int x, y, index = 0, int_color = 0
     for x, y in moves:
         moves_x[index] = x
         moves_y[index] = y
         index += 1
-    return _get_best_move(color, board, index, moves_x, moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
+    if color == 'black':
+        int_color = <unsigned int>1
+    return _get_best_move(int_color, board, index, moves_x, moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
 
 
-cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
+cdef inline _get_best_move(unsigned int int_color, board, unsigned int index, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
     global bb, wb, bs, ws
     cdef:
-        str next_color
         double score = alpha
-        unsigned int i, best = 64
+        unsigned int int_color_next = 1, i, best = 64
     scores = {}
+    # 手番
+    if int_color:
+        int_color_next = <unsigned int>0
     # ボード情報取得
     bb, wb = board.get_bitboard_info()
     bs = board._black_score
@@ -77,14 +84,13 @@ cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64
     board_prev = [(item[0], item[1], item[2], item[3]) for item in board.prev]
     # 各手のスコア取得
     for i in range(index):
-        _put_disc(1 if color == 'black' else 0, moves_x[i], moves_y[i])
-        next_color = 'white' if color == 'black' else 'black'
+        _put_disc(int_color, moves_x[i], moves_y[i])
         if timer:
             if measure:  # タイマーあり:メジャーあり
-                score = -_get_score_timer_measure(_get_score_timer_measure, next_color, board, -beta, -alpha, depth-1, evaluator, pid)
+                score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer)
                 _undo()
             else:        # タイマーあり:メジャーなし
-                score = -_get_score_timer(_get_score_timer, next_color, board, -beta, -alpha, depth-1, evaluator, pid)
+                score = -_get_score_timer(_get_score_timer, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer)
                 _undo()
             scores[(moves_x[i], moves_y[i])] = score
             if Timer.is_timeout(pid):  # タイムアウト判定
@@ -92,11 +98,11 @@ cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64
                     best = i
                 break
         elif measure:    # タイマーなし:メジャーあり
-            score = -_get_score_measure(_get_score_measure, next_color, board, -beta, -alpha, depth-1, evaluator, pid)
+            score = -_get_score_measure(_get_score_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer)
             _undo()
             scores[(moves_x[i], moves_y[i])] = score
         else:            # タイマーなし:メジャーなし
-            score = -_get_score(_get_score, next_color, board, -beta, -alpha, depth-1, evaluator, pid)
+            score = -_get_score(_get_score, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer)
             _undo()
             scores[(moves_x[i], moves_y[i])] = score
         if score > alpha:  # 最善手を更新
@@ -111,33 +117,33 @@ cdef inline _get_best_move(str color, board, unsigned int index, unsigned int[64
     return (moves_x[best], moves_y[best]), scores
 
 
-cdef inline double _get_score_measure(func, str color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t):
     """_get_score_measure
     """
     measure(pid)
-    return _get_score(func, color, board, alpha, beta, depth, evaluator, pid)
+    return _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t)
 
 
-cdef inline double _get_score_timer(func, str color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score_timer(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t):
     """_get_score_timer
     """
     cdef:
         signed int timeout
     timeout = timer(pid)
-    return timeout if timeout else _get_score(func, color, board, alpha, beta, depth, evaluator, pid)
+    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t)
 
 
-cdef inline double _get_score_timer_measure(func, str color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score_timer_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t):
     """_get_score_timer_measure
     """
     cdef:
         signed int timeout
     measure(pid)
     timeout = timer(pid)
-    return timeout if timeout else _get_score(func, color, board, alpha, beta, depth, evaluator, pid)
+    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t)
 
 
-cdef inline measure(str pid):
+cdef inline void measure(str pid):
     """measure
     """
     if pid:
@@ -156,30 +162,25 @@ cdef inline signed int timer(str pid):
     return <signed int>0
 
 
-cdef inline double _get_score(func, str color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t):
     """_get_score
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
-        unsigned int is_game_end, color_num, x, y
-        signed int sign
+        unsigned int is_game_end, int_color_next = 1, x, y
+        signed int sign = -1
     # ゲーム終了 or 最大深さに到達
     legal_moves_b_bits = _get_legal_moves_bits(1, bb, wb)
     legal_moves_w_bits = _get_legal_moves_bits(0, bb, wb)
     is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
-    if color == 'black':
-        color_num = <unsigned int>1
-        sign = <signed int>1
-        legal_moves_bits = legal_moves_b_bits
-        next_color = 'white'
-    else:
-        color_num = <unsigned int>0
-        sign = <signed int>-1
-        legal_moves_bits = legal_moves_w_bits
-        next_color = 'black'
     if is_game_end or depth == <unsigned int>0:
+        if int_color:
+            sign = <signed int>1
+            str_color = 'black'
+        else:
+            str_color = 'white'
         board._black_bitboard = bb
         board._white_bitboard = wb
         board._black_score = bs
@@ -188,21 +189,26 @@ cdef inline double _get_score(func, str color, board, double alpha, double beta,
         board.prev = []
         for i in range(tail):
             board.prev += [(pbb[i], pwb[i], pbs[i], pws[i])]
-        return evaluator.evaluate(color=color, board=board, possibility_b=_get_bit_count(legal_moves_b_bits), possibility_w=_get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
+        return evaluator.evaluate(color=str_color, board=board, possibility_b=_get_bit_count(legal_moves_b_bits), possibility_w=_get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
     # パスの場合
+    if int_color:
+        legal_moves_bits = legal_moves_b_bits
+        int_color_next = <unsigned int>0
+    else:
+        legal_moves_bits = legal_moves_w_bits
     if not legal_moves_bits:
-        return -func(func, next_color, board, -beta, -alpha, depth, evaluator, pid)
+        return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t)
     # 評価値を算出
     mask = 1 << 63
     for y in range(8):
         for x in range(8):
             if legal_moves_bits & mask:
-                _put_disc(color_num, x, y)
-                score = -func(func, next_color, board, -beta, -alpha, depth-1, evaluator, pid)
+                _put_disc(int_color, x, y)
+                score = -func(func, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, t)
                 _undo()
                 if score > alpha:
                     alpha = score
-                if pid:
+                if t:
                     if Timer.is_timeout(pid):
                         return alpha
                 if alpha >= beta:  # 枝刈り
@@ -211,14 +217,14 @@ cdef inline double _get_score(func, str color, board, double alpha, double beta,
     return alpha
 
 
-cdef inline unsigned int _get_legal_moves(str color, unsigned long long b, unsigned long long w):
+cdef inline unsigned int _get_legal_moves(unsigned int int_color, unsigned long long b, unsigned long long w):
     """_get_legal_moves
     """
     global legal_moves_x, legal_moves_y
     cdef:
         unsigned int x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
-    legal_moves = _get_legal_moves_bits(1 if color == 'black' else 0, b, w)
+    legal_moves = _get_legal_moves_bits(int_color, b, w)
     for y in range(8):
         for x in range(8):
             if legal_moves & mask:
@@ -229,12 +235,12 @@ cdef inline unsigned int _get_legal_moves(str color, unsigned long long b, unsig
     return index
 
 
-cdef inline unsigned long long _get_legal_moves_bits(unsigned int color, unsigned long long b, unsigned long long w):
+cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w):
     """_get_legal_moves_bits
     """
     cdef:
         unsigned long long player = w, opponent = b
-    if color:
+    if int_color:
         player = b
         opponent = w
     cdef:
@@ -285,7 +291,7 @@ cdef inline unsigned long long _get_bit_count(unsigned long long bits):
     return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
 
 
-cdef inline void _put_disc(unsigned int color, unsigned int x, unsigned int y):
+cdef inline void _put_disc(unsigned int int_color, unsigned int x, unsigned int y):
     """_put_disc
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
@@ -296,7 +302,7 @@ cdef inline void _put_disc(unsigned int color, unsigned int x, unsigned int y):
     lshift = (63-(y*8+x))
     put = <unsigned long long>1 << lshift
     # ひっくり返せる石を取得
-    fd = _get_flippable_discs_num(color, bb, wb, lshift)
+    fd = _get_flippable_discs_num(int_color, bb, wb, lshift)
     count = _get_bit_count(fd)
     # 打つ前の状態を格納
     pbb[tail] = bb
@@ -305,7 +311,7 @@ cdef inline void _put_disc(unsigned int color, unsigned int x, unsigned int y):
     pws[tail] = ws
     tail += 1
     # 自分の石を置いて相手の石をひっくり返す
-    if color:
+    if int_color:
         bb ^= put | fd
         wb ^= fd
         bs += <unsigned int>1 + <unsigned int>count
@@ -317,7 +323,7 @@ cdef inline void _put_disc(unsigned int color, unsigned int x, unsigned int y):
         ws += <unsigned int>1 + <unsigned int>count
 
 
-cdef inline unsigned long long _get_flippable_discs_num(unsigned int color, unsigned long long b, unsigned long long w, unsigned int lshift):
+cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned int lshift):
     """_get_flippable_discs_size8_64bit
     """
     cdef:
@@ -325,7 +331,7 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int color, unsi
         unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
         unsigned long long move = 0
         unsigned long long player = w, opponent = b, flippable_discs_num = 0
-    if color:
+    if int_color:
         player = b
         opponent = w
     move = <unsigned long long>1 << lshift
