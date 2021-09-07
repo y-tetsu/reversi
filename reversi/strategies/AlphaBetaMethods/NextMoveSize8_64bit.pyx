@@ -38,13 +38,21 @@ cdef inline tuple _next_move(str color, board, signed int param_min, signed int 
     global legal_moves_x, legal_moves_y
     cdef:
         double alpha = param_min, beta = param_max
-        unsigned int index
         unsigned long long b, w
         unsigned int int_color = 0
+        unsigned int x, y, index = 0
+        unsigned long long legal_moves, mask = 0x8000000000000000
     if color == 'black':
         int_color = <unsigned int>1
     b, w = board.get_bitboard_info()
-    index = _get_legal_moves(int_color, b, w)
+    legal_moves = _get_legal_moves_bits(int_color, b, w)
+    for y in range(8):
+        for x in range(8):
+            if legal_moves & mask:
+                legal_moves_x[index] = x
+                legal_moves_y[index] = y
+                index += 1
+            mask >>= 1
     best_move, _ = _get_best_move(int_color, board, index, legal_moves_x, legal_moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
     return best_move
 
@@ -218,24 +226,6 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
                     return alpha
             mask >>= 1
     return alpha
-
-
-cdef inline unsigned int _get_legal_moves(unsigned int int_color, unsigned long long b, unsigned long long w):
-    """_get_legal_moves
-    """
-    global legal_moves_x, legal_moves_y
-    cdef:
-        unsigned int x, y, index = 0
-        unsigned long long legal_moves, mask = 0x8000000000000000
-    legal_moves = _get_legal_moves_bits(int_color, b, w)
-    for y in range(8):
-        for x in range(8):
-            if legal_moves & mask:
-                legal_moves_x[index] = x
-                legal_moves_y[index] = y
-                index += 1
-            mask >>= 1
-    return index
 
 
 cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w):
