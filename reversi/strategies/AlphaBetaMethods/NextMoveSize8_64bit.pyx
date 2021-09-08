@@ -1,4 +1,4 @@
-#cython: language_level=3, profile=True, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """Next Move(Size8,64bit) of AlphaBeta strategy
 """
 
@@ -8,6 +8,7 @@ from reversi.strategies.common import Timer, Measure
 
 
 cdef:
+    unsigned long long[64] legal_moves_bit_list
     unsigned int[64] legal_moves_x
     unsigned int[64] legal_moves_y
     unsigned long long bb
@@ -35,7 +36,7 @@ def get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer
 
 
 cdef inline tuple _next_move(str color, board, signed int param_min, signed int param_max, int depth, evaluator, str pid, int timer, int measure):
-    global legal_moves_x, legal_moves_y
+    global legal_moves_bit_list, legal_moves_x, legal_moves_y
     cdef:
         double alpha = param_min, beta = param_max
         unsigned long long b, w
@@ -49,29 +50,36 @@ cdef inline tuple _next_move(str color, board, signed int param_min, signed int 
     for y in range(8):
         for x in range(8):
             if legal_moves & mask:
+                legal_moves_bit_list[index] = mask
                 legal_moves_x[index] = x
                 legal_moves_y[index] = y
                 index += 1
             mask >>= 1
-    best_move, _ = _get_best_move(int_color, board, index, legal_moves_x, legal_moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
+    best_move, _ = _get_best_move(int_color, board, index, legal_moves_bit_list, legal_moves_x, legal_moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
     return best_move
 
 
 cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
     cdef:
+        unsigned long long[64] moves_bit_list
         unsigned int[64] moves_x
         unsigned int[64] moves_y
         unsigned int x, y, index = 0, int_color = 0
+        unsigned long long put
+        signed int lshift
     for x, y in moves:
+        lshift = (63-(y*8+x))
+        put = <unsigned long long>1 << lshift
+        moves_bit_list[index] = put
         moves_x[index] = x
         moves_y[index] = y
         index += 1
     if color == 'black':
         int_color = <unsigned int>1
-    return _get_best_move(int_color, board, index, moves_x, moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
+    return _get_best_move(int_color, board, index, moves_bit_list, moves_x, moves_y, alpha, beta, depth, evaluator, pid, timer, measure)
 
 
-cdef inline _get_best_move(unsigned int int_color, board, unsigned int index, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
+cdef inline _get_best_move(unsigned int int_color, board, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
     global bb, wb, bs, ws
     cdef:
         double score = alpha
@@ -92,7 +100,7 @@ cdef inline _get_best_move(unsigned int int_color, board, unsigned int index, un
     board_prev = [(item[0], item[1], item[2], item[3]) for item in board.prev]
     # 各手のスコア取得
     for i in range(index):
-        _put_disc(int_color, moves_x[i], moves_y[i])
+        _put_disc(int_color, moves_bit_list[i])
         if timer:
             if measure:  # タイマーあり:メジャーあり
                 score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
@@ -176,7 +184,7 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score
-        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask = 0x8000000000000000
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y
         signed int sign = -1
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
@@ -210,21 +218,19 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     if not legal_moves_bits:
         return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t, <unsigned int>1)
     # 評価値を算出
-    mask = 1 << 63
-    for y in range(8):
-        for x in range(8):
-            if legal_moves_bits & mask:
-                _put_disc(int_color, x, y)
-                score = -func(func, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, t, <unsigned int>0)
-                _undo()
-                if score > alpha:
-                    alpha = score
-                if t:
-                    if Timer.is_timeout(pid):
-                        return alpha
-                if alpha >= beta:  # 枝刈り
+    for _ in range(64):
+        if legal_moves_bits & mask:
+            _put_disc(int_color, mask)
+            score = -func(func, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, t, <unsigned int>0)
+            _undo()
+            if score > alpha:
+                alpha = score
+            if t:
+                if Timer.is_timeout(pid):
                     return alpha
-            mask >>= 1
+            if alpha >= beta:  # 枝刈り
+                return alpha
+        mask >>= 1
     return alpha
 
 
@@ -284,18 +290,15 @@ cdef inline unsigned long long _get_bit_count(unsigned long long bits):
     return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
 
 
-cdef inline void _put_disc(unsigned int int_color, unsigned int x, unsigned int y):
+cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
     """_put_disc
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        unsigned long long put, count
+        unsigned long long count
         signed int lshift
-    # 配置位置を整数に変換
-    lshift = (63-(y*8+x))
-    put = <unsigned long long>1 << lshift
     # ひっくり返せる石を取得
-    fd = _get_flippable_discs_num(int_color, bb, wb, lshift)
+    fd = _get_flippable_discs_num(int_color, bb, wb, move)
     count = _get_bit_count(fd)
     # 打つ前の状態を格納
     pbb[tail] = bb
@@ -305,29 +308,27 @@ cdef inline void _put_disc(unsigned int int_color, unsigned int x, unsigned int 
     tail += 1
     # 自分の石を置いて相手の石をひっくり返す
     if int_color:
-        bb ^= put | fd
+        bb ^= move | fd
         wb ^= fd
         bs += <unsigned int>1 + <unsigned int>count
         ws -= <unsigned int>count
     else:
-        wb ^= put | fd
+        wb ^= move | fd
         bb ^= fd
         bs -= <unsigned int>count
         ws += <unsigned int>1 + <unsigned int>count
 
 
-cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned int lshift):
+cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
     """_get_flippable_discs_size8_64bit
     """
     cdef:
         unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
         unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
-        unsigned long long move = 0
         unsigned long long player = w, opponent = b, flippable_discs_num = 0
     if int_color:
         player = b
         opponent = w
-    move = <unsigned long long>1 << lshift
     t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
     rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
     r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
