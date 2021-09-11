@@ -1,4 +1,4 @@
-from .board import Board, BitBoard, CyBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE
+from .board import Board, BitBoard, PyBitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE
 from .color import C
 from .player import Player
 from .display import ConsoleDisplay, NoneDisplay, WindowDisplay
@@ -14,7 +14,7 @@ from . import genetic_algorithm
 __all__ = [
     'Board',
     'BitBoard',
-    'CyBoard',
+    'PyBitBoard',
     'MIN_BOARD_SIZE',
     'MAX_BOARD_SIZE',
     'C',

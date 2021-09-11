@@ -4,7 +4,7 @@
 import unittest
 import os
 
-from reversi.board import CyBoard
+from reversi.board import BitBoard
 from reversi.strategies.common import Measure
 from reversi.strategies import IterativeDeepning
 from reversi.strategies.alphabeta import _AlphaBeta, AlphaBeta
@@ -32,7 +32,7 @@ class TestIterativeDeepning(unittest.TestCase):
         self.assertTrue(isinstance(iterative.search.evaluator, coord.Evaluator_TPOW))
 
     def test_iterative_next_move_depth2(self):
-        board = CyBoard()
+        board = BitBoard()
 
         # limit
         iterative = IterativeDeepning(

@@ -6,7 +6,7 @@ import json
 import itertools
 from multiprocessing import Pool
 
-from reversi import Board, CyBoard, Player, NoneDisplay, Game
+from reversi import Board, BitBoard, Player, NoneDisplay, Game
 from reversi.strategies import RandomOpening
 
 
@@ -150,7 +150,7 @@ class Simulator:
             if (i + 1) % 5 == 0:
                 print("    -", black.name, white.name, i + 1)
 
-            board = CyBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
+            board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
             game = Game(board, black, white, NoneDisplay())
             game.play()
 

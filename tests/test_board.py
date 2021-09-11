@@ -3,7 +3,7 @@
 
 import unittest
 
-from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, CyBoard
+from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, PyBitBoard
 from reversi.color import C as c
 from reversi.disc import D as d
 from reversi.game import Game
@@ -16,7 +16,7 @@ class TestBoard(unittest.TestCase):
     """board
     """
     def setUp(self):
-        self.board_classes = [Board, BitBoard, CyBoard]
+        self.board_classes = [Board, BitBoard, PyBitBoard]
 
     def test_board_invalid_size(self):
         minus_value = -1
@@ -63,7 +63,7 @@ class TestBoard(unittest.TestCase):
 
     def test_bitboard_initial_board(self):
         min_size, max_size, step = 4, 26, 2
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             for size in range(min_size, max_size+1, step):
                 board = board_class(size)
                 black_bitboard = (0x1 << ((size * (size//2) + (size//2) - 1))) + (0x1 << ((size * (size//2-1) + (size//2))))
@@ -72,7 +72,7 @@ class TestBoard(unittest.TestCase):
                 self.assertEqual(board._white_bitboard, white_bitboard)
 
     def test_bitboard_initial_mask(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(4)
             self.assertEqual(board._mask.h, 0x6666)
             self.assertEqual(board._mask.v, 0x0FF0)
@@ -171,7 +171,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(legal_moves, [(2, 0), (3, 0), (3, 1)])
 
     def test_bitboard_size_4_get_legal_moves(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(4)
 
             board._black_bitboard = 0x640
@@ -307,7 +307,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(legal_moves, [(3, 2), (4, 2), (2, 3), (6, 3), (2, 5), (6, 5)])
 
     def test_bitboard_size_8_get_legal_moves(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(8)
             legal_moves = board.get_legal_moves(c.black)
             self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
@@ -370,7 +370,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(legal_moves_bits, 0xA080)
 
     def test_bitboard_size_4_get_legal_moves_bits(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(4)
 
             board._black_bitboard = 0x640
@@ -386,7 +386,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
     def test_bitboard_size_8_get_legal_moves_bits(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(8)
             legal_moves_bits = board.get_legal_moves_bits(c.black)
             self.assertEqual(legal_moves_bits, 0x0000102004080000)
@@ -448,7 +448,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
 
     def test_bitboard_size_4_get_flippable_discs(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(4)
 
             board._black_bitboard = 0x640
@@ -694,7 +694,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_flippable_discs(c.black, 6, 5), [(5, 5)])
 
     def test_bitboard_size_8_get_flippable_discs(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(8)
             self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
             self.assertEqual(board.get_flippable_discs(c.black, 2, 3), [(3, 3)])
@@ -953,7 +953,7 @@ class TestBoard(unittest.TestCase):
 
     def test_bitboard_update_score(self):
         min_size, max_size, step = 4, 26, 2
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             for size in range(min_size, max_size+1, step):
                 board = board_class(size)
                 board._black_score = 0
@@ -1004,7 +1004,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
 
     def test_bitboard_size_4_get_bit_count(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(4)
             board._black_bitboard = 0x640
             board._white_bitboard = 0x020
@@ -1019,7 +1019,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
 
     def test_bitboard_size_8_get_bit_count(self):
-        for board_class in [BitBoard, CyBoard]:
+        for board_class in [BitBoard, PyBitBoard]:
             board = board_class(8)
             legal_moves_bits = board.get_legal_moves_bits(c.black)
             self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
@@ -1164,7 +1164,7 @@ class TestBoard(unittest.TestCase):
 
         for _ in range(5):
             board = Board()
-            bitboard = CyBoard()
+            bitboard = BitBoard()
             black_player = TestPlayer(c.black, 'Random1', Random())
             white_player = TestPlayer(c.white, 'Random2', Random())
             game = TestGame(self, board, bitboard, black_player, white_player, NoneDisplay())
@@ -1650,9 +1650,9 @@ class TestBoard(unittest.TestCase):
         importlib.reload(reversi.BitBoardMethods)
         self.assertTrue(reversi.BitBoardMethods.CYBOARD_ERROR)
         # -------------------------------
-        self.assertIsInstance(CyBoard(4), BitBoard)
-        self.assertIsInstance(CyBoard(), BitBoard)
-        self.assertIsInstance(CyBoard(26), BitBoard)
+        self.assertIsInstance(BitBoard(4), PyBitBoard)
+        self.assertIsInstance(BitBoard(), PyBitBoard)
+        self.assertIsInstance(BitBoard(26), PyBitBoard)
 
         # -------------------------------
         # recover environment and reload module
@@ -1660,6 +1660,6 @@ class TestBoard(unittest.TestCase):
         importlib.reload(reversi.BitBoardMethods)
         self.assertFalse(reversi.BitBoardMethods.CYBOARD_ERROR)
         # -------------------------------
-        self.assertIsInstance(CyBoard(4), BitBoard)
-        self.assertIsInstance(CyBoard(), reversi.board.BitBoardMethods.CyBoard8_64bit.CythonBitBoard)
-        self.assertIsInstance(CyBoard(26), BitBoard)
+        self.assertIsInstance(BitBoard(4), PyBitBoard)
+        self.assertIsInstance(BitBoard(), reversi.board.BitBoardMethods.CyBoard8_64bit.CythonBitBoard)
+        self.assertIsInstance(BitBoard(26), PyBitBoard)

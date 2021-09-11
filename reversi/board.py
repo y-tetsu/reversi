@@ -309,8 +309,14 @@ class Board(AbstractBoard):
         self.update_score()
 
 
-class BitBoard(AbstractBoard):
-    """BitBoard
+def BitBoard(size=8):
+    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
+        return BitBoardMethods.CythonBitBoard()
+    return PyBitBoard(size)
+
+
+class PyBitBoard(AbstractBoard):
+    """PyBitBoard
     """
     def __init__(self, size=8):
         if self._is_invalid_size(size):
@@ -438,9 +444,3 @@ class BitBoard(AbstractBoard):
         """undo
         """
         BitBoardMethods.undo(self)
-
-
-def CyBoard(size=8):
-    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
-        return BitBoardMethods.CythonBitBoard()
-    return BitBoard(size)
