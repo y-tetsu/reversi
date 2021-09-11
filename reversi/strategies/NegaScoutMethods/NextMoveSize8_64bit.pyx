@@ -156,7 +156,7 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
         int_color_next = 1
 
     if is_game_end or depth == <unsigned int>0:
-        return evaluator.evaluate(str_color, board, _get_bit_count_size8_64bit(legal_moves_b_bits), _get_bit_count_size8_64bit(legal_moves_w_bits)) * sign  # noqa: E501
+        return evaluator.evaluate(str_color, board, _get_bit_count(legal_moves_b_bits), _get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
 
     # パスの場合
     if not legal_moves_bits:
@@ -259,15 +259,14 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(unsigned int co
     return blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
 
-cdef inline unsigned long long _get_bit_count_size8_64bit(unsigned long long bits):
-    """_get_bit_count_size8_64bit
+cdef inline unsigned long long _get_bit_count(unsigned long long bits):
+    """_get_bit_count
     """
     bits = (bits & <unsigned long long>0x5555555555555555) + (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
     bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
     bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
     bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
     bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
-
     return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
 
 
@@ -289,7 +288,7 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, 
     black_score = board._black_score
     white_score = board._white_score
     flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, move)
-    flippable_discs_count = _get_bit_count_size8_64bit(flippable_discs_num)
+    flippable_discs_count = _get_bit_count(flippable_discs_num)
 
     # 打つ前の状態を格納
     board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
@@ -339,8 +338,8 @@ cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, u
         white_bitboard ^= move | flippable_discs_num
         black_bitboard ^= flippable_discs_num
 
-    possibility_b = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(1, black_bitboard, white_bitboard))
-    possibility_w = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(0, black_bitboard, white_bitboard))
+    possibility_b = <signed int>_get_bit_count(_get_legal_moves_bits_size8_64bit(1, black_bitboard, white_bitboard))
+    possibility_w = <signed int>_get_bit_count(_get_legal_moves_bits_size8_64bit(0, black_bitboard, white_bitboard))
 
     return (possibility_b - possibility_w) * sign
 
