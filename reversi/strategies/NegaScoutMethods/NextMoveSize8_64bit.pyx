@@ -140,8 +140,8 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
     # ゲーム終了 or 最大深さに到達
     b = board._black_bitboard
     w = board._white_bitboard
-    legal_moves_b_bits = _get_legal_moves_bits_size8_64bit(1, b, w)
-    legal_moves_w_bits = _get_legal_moves_bits_size8_64bit(0, b, w)
+    legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, b, w)
+    legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, b, w)
     is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
 
     if int_color:
@@ -204,26 +204,20 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
     return alpha
 
 
-cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(unsigned int color, unsigned long long b, unsigned long long w):
-    """_get_legal_moves_bits_size8_64bit
+cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w):
+    """_get_legal_moves_bits
     """
     cdef:
-        unsigned long long player, opponent
-
-    if color:
+        unsigned long long player = w, opponent = b
+    if int_color:
         player = b
         opponent = w
-    else:
-        player = w
-        opponent = b
-
     cdef:
         unsigned long long blank = ~(player | opponent)
         unsigned long long horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         unsigned long long vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         unsigned long long diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
         unsigned long long tmp_h, tmp_v, tmp_d1, tmp_d2
-
     # left/right
     tmp_h = horizontal & ((player << 1) | (player >> 1))
     tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
@@ -231,7 +225,6 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(unsigned int co
     tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
     tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
     tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
-
     # top/bottom
     tmp_v = vertical & ((player << 8) | (player >> 8))
     tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
@@ -239,7 +232,6 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(unsigned int co
     tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
     tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
     tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
-
     # left-top/right-bottom
     tmp_d1 = diagonal & ((player << 9) | (player >> 9))
     tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
@@ -247,7 +239,6 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(unsigned int co
     tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
     tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
     tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
-
     # right-top/left-bottom
     tmp_d2 = diagonal & ((player << 7) | (player >> 7))
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
@@ -255,7 +246,6 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(unsigned int co
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
-
     return blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
 
@@ -338,8 +328,8 @@ cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, u
         white_bitboard ^= move | flippable_discs_num
         black_bitboard ^= flippable_discs_num
 
-    possibility_b = <signed int>_get_bit_count(_get_legal_moves_bits_size8_64bit(1, black_bitboard, white_bitboard))
-    possibility_w = <signed int>_get_bit_count(_get_legal_moves_bits_size8_64bit(0, black_bitboard, white_bitboard))
+    possibility_b = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>1, black_bitboard, white_bitboard))
+    possibility_w = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>0, black_bitboard, white_bitboard))
 
     return (possibility_b - possibility_w) * sign
 
