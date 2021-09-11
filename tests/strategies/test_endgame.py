@@ -65,80 +65,35 @@ class TestEndGame(unittest.TestCase):
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
         print('(180000)', Measure.count[pid])
 
-    #def test_alphabeta_force_import_error(self):
-    #    import os
-    #    import importlib
-    #    import reversi
+    def test_endgame_force_import_error(self):
+        import os
+        import importlib
+        import reversi
 
-    #    # -------------------------------
-    #    # switch environ and reload module
-    #    os.environ['FORCE_ALPHABETAMETHODS_IMPORT_ERROR'] = 'RAISE'
-    #    importlib.reload(reversi.strategies.AlphaBetaMethods)
-    #    self.assertTrue(reversi.strategies.AlphaBetaMethods.SLOW_MODE)
-    #    self.assertTrue(reversi.strategies.AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR)
-    #    # -------------------------------
+        # -------------------------------
+        # switch environ and reload module
+        os.environ['FORCE_ENDGAMEMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.strategies.EndGameMethods)
+        self.assertTrue(reversi.strategies.EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR)
+        # -------------------------------
 
-    #    # measure
-    #    pid = 'ALPHABETA_IMPORT_ERROR_MEASURE'
-    #    for _ in range(3):
-    #        reversi.strategies.AlphaBetaMethods.GetScore.measure(pid)
-    #    self.assertEqual(Measure.count[pid], 3)
+        for instance in [_EndGame_, _EndGame, EndGame_, EndGame]:
+            board = BitBoard()
+            endgame = instance(depth=6)
 
-    #    # timer
-    #    pid = 'ALPHABETA_IMPORT_ERROR_TIMER'
-    #    Timer.deadline[pid] = 0
-    #    Timer.timeout_value[pid] = 100
-    #    self.assertIsNone(reversi.strategies.AlphaBetaMethods.GetScore.timer(None))
-    #    self.assertEqual(reversi.strategies.AlphaBetaMethods.GetScore.timer(pid), 100)
-    #    self.assertTrue(Timer.timeout_flag[pid])
+            board.put_disc('black', 3, 2)
+            self.assertEqual(endgame.next_move('white', board), (2, 2))
 
-    #    # get_score
-    #    alphabeta = AlphaBeta(depth=2, evaluator=coord.Evaluator_N())
-    #    color = 'black'
-    #    board = BitBoard(4)
-    #    alpha = 1
-    #    beta = 1
-    #    depth = 0
-    #    pid = 'ALPHABETA_IMPORT_ERROR_GET_SCORE'
+            board.put_disc('white', 2, 4)
+            board.put_disc('black', 5, 5)
+            board.put_disc('white', 4, 2)
+            board.put_disc('black', 5, 2)
+            board.put_disc('white', 5, 4)
+            self.assertEqual(endgame.next_move('black', board), (1, 5))
 
-    #    # - depth == 0
-    #    score = reversi.strategies.AlphaBetaMethods.GetScore.get_score(alphabeta, color, board, alpha, beta, depth, pid)
-    #    self.assertEqual(score, 0)
-
-    #    # - pass and score
-    #    depth = 1
-    #    board._black_bitboard = 0x4000
-    #    board._white_bitboard = 0x8000
-    #    score = reversi.strategies.AlphaBetaMethods.GetScore.get_score(alphabeta, color, board, alpha, beta, depth, pid)
-    #    self.assertEqual(score, -3)
-
-    #    # get_score_measure
-    #    score = reversi.strategies.AlphaBetaMethods.GetScore.get_score_measure(alphabeta, color, board, alpha, beta, depth, pid)
-    #    self.assertEqual(score, -3)
-    #    self.assertEqual(Measure.count[pid], 3)
-
-    #    # get_score_timer
-    #    Timer.deadline[pid] = 0
-    #    Timer.timeout_value[pid] = 100
-    #    score = reversi.strategies.AlphaBetaMethods.GetScore.get_score_timer(alphabeta, color, board, alpha, beta, depth, pid)
-    #    self.assertEqual(score, 100)
-    #    self.assertTrue(Timer.timeout_flag[pid])
-
-    #    Timer.deadline[pid] = time.time() + 1
-    #    score = reversi.strategies.AlphaBetaMethods.GetScore.get_score_timer(alphabeta, color, board, alpha, beta, depth, pid)
-    #    self.assertEqual(score, 1)
-
-    #    # get_score_measure_timer
-    #    Measure.count[pid] = 0
-    #    Timer.deadline[pid] = time.time() + 1
-    #    score = reversi.strategies.AlphaBetaMethods.GetScore.get_score_measure_timer(alphabeta, color, board, alpha, beta, depth, pid)
-    #    self.assertEqual(score, 1)
-    #    self.assertEqual(Measure.count[pid], 3)
-
-    #    # -------------------------------
-    #    # recover environment and reload module
-    #    del os.environ['FORCE_ALPHABETAMETHODS_IMPORT_ERROR']
-    #    importlib.reload(reversi.strategies.AlphaBetaMethods)
-    #    self.assertFalse(reversi.strategies.AlphaBetaMethods.SLOW_MODE)
-    #    self.assertFalse(reversi.strategies.AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR)
-    #    # -------------------------------
+        # -------------------------------
+        # recover environment and reload module
+        del os.environ['FORCE_ENDGAMEMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.strategies.EndGameMethods)
+        self.assertFalse(reversi.strategies.EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR)
+        # -------------------------------
