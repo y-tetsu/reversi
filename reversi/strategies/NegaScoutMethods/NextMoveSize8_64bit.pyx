@@ -1,177 +1,111 @@
-#cython: language_level=3, profile=False
-"""Get Score of NegaScout strategy
+#cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+"""Next Move(Size8,64bit) of NegaScout
 """
 
-import sys
 import time
 
 from reversi.strategies.common import Timer, Measure
 
 
-MAXSIZE64 = 2**63 - 1
-
-
-def get_score(negascout, color, board, alpha, beta, depth, pid):
-    """get_score
+def next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
+    """next_move
     """
-    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
-        return _get_score_size8_64bit(_get_score_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
-
-    return _get_score(_get_score, negascout, color, board, alpha, beta, depth, pid)
+    return _next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure)
 
 
-def get_score_measure(negascout, color, board, alpha, beta, depth, pid):
-    """get_score_measure
+def get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure):
+    """get_best_move
     """
-    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
-        return _get_score_measure_size8_64bit(_get_score_measure_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
-
-    return _get_score_measure(_get_score_measure, negascout, color, board, alpha, beta, depth, pid)
+    return _get_best_move_wrap(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
 
 
-def get_score_timer(negascout, color, board, alpha, beta, depth, pid):
-    """get_score_timer
-    """
-    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
-        return _get_score_timer_size8_64bit(_get_score_timer_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
-
-    return _get_score_timer(_get_score_timer, negascout, color, board, alpha, beta, depth, pid)
-
-
-def get_score_measure_timer(negascout, color, board, alpha, beta, depth, pid):
-    """get_score_measure_timer
-    """
-    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
-        return _get_score_measure_timer_size8_64bit(_get_score_measure_timer_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
-
-    return _get_score_measure_timer(_get_score_measure_timer, negascout, color, board, alpha, beta, depth, pid)
-
-
-cdef _get_score(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
-    """_get_score
-    """
+cdef inline tuple _next_move(str color, board, signed int param_min, signed int param_max, int depth, evaluator, str pid, int timer, int measure):
+    global legal_moves_bit_list, legal_moves_x, legal_moves_y
     cdef:
-        unsigned int is_game_end
+        double alpha = param_min, beta = param_max
+        unsigned int int_color = 0
+    if color == 'black':
+        int_color = <unsigned int>1
+    moves = board.get_legal_moves(color)  # 手の候補
+    best_move, _ = _get_best_move(int_color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
+    return best_move
 
-    # ゲーム終了 or 最大深さに到達
-    legal_moves_b_bits = board.get_legal_moves_bits('black')
-    legal_moves_w_bits = board.get_legal_moves_bits('white')
-    is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
-    sign = 1 if color == 'black' else -1
-    if is_game_end or depth == <unsigned int>0:
-        return negascout.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
 
-    # パスの場合
-    legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
-    next_color = 'white' if color == 'black' else 'black'
-    if not legal_moves_bits:
-        return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid=pid)
+cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
+    cdef:
+        unsigned int int_color = 0
+    if color == 'black':
+        int_color = <unsigned int>1
+    return _get_best_move(int_color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
 
-    # 着手可能数に応じて手を並び替え
-    tmp = []
-    size = board.size
-    mask = 1 << ((size**2)-1)
-    for y in range(size):
-        for x in range(size):
-            if legal_moves_bits & mask:
-                board.put_disc(color, x, y)
-                possibility_b = board.get_bit_count(board.get_legal_moves_bits('black'))
-                possibility_w = board.get_bit_count(board.get_legal_moves_bits('white'))
-                tmp += [((x, y), (possibility_b - possibility_w) * sign)]
+
+cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
+    global bb, wb, bs, ws
+    cdef:
+        double score = alpha
+        unsigned int int_color_next = 1, i, best = 64
+    color = 'white'
+    scores = {}
+    # 手番
+    if int_color:
+        int_color_next = <unsigned int>0
+        color = 'black'
+    # 各手のスコア取得
+    best_move = None
+    for move in moves:
+        board.put_disc(color, *move)
+        if timer:
+            if measure:  # タイマーあり:メジャーあり
+                score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
                 board.undo()
-            mask >>= 1
-
-    next_moves = [i[0] for i in sorted(tmp, reverse=True, key=lambda x:x[1])]
-
-    # NegaScout法
-    cdef:
-        unsigned int index = 0
-    tmp, null_window = None, beta
-    for move in next_moves:
-        if alpha < beta:
-            board.put_disc(color, *move)
-            tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid=pid)
+            else:        # タイマーあり:メジャーなし
+                score = -_get_score_timer(_get_score_timer, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
+                board.undo()
+            scores[move] = score
+            if Timer.is_timeout(pid):  # タイムアウト判定
+                best_move = move if best_move is None else best_move
+                break
+        elif measure:    # タイマーなし:メジャーあり
+            score = -_get_score_measure(_get_score_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
             board.undo()
-
-            if alpha < tmp:
-                if tmp <= null_window and index:
-                    board.put_disc(color, *move)
-                    alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid=pid)
-                    board.undo()
-
-                    if Timer.is_timeout(pid):
-                        return alpha
-                else:
-                    alpha = tmp
-
-            null_window = alpha + 1
-        else:
-            break
-
-        index += <unsigned int>1
-
-    return alpha
+            scores[move] = score
+        else:            # タイマーなし:メジャーなし
+            score = -_get_score(_get_score, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
+            board.undo()
+            scores[move] = score
+        if score > alpha:  # 最善手を更新
+            alpha = score
+            best_move = move
+    return best_move, scores
 
 
-cdef _get_score_measure(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
+cdef inline double _get_score_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
     """_get_score_measure
     """
     measure(pid)
+    return _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid)
 
-    return _get_score(func, negascout, color, board, alpha, beta, depth, pid)
 
-
-cdef _get_score_timer(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
+cdef inline double _get_score_timer(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
     """_get_score_timer
     """
     cdef:
         signed int timeout
     timeout = timer(pid)
+    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid)
 
-    return timeout if timeout else _get_score(func, negascout, color, board, alpha, beta, depth, pid)
 
-
-cdef _get_score_measure_timer(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
-    """_get_score_measure_timer
+cdef inline double _get_score_timer_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+    """_get_score_timer_measure
     """
     cdef:
         signed int timeout
     measure(pid)
     timeout = timer(pid)
-
-    return timeout if timeout else _get_score(func, negascout, color, board, alpha, beta, depth, pid)
-
-
-cdef double _get_score_measure_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_get_score_measure_size8_64bit
-    """
-    measure(pid)
-
-    return _get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
+    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid)
 
 
-cdef double _get_score_timer_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_get_score_timer_size8_64bit
-    """
-    cdef:
-        signed int timeout
-    timeout = timer(pid)
-
-    return timeout if timeout else _get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
-
-
-cdef double _get_score_measure_timer_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_get_score_measure_timer_size8_64bit
-    """
-    cdef:
-        signed int timeout
-    measure(pid)
-    timeout = timer(pid)
-
-    return timeout if timeout else _get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
-
-
-cdef inline measure(pid):
+cdef inline void measure(str pid):
     """measure
     """
     if pid:
@@ -180,19 +114,18 @@ cdef inline measure(pid):
         Measure.count[pid] += 1
 
 
-cdef inline signed int timer(pid):
+cdef inline signed int timer(str pid):
     """timer
     """
     if pid:
         if time.time() > Timer.deadline[pid]:
             Timer.timeout_flag[pid] = True  # タイムアウト発生
             return Timer.timeout_value[pid]
-
     return <signed int>0
 
 
-cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_get_score_size8_64bit
+cdef double _get_score(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+    """_get_score
     """
     cdef:
         double score, tmp, null_window
@@ -200,6 +133,7 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
         unsigned int is_game_end, color_num, x, y, i, count, index = 0
         unsigned int next_moves_x[64]
         unsigned int next_moves_y[64]
+        unsigned int int_color_next
         signed int sign
         signed int possibilities[64]
 
@@ -210,23 +144,23 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
     legal_moves_w_bits = _get_legal_moves_bits_size8_64bit(0, b, w)
     is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
 
-    if color == 'black':
-        color_num = <unsigned int>1
+    if int_color:
         sign = <signed int>1
         legal_moves_bits = legal_moves_b_bits
-        next_color = 'white'
+        str_color = 'black'
+        int_color_next = 0
     else:
-        color_num = <unsigned int>0
         sign = <signed int>-1
         legal_moves_bits = legal_moves_w_bits
-        next_color = 'black'
+        str_color = 'white'
+        int_color_next = 1
 
     if is_game_end or depth == <unsigned int>0:
-        return negascout.evaluator.evaluate(color=color, board=board, possibility_b=_get_bit_count_size8_64bit(legal_moves_b_bits), possibility_w=_get_bit_count_size8_64bit(legal_moves_w_bits)) * sign  # noqa: E501
+        return evaluator.evaluate(str_color, board, _get_bit_count_size8_64bit(legal_moves_b_bits), _get_bit_count_size8_64bit(legal_moves_w_bits)) * sign  # noqa: E501
 
     # パスの場合
     if not legal_moves_bits:
-        return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid)
+        return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid)
 
     # 着手可能数に応じて手を並び替え
     count = 0
@@ -236,7 +170,7 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
             if legal_moves_bits & mask:
                 next_moves_x[count] = x
                 next_moves_y[count] = y
-                possibilities[count] = _get_possibility_size8_64bit(board, color_num, x, y, sign)
+                possibilities[count] = _get_possibility_size8_64bit(board, int_color, x, y, sign)
                 count += 1
             mask >>= 1
 
@@ -246,14 +180,14 @@ cdef double _get_score_size8_64bit(func, negascout, color, board, double alpha, 
     null_window = beta
     for i in range(count):
         if alpha < beta:
-            _put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
-            tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
+            _put_disc_size8_64bit(board, int_color, next_moves_x[i], next_moves_y[i])
+            tmp = -func(func, int_color_next, board, -null_window, -alpha, depth-1, evaluator, pid)
             _undo(board)
 
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
-                    alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
+                    _put_disc_size8_64bit(board, int_color, next_moves_x[i], next_moves_y[i])
+                    alpha = -func(func, int_color_next, board, -beta, -tmp, depth-1, evaluator, pid)
                     _undo(board)
 
                     if Timer.is_timeout(pid):

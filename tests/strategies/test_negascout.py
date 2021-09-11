@@ -183,7 +183,7 @@ class TestNegaScout(unittest.TestCase):
         negascout.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
-        print('(7000)', Measure.count[pid])
+        print('(9300)', Measure.count[pid])
 
     def test_negascout_force_import_error(self):
         import os
@@ -195,6 +195,7 @@ class TestNegaScout(unittest.TestCase):
         os.environ['FORCE_NEGASCOUTMETHODS_IMPORT_ERROR'] = 'RAISE'
         importlib.reload(reversi.strategies.NegaScoutMethods)
         self.assertTrue(reversi.strategies.NegaScoutMethods.SLOW_MODE)
+        self.assertTrue(reversi.strategies.NegaScoutMethods.NEGASCOUT_SIZE8_64BIT_ERROR)
         # -------------------------------
 
         # measure
@@ -281,4 +282,5 @@ class TestNegaScout(unittest.TestCase):
         del os.environ['FORCE_NEGASCOUTMETHODS_IMPORT_ERROR']
         importlib.reload(reversi.strategies.NegaScoutMethods)
         self.assertFalse(reversi.strategies.NegaScoutMethods.SLOW_MODE)
+        self.assertFalse(reversi.strategies.NegaScoutMethods.NEGASCOUT_SIZE8_64BIT_ERROR)
         # -------------------------------
