@@ -6,7 +6,7 @@ import sys
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.coordinator import Evaluator_N_Fast
 from reversi.strategies.alphabeta import _AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta
-# import reversi.strategies.EndGameMethods as EndGameMethods
+import reversi.strategies.EndGameMethods as EndGameMethods
 
 
 MAXSIZE64 = 2**63 - 1
@@ -31,9 +31,8 @@ class _EndGame_(AbstractStrategy):
         """
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
         if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR:
-            # return EndGameMethods.next_move(color, board, self.depth, pid, self.timer, self.measure)
-            pass
-        return self.alphabeta_n(color, board)
+            return EndGameMethods.next_move(color, board, self._MIN, self._MAX, self.depth, self.evaluator, pid, self.timer, self.measure)
+        return self.alphabeta_n.next_move(color, board)
 
 
 class _EndGame(_EndGame_):

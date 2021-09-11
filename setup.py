@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='reversi',
-    version='0.0.25',
+    version='0.0.26',
     license='MIT License',
     install_requires=[
         'cython',
@@ -22,6 +22,7 @@ setup(
         'reversi.strategies.TableMethods',
         'reversi.strategies.AlphaBetaMethods',
         'reversi.strategies.NegaScoutMethods',
+        'reversi.strategies.EndGameMethods',
         'reversi.genetic_algorithm',
         'reversi.examples',
         'reversi.examples.extra',
