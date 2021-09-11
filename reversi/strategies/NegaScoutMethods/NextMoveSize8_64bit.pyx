@@ -8,9 +8,6 @@ from reversi.strategies.common import Timer, Measure
 
 
 cdef:
-    unsigned long long[64] legal_moves_bit_list
-    unsigned int[64] legal_moves_x
-    unsigned int[64] legal_moves_y
     unsigned long long bb
     unsigned long long wb
     unsigned long long fd
@@ -36,7 +33,6 @@ def get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer
 
 
 cdef inline tuple _next_move(str color, board, signed int param_min, signed int param_max, int depth, evaluator, str pid, int timer, int measure):
-    global legal_moves_bit_list, legal_moves_x, legal_moves_y
     cdef:
         double alpha = param_min, beta = param_max
         unsigned int int_color = 0
@@ -59,15 +55,12 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
     global bb, wb, bs, ws
     cdef:
         double score = alpha
-        unsigned int int_color_next = 1, i, best = 64
+        unsigned int int_color_next = 1, board_bs, board_ws
         unsigned long long board_bb, board_wb
-        unsigned int board_bs, board_ws
-    color = 'white'
     scores = {}
     # 手番
     if int_color:
         int_color_next = <unsigned int>0
-        color = 'black'
     # ボード情報取得
     bb, wb = board.get_bitboard_info()
     bs = board._black_score
@@ -164,27 +157,26 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
-        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
-        unsigned int is_game_end, color_num, x, y, i, count, index = 0
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask = 0x8000000000000000
+        unsigned int i, is_game_end = 0, int_color_next = 1, count = 0, index = 0
+        signed int sign = -1
         unsigned long long[64] next_moves_list
-        unsigned int int_color_next
-        signed int sign
         signed int[64] possibilities
-    # ゲーム終了 or 最大深さに到達
-    legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
-    legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
-    is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
-    if int_color:
-        sign = <signed int>1
-        legal_moves_bits = legal_moves_b_bits
-        str_color = 'black'
-        int_color_next = 0
-    else:
-        sign = <signed int>-1
-        legal_moves_bits = legal_moves_w_bits
-        str_color = 'white'
-        int_color_next = 1
-    if is_game_end or depth == <unsigned int>0:
+    legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
+    # 前回パス and 打てる場所なし の場合ゲーム終了
+    if pas and not legal_moves_bits:
+        is_game_end = <unsigned int>1
+    # 最大深さに到達 or ゲーム終了
+    if not depth or is_game_end:
+        if int_color:
+            legal_moves_b_bits = legal_moves_bits
+            legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
+            sign = <signed int>1
+            str_color = 'black'
+        else:
+            legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
+            legal_moves_w_bits = legal_moves_bits
+            str_color = 'white'
         board._black_bitboard = bb
         board._white_bitboard = wb
         board._black_score = bs
@@ -194,19 +186,20 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
         for i in range(tail):
             board.prev += [(pbb[i], pwb[i], pbs[i], pws[i])]
         return evaluator.evaluate(str_color, board, _get_bit_count(legal_moves_b_bits), _get_bit_count(legal_moves_w_bits)) * sign
+    # 次の手番
+    if int_color:
+        sign = <signed int>1
+        int_color_next = <unsigned int>0
     # パスの場合
     if not legal_moves_bits:
         return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t, <unsigned int>1)
     # 着手可能数に応じて手を並び替え
-    count = 0
-    mask = 1 << 63
-    for y in range(8):
-        for x in range(8):
-            if legal_moves_bits & mask:
-                next_moves_list[count] = mask
-                possibilities[count] = _get_possibility(int_color, bb, wb, mask, sign)
-                count += 1
-            mask >>= 1
+    for _ in range(64):
+        if legal_moves_bits & mask:
+            next_moves_list[count] = mask
+            possibilities[count] = _get_possibility(int_color, bb, wb, mask, sign)
+            count += 1
+        mask >>= 1
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
     # 次の手の探索
     null_window = beta
