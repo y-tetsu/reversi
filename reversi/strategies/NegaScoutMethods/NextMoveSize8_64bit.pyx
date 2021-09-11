@@ -7,6 +7,22 @@ import time
 from reversi.strategies.common import Timer, Measure
 
 
+cdef:
+    unsigned long long[64] legal_moves_bit_list
+    unsigned int[64] legal_moves_x
+    unsigned int[64] legal_moves_y
+    unsigned long long bb
+    unsigned long long wb
+    unsigned long long fd
+    unsigned long long[64] pbb
+    unsigned long long[64] pwb
+    unsigned int bs
+    unsigned int ws
+    unsigned int[64] pbs
+    unsigned int[64] pws
+    unsigned int tail
+
+
 def next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
     """next_move
     """
@@ -44,38 +60,56 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
     cdef:
         double score = alpha
         unsigned int int_color_next = 1, i, best = 64
+        unsigned long long board_bb, board_wb
+        unsigned int board_bs, board_ws
     color = 'white'
     scores = {}
     # 手番
     if int_color:
         int_color_next = <unsigned int>0
         color = 'black'
+    # ボード情報取得
+    bb, wb = board.get_bitboard_info()
+    bs = board._black_score
+    ws = board._white_score
+    # ボード情報退避
+    board_bb = bb
+    board_wb = wb
+    board_bs = bs
+    board_ws = ws
+    board_prev = [(item[0], item[1], item[2], item[3]) for item in board.prev]
     # 各手のスコア取得
     best_move = None
     for move in moves:
-        board.put_disc(color, *move)
+        _put_disc(int_color, <unsigned long long>1 << (63-(move[1]*8+move[0])))
         if timer:
             if measure:  # タイマーあり:メジャーあり
                 score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
-                board.undo()
+                _undo()
             else:        # タイマーあり:メジャーなし
                 score = -_get_score_timer(_get_score_timer, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
-                board.undo()
+                _undo()
             scores[move] = score
             if Timer.is_timeout(pid):  # タイムアウト判定
                 best_move = move if best_move is None else best_move
                 break
         elif measure:    # タイマーなし:メジャーあり
             score = -_get_score_measure(_get_score_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
-            board.undo()
+            _undo()
             scores[move] = score
         else:            # タイマーなし:メジャーなし
             score = -_get_score(_get_score, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
-            board.undo()
+            _undo()
             scores[move] = score
         if score > alpha:  # 最善手を更新
             alpha = score
             best_move = move
+    # ボードを元に戻す
+    board._black_bitboard = board_bb
+    board._white_bitboard = board_wb
+    board._black_score = board_bs
+    board._white_score = board_ws
+    board.prev = [(item[0], item[1], item[2], item[3]) for item in board_prev]
     return best_move, scores
 
 
@@ -127,23 +161,20 @@ cdef inline signed int timer(str pid):
 cdef double _get_score(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
     """_get_score
     """
+    global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
-        unsigned long long b, w, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask, move
         unsigned int is_game_end, color_num, x, y, i, count, index = 0
         unsigned int next_moves_x[64]
         unsigned int next_moves_y[64]
         unsigned int int_color_next
         signed int sign
         signed int possibilities[64]
-
     # ゲーム終了 or 最大深さに到達
-    b = board._black_bitboard
-    w = board._white_bitboard
-    legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, b, w)
-    legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, b, w)
+    legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
+    legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
     is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
-
     if int_color:
         sign = <signed int>1
         legal_moves_bits = legal_moves_b_bits
@@ -154,14 +185,19 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
         legal_moves_bits = legal_moves_w_bits
         str_color = 'white'
         int_color_next = 1
-
     if is_game_end or depth == <unsigned int>0:
+        board._black_bitboard = bb
+        board._white_bitboard = wb
+        board._black_score = bs
+        board._white_score = ws
+        board._flippable_discs_num = fd
+        board.prev = []
+        for i in range(tail):
+            board.prev += [(pbb[i], pwb[i], pbs[i], pws[i])]
         return evaluator.evaluate(str_color, board, _get_bit_count(legal_moves_b_bits), _get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
-
     # パスの場合
     if not legal_moves_bits:
         return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid)
-
     # 着手可能数に応じて手を並び替え
     count = 0
     mask = 1 << 63
@@ -170,38 +206,104 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
             if legal_moves_bits & mask:
                 next_moves_x[count] = x
                 next_moves_y[count] = y
-                possibilities[count] = _get_possibility_size8_64bit(board, int_color, x, y, sign)
+                possibilities[count] = _get_possibility(int_color, bb, wb, x, y, sign)
                 count += 1
             mask >>= 1
-
     _sort_moves_by_possibility(count, next_moves_x, next_moves_y, possibilities)
-
     # 次の手の探索
     null_window = beta
     for i in range(count):
         if alpha < beta:
-            _put_disc_size8_64bit(board, int_color, next_moves_x[i], next_moves_y[i])
+            move = <unsigned long long>1 << (63-(next_moves_y[i]*8+next_moves_x[i]))
+            _put_disc(int_color, move)
             tmp = -func(func, int_color_next, board, -null_window, -alpha, depth-1, evaluator, pid)
-            _undo(board)
-
+            _undo()
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _put_disc_size8_64bit(board, int_color, next_moves_x[i], next_moves_y[i])
+                    _put_disc(int_color, move)
                     alpha = -func(func, int_color_next, board, -beta, -tmp, depth-1, evaluator, pid)
-                    _undo(board)
-
+                    _undo()
                     if Timer.is_timeout(pid):
                         return alpha
                 else:
                     alpha = tmp
-
             null_window = alpha + 1
         else:
             return alpha
-
         index += <unsigned int>1
-
     return alpha
+
+
+cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned int x, unsigned int y, signed int sign):
+    """_get_possibility
+    """
+    cdef:
+        unsigned long long move, flippable_discs_num
+        signed int shift_size, possibility_b, possibility_w
+    # 配置位置を整数に変換
+    shift_size = (63-(y*8+x))
+    move = <unsigned long long>1 << shift_size
+    # ひっくり返せる石を取得
+    flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
+    # 自分の石を置いて相手の石をひっくり返す
+    if int_color:
+        b ^= move | flippable_discs_num
+        w ^= flippable_discs_num
+    else:
+        w ^= move | flippable_discs_num
+        b ^= flippable_discs_num
+    possibility_b = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>1, b, w))
+    possibility_w = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>0, b, w))
+    return (possibility_b - possibility_w) * sign
+
+
+cdef inline _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+    """_sort_moves_by_possibility
+    """
+    cdef:
+        unsigned int len1, len2, i
+        unsigned int array_x1[64]
+        unsigned int array_x2[64]
+        unsigned int array_y1[64]
+        unsigned int array_y2[64]
+        signed int array_p1[64]
+        signed int array_p2[64]
+
+    # merge sort
+    if count > 1:
+        len1 = <unsigned int>(count / 2)
+        len2 = <unsigned int>(count - len1)
+        for i in range(len1):
+            array_x1[i] = next_moves_x[i]
+            array_y1[i] = next_moves_y[i]
+            array_p1[i] = possibilities[i]
+        for i in range(len2):
+            array_x2[i] = next_moves_x[len1+i]
+            array_y2[i] = next_moves_y[len1+i]
+            array_p2[i] = possibilities[len1+i]
+        _sort_moves_by_possibility(len1, array_x1, array_y1, array_p1)
+        _sort_moves_by_possibility(len2, array_x2, array_y2, array_p2)
+        _merge(len1, len2, array_x1, array_y1, array_p1, array_x2, array_y2, array_p2, next_moves_x, next_moves_y, possibilities)
+
+
+cdef inline _merge(unsigned int len1, unsigned int len2, unsigned int *array_x1, unsigned int *array_y1, signed int *array_p1, unsigned int *array_x2, unsigned int *array_y2, signed int *array_p2, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+    """_merge
+    """
+    cdef:
+        unsigned int i = 0, j = 0
+
+    while i < len1 or j < len2:
+        # descending sort
+        if j >= len2 or (i < len1 and array_p1[i] >= array_p2[j]):
+            next_moves_x[i+j] = array_x1[i]
+            next_moves_y[i+j] = array_y1[i]
+            possibilities[i+j] = array_p1[i]
+            i += 1
+        else:
+            next_moves_x[i+j] = array_x2[j]
+            next_moves_y[i+j] = array_y2[j]
+            possibilities[i+j] = array_p2[j]
+            j += 1
 
 
 cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w):
@@ -260,127 +362,32 @@ cdef inline unsigned long long _get_bit_count(unsigned long long bits):
     return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
 
 
-cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y):
-    """_put_disc_size8_64bit
+cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
+    """_put_disc
     """
+    global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        unsigned long long move, black_bitboard, white_bitboard, flippable_discs_num, flippable_discs_count
-        unsigned int black_score, white_score
-        signed int shift_size
-
-    # 配置位置を整数に変換
-    shift_size = (63-(y*8+x))
-    move = <unsigned long long>1 << shift_size
-
+        unsigned long long count
     # ひっくり返せる石を取得
-    black_bitboard = board._black_bitboard
-    white_bitboard = board._white_bitboard
-    black_score = board._black_score
-    white_score = board._white_score
-    flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, move)
-    flippable_discs_count = _get_bit_count(flippable_discs_num)
-
+    fd = _get_flippable_discs_num(int_color, bb, wb, move)
+    count = _get_bit_count(fd)
     # 打つ前の状態を格納
-    board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
-
+    pbb[tail] = bb
+    pwb[tail] = wb
+    pbs[tail] = bs
+    pws[tail] = ws
+    tail += 1
     # 自分の石を置いて相手の石をひっくり返す
-    if color:
-        black_bitboard ^= move | flippable_discs_num
-        white_bitboard ^= flippable_discs_num
-        black_score += <unsigned int>1 + <unsigned int>flippable_discs_count
-        white_score -= <unsigned int>flippable_discs_count
+    if int_color:
+        bb ^= move | fd
+        wb ^= fd
+        bs += <unsigned int>1 + <unsigned int>count
+        ws -= <unsigned int>count
     else:
-        white_bitboard ^= move | flippable_discs_num
-        black_bitboard ^= flippable_discs_num
-        black_score -= <unsigned int>flippable_discs_count
-        white_score += <unsigned int>1 + <unsigned int>flippable_discs_count
-
-    board._black_bitboard = black_bitboard
-    board._white_bitboard = white_bitboard
-    board._black_score = black_score
-    board._white_score = white_score
-    board._flippable_discs_num = flippable_discs_num
-
-    return flippable_discs_num
-
-
-cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y, signed int sign):
-    """_get_possibility_size8_64bit
-    """
-    cdef:
-        unsigned long long move, black_bitboard, white_bitboard, flippable_discs_num
-        signed int shift_size, possibility_b, possibility_w
-
-    # 配置位置を整数に変換
-    shift_size = (63-(y*8+x))
-    move = <unsigned long long>1 << shift_size
-
-    # ひっくり返せる石を取得
-    black_bitboard = board._black_bitboard
-    white_bitboard = board._white_bitboard
-    flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, move)
-
-    # 自分の石を置いて相手の石をひっくり返す
-    if color:
-        black_bitboard ^= move | flippable_discs_num
-        white_bitboard ^= flippable_discs_num
-    else:
-        white_bitboard ^= move | flippable_discs_num
-        black_bitboard ^= flippable_discs_num
-
-    possibility_b = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>1, black_bitboard, white_bitboard))
-    possibility_w = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>0, black_bitboard, white_bitboard))
-
-    return (possibility_b - possibility_w) * sign
-
-
-cdef inline _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
-    """_sort_moves_by_possibility
-    """
-    cdef:
-        unsigned int len1, len2, i
-        unsigned int array_x1[64]
-        unsigned int array_x2[64]
-        unsigned int array_y1[64]
-        unsigned int array_y2[64]
-        signed int array_p1[64]
-        signed int array_p2[64]
-
-    # merge sort
-    if count > 1:
-        len1 = <unsigned int>(count / 2)
-        len2 = <unsigned int>(count - len1)
-        for i in range(len1):
-            array_x1[i] = next_moves_x[i]
-            array_y1[i] = next_moves_y[i]
-            array_p1[i] = possibilities[i]
-        for i in range(len2):
-            array_x2[i] = next_moves_x[len1+i]
-            array_y2[i] = next_moves_y[len1+i]
-            array_p2[i] = possibilities[len1+i]
-        _sort_moves_by_possibility(len1, array_x1, array_y1, array_p1)
-        _sort_moves_by_possibility(len2, array_x2, array_y2, array_p2)
-        _merge(len1, len2, array_x1, array_y1, array_p1, array_x2, array_y2, array_p2, next_moves_x, next_moves_y, possibilities)
-
-
-cdef inline _merge(unsigned int len1, unsigned int len2, unsigned int *array_x1, unsigned int *array_y1, signed int *array_p1, unsigned int *array_x2, unsigned int *array_y2, signed int *array_p2, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
-    """_merge
-    """
-    cdef:
-        unsigned int i = 0, j = 0
-
-    while i < len1 or j < len2:
-        # descending sort
-        if j >= len2 or (i < len1 and array_p1[i] >= array_p2[j]):
-            next_moves_x[i+j] = array_x1[i]
-            next_moves_y[i+j] = array_y1[i]
-            possibilities[i+j] = array_p1[i]
-            i += 1
-        else:
-            next_moves_x[i+j] = array_x2[j]
-            next_moves_y[i+j] = array_y2[j]
-            possibilities[i+j] = array_p2[j]
-            j += 1
+        wb ^= move | fd
+        bb ^= fd
+        bs -= <unsigned int>count
+        ws += <unsigned int>1 + <unsigned int>count
 
 
 cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
@@ -445,7 +452,12 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
     return flippable_discs_num
 
 
-cdef inline _undo(board):
+cdef inline void _undo():
     """_undo
     """
-    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
+    global bb, wb, bs, ws, pbb, pwb, pbs, pws, tail
+    bb = pbb[tail-1]
+    wb = pwb[tail-1]
+    bs = pbs[tail-1]
+    ws = pws[tail-1]
+    tail -= 1
