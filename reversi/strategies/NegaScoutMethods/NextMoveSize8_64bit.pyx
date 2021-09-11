@@ -164,13 +164,12 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
-        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask, move
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
         unsigned int is_game_end, color_num, x, y, i, count, index = 0
-        unsigned int next_moves_x[64]
-        unsigned int next_moves_y[64]
+        unsigned long long[64] next_moves_list
         unsigned int int_color_next
         signed int sign
-        signed int possibilities[64]
+        signed int[64] possibilities
     # ゲーム終了 or 最大深さに到達
     legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
     legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
@@ -204,23 +203,21 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
     for y in range(8):
         for x in range(8):
             if legal_moves_bits & mask:
-                next_moves_x[count] = x
-                next_moves_y[count] = y
+                next_moves_list[count] = mask
                 possibilities[count] = _get_possibility(int_color, bb, wb, mask, sign)
                 count += 1
             mask >>= 1
-    _sort_moves_by_possibility(count, next_moves_x, next_moves_y, possibilities)
+    _sort_moves_by_possibility(count, next_moves_list, possibilities)
     # 次の手の探索
     null_window = beta
     for i in range(count):
         if alpha < beta:
-            move = <unsigned long long>1 << (63-(next_moves_y[i]*8+next_moves_x[i]))
-            _put_disc(int_color, move)
+            _put_disc(int_color, next_moves_list[i])
             tmp = -func(func, int_color_next, board, -null_window, -alpha, depth-1, evaluator, pid)
             _undo()
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _put_disc(int_color, move)
+                    _put_disc(int_color, next_moves_list[i])
                     alpha = -func(func, int_color_next, board, -beta, -tmp, depth-1, evaluator, pid)
                     _undo()
                     if Timer.is_timeout(pid):
@@ -254,51 +251,41 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
     return (pb - pw) * sign
 
 
-cdef inline _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
     """_sort_moves_by_possibility
     """
     cdef:
         unsigned int len1, len2, i
-        unsigned int array_x1[64]
-        unsigned int array_x2[64]
-        unsigned int array_y1[64]
-        unsigned int array_y2[64]
-        signed int array_p1[64]
-        signed int array_p2[64]
-
-    # merge sort
+        unsigned long long[64] array_move1
+        unsigned long long[64] array_move2
+        signed int[64] array_p1
+        signed int[64] array_p2
     if count > 1:
         len1 = <unsigned int>(count / 2)
         len2 = <unsigned int>(count - len1)
         for i in range(len1):
-            array_x1[i] = next_moves_x[i]
-            array_y1[i] = next_moves_y[i]
+            array_move1[i] = next_moves_list[i]
             array_p1[i] = possibilities[i]
         for i in range(len2):
-            array_x2[i] = next_moves_x[len1+i]
-            array_y2[i] = next_moves_y[len1+i]
+            array_move2[i] = next_moves_list[len1+i]
             array_p2[i] = possibilities[len1+i]
-        _sort_moves_by_possibility(len1, array_x1, array_y1, array_p1)
-        _sort_moves_by_possibility(len2, array_x2, array_y2, array_p2)
-        _merge(len1, len2, array_x1, array_y1, array_p1, array_x2, array_y2, array_p2, next_moves_x, next_moves_y, possibilities)
+        _sort_moves_by_possibility(len1, array_move1, array_p1)
+        _sort_moves_by_possibility(len2, array_move2, array_p2)
+        _merge(len1, len2, array_move1, array_p1, array_move2, array_p2, next_moves_list, possibilities)
 
 
-cdef inline _merge(unsigned int len1, unsigned int len2, unsigned int *array_x1, unsigned int *array_y1, signed int *array_p1, unsigned int *array_x2, unsigned int *array_y2, signed int *array_p2, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
+cdef inline void _merge(unsigned int len1, unsigned int len2, unsigned long long[64] array_move1, signed int[64] array_p1, unsigned long long[64] array_move2, signed int[64] array_p2, unsigned long long[64] next_moves_list, signed int[64] possibilities):
     """_merge
     """
     cdef:
         unsigned int i = 0, j = 0
-
     while i < len1 or j < len2:
-        # descending sort
         if j >= len2 or (i < len1 and array_p1[i] >= array_p2[j]):
-            next_moves_x[i+j] = array_x1[i]
-            next_moves_y[i+j] = array_y1[i]
+            next_moves_list[i+j] = array_move1[i]
             possibilities[i+j] = array_p1[i]
             i += 1
         else:
-            next_moves_x[i+j] = array_x2[j]
-            next_moves_y[i+j] = array_y2[j]
+            next_moves_list[i+j] = array_move2[j]
             possibilities[i+j] = array_p2[j]
             j += 1
 
