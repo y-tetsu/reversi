@@ -275,20 +275,20 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, 
     """_put_disc_size8_64bit
     """
     cdef:
-        unsigned long long put, black_bitboard, white_bitboard, flippable_discs_num, flippable_discs_count
+        unsigned long long move, black_bitboard, white_bitboard, flippable_discs_num, flippable_discs_count
         unsigned int black_score, white_score
         signed int shift_size
 
     # 配置位置を整数に変換
     shift_size = (63-(y*8+x))
-    put = <unsigned long long>1 << shift_size
+    move = <unsigned long long>1 << shift_size
 
     # ひっくり返せる石を取得
     black_bitboard = board._black_bitboard
     white_bitboard = board._white_bitboard
     black_score = board._black_score
     white_score = board._white_score
-    flippable_discs_num = _get_flippable_discs_num_size8_64bit(color, black_bitboard, white_bitboard, shift_size)
+    flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, move)
     flippable_discs_count = _get_bit_count_size8_64bit(flippable_discs_num)
 
     # 打つ前の状態を格納
@@ -296,12 +296,12 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, 
 
     # 自分の石を置いて相手の石をひっくり返す
     if color:
-        black_bitboard ^= put | flippable_discs_num
+        black_bitboard ^= move | flippable_discs_num
         white_bitboard ^= flippable_discs_num
         black_score += <unsigned int>1 + <unsigned int>flippable_discs_count
         white_score -= <unsigned int>flippable_discs_count
     else:
-        white_bitboard ^= put | flippable_discs_num
+        white_bitboard ^= move | flippable_discs_num
         black_bitboard ^= flippable_discs_num
         black_score -= <unsigned int>flippable_discs_count
         white_score += <unsigned int>1 + <unsigned int>flippable_discs_count
@@ -315,99 +315,28 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, 
     return flippable_discs_num
 
 
-cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(unsigned int color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int shift_size):
-    """_get_flippable_discs_size8_64bit
-    """
-    cdef:
-        unsigned int direction1, direction2
-        unsigned long long buff, next_put
-        unsigned long long move = 0
-        unsigned long long player, opponent, flippable_discs_num = 0
-
-    if color:
-        player = black_bitboard
-        opponent = white_bitboard
-    else:
-        player = white_bitboard
-        opponent = black_bitboard
-
-    move = <unsigned long long>1 << shift_size
-
-    for direction1 in range(8):
-        buff = 0
-        next_put = _get_next_put_size8_64bit(move, direction1)
-
-        # get discs of consecutive opponents
-        for direction2 in range(8):
-            if next_put & opponent:
-                buff |= next_put
-                next_put = _get_next_put_size8_64bit(next_put, direction1)
-            else:
-                break
-
-        # store result if surrounded by own disc
-        if next_put & player:
-            flippable_discs_num |= buff
-
-    return flippable_discs_num
-
-
-cdef inline unsigned long long _get_next_put_size8_64bit(unsigned long long put, unsigned int direction):
-    """_get_next_put_size8_64bit
-    """
-    cdef:
-        unsigned long long next_put
-
-    if direction == 0:
-        next_put = <unsigned long long>0xFFFFFFFFFFFFFF00 & (put << <unsigned int>8)  # top
-    elif direction == 1:
-        next_put = <unsigned long long>0x7F7F7F7F7F7F7F00 & (put << <unsigned int>7)  # right-top
-    elif direction == 2:
-        next_put = <unsigned long long>0x7F7F7F7F7F7F7F7F & (put >> <unsigned int>1)  # right
-    elif direction == 3:
-        next_put = <unsigned long long>0x007F7F7F7F7F7F7F & (put >> <unsigned int>9)  # right-bottom
-    elif direction == 4:
-        next_put = <unsigned long long>0x00FFFFFFFFFFFFFF & (put >> <unsigned int>8)  # bottom
-    elif direction == 5:
-        next_put = <unsigned long long>0x00FEFEFEFEFEFEFE & (put >> <unsigned int>7)  # left-bottom
-    elif direction == 6:
-        next_put = <unsigned long long>0xFEFEFEFEFEFEFEFE & (put << <unsigned int>1)  # left
-    elif direction == 7:
-        next_put = <unsigned long long>0xFEFEFEFEFEFEFE00 & (put << <unsigned int>9)  # left-top
-    else:
-        next_put = <unsigned long long>0                                              # unexpected
-
-    return next_put
-
-
-cdef inline _undo(board):
-    """_undo
-    """
-    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
-
-
 cdef inline signed int _get_possibility_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y, signed int sign):
     """_get_possibility_size8_64bit
     """
     cdef:
-        unsigned long long put, black_bitboard, white_bitboard, flippable_discs_num
+        unsigned long long move, black_bitboard, white_bitboard, flippable_discs_num
         signed int shift_size, possibility_b, possibility_w
 
     # 配置位置を整数に変換
     shift_size = (63-(y*8+x))
-    put = <unsigned long long>1 << shift_size
+    move = <unsigned long long>1 << shift_size
 
     # ひっくり返せる石を取得
     black_bitboard = board._black_bitboard
     white_bitboard = board._white_bitboard
-    flippable_discs_num = _get_flippable_discs_num_size8_64bit(color, black_bitboard, white_bitboard, shift_size)
+    flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, move)
 
     # 自分の石を置いて相手の石をひっくり返す
     if color:
-        black_bitboard ^= put | flippable_discs_num
+        black_bitboard ^= move | flippable_discs_num
         white_bitboard ^= flippable_discs_num
     else:
-        white_bitboard ^= put | flippable_discs_num
+        white_bitboard ^= move | flippable_discs_num
         black_bitboard ^= flippable_discs_num
 
     possibility_b = <signed int>_get_bit_count_size8_64bit(_get_legal_moves_bits_size8_64bit(1, black_bitboard, white_bitboard))
@@ -463,3 +392,71 @@ cdef inline _merge(unsigned int len1, unsigned int len2, unsigned int *array_x1,
             next_moves_y[i+j] = array_y2[j]
             possibilities[i+j] = array_p2[j]
             j += 1
+
+
+cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
+    """_get_flippable_discs_num
+    """
+    cdef:
+        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
+        unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
+        unsigned long long player = w, opponent = b, flippable_discs_num = 0
+    if int_color:
+        player = b
+        opponent = w
+    t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
+    rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
+    r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
+    rb = <unsigned long long>0x007F7F7F7F7F7F7F & (move >> <unsigned int>9)  # right-bottom
+    b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (move >> <unsigned int>8)  # bottom
+    lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
+    l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
+    lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
+    for _ in range(8):
+        if t_ & opponent:
+            bf_t_ |= t_
+            t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
+        if rt & opponent:
+            bf_rt |= rt
+            rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (rt << <unsigned int>7)
+        if r_ & opponent:
+            bf_r_ |= r_
+            r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)
+        if rb & opponent:
+            bf_rb |= rb
+            rb = <unsigned long long>0x007F7F7F7F7F7F7F & (rb >> <unsigned int>9)
+        if b_ & opponent:
+            bf_b_ |= b_
+            b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)
+        if lb & opponent:
+            bf_lb |= lb
+            lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (lb >> <unsigned int>7)
+        if l_ & opponent:
+            bf_l_ |= l_
+            l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (l_ << <unsigned int>1)
+        if lt & opponent:
+            bf_lt |= lt
+            lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)
+    if t_ & player:
+        flippable_discs_num |= bf_t_
+    if rt & player:
+        flippable_discs_num |= bf_rt
+    if r_ & player:
+        flippable_discs_num |= bf_r_
+    if rb & player:
+        flippable_discs_num |= bf_rb
+    if b_ & player:
+        flippable_discs_num |= bf_b_
+    if lb & player:
+        flippable_discs_num |= bf_lb
+    if l_ & player:
+        flippable_discs_num |= bf_l_
+    if lt & player:
+        flippable_discs_num |= bf_lt
+    return flippable_discs_num
+
+
+cdef inline _undo(board):
+    """_undo
+    """
+    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
