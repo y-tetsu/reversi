@@ -6,6 +6,7 @@ from ..strategies.montecarlo import MonteCarlo
 from ..strategies.minmax import _MinMax_, MinMax
 from ..strategies.negamax import _NegaMax_, _NegaMax, NegaMax_, NegaMax
 from ..strategies.alphabeta import _AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta, _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN  # noqa: E501
+from ..strategies.endgame import _EndGame_, _EndGame, EndGame_, EndGame
 from ..strategies.negascout import _NegaScout_, _NegaScout, NegaScout_, NegaScout
 from ..strategies.switch import _Switch_, Switch
 from ..strategies.joseki import _Joseki_, _Usagi_, Usagi, _Tora_, Tora, _Ushi_, Ushi, _Nezumi_, Nezumi, _Neko_, Neko, _Hitsuji_, Hitsuji
@@ -99,6 +100,10 @@ __all__ = [
     'AlphaBeta2_TPWE',
     'AlphaBeta3_TPWE',
     'AlphaBeta4_TPWE',
+    '_EndGame_',
+    '_EndGame',
+    'EndGame_',
+    'EndGame',
     '_NegaScout_',
     '_NegaScout',
     'NegaScout_',
