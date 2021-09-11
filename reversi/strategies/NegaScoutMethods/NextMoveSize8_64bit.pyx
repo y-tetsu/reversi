@@ -206,7 +206,7 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
             if legal_moves_bits & mask:
                 next_moves_x[count] = x
                 next_moves_y[count] = y
-                possibilities[count] = _get_possibility(int_color, bb, wb, x, y, sign)
+                possibilities[count] = _get_possibility(int_color, bb, wb, mask, sign)
                 count += 1
             mask >>= 1
     _sort_moves_by_possibility(count, next_moves_x, next_moves_y, possibilities)
@@ -234,15 +234,12 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
     return alpha
 
 
-cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned int x, unsigned int y, signed int sign):
+cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move, signed int sign):
     """_get_possibility
     """
     cdef:
-        unsigned long long move, flippable_discs_num
-        signed int shift_size, possibility_b, possibility_w
-    # 配置位置を整数に変換
-    shift_size = (63-(y*8+x))
-    move = <unsigned long long>1 << shift_size
+        unsigned long long flippable_discs_num
+        signed int pb, pw
     # ひっくり返せる石を取得
     flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
     # 自分の石を置いて相手の石をひっくり返す
@@ -252,9 +249,9 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
     else:
         w ^= move | flippable_discs_num
         b ^= flippable_discs_num
-    possibility_b = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>1, b, w))
-    possibility_w = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>0, b, w))
-    return (possibility_b - possibility_w) * sign
+    pb = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>1, b, w))
+    pw = <signed int>_get_bit_count(_get_legal_moves_bits(<unsigned int>0, b, w))
+    return (pb - pw) * sign
 
 
 cdef inline _sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
