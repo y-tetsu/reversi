@@ -84,21 +84,21 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
         _put_disc(int_color, <unsigned long long>1 << (63-(move[1]*8+move[0])))
         if timer:
             if measure:  # タイマーあり:メジャーあり
-                score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
+                score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
                 _undo()
             else:        # タイマーあり:メジャーなし
-                score = -_get_score_timer(_get_score_timer, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
+                score = -_get_score_timer(_get_score_timer, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
                 _undo()
             scores[move] = score
             if Timer.is_timeout(pid):  # タイムアウト判定
                 best_move = move if best_move is None else best_move
                 break
         elif measure:    # タイマーなし:メジャーあり
-            score = -_get_score_measure(_get_score_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
+            score = -_get_score_measure(_get_score_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
             _undo()
             scores[move] = score
         else:            # タイマーなし:メジャーなし
-            score = -_get_score(_get_score, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid)
+            score = -_get_score(_get_score, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
             _undo()
             scores[move] = score
         if score > alpha:  # 最善手を更新
@@ -113,30 +113,30 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
     return best_move, scores
 
 
-cdef inline double _get_score_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
     """_get_score_measure
     """
     measure(pid)
-    return _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid)
+    return _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t, pas)
 
 
-cdef inline double _get_score_timer(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score_timer(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
     """_get_score_timer
     """
     cdef:
         signed int timeout
     timeout = timer(pid)
-    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid)
+    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t, pas)
 
 
-cdef inline double _get_score_timer_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score_timer_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
     """_get_score_timer_measure
     """
     cdef:
         signed int timeout
     measure(pid)
     timeout = timer(pid)
-    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid)
+    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t, pas)
 
 
 cdef inline void measure(str pid):
@@ -158,7 +158,7 @@ cdef inline signed int timer(str pid):
     return <signed int>0
 
 
-cdef double _get_score(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid):
+cdef inline double _get_score(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
     """_get_score
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
@@ -193,10 +193,10 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
         board.prev = []
         for i in range(tail):
             board.prev += [(pbb[i], pwb[i], pbs[i], pws[i])]
-        return evaluator.evaluate(str_color, board, _get_bit_count(legal_moves_b_bits), _get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
+        return evaluator.evaluate(str_color, board, _get_bit_count(legal_moves_b_bits), _get_bit_count(legal_moves_w_bits)) * sign
     # パスの場合
     if not legal_moves_bits:
-        return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid)
+        return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t, <unsigned int>1)
     # 着手可能数に応じて手を並び替え
     count = 0
     mask = 1 << 63
@@ -213,15 +213,16 @@ cdef double _get_score(func, unsigned int int_color, board, double alpha, double
     for i in range(count):
         if alpha < beta:
             _put_disc(int_color, next_moves_list[i])
-            tmp = -func(func, int_color_next, board, -null_window, -alpha, depth-1, evaluator, pid)
+            tmp = -func(func, int_color_next, board, -null_window, -alpha, depth-1, evaluator, pid, t, <unsigned int>0)
             _undo()
             if alpha < tmp:
                 if tmp <= null_window and index:
                     _put_disc(int_color, next_moves_list[i])
-                    alpha = -func(func, int_color_next, board, -beta, -tmp, depth-1, evaluator, pid)
+                    alpha = -func(func, int_color_next, board, -beta, -tmp, depth-1, evaluator, pid, t, <unsigned int>0)
                     _undo()
-                    if Timer.is_timeout(pid):
-                        return alpha
+                    if t:
+                        if Timer.is_timeout(pid):
+                            return alpha
                 else:
                     alpha = tmp
             null_window = alpha + 1
