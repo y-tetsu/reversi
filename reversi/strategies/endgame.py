@@ -31,7 +31,7 @@ class _EndGame_(AbstractStrategy):
         """
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
         if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR:
-            return EndGameMethods.next_move(color, board, self._MIN, self._MAX, self.depth, self.evaluator, pid, self.timer, self.measure)
+            return EndGameMethods.next_move(color, board, self.depth, pid, self.timer, self.measure)
         return self.alphabeta_n.next_move(color, board)
 
 
