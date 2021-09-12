@@ -328,8 +328,8 @@ cdef inline void _undo():
     """_undo
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, tail
-    bb = pbb[tail-1]
-    wb = pwb[tail-1]
-    bs = pbs[tail-1]
-    ws = pws[tail-1]
     tail -= 1
+    bb = pbb[tail]
+    wb = pwb[tail]
+    bs = pbs[tail]
+    ws = pws[tail]
