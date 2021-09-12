@@ -65,6 +65,58 @@ class TestEndGame(unittest.TestCase):
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
         print('(180000)', Measure.count[pid])
 
+    def test_endgame_remain_12(self):
+        # Windows10 Celeron 1.6GHz 4.00GB
+        board = BitBoard()
+        endgame = _EndGame(depth=12)
+        key = endgame.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        color = 'black'
+        board._black_bitboard = 0xF07DBF650158381C
+        board._white_bitboard = 0x2009A7EA6C4E0
+        board.update_score()
+        self.assertEqual(endgame.next_move(color, board), (7, 0))
+        print()
+        print(key, 'remain = 12')
+        print(' min :', Measure.elp_time[key]['min'], '(s)')
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+        print('(456890 / 0.50s)', Measure.count[key])
+
+    #def test_endgame_remain_14(self):
+    #    board = BitBoard()
+    #    endgame = _EndGame(depth=14)
+    #    key = endgame.__class__.__name__ + str(os.getpid())
+    #    Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+    #    color = 'black'
+    #    board._black_bitboard = 0xE07DBF650158381C
+    #    board._white_bitboard = 0x0009A7EA6C4E0
+    #    board.update_score()
+    #    self.assertEqual(endgame.next_move(color, board), (7, 5))
+    #    print()
+    #    print(key, 'remain = 14')
+    #    print(' min :', Measure.elp_time[key]['min'], '(s)')
+    #    print(' max :', Measure.elp_time[key]['max'], '(s)')
+    #    print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+    #    print('(4499330 / 5.73s)', Measure.count[key])
+
+    #def test_endgame_remain_16(self):
+    #    board = BitBoard()
+    #    endgame = _EndGame(depth=16)
+    #    key = endgame.__class__.__name__ + str(os.getpid())
+    #    Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+    #    color = 'black'
+    #    board._black_bitboard = 0xC07DBF650158381C
+    #    board._white_bitboard = 0x0009A7CA6C4E0
+    #    board.update_score()
+    #    self.assertEqual(endgame.next_move(color, board), (6, 6))
+    #    print()
+    #    print(key, 'remain = 16')
+    #    print(' min :', Measure.elp_time[key]['min'], '(s)')
+    #    print(' max :', Measure.elp_time[key]['max'], '(s)')
+    #    print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+    #    print('(53034845 / 63.50s)', Measure.count[key])
+
     def test_endgame_force_import_error(self):
         import os
         import importlib
