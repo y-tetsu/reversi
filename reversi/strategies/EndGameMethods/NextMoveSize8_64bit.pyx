@@ -142,7 +142,7 @@ cdef inline double _get_score(func, unsigned int int_color, double alpha, double
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score
-        unsigned long long legal_moves_bits, mask = 0x8000000000000000
+        unsigned long long legal_moves_bits, mask = 0x8000000000000000, count
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y
         signed int sign = -1
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
@@ -160,6 +160,13 @@ cdef inline double _get_score(func, unsigned int int_color, double alpha, double
     # パスの場合
     if not legal_moves_bits:
         return -func(func, int_color_next, -beta, -alpha, depth, pid, t, <unsigned int>1)
+    # 最終1手
+    if bs + ws == <unsigned int>63:
+        count = _get_bit_count(_get_flippable_discs_num(int_color, bb, wb, legal_moves_bits))
+        if int_color:
+            return <double>(<double>bs - <double>ws + <double>(1 + count*2))
+        else:
+            return <double>-(<double>bs - <double>ws - <double>(1 + count*2))
     # 評価値を算出
     for _ in range(64):
         if legal_moves_bits & mask:
