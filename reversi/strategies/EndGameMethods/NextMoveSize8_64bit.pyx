@@ -8,6 +8,7 @@ from reversi.strategies.common import Timer, Measure
 
 
 cdef:
+    unsigned long long measure_count
     unsigned long long bb
     unsigned long long wb
     unsigned long long fd
@@ -18,6 +19,7 @@ cdef:
     unsigned int[64] pbs
     unsigned int[64] pws
     unsigned int tail
+    double timer_deadline
 
 
 def next_move(color, board, depth, pid, timer, measure):
@@ -27,7 +29,7 @@ def next_move(color, board, depth, pid, timer, measure):
 
 
 cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, int measure):
-    global bb, wb, bs, ws
+    global timer_deadline, measure_count, bb, wb, bs, ws
     cdef:
         double alpha = -10000000, beta = 10000000
         unsigned int int_color = 0
@@ -36,6 +38,12 @@ cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, in
         unsigned long long[64] legal_moves_bit_list
         unsigned int[64] legal_moves_x
         unsigned int[64] legal_moves_y
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+    if measure and pid:
+        measure_count = 0
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
     if color == 'black':
         int_color = <unsigned int>1
     bb, wb = board.get_bitboard_info()
@@ -51,6 +59,8 @@ cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, in
                 index += 1
             mask >>= 1
     best_move, scores = _get_best_move(int_color, index, legal_moves_bit_list, legal_moves_x, legal_moves_y, alpha, beta, depth, pid, timer, measure)
+    if measure and pid:
+        Measure.count[pid] = measure_count
     return best_move
 
 
@@ -94,7 +104,8 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
 cdef inline double _get_score_measure(func, unsigned int int_color, double alpha, double beta, unsigned int depth, str pid, int t, unsigned int pas):
     """_get_score_measure
     """
-    measure(pid)
+    global measure_count
+    measure_count += 1
     return _get_score(func, int_color, alpha, beta, depth, pid, t, pas)
 
 
@@ -110,27 +121,20 @@ cdef inline double _get_score_timer(func, unsigned int int_color, double alpha, 
 cdef inline double _get_score_timer_measure(func, unsigned int int_color, double alpha, double beta, unsigned int depth, str pid, int t, unsigned int pas):
     """_get_score_timer_measure
     """
+    global measure_count
     cdef:
         signed int timeout
-    measure(pid)
+    measure_count += 1
     timeout = timer(pid)
     return timeout if timeout else _get_score(func, int_color, alpha, beta, depth, pid, t, pas)
-
-
-cdef inline void measure(str pid):
-    """measure
-    """
-    if pid:
-        if pid not in Measure.count:
-            Measure.count[pid] = 0
-        Measure.count[pid] += 1
 
 
 cdef inline signed int timer(str pid):
     """timer
     """
+    global timer_deadline
     if pid:
-        if time.time() > Timer.deadline[pid]:
+        if time.time() > timer_deadline:
             Timer.timeout_flag[pid] = True  # タイムアウト発生
             return Timer.timeout_value[pid]
     return <signed int>0

@@ -63,7 +63,7 @@ class TestEndGame(unittest.TestCase):
         endgame.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
-        print('(150000)', Measure.count[pid])
+        print('(240000)', Measure.count[pid])
 
     def test_endgame_remain_12(self):
         # Windows10 Celeron 1.6GHz 4.00GB
@@ -71,6 +71,7 @@ class TestEndGame(unittest.TestCase):
         endgame = _EndGame(depth=12)
         key = endgame.__class__.__name__ + str(os.getpid())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        Measure.count[key] = 0
         color = 'black'
         board._black_bitboard = 0xF07DBF650158381C
         board._white_bitboard = 0x2009A7EA6C4E0
@@ -81,13 +82,14 @@ class TestEndGame(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        print('(342795 / 0.38s)', Measure.count[key])
+        print('(329087 / 0.25s)', Measure.count[key])
 
     #def test_endgame_remain_14(self):
     #    board = BitBoard()
     #    endgame = _EndGame(depth=14)
     #    key = endgame.__class__.__name__ + str(os.getpid())
     #    Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+    #    Measure.count[key] = 0
     #    color = 'black'
     #    board._black_bitboard = 0xE07DBF650158381C
     #    board._white_bitboard = 0x0009A7EA6C4E0
@@ -98,13 +100,14 @@ class TestEndGame(unittest.TestCase):
     #    print(' min :', Measure.elp_time[key]['min'], '(s)')
     #    print(' max :', Measure.elp_time[key]['max'], '(s)')
     #    print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-    #    print('(3360357 / 3.47s)', Measure.count[key])
+    #    print('(3017562 / 2.35s)', Measure.count[key])
 
     #def test_endgame_remain_16(self):
     #    board = BitBoard()
     #    endgame = _EndGame(depth=16)
     #    key = endgame.__class__.__name__ + str(os.getpid())
     #    Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+    #    Measure.count[key] = 0
     #    color = 'black'
     #    board._black_bitboard = 0xC07DBF650158381C
     #    board._white_bitboard = 0x0009A7CA6C4E0
@@ -115,7 +118,7 @@ class TestEndGame(unittest.TestCase):
     #    print(' min :', Measure.elp_time[key]['min'], '(s)')
     #    print(' max :', Measure.elp_time[key]['max'], '(s)')
     #    print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-    #    print('(42957816 / 49.44s)', Measure.count[key])
+    #    print('(39597459 / 29.68s)', Measure.count[key])
 
     def test_endgame_force_import_error(self):
         import os
