@@ -20,6 +20,8 @@ cdef:
     unsigned int[64] pws
     unsigned int tail
     double timer_deadline
+    unsigned int timer_timeout
+    signed int timer_timeout_value
 
 
 def next_move(color, board, depth, pid, timer, measure):
@@ -29,7 +31,7 @@ def next_move(color, board, depth, pid, timer, measure):
 
 
 cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, int measure):
-    global timer_deadline, measure_count, bb, wb, bs, ws
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws
     cdef:
         double alpha = -10000000, beta = 10000000
         unsigned int int_color = 0
@@ -41,6 +43,8 @@ cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, in
     measure_count = 0
     if timer and pid:
         timer_deadline = Timer.deadline[pid]
+        timer_timeout = <unsigned int>0
+        timer_timeout_value = Timer.timeout_value[pid]
     if measure and pid:
         if pid not in Measure.count:
             Measure.count[pid] = 0
@@ -58,13 +62,16 @@ cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, in
                 legal_moves_y[index] = y
                 index += 1
             mask >>= 1
-    best_move, scores = _get_best_move(int_color, index, legal_moves_bit_list, legal_moves_x, legal_moves_y, alpha, beta, depth, pid, timer, measure)
+    best_move, scores = _get_best_move(int_color, index, legal_moves_bit_list, legal_moves_x, legal_moves_y, alpha, beta, depth, timer)
     if measure and pid:
         Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
     return best_move
 
 
-cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, str pid, int timer, int measure):
+cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, int timer):
+    global timer_timeout
     cdef:
         double score = alpha
         unsigned int int_color_next = 1, i, best = 64
@@ -76,15 +83,15 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
     for i in range(index):
         _put_disc(int_color, moves_bit_list[i])
         if timer:
-            score = -_get_score_timer(_get_score_timer, int_color_next, -beta, -alpha, depth-1, pid, timer, <unsigned int>0)
+            score = -_get_score_timer(_get_score_timer, int_color_next, -beta, -alpha, depth-1, timer, <unsigned int>0)
             _undo()
             scores[(moves_x[i], moves_y[i])] = score
-            if Timer.is_timeout(pid):  # タイムアウト判定
+            if timer_timeout:
                 if best == 64:
                     best = i
                 break
         else:
-            score = -_get_score(_get_score, int_color_next, -beta, -alpha, depth-1, pid, timer, <unsigned int>0)
+            score = -_get_score(_get_score, int_color_next, -beta, -alpha, depth-1, timer, <unsigned int>0)
             _undo()
             scores[(moves_x[i], moves_y[i])] = score
         if score > alpha:  # 最善手を更新
@@ -93,30 +100,29 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
     return (moves_x[best], moves_y[best]), scores
 
 
-cdef inline double _get_score_timer(func, unsigned int int_color, double alpha, double beta, unsigned int depth, str pid, int t, unsigned int pas):
+cdef inline double _get_score_timer(func, unsigned int int_color, double alpha, double beta, unsigned int depth, int t, unsigned int pas):
     """_get_score_timer
     """
     cdef:
         signed int timeout
-    timeout = timer(pid)
-    return timeout if timeout else _get_score(func, int_color, alpha, beta, depth, pid, t, pas)
+    timeout = timer()
+    return timeout if timeout else _get_score(func, int_color, alpha, beta, depth, t, pas)
 
 
-cdef inline signed int timer(str pid):
+cdef inline signed int timer():
     """timer
     """
-    global timer_deadline
-    if pid:
-        if time.time() > timer_deadline:
-            Timer.timeout_flag[pid] = True  # タイムアウト発生
-            return Timer.timeout_value[pid]
+    global timer_deadline, timer_timeout, timer_timeout_value
+    if time.time() > timer_deadline:
+        timer_timeout = <unsigned int>1
+        return timer_timeout_value
     return <signed int>0
 
 
-cdef inline double _get_score(func, unsigned int int_color, double alpha, double beta, unsigned int depth, str pid, int t, unsigned int pas):
+cdef inline double _get_score(func, unsigned int int_color, double alpha, double beta, unsigned int depth, int t, unsigned int pas):
     """_get_score
     """
-    global measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
+    global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score
         unsigned long long legal_moves_bits, mask = 0x8000000000000000, count
@@ -137,7 +143,7 @@ cdef inline double _get_score(func, unsigned int int_color, double alpha, double
         int_color_next = <unsigned int>0
     # パスの場合
     if not legal_moves_bits:
-        return -func(func, int_color_next, -beta, -alpha, depth, pid, t, <unsigned int>1)
+        return -func(func, int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 最終1手
     if bs + ws == <unsigned int>63:
         measure_count += 1
@@ -150,12 +156,12 @@ cdef inline double _get_score(func, unsigned int int_color, double alpha, double
     for _ in range(64):
         if legal_moves_bits & mask:
             _put_disc(int_color, mask)
-            score = -func(func, int_color_next, -beta, -alpha, depth-1, pid, t, <unsigned int>0)
+            score = -func(func, int_color_next, -beta, -alpha, depth-1, t, <unsigned int>0)
             _undo()
             if score > alpha:
                 alpha = score
             if t:
-                if Timer.is_timeout(pid):
+                if timer_timeout:
                     return alpha
             if alpha >= beta:  # 枝刈り
                 return alpha
