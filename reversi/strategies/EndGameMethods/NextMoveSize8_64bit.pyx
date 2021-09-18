@@ -82,35 +82,21 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
     # 各手のスコア取得
     for i in range(index):
         _put_disc(int_color, moves_bit_list[i])
-        if timer:
-            score = -_get_score_timer(_get_score_timer, int_color_next, -beta, -alpha, depth-1, timer, <unsigned int>0)
-            _undo()
-            scores[(moves_x[i], moves_y[i])] = score
-            if timer_timeout:
-                if best == 64:
-                    best = i
-                break
-        else:
-            score = -_get_score(_get_score, int_color_next, -beta, -alpha, depth-1, timer, <unsigned int>0)
-            _undo()
-            scores[(moves_x[i], moves_y[i])] = score
+        score = -_get_score(int_color_next, -beta, -alpha, depth-1, timer, <unsigned int>0)
+        _undo()
+        scores[(moves_x[i], moves_y[i])] = score
+        if timer_timeout:
+            if best == 64:
+                best = i
+            break
         if score > alpha:  # 最善手を更新
             alpha = score
             best = i
     return (moves_x[best], moves_y[best]), scores
 
 
-cdef inline double _get_score_timer(func, unsigned int int_color, double alpha, double beta, unsigned int depth, int t, unsigned int pas):
-    """_get_score_timer
-    """
-    cdef:
-        signed int timeout
-    timeout = timer()
-    return timeout if timeout else _get_score(func, int_color, alpha, beta, depth, t, pas)
-
-
-cdef inline signed int timer():
-    """timer
+cdef inline signed int check_timeout():
+    """check_timeout
     """
     global timer_deadline, timer_timeout, timer_timeout_value
     if time.time() > timer_deadline:
@@ -119,16 +105,24 @@ cdef inline signed int timer():
     return <signed int>0
 
 
-cdef inline double _get_score(func, unsigned int int_color, double alpha, double beta, unsigned int depth, int t, unsigned int pas):
+cdef inline double _get_score(unsigned int int_color, double alpha, double beta, unsigned int depth, int t, unsigned int pas):
     """_get_score
     """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
+        signed int timeout
         double score
         unsigned long long legal_moves_bits, mask = 0x8000000000000000, count
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y
         signed int sign = -1
+    # タイムアウト判定
+    if t:
+        timeout = check_timeout()
+        if timeout:
+            return timeout
+    # 探索ノード数カウント
     measure_count += 1
+    # 合法手を取得
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
     # 前回パス and 打てる場所なし の場合ゲーム終了
     if pas and not legal_moves_bits:
@@ -143,7 +137,7 @@ cdef inline double _get_score(func, unsigned int int_color, double alpha, double
         int_color_next = <unsigned int>0
     # パスの場合
     if not legal_moves_bits:
-        return -func(func, int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
+        return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 最終1手
     if bs + ws == <unsigned int>63:
         measure_count += 1
@@ -156,13 +150,12 @@ cdef inline double _get_score(func, unsigned int int_color, double alpha, double
     for _ in range(64):
         if legal_moves_bits & mask:
             _put_disc(int_color, mask)
-            score = -func(func, int_color_next, -beta, -alpha, depth-1, t, <unsigned int>0)
+            score = -_get_score(int_color_next, -beta, -alpha, depth-1, t, <unsigned int>0)
             _undo()
             if score > alpha:
                 alpha = score
-            if t:
-                if timer_timeout:
-                    return alpha
+            if timer_timeout:
+                return alpha
             if alpha >= beta:  # 枝刈り
                 return alpha
         mask >>= 1

@@ -63,7 +63,7 @@ class TestEndGame(unittest.TestCase):
         endgame.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
-        print('(550000)', Measure.count[pid])
+        print('(930000)', Measure.count[pid])
 
     def test_endgame_remain_12(self):
         # Windows10 Celeron 1.6GHz 4.00GB
@@ -82,7 +82,7 @@ class TestEndGame(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-        print('(443182 / 0.25s)', Measure.count[key])
+        print('(443182 / 0.12s)', Measure.count[key])
 
     #def test_endgame_remain_14(self):
     #    board = BitBoard()
@@ -100,7 +100,7 @@ class TestEndGame(unittest.TestCase):
     #    print(' min :', Measure.elp_time[key]['min'], '(s)')
     #    print(' max :', Measure.elp_time[key]['max'], '(s)')
     #    print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-    #    print('(3017562 / 2.35s)', Measure.count[key])
+    #    print('(4042440 / 1.04s)', Measure.count[key])
 
     #def test_endgame_remain_16(self):
     #    board = BitBoard()
@@ -118,7 +118,7 @@ class TestEndGame(unittest.TestCase):
     #    print(' min :', Measure.elp_time[key]['min'], '(s)')
     #    print(' max :', Measure.elp_time[key]['max'], '(s)')
     #    print(' ave :', Measure.elp_time[key]['ave'], '(s)')
-    #    print('(39597459 / 29.68s)', Measure.count[key])
+    #    print('(52577955 / 14.01s)', Measure.count[key])
 
     def test_endgame_force_import_error(self):
         import os
