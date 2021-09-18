@@ -210,12 +210,12 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
 cdef inline unsigned long long _get_bit_count(unsigned long long bits):
     """_get_bit_count
     """
-    bits = (bits & <unsigned long long>0x5555555555555555) + (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
+    bits = bits - (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
     bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
     bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
     bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
     bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
-    return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
+    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
 cdef inline void _put_disc(unsigned int int_color, unsigned long long move):

@@ -301,13 +301,12 @@ cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(unsigned int
 cdef inline unsigned long long _get_bit_count_size8_64bit(unsigned long long bits):
     """_get_bit_count_size8_64bit
     """
-    bits = (bits & <unsigned long long>0x5555555555555555) + (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
+    bits = bits - (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
     bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
     bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
     bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
     bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
-
-    return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
+    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
 cdef inline _get_board_info_size8_64bit(unsigned long long b, unsigned long long w):
