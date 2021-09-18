@@ -112,7 +112,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     cdef:
         signed int timeout
         double score
-        unsigned long long legal_moves_bits, mask = 0x8000000000000000, count
+        unsigned long long legal_moves_bits, move, count
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y
         signed int sign = -1
     # タイムアウト判定
@@ -147,18 +147,18 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         else:
             return <double>-(<double>bs - <double>ws - <double>(1 + count*2))
     # 評価値を算出
-    for _ in range(64):
-        if legal_moves_bits & mask:
-            _put_disc(int_color, mask)
-            score = -_get_score(int_color_next, -beta, -alpha, depth-1, t, <unsigned int>0)
-            _undo()
-            if score > alpha:
-                alpha = score
-            if timer_timeout:
-                return alpha
-            if alpha >= beta:  # 枝刈り
-                return alpha
-        mask >>= 1
+    while (legal_moves_bits):
+        move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+        _put_disc(int_color, move)
+        score = -_get_score(int_color_next, -beta, -alpha, depth-1, t, <unsigned int>0)
+        _undo()
+        legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
+        if score > alpha:
+            alpha = score
+        if timer_timeout:
+            return alpha
+        if alpha >= beta:  # 枝刈り
+            return alpha
     return alpha
 
 
