@@ -254,7 +254,7 @@ cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(unsigned int
     lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
     l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
     lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
-    for _ in range(8):
+    for _ in range(6):
         if t_ & opponent:
             bf_t_ |= t_
             t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
