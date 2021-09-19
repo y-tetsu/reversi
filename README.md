@@ -52,8 +52,8 @@
 **reversi**をインストールすると、リバーシAIのプログラミングを手軽に試せるようになります。<br>
 
 他にも、以下のような用途に使えます。
-- リバーシAI同士の対戦シミュレート
-- アプリケーションの作成
+- アプリケーションを作って、自作したAIと対戦し遊ぶ
+- シミュレータを使って、AI同士をたくさん対戦させ強さを調べる
 
 また、本ライブラリを使って作成した[Windows版アプリケーション](#Windows版アプリケーションについて)も用意しています。<br>
 こちらはダウンロード後、インストール不要で、すぐにリバーシのゲームを無料でプレイできます。
@@ -1076,6 +1076,7 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 - 「オセロ･リバーシの勝ち方、必勝法」https://bassy84.net/
 - 「強いオセロプログラムの内部動作」http://www.amy.hi-ho.ne.jp/okuhara/howtoj.htm
 - 「オセロAI入門」https://qiita.com/na-o-ys/items/10d894635c2a6c07ac70
+- 「Thellのアルゴリズムについて」http://sealsoft.jp/thell/algorithm.html
 
 
 ## 脚注
