@@ -27,12 +27,14 @@
         - [AI同士の対戦をシミュレートする](#AI同士の対戦をシミュレートする)
     - [オブジェクト編](#オブジェクト編)
         - [boardオブジェクトの使い方](#boardオブジェクトの使い方)
+        - [colorオブジェクトの使い方](#colorオブジェクトの使い方)
     - [AIクラス編](#AIクラス編)
         - [単純思考なAI](#単純思考なAI)
         - [マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)
         - [ランダムに複数回打ってみて勝率の良い手を選ぶAI](#ランダムに複数回打ってみて勝率の良い手を選ぶAI)
         - [数手先の盤面を読んで手を選ぶAI](#数手先の盤面を読んで手を選ぶAI)
         - [評価関数のカスタマイズ方法](#評価関数のカスタマイズ方法)
+        - [評価関数の自作方法](#評価関数の自作方法)
 - [Windows版アプリケーションについて](#Windows版アプリケーションについて)
     - [ゲーム紹介](#ゲーム紹介)
     - [ダウンロード](#ダウンロード)
@@ -522,6 +524,27 @@ print(board)
 上記の実行結果は下記となります。<br>
 ![undo](https://raw.githubusercontent.com/y-tetsu/reversi/images/undo.png)
 
+#### colorオブジェクトの使い方
+これまでは、黒番や白番の手番の判別に'black'や'white'の文字列を使う方法を示しましたが<br>
+`color`オブジェクトを用いて指定することも可能です。
+
+以下のように`color`オブジェクトである`C`をインポートして、<br>
+blackプロパティやwhiteプロパティにてそれぞれ黒番、白番を指定できます。
+```Python
+from reversi import BitBoard
+from reversi import C as c
+
+board = BitBoard()
+board.put_disc(c.black, 5, 4)
+print(board)
+
+board.put_disc(c.white, 5, 5)
+print(board)
+```
+
+上記の実行結果は下記となります。<br>
+![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
+
 ### AIクラス編
 本ライブラリに用意されている各種AIクラスについて説明します。
 
@@ -665,6 +688,7 @@ Reversi(
     }
 ).start()
 ```
+※持ち時間制限を外したい場合は、`NegaMax`クラスの代わりに`_NegaMax`クラスを使用してください。
 
 ##### AlphaBeta
 AlphaBeta法で手を選びます。不要な手(悪手)の読みを枝刈りする(打ち切る)ことでMinMax法より効率よく手を読みます。<br>
@@ -684,6 +708,7 @@ Reversi(
     }
 ).start()
 ```
+※持ち時間制限を外したい場合は、`AlphaBeta`クラスの代わりに`_AlphaBeta`クラスを使用してください。
 
 ##### NegaScout
 NegaScout法で手を選びます。AlphaBeta法の枝刈りに加えて自身の着手可能数がより多くなる手を優先的に読むよう設定しています。<br>
@@ -703,6 +728,7 @@ Reversi(
     }
 ).start()
 ```
+※持ち時間制限を外したい場合は、`NegaScout`クラスの代わりに`_NegaScout`クラスを使用してください。
 
 #### 評価関数のカスタマイズ方法
 評価関数のカスタマイズにはEvaluatorクラスを使用します。<br>
@@ -768,6 +794,55 @@ Reversi(
     }
 ).start()
 ```
+
+#### 評価関数の自作方法
+Evaluatorクラスを自作することで、より自由度の高い評価関数を用意することもできます。<br>
+以下に、評価関数を自作したAIを作るためのひな形を示します。<br>
+
+(前提)
+ - 探索方法にAlphaBeta法を用いる(時間制限なしで、6手先まで読む)
+ - 評価関数には自作した`MyEvaluator`を用いる
+ - 評価関数のスコアは高いほど、自身の形勢が良いことを示し、もっともスコアの高い手が選ばれます
+
+(処理内容)
+ - 初期盤面を表示する
+ - 自作したAIに、黒の手番での次の一手を求めさせ、盤面に打つ
+ - 盤面を表示する
+
+```Python
+from reversi import BitBoard
+from reversi import C as c
+from reversi.strategies.common import AbstractEvaluator
+from reversi.strategies import _AlphaBeta
+
+class MyEvaluator(AbstractEvaluator):
+    def evaluate(self, color, board, possibility_b, possibility_w):
+        score = 0
+        #
+        # 現在の盤面のスコア(評価値)を算出するロジックをコーディングして下さい。
+        #
+        return score
+
+my_ai = _AlphaBeta(depth=6, evaluator=MyEvaluator())
+board = BitBoard()
+print(board)
+x, y = my_ai.next_move(c.black, board)
+board.put_disc(c.black, x, y)
+print(board)
+```
+
+上記の実行結果は下記となります。<br>
+![myevaluator](https://raw.githubusercontent.com/y-tetsu/reversi/images/myevaluator.png)
+
+なお、Evaluatorクラスのevaluate関数の引数には以下が渡されます。<br>
+必要に応じて使用してください。
+
+ |引数|説明|
+ |:---|:---|
+ |`color`変数|`black`か`white`の`str`型の文字列が渡され、それぞれ黒番か白番かを判別することができます。|
+ |`board`オブジェクト|リバーシの盤面情報を持ったオブジェクトが渡されます。黒と白の石の配置情報のほか、石が置ける位置の取得などゲームを進行するために必要となる、パラメータやメソッドを持っています。|
+ |`possibilitiy_b`変数|黒番の着手可能数が格納されています。|
+ |`possibilitiy_w`変数|白番の着手可能数が格納されています。|
 
 
 ---
