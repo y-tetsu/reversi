@@ -132,3 +132,45 @@ class TestFullReading(unittest.TestCase):
         print(' min :', Measure.elp_time[key]['min'], '(s)')
         print(' max :', Measure.elp_time[key]['max'], '(s)')
         print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+
+    def test_fullreading_remain_11(self):
+        class Test:
+            pass
+
+        board = BitBoard()
+        fullreading = _FullReading(remain=11, base=Test())
+        key = fullreading.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        color = 'white'
+
+        board._black_bitboard = 0xF07DBF650158381E
+        board._white_bitboard = 0x0009AFEA6C4E0
+        board.update_score()
+        self.assertEqual(fullreading.next_move(color, board), (7, 7))
+
+        print()
+        print(key, 'remain = 11')
+        print(' min :', Measure.elp_time[key]['min'], '(s)')
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
+
+    def test_fullreading_remain_12(self):
+        class Test:
+            pass
+
+        board = BitBoard()
+        fullreading = _FullReading(remain=12, base=Test())
+        key = fullreading.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        color = 'black'
+
+        board._black_bitboard = 0xF07DBF650158380E
+        board._white_bitboard = 0x0009AFEA6C4E0
+        board.update_score()
+        self.assertEqual(fullreading.next_move(color, board), (7, 6))
+
+        print()
+        print(key, 'remain = 12')
+        print(' min :', Measure.elp_time[key]['min'], '(s)')
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
+        print(' ave :', Measure.elp_time[key]['ave'], '(s)')
