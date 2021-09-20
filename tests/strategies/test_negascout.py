@@ -183,7 +183,7 @@ class TestNegaScout(unittest.TestCase):
         negascout.next_move('white', board)
         self.assertTrue(Timer.timeout_flag[pid])
         self.assertLessEqual(Measure.elp_time[pid]['max'], CPU_TIME * 1.1)
-        print('(9300)', Measure.count[pid])
+        print('(10000)', Measure.count[pid])
 
     def test_negascout_force_import_error(self):
         import os

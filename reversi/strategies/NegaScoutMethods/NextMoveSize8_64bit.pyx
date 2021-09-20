@@ -27,36 +27,69 @@ cdef:
 def next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
     """next_move
     """
+    if pid is None:
+        timer, measure = False, False
     return _next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure)
 
 
 def get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure):
     """get_best_move
     """
+    if pid is None:
+        timer, measure = False, False
     return _get_best_move_wrap(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
 
 
 cdef inline tuple _next_move(str color, board, signed int param_min, signed int param_max, int depth, evaluator, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count
     cdef:
         double alpha = param_min, beta = param_max
         unsigned int int_color = 0
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        measure_count = Measure.count[pid]
     if color == 'black':
         int_color = <unsigned int>1
     moves = board.get_legal_moves(color)  # 手の候補
-    best_move, _ = _get_best_move(int_color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
+    best_move, _ = _get_best_move(int_color, board, moves, alpha, beta, depth, evaluator, timer)
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
     return best_move
 
 
 cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count
     cdef:
         unsigned int int_color = 0
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        measure_count = Measure.count[pid]
     if color == 'black':
         int_color = <unsigned int>1
-    return _get_best_move(int_color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
+    best_move, scores = _get_best_move(int_color, board, moves, alpha, beta, depth, evaluator, timer)
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
+    return (best_move, scores)
 
 
-cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
-    global bb, wb, bs, ws
+cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, double beta, int depth, evaluator, int timer):
+    global timer_timeout, bb, wb, bs, ws
     cdef:
         double score = alpha
         unsigned int int_color_next = 1, board_bs, board_ws
@@ -79,25 +112,12 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
     best_move = None
     for move in moves:
         _put_disc(int_color, <unsigned long long>1 << (63-(move[1]*8+move[0])))
-        if timer:
-            if measure:  # タイマーあり:メジャーあり
-                score = -_get_score_timer_measure(_get_score_timer_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
-                _undo()
-            else:        # タイマーあり:メジャーなし
-                score = -_get_score_timer(_get_score_timer, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
-                _undo()
-            scores[move] = score
-            if Timer.is_timeout(pid):  # タイムアウト判定
-                best_move = move if best_move is None else best_move
-                break
-        elif measure:    # タイマーなし:メジャーあり
-            score = -_get_score_measure(_get_score_measure, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
-            _undo()
-            scores[move] = score
-        else:            # タイマーなし:メジャーなし
-            score = -_get_score(_get_score, int_color_next, board, -beta, -alpha, depth-1, evaluator, pid, timer, <unsigned int>0)
-            _undo()
-            scores[move] = score
+        score = -_get_score(int_color_next, board, -beta, -alpha, depth-1, evaluator, timer, <unsigned int>0)
+        _undo()
+        scores[move] = score
+        if timer_timeout:  # タイムアウト判定
+            best_move = move if best_move is None else best_move
+            break
         if score > alpha:  # 最善手を更新
             alpha = score
             best_move = move
@@ -110,62 +130,35 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
     return best_move, scores
 
 
-cdef inline double _get_score_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
-    """_get_score_measure
+cdef inline signed int check_timeout():
+    """check_timeout
     """
-    measure(pid)
-    return _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t, pas)
-
-
-cdef inline double _get_score_timer(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
-    """_get_score_timer
-    """
-    cdef:
-        signed int timeout
-    timeout = timer(pid)
-    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t, pas)
-
-
-cdef inline double _get_score_timer_measure(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
-    """_get_score_timer_measure
-    """
-    cdef:
-        signed int timeout
-    measure(pid)
-    timeout = timer(pid)
-    return timeout if timeout else _get_score(func, int_color, board, alpha, beta, depth, evaluator, pid, t, pas)
-
-
-cdef inline void measure(str pid):
-    """measure
-    """
-    if pid:
-        if pid not in Measure.count:
-            Measure.count[pid] = 0
-        Measure.count[pid] += 1
-
-
-cdef inline signed int timer(str pid):
-    """timer
-    """
-    if pid:
-        if time.time() > Timer.deadline[pid]:
-            Timer.timeout_flag[pid] = True  # タイムアウト発生
-            return Timer.timeout_value[pid]
+    global timer_deadline, timer_timeout, timer_timeout_value
+    if time.time() > timer_deadline:
+        timer_timeout = <unsigned int>1
+        return timer_timeout_value
     return <signed int>0
 
 
-cdef inline double _get_score(func, unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, str pid, int t, unsigned int pas):
+cdef inline double _get_score(unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, int t, unsigned int pas):
     """_get_score
     """
-    global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
+    global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, is_game_end = 0, int_color_next = 1, count = 0, index = 0
-        signed int sign = -1
+        signed int timeout, sign = -1
         unsigned long long[64] next_moves_list
         signed int[64] possibilities
+    # タイムアウト判定
+    if t:
+        timeout = check_timeout()
+        if timeout:
+            return timeout
+    # 探索ノード数カウント
+    measure_count += 1
+    # 合法手を取得
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
     # 前回パス and 打てる場所なし の場合ゲーム終了
     if pas and not legal_moves_bits:
@@ -196,7 +189,7 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
         int_color_next = <unsigned int>0
     # パスの場合
     if not legal_moves_bits:
-        return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t, <unsigned int>1)
+        return -_get_score(int_color_next, board, -beta, -alpha, depth, evaluator, t, <unsigned int>1)
     # 着手可能数に応じて手を並び替え
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
@@ -210,16 +203,15 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     for i in range(count):
         if alpha < beta:
             _put_disc(int_color, next_moves_list[i])
-            tmp = -func(func, int_color_next, board, -null_window, -alpha, depth-1, evaluator, pid, t, <unsigned int>0)
+            tmp = -_get_score(int_color_next, board, -null_window, -alpha, depth-1, evaluator, t, <unsigned int>0)
             _undo()
             if alpha < tmp:
                 if tmp <= null_window and index:
                     _put_disc(int_color, next_moves_list[i])
-                    alpha = -func(func, int_color_next, board, -beta, -tmp, depth-1, evaluator, pid, t, <unsigned int>0)
+                    alpha = -_get_score(int_color_next, board, -beta, -tmp, depth-1, evaluator, t, <unsigned int>0)
                     _undo()
-                    if t:
-                        if Timer.is_timeout(pid):
-                            return alpha
+                    if timer_timeout:
+                        return alpha
                 else:
                     alpha = tmp
             null_window = alpha + 1
