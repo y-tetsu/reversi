@@ -35,6 +35,7 @@
         - [数手先の盤面を読んで手を選ぶAI](#数手先の盤面を読んで手を選ぶAI)
         - [評価関数のカスタマイズ方法](#評価関数のカスタマイズ方法)
         - [評価関数の自作方法](#評価関数の自作方法)
+        - [序盤の定石打ちを追加する方法](#序盤の定石打ちを追加する方法)
 - [Windows版アプリケーションについて](#Windows版アプリケーションについて)
     - [ゲーム紹介](#ゲーム紹介)
     - [ダウンロード](#ダウンロード)
@@ -844,6 +845,50 @@ print(board)
  |`board`オブジェクト|リバーシの盤面情報を持ったオブジェクトが渡されます。黒と白の石の配置情報のほか、石が置ける位置の取得などゲームを進行するために必要となる、パラメータやメソッドを持っています。|
  |`possibilitiy_b`変数|黒番の着手可能数が格納されています。|
  |`possibilitiy_w`変数|白番の着手可能数が格納されています。|
+
+#### 序盤の定石打ちを追加する方法
+`Joseki`クラスを活用すると、AIに序盤は定石どおりに手を選ばせることができます。
+
+以下に、自作したAIに定石打ちを追加する例を示します。<br>
+(前提)
+ - 自作したAI(`MyAI`)に兎進行の定石打ちを追加する
+
+```Python
+import random
+
+from reversi import BitBoard
+from reversi import C as c
+from reversi.strategies import AbstractStrategy, Usagi
+
+class MyAI(AbstractStrategy):
+    """自作AI(ランダムに打つ)"""
+    def next_move(self, color, board):
+        legal_moves = board.get_legal_moves(color)
+        return random.choice(legal_moves)
+
+my_ai = Usagi(base=MyAI())
+board = BitBoard()
+print(board)
+for color in [c.black, c.white, c.black]:  # 3手進める
+    x, y = my_ai.next_move(color, board)
+    board.put_disc(color, x, y)
+    print(board)
+```
+
+上記の実行結果は下記となります。<br>
+![joseki](https://raw.githubusercontent.com/y-tetsu/reversi/images/joseki.png)
+
+ 使用可能な`Joseki`クラスは以下になります。<br>
+
+ |Josekiクラス|説明|
+ |:---|:---|
+ |Usagi|兎進行を選びます。|
+ |Tora|虎進行を選びます。|
+ |Ushi|牛進行を選びます。|
+ |Nezumi|鼠進行を選びます。|
+ |Neko|猫進行を選びます。|
+ |Hitsuji|羊進行を選びます。|
+ 上記いずれにも同じ定石が搭載されており、それぞれの進行を外れても打てる定石に差異はありません。
 
 
 ---
