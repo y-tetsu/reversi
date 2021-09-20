@@ -866,7 +866,7 @@ class MyAI(AbstractStrategy):
         legal_moves = board.get_legal_moves(color)
         return random.choice(legal_moves)
 
-my_ai = Usagi(base=MyAI())
+my_ai = Usagi(base=MyAI())  # base引数に自作AIを与える
 board = BitBoard()
 print(board)
 for color in [c.black, c.white, c.black]:  # 3手進める
@@ -878,7 +878,7 @@ for color in [c.black, c.white, c.black]:  # 3手進める
 上記の実行結果は下記となります。<br>
 ![joseki](https://raw.githubusercontent.com/y-tetsu/reversi/images/joseki.png)
 
- 使用可能な`Joseki`クラスは以下になります。<br>
+ 使用可能な`Joseki`クラスの一覧は以下になります。<br>
 
  |Josekiクラス|説明|
  |:---|:---|
@@ -888,7 +888,8 @@ for color in [c.black, c.white, c.black]:  # 3手進める
  |Nezumi|鼠進行を選びます。|
  |Neko|猫進行を選びます。|
  |Hitsuji|羊進行を選びます。|
- 上記いずれにも同じ定石が搭載されており、それぞれの進行を外れても打てる定石に差異はありません。
+
+上記いずれにも同じ定石が搭載されており、それぞれの進行を外れても打てる定石に差異はありません。
 
 
 ---
