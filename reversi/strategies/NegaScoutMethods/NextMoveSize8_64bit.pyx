@@ -8,6 +8,10 @@ from reversi.strategies.common import Timer, Measure
 
 
 cdef:
+    unsigned long long measure_count
+    double timer_deadline
+    unsigned int timer_timeout
+    signed int timer_timeout_value
     unsigned long long bb
     unsigned long long wb
     unsigned long long fd
@@ -157,7 +161,7 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
-        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask = 0x8000000000000000
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, is_game_end = 0, int_color_next = 1, count = 0, index = 0
         signed int sign = -1
         unsigned long long[64] next_moves_list
@@ -194,12 +198,12 @@ cdef inline double _get_score(func, unsigned int int_color, board, double alpha,
     if not legal_moves_bits:
         return -func(func, int_color_next, board, -beta, -alpha, depth, evaluator, pid, t, <unsigned int>1)
     # 着手可能数に応じて手を並び替え
-    for _ in range(64):
-        if legal_moves_bits & mask:
-            next_moves_list[count] = mask
-            possibilities[count] = _get_possibility(int_color, bb, wb, mask, sign)
-            count += 1
-        mask >>= 1
+    while (legal_moves_bits):
+        move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+        next_moves_list[count] = move
+        possibilities[count] = _get_possibility(int_color, bb, wb, move, sign)
+        count += 1
+        legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
     # 次の手の探索
     null_window = beta
@@ -332,12 +336,12 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
 cdef inline unsigned long long _get_bit_count(unsigned long long bits):
     """_get_bit_count
     """
-    bits = (bits & <unsigned long long>0x5555555555555555) + (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
+    bits = bits - (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
     bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
     bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
     bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
     bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
-    return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
+    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
 cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
@@ -386,7 +390,7 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
     lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
     l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
     lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
-    for _ in range(8):
+    for _ in range(6):
         if t_ & opponent:
             bf_t_ |= t_
             t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
@@ -434,8 +438,8 @@ cdef inline void _undo():
     """_undo
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, tail
-    bb = pbb[tail-1]
-    wb = pwb[tail-1]
-    bs = pbs[tail-1]
-    ws = pws[tail-1]
     tail -= 1
+    bb = pbb[tail]
+    wb = pwb[tail]
+    bs = pbs[tail]
+    ws = pws[tail]
