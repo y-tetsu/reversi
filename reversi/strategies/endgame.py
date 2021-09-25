@@ -16,7 +16,7 @@ class _EndGame_(AbstractStrategy):
     """
     石差読みで次の手を決める
     """
-    def __init__(self, depth=10):
+    def __init__(self, depth=60):
         self._MIN = -10000000
         self._MAX = 10000000
         self.evaluator = Evaluator_N_Fast()
@@ -38,7 +38,7 @@ class _EndGame_(AbstractStrategy):
 class _EndGame(_EndGame_):
     """EndGame + Measure
     """
-    def __init__(self, depth=10):
+    def __init__(self, depth=60):
         super().__init__(depth)
         self.alphabeta_n = _AlphaBeta(depth=depth, evaluator=self.evaluator)
         self.timer = False
@@ -54,7 +54,7 @@ class _EndGame(_EndGame_):
 class EndGame_(_EndGame_):
     """EndGame + Timer
     """
-    def __init__(self, depth=10):
+    def __init__(self, depth=60):
         super().__init__(depth)
         self.alphabeta_n = AlphaBeta_(depth=depth, evaluator=self.evaluator)
         self.timer = True
@@ -70,7 +70,7 @@ class EndGame_(_EndGame_):
 class EndGame(_EndGame_):
     """EndGame + Measure + Timer
     """
-    def __init__(self, depth=10):
+    def __init__(self, depth=60):
         super().__init__(depth)
         self.alphabeta_n = AlphaBeta(depth=depth, evaluator=self.evaluator)
         self.timer = True

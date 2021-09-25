@@ -23,7 +23,7 @@ class TestEndGame(unittest.TestCase):
             self.assertEqual(endgame._MIN, -10000000)
             self.assertEqual(endgame._MAX, 10000000)
             self.assertTrue(isinstance(endgame.evaluator, coord.Evaluator_N_Fast))
-            self.assertEqual(endgame.depth, 10)
+            self.assertEqual(endgame.depth, 60)
             self.assertTrue(isinstance(endgame.alphabeta_n, alphabeta_n[index]))
             self.assertEqual(endgame.timer, timer[index])
             self.assertEqual(endgame.measure, measure[index])
