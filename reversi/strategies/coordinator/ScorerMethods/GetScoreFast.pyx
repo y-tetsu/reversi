@@ -62,14 +62,14 @@ cdef inline signed int _get_blank_score_size8_64bit(board, signed int w1, signed
     rb_blank = diagonal & ((diagonal >> 9) & not_blackwhite) << 9
 
     # w1の計算
-    score += w1 * (_get_bit_count(l_blank & black) - _get_bit_count(l_blank & white))
-    score += w1 * (_get_bit_count(r_blank & black) - _get_bit_count(r_blank & white))
-    score += w1 * (_get_bit_count(t_blank & black) - _get_bit_count(t_blank & white))
-    score += w1 * (_get_bit_count(b_blank & black) - _get_bit_count(b_blank & white))
-    score += w1 * (_get_bit_count(lt_blank & black) - _get_bit_count(lt_blank & white))
-    score += w1 * (_get_bit_count(rt_blank & black) - _get_bit_count(rt_blank & white))
-    score += w1 * (_get_bit_count(lb_blank & black) - _get_bit_count(lb_blank & white))
-    score += w1 * (_get_bit_count(rb_blank & black) - _get_bit_count(rb_blank & white))
+    score += w1 * (_popcount(l_blank & black) - _popcount(l_blank & white))
+    score += w1 * (_popcount(r_blank & black) - _popcount(r_blank & white))
+    score += w1 * (_popcount(t_blank & black) - _popcount(t_blank & white))
+    score += w1 * (_popcount(b_blank & black) - _popcount(b_blank & white))
+    score += w1 * (_popcount(lt_blank & black) - _popcount(lt_blank & white))
+    score += w1 * (_popcount(rt_blank & black) - _popcount(rt_blank & white))
+    score += w1 * (_popcount(lb_blank & black) - _popcount(lb_blank & white))
+    score += w1 * (_popcount(rb_blank & black) - _popcount(rb_blank & white))
 
     # w2の計算
     lt_x = lt_blank & <unsigned long long>0x0040000000000000  # 左上のX打ち
@@ -150,15 +150,15 @@ cdef inline signed int _get_blank_score_size8_64bit(board, signed int w1, signed
     return score
 
 
-cdef inline signed int _get_bit_count(unsigned long long bits):
-    """_get_bit_count
+cdef inline signed int _popcount(unsigned long long bits):
+    """_popcount
     """
-    bits = (bits & <unsigned long long>0x5555555555555555) + (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
-    bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
-    bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
-    bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
-    bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
-    return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
+    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+    bits = bits + (bits >> <unsigned int>8)
+    bits = bits + (bits >> <unsigned int>16)
+    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
 cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, signed int w3):

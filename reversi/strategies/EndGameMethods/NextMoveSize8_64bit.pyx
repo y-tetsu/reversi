@@ -141,7 +141,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     # 最終1手
     if bs + ws == <unsigned int>63:
         measure_count += 1
-        count = _get_bit_count(_get_flippable_discs_num(int_color, bb, wb, legal_moves_bits))
+        count = _popcount(_get_flippable_discs_num(int_color, bb, wb, legal_moves_bits))
         if int_color:
             return <double>(<double>bs - <double>ws + <double>(1 + count*2))
         else:
@@ -207,14 +207,14 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
     return blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
 
-cdef inline unsigned long long _get_bit_count(unsigned long long bits):
-    """_get_bit_count
+cdef inline unsigned long long _popcount(unsigned long long bits):
+    """_popcount
     """
-    bits = bits - (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
-    bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
-    bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
-    bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
-    bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
+    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+    bits = bits + (bits >> <unsigned int>8)
+    bits = bits + (bits >> <unsigned int>16)
     return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
@@ -227,7 +227,7 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
         signed int lshift
     # ひっくり返せる石を取得
     fd = _get_flippable_discs_num(int_color, bb, wb, move)
-    count = _get_bit_count(fd)
+    count = _popcount(fd)
     # 打つ前の状態を格納
     pbb[tail] = bb
     pwb[tail] = wb

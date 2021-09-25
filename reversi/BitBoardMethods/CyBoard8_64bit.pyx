@@ -88,7 +88,7 @@ cdef class CythonBitBoard():
         return _get_board_info_size8_64bit(self._black_bitboard, self._white_bitboard)
 
     def get_bit_count(self, bits):
-        return _get_bit_count_size8_64bit(bits)
+        return _popcount_size8_64bit(bits)
 
     def get_bitboard_info(self):
         return self._black_bitboard, self._white_bitboard
@@ -210,7 +210,7 @@ cdef inline unsigned long long _put_disc_size8_64bit(board, unsigned int color, 
     black_score = board._black_score
     white_score = board._white_score
     flippable_discs_num = _get_flippable_discs_num_size8_64bit(color, black_bitboard, white_bitboard, put)
-    flippable_discs_count = _get_bit_count_size8_64bit(flippable_discs_num)
+    flippable_discs_count = _popcount_size8_64bit(flippable_discs_num)
 
     # 打つ前の状態を格納
     board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
@@ -298,14 +298,14 @@ cdef inline unsigned long long _get_flippable_discs_num_size8_64bit(unsigned int
     return flippable_discs_num
 
 
-cdef inline unsigned long long _get_bit_count_size8_64bit(unsigned long long bits):
-    """_get_bit_count_size8_64bit
+cdef inline unsigned long long _popcount_size8_64bit(unsigned long long bits):
+    """_popcount_size8_64bit
     """
-    bits = bits - (bits >> <unsigned int>1 & <unsigned long long>0x5555555555555555)
-    bits = (bits & <unsigned long long>0x3333333333333333) + (bits >> <unsigned int>2 & <unsigned long long>0x3333333333333333)
-    bits = (bits & <unsigned long long>0x0F0F0F0F0F0F0F0F) + (bits >> <unsigned int>4 & <unsigned long long>0x0F0F0F0F0F0F0F0F)
-    bits = (bits & <unsigned long long>0x00FF00FF00FF00FF) + (bits >> <unsigned int>8 & <unsigned long long>0x00FF00FF00FF00FF)
-    bits = (bits & <unsigned long long>0x0000FFFF0000FFFF) + (bits >> <unsigned int>16 & <unsigned long long>0x0000FFFF0000FFFF)
+    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+    bits = bits + (bits >> <unsigned int>8)
+    bits = bits + (bits >> <unsigned int>16)
     return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
