@@ -34,6 +34,16 @@ class _EndGame_(AbstractStrategy):
             return EndGameMethods.next_move(color, board, self.depth, pid, self.timer, self.measure)
         return self.alphabeta_n.next_move(color, board)
 
+    def get_best_move(self, color, board, moves, depth=60, pid=None):
+        """
+        最善手を選ぶ
+        """
+        best_move, alpha, beta, scores = None, self._MIN, self._MAX, {}
+
+        if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR:
+            return EndGameMethods.get_best_move(color, board, moves, alpha, beta, depth, pid, self.timer, self.measure)
+        return self.alphabeta_n.get_best_move(color, board, moves, depth, pid)
+
 
 class _EndGame(_EndGame_):
     """EndGame + Measure

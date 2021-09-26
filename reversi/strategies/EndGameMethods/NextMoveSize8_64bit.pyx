@@ -27,7 +27,17 @@ cdef:
 def next_move(color, board, depth, pid, timer, measure):
     """next_move
     """
+    if pid is None:
+        timer, measure = False, False
     return _next_move(color, board, depth, pid, timer, measure)
+
+
+def get_best_move(color, board, moves, alpha, beta, depth, pid, timer, measure):
+    """get_best_move
+    """
+    if pid is None:
+        timer, measure = False, False
+    return _get_best_move_wrap(color, board, moves, alpha, beta, depth, pid, timer, measure)
 
 
 cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, int measure):
@@ -40,19 +50,27 @@ cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, in
         unsigned long long[64] legal_moves_bit_list
         unsigned int[64] legal_moves_x
         unsigned int[64] legal_moves_y
+    # タイマーとメジャー準備
     measure_count = 0
+    timer_timeout = <unsigned int>0
     if timer and pid:
         timer_deadline = Timer.deadline[pid]
-        timer_timeout = <unsigned int>0
         timer_timeout_value = Timer.timeout_value[pid]
     if measure and pid:
         if pid not in Measure.count:
-            Measure.count[pid] = 0
+            Measure.count[pid] = <unsigned int>0
+        measure_count = Measure.count[pid]
+    # 次の手番
     if color == 'black':
         int_color = <unsigned int>1
+    # ボード情報取得
     bb, wb = board.get_bitboard_info()
     bs = board._black_score
     ws = board._white_score
+    # 最大深さ調整
+    if depth > <int>(64 - (bs + ws)):
+        depth =  <int>64 - (bs + ws)
+    # 最善手を取得
     legal_moves = _get_legal_moves_bits(int_color, bb, wb)
     for y in range(8):
         for x in range(8):
@@ -63,11 +81,58 @@ cdef inline tuple _next_move(str color, board, int depth, str pid, int timer, in
                 index += 1
             mask >>= 1
     best_move, scores = _get_best_move(int_color, index, legal_moves_bit_list, legal_moves_x, legal_moves_y, alpha, beta, depth, timer)
+    # タイマーとメジャー格納
     if measure and pid:
         Measure.count[pid] = measure_count
     if timer and pid and timer_timeout:
         Timer.timeout_flag[pid] = True  # タイムアウト発生
     return best_move
+
+
+cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double beta, int depth, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws
+    cdef:
+        unsigned long long[64] moves_bit_list
+        unsigned int[64] moves_x
+        unsigned int[64] moves_y
+        unsigned int x, y, index = 0, int_color = 0
+        unsigned long long put
+        signed int lshift
+    # タイマーとメジャー準備
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = <unsigned int>0
+        measure_count = Measure.count[pid]
+    # 次の手番
+    if color == 'black':
+        int_color = <unsigned int>1
+    # ボード情報取得
+    bb, wb = board.get_bitboard_info()
+    bs = board._black_score
+    ws = board._white_score
+    # 最大深さ調整
+    if depth > <int>(64 - (bs + ws)):
+        depth =  <int>64 - (bs + ws)
+    # 最善手を取得
+    for x, y in moves:
+        lshift = (63-(y*8+x))
+        put = <unsigned long long>1 << lshift
+        moves_bit_list[index] = put
+        moves_x[index] = x
+        moves_y[index] = y
+        index += 1
+    best_move, scores = _get_best_move(int_color, index, moves_bit_list, moves_x, moves_y, alpha, beta, depth, timer)
+    # タイマーとメジャー格納
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
+    return (best_move, scores)
 
 
 cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, int timer):
