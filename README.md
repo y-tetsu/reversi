@@ -36,6 +36,8 @@
         - [評価関数のカスタマイズ方法](#評価関数のカスタマイズ方法)
         - [評価関数の自作方法](#評価関数の自作方法)
         - [序盤の定石打ちを追加する方法](#序盤の定石打ちを追加する方法)
+        - [手の進行に応じてAIを切り替える方法](#手の進行に応じてAIを切り替える方法)
+        - [終盤完全読みを追加する方法](#終盤完全読みを追加する方法)
 - [Windows版アプリケーションについて](#Windows版アプリケーションについて)
     - [ゲーム紹介](#ゲーム紹介)
     - [ダウンロード](#ダウンロード)
@@ -890,6 +892,48 @@ for color in [c.black, c.white, c.black]:  # 3手進める
  |Hitsuji|羊進行を選びます。|
 
 上記いずれにも同じ定石が搭載されており、それぞれの進行を外れても打てる定石に差異はありません。
+
+#### 手の進行に応じてAIを切り替える方法
+
+#### 終盤完全読みを追加する方法
+ゲームが終了するまで手を読み、石数の差がより多くなるよう手を選ぶAIを追加することができます。<br>
+最終盤面まで読むため、勝てる手が残っていれば、勝つ手を必ず選ぶようになります。<br>
+
+##### EndGame
+処理時間の目安として、残り16手以下の盤面であれば概ね0.5s以内に手を読みます。<br>
+以下に、自作したAIに終盤完全読みを追加する例を示します。<br>
+
+(前提)
+ - 残り10手から完全読みを開始する
+
+(使用例)
+```Python
+import random
+
+from reversi import Reversi
+from reversi.strategies import _Switch_, _EndGame_
+
+class MyAI(AbstractStrategy):
+    """自作AI(ランダムに打つ)"""
+    def next_move(self, color, board):
+        legal_moves = board.get_legal_moves(color)
+        return random.choice(legal_moves)
+
+Reversi(
+    {
+        'ENDGAME': _Switch_(  # 戦略切り替え(制限時間なし)
+            turns=[
+                49,           # 49手目(残り11手)まではMyAI()
+                60            # それ以降(残り10手)からは完全読み
+            ],
+            strategies=[
+                MyAI(),       # 自作AI
+                _EndGame_(),  # 完全読み(制限時間なし)
+            ],
+        ),
+    }
+).start()
+```
 
 
 ---
