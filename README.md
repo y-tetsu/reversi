@@ -894,16 +894,58 @@ for color in [c.black, c.white, c.black]:  # 3手進める
 上記いずれにも同じ定石が搭載されており、それぞれの進行を外れても打てる定石に差異はありません。
 
 #### 手の進行に応じてAIを切り替える方法
+##### Switch
+`Switch`クラスを活用すると、現在の手数に応じて、AIを切り替えることができます。<br>
 
-#### 終盤完全読みを追加する方法
-ゲームが終了するまで手を読み、石数の差がより多くなるよう手を選ぶAIを追加することができます。<br>
-最終盤面まで読むため、勝てる手が残っていれば、勝つ手を必ず選ぶようになります。<br>
+以下に、使い方の例を示します。<br>
+(前提)
+ - 盤面のサイズは8x8
+ - 1～30手目までは`Random`
+ - 31～50手目までは`Table`
+ - 51～60手目までは`MonteCarlo`
+
+```Python
+from reversi import Reversi
+from reversi.strategies import Random, Table, MonteCarlo, Switch
+
+Reversi(
+    {
+        'SWITCH': Switch(      # 戦略切り替え
+            turns=[
+                29,            # 1～30手目まではRandom              (30手目-1を設定)
+                49,            # 21～50手目まではTable              (50手目-1を設定)
+                60             # それ以降(残り10手)からはMobteCarlo (最後は60を設定)
+            ],
+            strategies=[
+                Random(),      # Random AI
+                Table(),       # Table AI
+                MonteCarlo(),  # MonteCarlo AI
+            ],
+        ),
+    }
+).start()
+```
+
+上記の例のように、序盤は適当に打ちハンデを与え、<br>
+中盤以降から徐々に強くするといった、ゲーム性を調整する場合や<br>
+序盤、中盤、終盤それぞれで最適な戦略を切り替えて、<br>
+より強いAIを作成する場合などにも活用することができます。<br>
+
+#### 終盤に完全読みを追加する方法
+完全読みとは、互いに最善を尽くす前提でゲーム終了まで打ち<br>
+最終の石数の差が、より自身にとって多くなる手を選ぶという方法です。<br>
+決着まで読み切るため、手数によっては大きく時間がかかる場合もありますが、<br>
+手を読んだ時点で勝てる手が残っていれば、必ず相手に勝つことができます。<br>
 
 ##### EndGame
-処理時間の目安として、残り16手以下の盤面であれば概ね0.5s以内に手を読みます。<br>
-以下に、自作したAIに終盤完全読みを追加する例を示します。<br>
+探索手法にAlphaBeta法を用いて完全読みを行います。<br>
+処理時間の目安として、残り16手以下の盤面であれば概ね、0.5秒以内に手を読みます。<br>
+`EndGame`クラスは制限時間あり、`_EndGame`クラスは制限時間なしとなります。<br>
+
+以下に、自作したAIに終盤の完全読みを追加する例を示します。<br>
 
 (前提)
+ - 盤面のサイズは8x8
  - 残り10手から完全読みを開始する
 
 (使用例)
@@ -911,7 +953,7 @@ for color in [c.black, c.white, c.black]:  # 3手進める
 import random
 
 from reversi import Reversi
-from reversi.strategies import _Switch_, _EndGame_
+from reversi.strategies import Switch, _EndGame
 
 class MyAI(AbstractStrategy):
     """自作AI(ランダムに打つ)"""
@@ -921,14 +963,14 @@ class MyAI(AbstractStrategy):
 
 Reversi(
     {
-        'ENDGAME': _Switch_(  # 戦略切り替え(制限時間なし)
+        'ENDGAME': Switch(   # 戦略切り替え
             turns=[
-                49,           # 49手目(残り11手)まではMyAI()
-                60            # それ以降(残り10手)からは完全読み
+                49,          # 残り11(= 60 - 49)手まではMyAI()
+                60           # それ以降(残り10手)からは完全読み
             ],
             strategies=[
-                MyAI(),       # 自作AI
-                _EndGame_(),  # 完全読み(制限時間なし)
+                MyAI(),      # 自作AI
+                _EndGame(),  # 完全読み(制限時間なし)
             ],
         ),
     }
