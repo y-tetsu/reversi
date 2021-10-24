@@ -38,17 +38,25 @@ class TestBlank(unittest.TestCase):
             self.assertEqual(blank.timer, timer[index])
             self.assertEqual(blank.measure, measure[index])
 
-    #def test_endgame_next_move(self):
-    #    for instance in [_Blank_, _Blank, Blank_, Blank]:
-    #        board = BitBoard()
-    #        blank = instance(depth=6)
+    def test_blank_next_move(self):
+        expected = _NegaScout_(depth=4, evaluator=coord.Evaluator_TPWEB())
+        for instance in [_Blank_, _Blank, Blank_, Blank]:
+            board = BitBoard()
+            blank = instance(depth=4)
 
-    #        board.put_disc('black', 3, 2)
-    #        self.assertEqual(blank.next_move('white', board), (2, 2))
+            board.put_disc('black', 3, 2)
+            self.assertEqual(blank.next_move('white', board), expected.next_move('white', board))
 
-    #        board.put_disc('white', 2, 4)
-    #        board.put_disc('black', 5, 5)
-    #        board.put_disc('white', 4, 2)
-    #        board.put_disc('black', 5, 2)
-    #        board.put_disc('white', 5, 4)
-    #        self.assertEqual(blank.next_move('black', board), (1, 5))
+            board.put_disc('white', 2, 4)
+            board.put_disc('black', 5, 5)
+            board.put_disc('white', 4, 2)
+            board.put_disc('black', 5, 2)
+            board.put_disc('white', 5, 4)
+            self.assertEqual(blank.next_move('black', board), expected.next_move('black', board))
+
+            board.put_disc('black', 2, 3)
+            board.put_disc('white', 1, 2)
+            board.put_disc('black', 5, 3)
+            board.put_disc('white', 2, 2)
+            board.put_disc('black', 4, 5)
+            self.assertEqual(blank.next_move('white', board), expected.next_move('white', board))
