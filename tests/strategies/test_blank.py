@@ -84,6 +84,47 @@ class TestBlank(unittest.TestCase):
 
         print()
         print(key)
-        print('Blank : (23000)', Measure.count[key2])
-        print('(max_depth=7)', iterative.max_depth)
+        print('Blank : (170000)', Measure.count[key2])
+        print('(max_depth=9)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
+
+    def test_blank_force_import_error(self):
+        import os
+        import importlib
+        import reversi
+
+        # -------------------------------
+        # switch environ and reload module
+        os.environ['FORCE_BLANKMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.strategies.BlankMethods)
+        self.assertTrue(reversi.strategies.BlankMethods.BLANK_SIZE8_64BIT_ERROR)
+        # -------------------------------
+
+        expected = _NegaScout_(depth=4, evaluator=coord.Evaluator_TPWEB())
+        for instance in [_Blank_, _Blank, Blank_, Blank]:
+            board = BitBoard()
+            blank = instance(depth=4)
+
+            board.put_disc('black', 3, 2)
+            self.assertEqual(blank.next_move('white', board), expected.next_move('white', board))
+
+            board.put_disc('white', 2, 4)
+            board.put_disc('black', 5, 5)
+            board.put_disc('white', 4, 2)
+            board.put_disc('black', 5, 2)
+            board.put_disc('white', 5, 4)
+            self.assertEqual(blank.next_move('black', board), expected.next_move('black', board))
+
+            board.put_disc('black', 2, 3)
+            board.put_disc('white', 1, 2)
+            board.put_disc('black', 5, 3)
+            board.put_disc('white', 2, 2)
+            board.put_disc('black', 4, 5)
+            self.assertEqual(blank.next_move('white', board), expected.next_move('white', board))
+
+        # -------------------------------
+        # recover environment and reload module
+        del os.environ['FORCE_BLANKMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.strategies.BlankMethods)
+        self.assertFalse(reversi.strategies.BlankMethods.BLANK_SIZE8_64BIT_ERROR)
+        # -------------------------------
