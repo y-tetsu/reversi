@@ -2,7 +2,7 @@
 """
 
 from reversi.strategies.common import Measure
-from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, NegaScout, Switch, FullReading_, _FullReading, FullReading, IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji  # noqa: E501
+from reversi.strategies import Random, MonteCarlo, MinMax, NegaMax, AlphaBeta_, AlphaBeta, NegaScout, Switch, FullReading_, _FullReading, FullReading, IterativeDeepning_, IterativeDeepning, Usagi, Tora, _Ushi_, Ushi, Nezumi, Neko, Hitsuji, _EndGame_, _Blank_  # noqa: E501
 from reversi.strategies.coordinator import Selector, Orderer_B, Orderer_PCB, Evaluator_T, Evaluator_TP, Evaluator_TPO, Evaluator_TPW, Evaluator_TPWE, Evaluator_TPWEB, Evaluator_TPWE_Fast, Evaluator_TPWEC, Evaluator_TPOW, Evaluator_PWE  # noqa: E501
 
 
@@ -770,6 +770,20 @@ class SwitchNsI_B_TPWE_Type2(Switch):
         super().__init__(turns, strategies)
 
 
+class Switch_Blank8_EndGame16(Switch):
+    def __init__(
+            self,
+            turns=[
+                43,  # 残り16まではBlank8手読み
+                60   # 残り16から最後までEndGame
+            ],
+            strategies=[
+                _Blank_(depth=8),
+                _EndGame_(depth=16),
+            ]):
+        super().__init__(turns, strategies)
+
+
 # ----------- #
 # FullReading #
 # ----------- #
@@ -1170,4 +1184,13 @@ class SwitchNsIF10J_B_TPWE_Type2(Hitsuji):
     (完全読み開始:残り10手)
     """
     def __init__(self, base=SwitchNsIF10_B_TPWE_Type2()):
+        super().__init__(base)
+
+
+class SwitchJ_Blank8_EndGame16(Ushi):
+    """
+    Blank8手読み+定石打ち
+    (完全読み開始:残り16手)
+    """
+    def __init__(self, base=Switch_Blank8_EndGame16()):
         super().__init__(base)
