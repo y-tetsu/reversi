@@ -7,7 +7,7 @@ import time
 
 from reversi.board import BitBoard
 from reversi.strategies.common import Timer, Measure, CPU_TIME
-from reversi.strategies import _Blank_, _Blank, Blank_, Blank, _NegaScout_, _NegaScout, NegaScout_, NegaScout
+from reversi.strategies import _Blank_, _Blank, Blank_, Blank, _NegaScout_, _NegaScout, NegaScout_, NegaScout, IterativeDeepning
 import reversi.strategies.coordinator as coord
 
 
@@ -60,3 +60,31 @@ class TestBlank(unittest.TestCase):
             board.put_disc('white', 2, 2)
             board.put_disc('black', 4, 5)
             self.assertEqual(blank.next_move('white', board), expected.next_move('white', board))
+
+    def test_blank_performance(self):
+        board = BitBoard()
+        board.put_disc('black', 3, 2)
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 5, 5)
+        board.put_disc('white', 4, 2)
+        board.put_disc('black', 5, 2)
+        board.put_disc('white', 5, 4)
+
+        iterative = IterativeDeepning(
+            depth=4,
+            selector=coord.Selector(),
+            orderer=coord.Orderer_B(),
+            search=Blank(),
+        )
+
+        key = iterative.__class__.__name__ + str(os.getpid())
+        Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
+        key2 = iterative.search.__class__.__name__ + str(os.getpid())
+        Measure.count[key2] = 0
+        iterative.next_move('black', board)
+
+        print()
+        print(key)
+        print('Blank : (23000)', Measure.count[key2])
+        print('(max_depth=7)', iterative.max_depth)
+        print(' max :', Measure.elp_time[key]['max'], '(s)')
