@@ -38,8 +38,7 @@ class _EndGame_(AbstractStrategy):
         """
         最善手を選ぶ
         """
-        best_move, alpha, beta, scores = None, self._MIN, self._MAX, {}
-
+        alpha, beta = self._MIN, self._MAX
         if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR:
             return EndGameMethods.get_best_move(color, board, moves, alpha, beta, depth, pid, self.timer, self.measure)
         return self.alphabeta_n.get_best_move(color, board, moves, depth, pid)

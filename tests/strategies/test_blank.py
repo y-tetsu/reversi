@@ -3,10 +3,9 @@
 
 import unittest
 import os
-import time
 
 from reversi.board import BitBoard
-from reversi.strategies.common import Timer, Measure, CPU_TIME
+from reversi.strategies.common import Measure
 from reversi.strategies import _Blank_, _Blank, Blank_, Blank, _NegaScout_, _NegaScout, NegaScout_, NegaScout, IterativeDeepning
 import reversi.strategies.coordinator as coord
 

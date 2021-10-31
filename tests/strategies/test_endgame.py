@@ -3,7 +3,6 @@
 
 import unittest
 import os
-import time
 
 from reversi.board import BitBoard
 from reversi.strategies.common import Timer, Measure, CPU_TIME
@@ -82,15 +81,15 @@ class TestEndGame(unittest.TestCase):
         # depth=17 : white : --
         # depth=17 : black : b6
         board.put_disc('black', 1, 5)
-        #print(board)
-        #print(board._black_score, board._white_score)
+        # print(board)
+        # print(board._black_score, board._white_score)
 
         # depth=16 : white : c7
         self.assertEqual(endgame.get_best_move('white', board, board.get_legal_moves('white')), ((1, 6), {(1, 6): -38.0, (2, 6): -38.0}))
         board.put_disc('white', 2, 6)
 
         # depth=15 : black : a7
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((0, 6), {(0, 5): 16.0, (0, 6): 38.0, (1, 7): 38.0, (2, 5): 30.0, (3, 6): 38.0, (3, 7): 38.0, (4, 7): 38.0, (5, 6): 38.0, (5, 7): 38.0, (6, 6): 38.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((0, 6), {(0, 5): 16.0, (0, 6): 38.0, (1, 7): 38.0, (2, 5): 30.0, (3, 6): 38.0, (3, 7): 38.0, (4, 7): 38.0, (5, 6): 38.0, (5, 7): 38.0, (6, 6): 38.0}))  # noqa: E501
         board.put_disc('black', 0, 6)
 
         # depth=14 : white : b7
@@ -98,7 +97,7 @@ class TestEndGame(unittest.TestCase):
         board.put_disc('white', 1, 6)
 
         # depth=13 : black : b8
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((1, 7), {(0, 5): 8.0, (1, 7): 38.0, (2, 5): 36.0, (3, 6): 36.0, (3, 7): 38.0, (4, 7): 38.0, (5, 6): 36.0, (5, 7): 38.0, (6, 6): 36.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((1, 7), {(0, 5): 8.0, (1, 7): 38.0, (2, 5): 36.0, (3, 6): 36.0, (3, 7): 38.0, (4, 7): 38.0, (5, 6): 36.0, (5, 7): 38.0, (6, 6): 36.0}))  # noqa: E501
         board.put_disc('black', 1, 7)
 
         # depth=12 : white : d7
@@ -106,15 +105,15 @@ class TestEndGame(unittest.TestCase):
         board.put_disc('white', 3, 6)
 
         # depth=11 : black : f8
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((5, 7), {(0, 5): 2.0, (2, 5): 36.0, (2, 7): 36.0, (3, 7): 36.0, (4, 7): 36.0, (5, 6): 36.0, (5, 7): 38.0, (6, 6): 36.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((5, 7), {(0, 5): 2.0, (2, 5): 36.0, (2, 7): 36.0, (3, 7): 36.0, (4, 7): 36.0, (5, 6): 36.0, (5, 7): 38.0, (6, 6): 36.0}))  # noqa: E501
         board.put_disc('black', 5, 7)
 
         # depth=10 : white : c6
-        self.assertEqual(endgame.get_best_move('white', board, board.get_legal_moves('white')), ((2, 5), {(2, 5): -38.0, (3, 7): -38.0, (4, 7): -38.0, (3, 7): -38.0, (5, 6): -38.0}))
+        self.assertEqual(endgame.get_best_move('white', board, board.get_legal_moves('white')), ((2, 5), {(2, 5): -38.0, (3, 7): -38.0, (4, 7): -38.0, (5, 6): -38.0}))  # noqa: E501
         board.put_disc('white', 2, 5)
 
         # depth=9 : black : f7
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((5, 6), {(0, 5): -8.0, (0, 7): 38.0, (2, 7): 38.0, (3, 7): 38.0, (5, 6): 38.0, (6, 6): 38.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((5, 6), {(0, 5): -8.0, (0, 7): 38.0, (2, 7): 38.0, (3, 7): 38.0, (5, 6): 38.0, (6, 6): 38.0}))  # noqa: E501
         board.put_disc('black', 5, 6)
 
         # depth=8 : white : g7
@@ -122,12 +121,12 @@ class TestEndGame(unittest.TestCase):
         board.put_disc('white', 6, 6)
 
         # depth=7 : black : a8
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((0, 7), {(0, 5): 6.0, (0, 7): 38.0, (2, 7): 38.0, (3, 7): 38.0, (4, 7): 38.0, (6, 7): 38.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((0, 7), {(0, 5): 6.0, (0, 7): 38.0, (2, 7): 38.0, (3, 7): 38.0, (4, 7): 38.0, (6, 7): 38.0}))  # noqa: E501
         board.put_disc('black', 0, 7)
 
         # depth=6 : white : --
         # depth=6 : black : d8
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((3, 7), {(0, 5): 34.0, (2, 7): 34.0, (3, 7): 38.0, (4, 7): 38.0, (6, 7): 38.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((3, 7), {(0, 5): 34.0, (2, 7): 34.0, (3, 7): 38.0, (4, 7): 38.0, (6, 7): 38.0}))  # noqa: E501
         board.put_disc('black', 3, 7)
 
         # depth=5 : white : e8
@@ -135,7 +134,7 @@ class TestEndGame(unittest.TestCase):
         board.put_disc('white', 4, 7)
 
         # depth=4 : balck : c8
-        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((2, 7), {(0, 5): 22.0, (2, 7): 38.0, (6, 7): 38.0, (7, 7): 38.0}))
+        self.assertEqual(endgame.get_best_move('black', board, board.get_legal_moves('black')), ((2, 7), {(0, 5): 22.0, (2, 7): 38.0, (6, 7): 38.0, (7, 7): 38.0}))  # noqa: E501
         board.put_disc('black', 2, 7)
 
         # depth=3 : white ; g8

@@ -35,7 +35,7 @@ class _Blank_(AbstractStrategy):
         self.wb1 = wb1
         self.wb2 = wb2
         self.wb3 = wb3
-        self.evaluator = Evaluator_TPWEB(corner=corner, c=c, a1=a1, a2=a2, b1=b1, b2=b2, b3=b3, x=x, o1=o1, o2=o2, wp=wp, ww=ww, we=we, wb1=wb1, wb2=wb2, wb3=wb3)
+        self.evaluator = Evaluator_TPWEB(corner=corner, c=c, a1=a1, a2=a2, b1=b1, b2=b2, b3=b3, x=x, o1=o1, o2=o2, wp=wp, ww=ww, we=we, wb1=wb1, wb2=wb2, wb3=wb3)  # noqa: E501
         self.depth = depth
         self.negascout_tpweb = _NegaScout_(depth=depth, evaluator=self.evaluator)
         self.timer = False
