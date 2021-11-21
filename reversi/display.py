@@ -107,6 +107,7 @@ class WindowDisplay(AbstractDisplay):
         self.board = window.board
         self.sleep_time_turn = sleep_time_turn  # sec
         self.sleep_time_move = sleep_time_move  # sec
+        self.pre_move = None
 
     def progress(self, board, black_player, white_player):
         """display progress"""
@@ -129,12 +130,14 @@ class WindowDisplay(AbstractDisplay):
             self.info.set_move_text_off(color)  # 打った手の表示を消す
 
         self.board.disable_moves(legal_moves)                # 打てる候補のハイライトをなくす
+        if self.pre_move:
+            self.board.disable_move(*self.pre_move)          # 前回打ったてのハイライトを消す
         self.board.enable_move(*player.move)                 # 打った手をハイライト
         self.board.put_disc(player.color, *player.move)      # 石を置く
         time.sleep(self.sleep_time_move)
         self.info.set_move_text_on(player.color, x, y)       # 打った手を表示
         self.board.turn_disc(player.color, player.captures)  # 石をひっくり返すアニメーション
-        self.board.disable_move(*player.move)
+        self.pre_move = player.move
 
     def foul(self, player):
         """display foul player"""

@@ -160,6 +160,7 @@ class TestDisplay(unittest.TestCase):
         self.assertIsInstance(display.board, TestBoard)
         self.assertEqual(display.sleep_time_turn, 0.3)
         self.assertEqual(display.sleep_time_move, 0.3)
+        self.assertIsNone(display.pre_move)
 
         display = WindowDisplay(TestWindow(), sleep_time_turn=0.001, sleep_time_move=0.001)
         self.assertEqual(display.sleep_time_turn, 0.001)
@@ -182,6 +183,7 @@ class TestDisplay(unittest.TestCase):
         player.move = (5, 4)
         player.captures = [(4, 4)]
         legal_moves = Board().get_legal_moves('black')
+        display.pre_move = (0, 0)
         with captured_stdout() as stdout:
             display.move(player, legal_moves)
             lines = stdout.getvalue().splitlines()
@@ -191,11 +193,11 @@ class TestDisplay(unittest.TestCase):
                 'set_turn_text_off white',
                 'set_move_text_off white',
                 'disable_moves [(3, 2), (2, 3), (5, 4), (4, 5)]',
+                'disable_move 0 0',
                 'enable_move 5 4',
                 'put_disc black 5 4',
                 'set_move_text_on black f 5',
                 'turn_disc black [(4, 4)]',
-                'disable_move 5 4',
             ])
 
         # foul
