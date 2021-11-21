@@ -333,11 +333,13 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
     if int_color:
         b ^= move | flippable_discs_num
         w ^= flippable_discs_num
+        pb = <signed int>0
+        pw = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, b, w))
     else:
         w ^= move | flippable_discs_num
         b ^= flippable_discs_num
-    pb = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>1, b, w))
-    pw = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, b, w))
+        pb = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>1, b, w))
+        pw = <signed int>0
     return (pb - pw) * sign
 
 
