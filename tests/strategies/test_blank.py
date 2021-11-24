@@ -84,8 +84,8 @@ class TestBlank(unittest.TestCase):
 
         print()
         print(key)
-        print('Blank : (160000)', Measure.count[key2])
-        print('(max_depth=8)', iterative.max_depth)
+        print('Blank : (220000)', Measure.count[key2])
+        print('(max_depth=9)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
 
     def test_blank_force_import_error(self):
