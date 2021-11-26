@@ -761,6 +761,9 @@ cdef inline signed int _get_b():
         unsigned long long l_blank, r_blank, t_blank, b_blank, lt_blank, rt_blank, lb_blank, rb_blank
         unsigned long long lt_x, rt_x, lb_x, rb_x
         unsigned long long lt_r, lt_b, rt_l, rt_b, lb_t, lb_r, rb_t, rb_l
+        unsigned long long l_blank_b, r_blank_b, t_blank_b, b_blank_b, lt_blank_b, rt_blank_b, lb_blank_b, rb_blank_b
+        unsigned long long l_blank_w, r_blank_w, t_blank_w, b_blank_w, lt_blank_w, rt_blank_w, lb_blank_w, rb_blank_w
+        unsigned long long no_blank_b, no_blank_w
         signed int lt_r_sign = 1, lt_b_sign = 1, rt_l_sign = 1, rt_b_sign = 1, lb_t_sign = 1, lb_r_sign = 1, rb_t_sign = 1, rb_l_sign = 1
     black = bb
     white = wb
@@ -786,14 +789,77 @@ cdef inline signed int _get_b():
     # 右下方向に空がある(左上方向が盤面の範囲内)
     rb_blank = diagonal & ((diagonal >> 9) & blank) << 9
     # wb1の計算
-    score += wb1 * (<signed int>_popcount(l_blank & black) - <signed int>_popcount(l_blank & white))
-    score += wb1 * (<signed int>_popcount(r_blank & black) - <signed int>_popcount(r_blank & white))
-    score += wb1 * (<signed int>_popcount(t_blank & black) - <signed int>_popcount(t_blank & white))
-    score += wb1 * (<signed int>_popcount(b_blank & black) - <signed int>_popcount(b_blank & white))
-    score += wb1 * (<signed int>_popcount(lt_blank & black) - <signed int>_popcount(lt_blank & white))
-    score += wb1 * (<signed int>_popcount(rt_blank & black) - <signed int>_popcount(rt_blank & white))
-    score += wb1 * (<signed int>_popcount(lb_blank & black) - <signed int>_popcount(lb_blank & white))
-    score += wb1 * (<signed int>_popcount(rb_blank & black) - <signed int>_popcount(rb_blank & white))
+    # - blank and color
+    l_blank_b = l_blank & black
+    r_blank_b = r_blank & black
+    t_blank_b = t_blank & black
+    b_blank_b = b_blank & black
+    lt_blank_b = lt_blank & black
+    rt_blank_b = rt_blank & black
+    lb_blank_b = lb_blank & black
+    rb_blank_b = rb_blank & black
+    l_blank_w = l_blank & white
+    r_blank_w = r_blank & white
+    t_blank_w = t_blank & white
+    b_blank_w = b_blank & white
+    lt_blank_w = lt_blank & white
+    rt_blank_w = rt_blank & white
+    lb_blank_w = lb_blank & white
+    rb_blank_w = rb_blank & white
+    # - merge
+    no_blank_b = ~(l_blank_b | r_blank_b | t_blank_b | b_blank_b | lt_blank_b | rt_blank_b | lb_blank_b | rb_blank_b)
+    no_blank_w = ~(l_blank_w | r_blank_w | t_blank_w | b_blank_w | lt_blank_w | rt_blank_w | lb_blank_w | rb_blank_w)
+    # - exclude opponent blank
+    l_blank_b &= no_blank_w
+    r_blank_b &= no_blank_w
+    t_blank_b &= no_blank_w
+    b_blank_b &= no_blank_w
+    lt_blank_b &= no_blank_w
+    rt_blank_b &= no_blank_w
+    lb_blank_b &= no_blank_w
+    rb_blank_b &= no_blank_w
+    l_blank_w &= no_blank_b
+    r_blank_w &= no_blank_b
+    t_blank_w &= no_blank_b
+    b_blank_w &= no_blank_b
+    lt_blank_w &= no_blank_b
+    rt_blank_w &= no_blank_b
+    lb_blank_w &= no_blank_b
+    rb_blank_w &= no_blank_b
+    # - calc score
+    if l_blank_b:
+        score += <signed int>_popcount(l_blank_b)
+    if r_blank_b:
+        score += <signed int>_popcount(r_blank_b)
+    if t_blank_b:
+        score += <signed int>_popcount(t_blank_b)
+    if b_blank_b:
+        score += <signed int>_popcount(b_blank_b)
+    if lt_blank_b:
+        score += <signed int>_popcount(lt_blank_b)
+    if rt_blank_b:
+        score += <signed int>_popcount(rt_blank_b)
+    if lb_blank_b:
+        score += <signed int>_popcount(lb_blank_b)
+    if rb_blank_b:
+        score += <signed int>_popcount(rb_blank_b)
+    if l_blank_w:
+        score -= <signed int>_popcount(l_blank_w)
+    if r_blank_w:
+        score -= <signed int>_popcount(r_blank_w)
+    if t_blank_w:
+        score -= <signed int>_popcount(t_blank_w)
+    if b_blank_w:
+        score -= <signed int>_popcount(b_blank_w)
+    if lt_blank_w:
+        score -= <signed int>_popcount(lt_blank_w)
+    if rt_blank_w:
+        score -= <signed int>_popcount(rt_blank_w)
+    if lb_blank_w:
+        score -= <signed int>_popcount(lb_blank_w)
+    if rb_blank_w:
+        score -= <signed int>_popcount(rb_blank_w)
+    score *= wb1
     # wb2の計算
     lt_x = lt_blank & <unsigned long long>0x0040000000000000  # 左上のX打ち
     if lt_x:
