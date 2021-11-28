@@ -325,22 +325,16 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
     """
     cdef:
         unsigned long long flippable_discs_num
-        signed int pb, pw, sign = -1
     # ひっくり返せる石を取得
     flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
     # 自分の石を置いて相手の石をひっくり返す
     if int_color:
         b ^= move | flippable_discs_num
         w ^= flippable_discs_num
-        pb = <signed int>0
-        pw = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, b, w))
-        sign = <signed int>1
     else:
         w ^= move | flippable_discs_num
         b ^= flippable_discs_num
-        pb = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>1, b, w))
-        pw = <signed int>0
-    return (pb - pw) * sign
+    return -<signed int>_popcount(_get_legal_moves_bits(not <unsigned int>int_color, b, w))
 
 
 cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
