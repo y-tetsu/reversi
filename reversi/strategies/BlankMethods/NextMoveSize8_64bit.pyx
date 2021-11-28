@@ -257,7 +257,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     cdef:
         double score, tmp, null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
-        unsigned int i, is_game_end = 0, int_color_next = 1, count = 0, index = 0
+        unsigned int i, int_color_next = 1, count = 0, index = 0
         signed int timeout, sign = -1
         unsigned long long[64] next_moves_list
         signed int[64] possibilities
@@ -272,9 +272,11 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
     # 前回パス and 打てる場所なし の場合ゲーム終了
     if pas and not legal_moves_bits:
-        is_game_end = <unsigned int>1
-    # 最大深さに到達 or ゲーム終了
-    if not depth or is_game_end:
+        if int_color:
+            sign = <signed int>1
+        return _evaluate(int_color, <signed int>0, <signed int>0) * sign
+    # 最大深さに到達
+    if not depth:
         if int_color:
             legal_moves_b_bits = legal_moves_bits
             legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
