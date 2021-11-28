@@ -342,11 +342,11 @@ cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long lo
     """
     cdef:
         unsigned int len1, len2, i
-        unsigned long long[64] array_move1
-        unsigned long long[64] array_move2
-        signed int[64] array_p1
-        signed int[64] array_p2
-    if count > 1:
+        unsigned long long[32] array_move1
+        unsigned long long[32] array_move2
+        signed int[32] array_p1
+        signed int[32] array_p2
+    if count >= 2:
         len1 = <unsigned int>(count / 2)
         len2 = <unsigned int>(count - len1)
         for i in range(len1):
@@ -360,7 +360,7 @@ cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long lo
         _merge(len1, len2, array_move1, array_p1, array_move2, array_p2, next_moves_list, possibilities)
 
 
-cdef inline void _merge(unsigned int len1, unsigned int len2, unsigned long long[64] array_move1, signed int[64] array_p1, unsigned long long[64] array_move2, signed int[64] array_p2, unsigned long long[64] next_moves_list, signed int[64] possibilities):
+cdef inline void _merge(unsigned int len1, unsigned int len2, unsigned long long[32] array_move1, signed int[32] array_p1, unsigned long long[32] array_move2, signed int[32] array_p2, unsigned long long[64] next_moves_list, signed int[64] possibilities):
     """_merge
     """
     cdef:
