@@ -270,27 +270,25 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     measure_count += 1
     # 合法手を取得
     legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
-    # 前回パス and 打てる場所なし の場合ゲーム終了
-    if pas and not legal_moves_bits:
-        if int_color:
-            sign = <signed int>1
-        return _evaluate(int_color, <signed int>0, <signed int>0) * sign
+    # 次の手番
+    if int_color:
+        int_color_next = <unsigned int>0
+        sign = <signed int>1
+    # パスの場合
+    if not legal_moves_bits:
+        # 前回もパスの場合ゲーム終了
+        if pas:
+            return _evaluate(int_color, <signed int>0, <signed int>0) * sign
+        return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 最大深さに到達
     if not depth:
         if int_color:
             legal_moves_b_bits = legal_moves_bits
             legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
-            sign = <signed int>1
         else:
             legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
             legal_moves_w_bits = legal_moves_bits
         return _evaluate(int_color, <signed int>_popcount(legal_moves_b_bits), <signed int>_popcount(legal_moves_w_bits)) * sign
-    # 次の手番
-    if int_color:
-        int_color_next = <unsigned int>0
-    # パスの場合
-    if not legal_moves_bits:
-        return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 着手可能数に応じて手を並び替え
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
