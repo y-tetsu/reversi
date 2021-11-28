@@ -285,7 +285,6 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         return _evaluate(int_color, <signed int>_popcount(legal_moves_b_bits), <signed int>_popcount(legal_moves_w_bits)) * sign
     # 次の手番
     if int_color:
-        sign = <signed int>1
         int_color_next = <unsigned int>0
     # パスの場合
     if not legal_moves_bits:
@@ -294,7 +293,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
         next_moves_list[count] = move
-        possibilities[count] = _get_possibility(int_color, bb, wb, move, sign)
+        possibilities[count] = _get_possibility(int_color, bb, wb, move)
         count += 1
         legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
@@ -321,12 +320,12 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     return alpha
 
 
-cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move, signed int sign):
+cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
     """_get_possibility
     """
     cdef:
         unsigned long long flippable_discs_num
-        signed int pb, pw
+        signed int pb, pw, sign = -1
     # ひっくり返せる石を取得
     flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
     # 自分の石を置いて相手の石をひっくり返す
@@ -335,6 +334,7 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
         w ^= flippable_discs_num
         pb = <signed int>0
         pw = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, b, w))
+        sign = <signed int>1
     else:
         w ^= move | flippable_discs_num
         b ^= flippable_discs_num
