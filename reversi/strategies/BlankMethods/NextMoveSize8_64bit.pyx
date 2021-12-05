@@ -7,6 +7,9 @@ import time
 from reversi.strategies.common import Timer, Measure
 
 
+DEF MAX_POSSIBILITY = 40  # 着手可能数の最大(想定)
+DEF POSSIBILITY_RANGE = MAX_POSSIBILITY * 2 + 1
+DEF BUCKET_SIZE = MAX_POSSIBILITY
 cdef:
     unsigned long long measure_count
     unsigned long long bb
@@ -340,6 +343,40 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
 cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
     """_sort_moves_by_possibility
     """
+    if count >= 2:
+        if count <= BUCKET_SIZE:
+            _bucket_sort(count, next_moves_list, possibilities)
+        else:
+            _merge_sort(count, next_moves_list, possibilities)
+
+
+cdef inline void _bucket_sort(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
+    """_bucket_sort
+    """
+    cdef:
+        unsigned int i, j, k = 0, pos, index
+        unsigned long long[POSSIBILITY_RANGE*BUCKET_SIZE] bucket
+        unsigned int[POSSIBILITY_RANGE] possibility_count
+    for i in range(POSSIBILITY_RANGE):
+        possibility_count[i] = <unsigned int>0
+    # バケツに入れる
+    for i in range(count):
+        pos = <unsigned int>(possibilities[i] + MAX_POSSIBILITY)
+        index = pos * BUCKET_SIZE + possibility_count[pos]
+        bucket[index] = next_moves_list[i]
+        possibility_count[pos] += <unsigned int>1
+    # バケツから取り出す
+    k = count - 1
+    for i in range(POSSIBILITY_RANGE):
+        for j in range(possibility_count[i]):
+            index = i * BUCKET_SIZE + j
+            next_moves_list[k] = bucket[index]
+            k -= 1
+
+
+cdef inline void _merge_sort(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
+    """_merge_sort
+    """
     cdef:
         unsigned int len1, len2, i
         unsigned long long[32] array_move1
@@ -355,8 +392,8 @@ cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long lo
         for i in range(len2):
             array_move2[i] = next_moves_list[len1+i]
             array_p2[i] = possibilities[len1+i]
-        _sort_moves_by_possibility(len1, array_move1, array_p1)
-        _sort_moves_by_possibility(len2, array_move2, array_p2)
+        _merge_sort(len1, array_move1, array_p1)
+        _merge_sort(len2, array_move2, array_p2)
         _merge(len1, len2, array_move1, array_p1, array_move2, array_p2, next_moves_list, possibilities)
 
 
