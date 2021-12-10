@@ -278,7 +278,44 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     # 探索ノード数カウント
     measure_count += 1
     # 合法手を取得
-    legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
+    # -- _get_legal_moves_bits(int_color, bb, wb) --
+    player, opponent = wb, bb
+    if int_color:
+        player, opponent = bb, wb
+    blank = ~(player | opponent)
+    horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
+    vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
+    diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
+    # left/right
+    tmp_h = horizontal & ((player << 1) | (player >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+    # top/bottom
+    tmp_v = vertical & ((player << 8) | (player >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+    # left-top/right-bottom
+    tmp_d1 = diagonal & ((player << 9) | (player >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+    # right-top/left-bottom
+    tmp_d2 = diagonal & ((player << 7) | (player >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+    legal_moves_bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
+    # -- _get_legal_moves_bits(int_color, bb, wb) --
     # 次の手番
     if int_color:
         int_color_next = <unsigned int>0
@@ -291,7 +328,43 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 最大深さに到達
     if not depth:
-        legal_moves_bits_opponent = _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb)
+        # 相手の着手可能数を取得
+        # -- _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
+        player, opponent = opponent, player  # reversed for opponent
+        blank = ~(player | opponent)
+        horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
+        vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
+        diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
+        # left/right
+        tmp_h = horizontal & ((player << 1) | (player >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        # top/bottom
+        tmp_v = vertical & ((player << 8) | (player >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        # left-top/right-bottom
+        tmp_d1 = diagonal & ((player << 9) | (player >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        # right-top/left-bottom
+        tmp_d2 = diagonal & ((player << 7) | (player >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        legal_moves_bits_opponent =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
+        # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
         if int_color:
             legal_moves_b_bits = legal_moves_bits
             legal_moves_w_bits = legal_moves_bits_opponent
@@ -318,6 +391,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_w_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount --
+        # 相手の着手可能数を取得
         return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign
     # 着手可能数に応じて手を並び替え
     while (legal_moves_bits):
@@ -327,9 +401,6 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         b, w = bb, wb
         # -- _get_flippable_discs_num --
         flippable_discs_num = 0
-        player, opponent = w, b
-        if int_color:
-            player, opponent = b, w
         t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
         rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
         r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
@@ -387,7 +458,10 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         else:
             w ^= move | flippable_discs_num
             b ^= flippable_discs_num
-        # -- _get_legal_moves_bits --
+        # -- _get_legal_moves_bits(int_color, b, w) --
+        player, opponent = w, b
+        if int_color:
+            player, opponent = b, w
         blank = ~(player | opponent)
         horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
@@ -421,7 +495,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-        # -- _get_legal_moves_bits --
+        # -- _get_legal_moves_bits(int_color, b, w) --
         # -- _popcount --
         bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
         bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
