@@ -269,6 +269,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
         unsigned long long player, opponent
         unsigned long long blank, horizontal, vertical, diagonal, tmp_h, tmp_v, tmp_d1, tmp_d2
+        unsigned long long legal_moves_bits_opponent
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -290,11 +291,12 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 最大深さに到達
     if not depth:
+        legal_moves_bits_opponent = _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb)
         if int_color:
             legal_moves_b_bits = legal_moves_bits
-            legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
+            legal_moves_w_bits = legal_moves_bits_opponent
         else:
-            legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
+            legal_moves_b_bits = legal_moves_bits_opponent
             legal_moves_w_bits = legal_moves_bits
         if legal_moves_b_bits:
             # -- _popcount --
