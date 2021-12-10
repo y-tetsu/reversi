@@ -264,7 +264,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         signed int timeout, sign = -1
         unsigned long long[64] next_moves_list
         signed int[64] possibilities
-        unsigned long long flippable_discs_num, b, w
+        unsigned long long flippable_discs_num, b, w, bits
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -292,7 +292,27 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         else:
             legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
             legal_moves_w_bits = legal_moves_bits
-        return _evaluate(int_color, <signed int>_popcount(legal_moves_b_bits), <signed int>_popcount(legal_moves_w_bits)) * sign
+        if legal_moves_b_bits:
+            # -- _popcount --
+            bits = legal_moves_b_bits
+            bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+            bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+            bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+            bits = bits + (bits >> <unsigned int>8)
+            bits = bits + (bits >> <unsigned int>16)
+            legal_moves_b_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+            # -- _popcount --
+        if legal_moves_b_bits:
+            # -- _popcount --
+            bits = legal_moves_w_bits
+            bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+            bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+            bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+            bits = bits + (bits >> <unsigned int>8)
+            bits = bits + (bits >> <unsigned int>16)
+            legal_moves_w_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+            # -- _popcount --
+        return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign
     # 着手可能数に応じて手を並び替え
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
@@ -307,7 +327,15 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         else:
             w ^= move | flippable_discs_num
             b ^= flippable_discs_num
-        possibilities[count] = -<signed int>_popcount(_get_legal_moves_bits(not <unsigned int>int_color, b, w))
+        bits = _get_legal_moves_bits(not <unsigned int>int_color, b, w)
+        # -- _popcount --
+        bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+        bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+        bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+        bits = bits + (bits >> <unsigned int>8)
+        bits = bits + (bits >> <unsigned int>16)
+        possibilities[count] = -<signed int>((bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F)
+        # -- _popcount --
         count += 1
         legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
@@ -452,15 +480,15 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
     return blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
 
-cdef inline unsigned long long _popcount(unsigned long long bits):
-    """_popcount
-    """
-    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
-    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
-    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
-    bits = bits + (bits >> <unsigned int>8)
-    bits = bits + (bits >> <unsigned int>16)
-    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+#cdef inline unsigned long long _popcount(unsigned long long bits):
+#    """_popcount
+#    """
+#    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+#    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+#    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+#    bits = bits + (bits >> <unsigned int>8)
+#    bits = bits + (bits >> <unsigned int>16)
+#    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
 
 
 cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
@@ -468,10 +496,18 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        unsigned long long count
+        unsigned long long count, bits
     # ひっくり返せる石を取得
     fd = _get_flippable_discs_num(int_color, bb, wb, move)
-    count = _popcount(fd)
+    # -- _popcount --
+    bits = fd
+    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+    bits = bits + (bits >> <unsigned int>8)
+    bits = bits + (bits >> <unsigned int>16)
+    count = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+    # -- _popcount --
     # 打つ前の状態を格納
     pbb[tail] = bb
     pwb[tail] = wb
@@ -826,21 +862,25 @@ cdef inline signed int _get_b():
         # black
         bits = blanks[i] & black
         if bits:
+            # -- _popcount --
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
             bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
             bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
             bits = bits + (bits >> <unsigned int>8)
             bits = bits + (bits >> <unsigned int>16)
             score += <signed int>(bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+            # -- _popcount --
         # white
         bits = blanks[i] & white
         if bits:
+            # -- _popcount --
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
             bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
             bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
             bits = bits + (bits >> <unsigned int>8)
             bits = bits + (bits >> <unsigned int>16)
             score -= <signed int>(bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+            # -- _popcount --
     score *= wb1
     # wb2の計算
     lt_x = lt_blank & <unsigned long long>0x0040000000000000  # 左上のX打ち
