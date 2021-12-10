@@ -265,6 +265,9 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         unsigned long long[64] next_moves_list
         signed int[64] possibilities
         unsigned long long flippable_discs_num, b, w, bits
+        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
+        unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
+        unsigned long long player, opponent
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -319,7 +322,61 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         next_moves_list[count] = move
         # ひっくり返せる石を取得
         b, w = bb, wb
-        flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
+        # -- _get_flippable_discs_num --
+        flippable_discs_num = 0
+        player, opponent = w, b
+        if int_color:
+            player, opponent = b, w
+        t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
+        rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
+        r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
+        rb = <unsigned long long>0x007F7F7F7F7F7F7F & (move >> <unsigned int>9)  # right-bottom
+        b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (move >> <unsigned int>8)  # bottom
+        lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
+        l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
+        lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
+        for _ in range(6):
+            if t_ & opponent:
+                bf_t_ |= t_
+                t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
+            if rt & opponent:
+                bf_rt |= rt
+                rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (rt << <unsigned int>7)
+            if r_ & opponent:
+                bf_r_ |= r_
+                r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)
+            if rb & opponent:
+                bf_rb |= rb
+                rb = <unsigned long long>0x007F7F7F7F7F7F7F & (rb >> <unsigned int>9)
+            if b_ & opponent:
+                bf_b_ |= b_
+                b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)
+            if lb & opponent:
+                bf_lb |= lb
+                lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (lb >> <unsigned int>7)
+            if l_ & opponent:
+                bf_l_ |= l_
+                l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (l_ << <unsigned int>1)
+            if lt & opponent:
+                bf_lt |= lt
+                lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)
+        if t_ & player:
+            flippable_discs_num |= bf_t_
+        if rt & player:
+            flippable_discs_num |= bf_rt
+        if r_ & player:
+            flippable_discs_num |= bf_r_
+        if rb & player:
+            flippable_discs_num |= bf_rb
+        if b_ & player:
+            flippable_discs_num |= bf_b_
+        if lb & player:
+            flippable_discs_num |= bf_lb
+        if l_ & player:
+            flippable_discs_num |= bf_l_
+        if lt & player:
+            flippable_discs_num |= bf_lt
+        # -- _get_flippable_discs_num --
         # 自分の石を置いて相手の石をひっくり返す
         if int_color:
             b ^= move | flippable_discs_num
@@ -480,63 +537,22 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
     return blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
 
 
-#cdef inline unsigned long long _popcount(unsigned long long bits):
-#    """_popcount
-#    """
-#    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
-#    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
-#    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
-#    bits = bits + (bits >> <unsigned int>8)
-#    bits = bits + (bits >> <unsigned int>16)
-#    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-
-
 cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
     """_put_disc
     """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         unsigned long long count, bits
-    # ひっくり返せる石を取得
-    fd = _get_flippable_discs_num(int_color, bb, wb, move)
-    # -- _popcount --
-    bits = fd
-    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
-    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
-    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
-    bits = bits + (bits >> <unsigned int>8)
-    bits = bits + (bits >> <unsigned int>16)
-    count = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-    # -- _popcount --
-    # 打つ前の状態を格納
-    pbb[tail] = bb
-    pwb[tail] = wb
-    pbs[tail] = bs
-    pws[tail] = ws
-    tail += 1
-    # 自分の石を置いて相手の石をひっくり返す
-    if int_color:
-        bb ^= move | fd
-        wb ^= fd
-        bs += <unsigned int>1 + <unsigned int>count
-        ws -= <unsigned int>count
-    else:
-        wb ^= move | fd
-        bb ^= fd
-        bs -= <unsigned int>count
-        ws += <unsigned int>1 + <unsigned int>count
-
-
-cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
-    """_get_flippable_discs_num
-    """
-    cdef:
         unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
         unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
-        unsigned long long player = w, opponent = b, flippable_discs_num = 0
+        unsigned long long player, opponent, flippable_discs_num = 0
+    # ひっくり返せる石を取得
+    # -- _get_flippable_discs_num --
+    player = wb
+    opponent = bb
     if int_color:
-        player = b
-        opponent = w
+        player = bb
+        opponent = wb
     t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
     rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
     r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
@@ -586,7 +602,34 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
         flippable_discs_num |= bf_l_
     if lt & player:
         flippable_discs_num |= bf_lt
-    return flippable_discs_num
+    fd = flippable_discs_num
+    # -- _get_flippable_discs_num --
+    # -- _popcount --
+    bits = fd
+    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+    bits = bits + (bits >> <unsigned int>8)
+    bits = bits + (bits >> <unsigned int>16)
+    count = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+    # -- _popcount --
+    # 打つ前の状態を格納
+    pbb[tail] = bb
+    pwb[tail] = wb
+    pbs[tail] = bs
+    pws[tail] = ws
+    tail += 1
+    # 自分の石を置いて相手の石をひっくり返す
+    if int_color:
+        bb ^= move | fd
+        wb ^= fd
+        bs += <unsigned int>1 + <unsigned int>count
+        ws -= <unsigned int>count
+    else:
+        wb ^= move | fd
+        bb ^= fd
+        bs -= <unsigned int>count
+        ws += <unsigned int>1 + <unsigned int>count
 
 
 cdef inline void _undo():
@@ -958,3 +1001,76 @@ cdef inline signed int _get_b():
         if rb_l & blank:
             score += wb3 * rb_l_sign
     return score
+
+
+#cdef inline unsigned long long _popcount(unsigned long long bits):
+#    """_popcount
+#    """
+#    bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+#    bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+#    bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+#    bits = bits + (bits >> <unsigned int>8)
+#    bits = bits + (bits >> <unsigned int>16)
+#    return (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+
+
+#cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
+#    """_get_flippable_discs_num
+#    """
+#    cdef:
+#        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
+#        unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
+#        unsigned long long player = w, opponent = b, flippable_discs_num = 0
+#    if int_color:
+#        player = b
+#        opponent = w
+#    t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
+#    rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
+#    r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
+#    rb = <unsigned long long>0x007F7F7F7F7F7F7F & (move >> <unsigned int>9)  # right-bottom
+#    b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (move >> <unsigned int>8)  # bottom
+#    lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
+#    l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
+#    lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
+#    for _ in range(6):
+#        if t_ & opponent:
+#            bf_t_ |= t_
+#            t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
+#        if rt & opponent:
+#            bf_rt |= rt
+#            rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (rt << <unsigned int>7)
+#        if r_ & opponent:
+#            bf_r_ |= r_
+#            r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)
+#        if rb & opponent:
+#            bf_rb |= rb
+#            rb = <unsigned long long>0x007F7F7F7F7F7F7F & (rb >> <unsigned int>9)
+#        if b_ & opponent:
+#            bf_b_ |= b_
+#            b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)
+#        if lb & opponent:
+#            bf_lb |= lb
+#            lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (lb >> <unsigned int>7)
+#        if l_ & opponent:
+#            bf_l_ |= l_
+#            l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (l_ << <unsigned int>1)
+#        if lt & opponent:
+#            bf_lt |= lt
+#            lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)
+#    if t_ & player:
+#        flippable_discs_num |= bf_t_
+#    if rt & player:
+#        flippable_discs_num |= bf_rt
+#    if r_ & player:
+#        flippable_discs_num |= bf_r_
+#    if rb & player:
+#        flippable_discs_num |= bf_rb
+#    if b_ & player:
+#        flippable_discs_num |= bf_b_
+#    if lb & player:
+#        flippable_discs_num |= bf_lb
+#    if l_ & player:
+#        flippable_discs_num |= bf_l_
+#    if lt & player:
+#        flippable_discs_num |= bf_lt
+#    return flippable_discs_num
