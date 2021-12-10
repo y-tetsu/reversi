@@ -793,6 +793,9 @@ cdef inline signed int _get_b():
         unsigned long long lt_x, rt_x, lb_x, rb_x
         unsigned long long lt_r, lt_b, rt_l, rt_b, lb_t, lb_r, rb_t, rb_l
         signed int lt_r_sign = 1, lt_b_sign = 1, rt_l_sign = 1, rt_b_sign = 1, lb_t_sign = 1, lb_r_sign = 1, rb_t_sign = 1, rb_l_sign = 1
+        unsigned int i;
+        unsigned long long[8] blanks;
+        unsigned long long bits;
     black = bb
     white = wb
     blackwhite = black | white
@@ -817,14 +820,34 @@ cdef inline signed int _get_b():
     # 右下方向に空がある(左上方向が盤面の範囲内)
     rb_blank = diagonal & ((diagonal >> 9) & blank) << 9
     # wb1の計算
-    score += wb1 * (<signed int>_popcount(l_blank & black) - <signed int>_popcount(l_blank & white))
-    score += wb1 * (<signed int>_popcount(r_blank & black) - <signed int>_popcount(r_blank & white))
-    score += wb1 * (<signed int>_popcount(t_blank & black) - <signed int>_popcount(t_blank & white))
-    score += wb1 * (<signed int>_popcount(b_blank & black) - <signed int>_popcount(b_blank & white))
-    score += wb1 * (<signed int>_popcount(lt_blank & black) - <signed int>_popcount(lt_blank & white))
-    score += wb1 * (<signed int>_popcount(rt_blank & black) - <signed int>_popcount(rt_blank & white))
-    score += wb1 * (<signed int>_popcount(lb_blank & black) - <signed int>_popcount(lb_blank & white))
-    score += wb1 * (<signed int>_popcount(rb_blank & black) - <signed int>_popcount(rb_blank & white))
+    blanks[0] = l_blank
+    blanks[1] = r_blank
+    blanks[2] = t_blank
+    blanks[3] = b_blank
+    blanks[4] = lt_blank
+    blanks[5] = rt_blank
+    blanks[6] = lb_blank
+    blanks[7] = rb_blank
+    for i in range(8):
+        # black
+        bits = blanks[i] & black
+        if bits:
+            bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+            bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+            bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+            bits = bits + (bits >> <unsigned int>8)
+            bits = bits + (bits >> <unsigned int>16)
+            score += <signed int>(bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+        # white
+        bits = blanks[i] & white
+        if bits:
+            bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
+            bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
+            bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
+            bits = bits + (bits >> <unsigned int>8)
+            bits = bits + (bits >> <unsigned int>16)
+            score -= <signed int>(bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
+    score *= wb1
     # wb2の計算
     lt_x = lt_blank & <unsigned long long>0x0040000000000000  # 左上のX打ち
     if lt_x:

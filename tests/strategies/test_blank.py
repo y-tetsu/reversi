@@ -84,7 +84,7 @@ class TestBlank(unittest.TestCase):
 
         print()
         print(key)
-        print('Blank : (260000)', Measure.count[key2])
+        print('Blank : (270000)', Measure.count[key2])
         print('(max_depth=9)', iterative.max_depth)
         print(' max :', Measure.elp_time[key]['max'], '(s)')
 
