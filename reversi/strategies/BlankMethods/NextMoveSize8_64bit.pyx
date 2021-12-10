@@ -276,8 +276,10 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         timeout = check_timeout()
         if timeout:
             return timeout
+
     # 探索ノード数カウント
     measure_count += 1
+
     # 合法手を取得
     # -- _get_legal_moves_bits(int_color, bb, wb) --
     player, opponent = wb, bb
@@ -317,10 +319,12 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     legal_moves_bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
     # -- _get_legal_moves_bits(int_color, bb, wb) --
+
     # 次の手番
     if int_color:
         int_color_next = <unsigned int>0
         sign = <signed int>1
+
     # パスの場合
     if not legal_moves_bits:
         # 前回もパスの場合ゲーム終了
@@ -333,7 +337,9 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
                 score -= ww
             return score * sign
             # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign ---
+
         return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
+
     # 最大深さに到達
     if not depth:
         # 相手の着手可能数を取得
@@ -373,12 +379,14 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         legal_moves_bits_opponent =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
         # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
+
         if int_color:
             legal_moves_b_bits = legal_moves_bits
             legal_moves_w_bits = legal_moves_bits_opponent
         else:
             legal_moves_b_bits = legal_moves_bits_opponent
             legal_moves_w_bits = legal_moves_bits
+
         if legal_moves_b_bits:
             # -- _popcount --
             bits = legal_moves_b_bits
@@ -389,6 +397,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_b_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount --
+
         if legal_moves_b_bits:
             # -- _popcount --
             bits = legal_moves_w_bits
@@ -399,6 +408,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_w_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount --
+
         # 評価値を返す
         # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
         # 勝敗が決まっている場合
@@ -413,12 +423,15 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         score = _get_t() + _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) + _get_e() + _get_b()
         return score * sign
         # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
+
     # 着手可能数に応じて手を並び替え
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
         next_moves_list[count] = move
+
         # ひっくり返せる石を取得
         b, w = bb, wb
+
         # -- _get_flippable_discs_num --
         flippable_discs_num = 0
         t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
@@ -471,6 +484,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         if lt & player:
             flippable_discs_num |= bf_lt
         # -- _get_flippable_discs_num --
+
         # 自分の石を置いて相手の石をひっくり返す
         if int_color:
             b ^= move | flippable_discs_num
@@ -478,6 +492,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         else:
             w ^= move | flippable_discs_num
             b ^= flippable_discs_num
+
         # -- _get_legal_moves_bits(int_color, b, w) --
         player, opponent = w, b
         if int_color:
@@ -516,6 +531,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
         # -- _get_legal_moves_bits(int_color, b, w) --
+
         # -- _popcount --
         bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
         bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
@@ -524,9 +540,13 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         bits = bits + (bits >> <unsigned int>16)
         possibilities[count] = -<signed int>((bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F)
         # -- _popcount --
+
         count += 1
         legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
+
+    # 着手可能数に応じて並び替え
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
+
     # 次の手の探索
     null_window = beta
     for i in range(count):
