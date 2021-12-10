@@ -257,7 +257,6 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     """_get_score
     """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
-    global wp
     cdef:
         double tmp, null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
@@ -422,12 +421,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
                 score -= ww
             return score * sign
         # 勝敗が決まっていない場合
-        score = _get_t()
-        # --- score += _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) ---
-        score += (<signed int>legal_moves_b_bits - <signed int>legal_moves_w_bits) * wp
-        # --- score += _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) ---
-        score += _get_e()
-        score += _get_b()
+        score = _get_t() + _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) + _get_e() + _get_b()
         return score * sign
         # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
 
@@ -975,11 +969,11 @@ cdef inline signed int _get_t():
     return score
 
 
-#cdef inline signed int _get_p(signed int pos_b, signed int pos_w):
-#    """着手可能数による評価値
-#    """
-#    global wp
-#    return (pos_b - pos_w) * wp
+cdef inline signed int _get_p(signed int pos_b, signed int pos_w):
+    """着手可能数による評価値
+    """
+    global wp
+    return (pos_b - pos_w) * wp
 
 
 cdef inline signed int _get_e():
