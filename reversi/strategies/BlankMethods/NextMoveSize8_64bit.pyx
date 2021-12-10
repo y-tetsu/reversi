@@ -264,6 +264,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         signed int timeout, sign = -1
         unsigned long long[64] next_moves_list
         signed int[64] possibilities
+        unsigned long long flippable_discs_num, b, w
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -296,7 +297,17 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
         next_moves_list[count] = move
-        possibilities[count] = _get_possibility(int_color, bb, wb, move)
+        # ひっくり返せる石を取得
+        b, w = bb, wb
+        flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
+        # 自分の石を置いて相手の石をひっくり返す
+        if int_color:
+            b ^= move | flippable_discs_num
+            w ^= flippable_discs_num
+        else:
+            w ^= move | flippable_discs_num
+            b ^= flippable_discs_num
+        possibilities[count] = -<signed int>_popcount(_get_legal_moves_bits(not <unsigned int>int_color, b, w))
         count += 1
         legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
@@ -321,23 +332,6 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
             return alpha
         index += <unsigned int>1
     return alpha
-
-
-cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
-    """_get_possibility
-    """
-    cdef:
-        unsigned long long flippable_discs_num
-    # ひっくり返せる石を取得
-    flippable_discs_num = _get_flippable_discs_num(int_color, b, w, move)
-    # 自分の石を置いて相手の石をひっくり返す
-    if int_color:
-        b ^= move | flippable_discs_num
-        w ^= flippable_discs_num
-    else:
-        w ^= move | flippable_discs_num
-        b ^= flippable_discs_num
-    return -<signed int>_popcount(_get_legal_moves_bits(not <unsigned int>int_color, b, w))
 
 
 cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
