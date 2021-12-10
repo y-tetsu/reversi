@@ -553,16 +553,17 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         if alpha < beta:
             _put_disc(int_color, next_moves_list[i])
             tmp = -_get_score(int_color_next, -null_window, -alpha, depth-1, t, <unsigned int>0)
-            _undo()
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _put_disc(int_color, next_moves_list[i])
                     alpha = -_get_score(int_color_next, -beta, -tmp, depth-1, t, <unsigned int>0)
                     _undo()
                     if timer_timeout:
                         return alpha
                 else:
+                    _undo()
                     alpha = tmp
+            else:
+                _undo()
             null_window = alpha + 1
         else:
             return alpha
