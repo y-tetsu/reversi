@@ -268,6 +268,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
         unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
         unsigned long long player, opponent
+        unsigned long long blank, horizontal, vertical, diagonal, tmp_h, tmp_v, tmp_d1, tmp_d2
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -384,7 +385,41 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         else:
             w ^= move | flippable_discs_num
             b ^= flippable_discs_num
-        bits = _get_legal_moves_bits(not <unsigned int>int_color, b, w)
+        # -- _get_legal_moves_bits --
+        blank = ~(player | opponent)
+        horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
+        vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
+        diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
+        # left/right
+        tmp_h = horizontal & ((player << 1) | (player >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        tmp_h |= horizontal & ((tmp_h << 1) | (tmp_h >> 1))
+        # top/bottom
+        tmp_v = vertical & ((player << 8) | (player >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        tmp_v |= vertical & ((tmp_v << 8) | (tmp_v >> 8))
+        # left-top/right-bottom
+        tmp_d1 = diagonal & ((player << 9) | (player >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        tmp_d1 |= diagonal & ((tmp_d1 << 9) | (tmp_d1 >> 9))
+        # right-top/left-bottom
+        tmp_d2 = diagonal & ((player << 7) | (player >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
+        bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
+        # -- _get_legal_moves_bits --
         # -- _popcount --
         bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
         bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
