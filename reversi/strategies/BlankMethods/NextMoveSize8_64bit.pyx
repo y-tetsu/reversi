@@ -258,7 +258,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        double score, tmp, null_window
+        double tmp, null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, int_color_next = 1, count = 0, index = 0
         signed int timeout, sign = -1
@@ -270,6 +270,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
         unsigned long long player, opponent
         unsigned long long blank, horizontal, vertical, diagonal, tmp_h, tmp_v, tmp_d1, tmp_d2
         unsigned long long legal_moves_bits_opponent
+        signed int score
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -324,7 +325,14 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     if not legal_moves_bits:
         # 前回もパスの場合ゲーム終了
         if pas:
-            return _evaluate(int_color, <signed int>0, <signed int>0) * sign
+            # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign ---
+            score = bs - ws
+            if score > 0:    # 黒が勝った
+                score += ww
+            elif score < 0:  # 白が勝った
+                score -= ww
+            return score * sign
+            # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign ---
         return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
     # 最大深さに到達
     if not depth:
@@ -391,8 +399,20 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_w_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount --
-        # 相手の着手可能数を取得
-        return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign
+        # 評価値を返す
+        # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
+        # 勝敗が決まっている場合
+        if not legal_moves_b_bits and not legal_moves_w_bits:
+            score = bs - ws
+            if score > 0:    # 黒が勝った
+                score += ww
+            elif score < 0:  # 白が勝った
+                score -= ww
+            return score * sign
+        # 勝敗が決まっていない場合
+        score = _get_t() + _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) + _get_e() + _get_b()
+        return score * sign
+        # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
     # 着手可能数に応じて手を並び替え
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
@@ -752,25 +772,6 @@ cdef inline void _undo():
     wb = pwb[tail]
     bs = pbs[tail]
     ws = pws[tail]
-
-
-cdef inline signed int _evaluate(unsigned int int_color, signed int pos_b,  signed int pos_w):
-    """_evaluate
-    """
-    global bs, ws, ww
-    cdef:
-        signed int score
-    # 勝敗が決まっている場合
-    if not pos_b and not pos_w:
-        score = bs - ws
-        if score > 0:    # 黒が勝った
-            score += ww
-        elif score < 0:  # 白が勝った
-            score -= ww
-        return score
-    # 勝敗が決まっていない場合
-    score = _get_t() + _get_p(pos_b, pos_w) + _get_e() + _get_b()
-    return score
 
 
 cdef inline signed int _set_t_table():
@@ -1185,3 +1186,22 @@ cdef inline signed int _get_b():
 #    if lt & player:
 #        flippable_discs_num |= bf_lt
 #    return flippable_discs_num
+
+
+#cdef inline signed int _evaluate(unsigned int int_color, signed int pos_b,  signed int pos_w):
+#    """_evaluate
+#    """
+#    global bs, ws, ww
+#    cdef:
+#        signed int score
+#    # 勝敗が決まっている場合
+#    if not pos_b and not pos_w:
+#        score = bs - ws
+#        if score > 0:    # 黒が勝った
+#            score += ww
+#        elif score < 0:  # 白が勝った
+#            score -= ww
+#        return score
+#    # 勝敗が決まっていない場合
+#    score = _get_t() + _get_p(pos_b, pos_w) + _get_e() + _get_b()
+#    return score
