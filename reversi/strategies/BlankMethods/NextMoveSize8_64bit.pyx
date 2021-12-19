@@ -7,6 +7,8 @@ import time
 from reversi.strategies.common import Timer, Measure
 
 
+DEF POSITIVE_INIFINITY = 10000000
+DEF NEGATIVE_INFINITY = -10000000
 DEF MAX_POSSIBILITY = 40  # 着手可能数の最大(想定)
 DEF POSSIBILITY_RANGE = MAX_POSSIBILITY * 2 + 1
 DEF BUCKET_SIZE = MAX_POSSIBILITY
@@ -364,7 +366,7 @@ def get_best_move(color, board, params, moves, alpha, beta, depth, pid, timer, m
 cdef inline tuple _next_move(str color, board, params, int depth, str pid, int timer, int measure):
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
-        signed int alpha = -10000000, beta = 10000000
+        signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INIFINITY
         unsigned int int_color = 0
         unsigned int x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
