@@ -918,14 +918,11 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
             if alpha < tmp:
                 if tmp <= null_window and index:
                     alpha = -_get_score(int_color_next, -beta, -tmp, depth-1, t, <unsigned int>0)
-                    _undo()
-                    if timer_timeout:
-                        return alpha
                 else:
-                    _undo()
                     alpha = tmp
-            else:
-                _undo()
+            _undo()
+            if timer_timeout:
+                return alpha
             null_window = alpha + 1
         else:
             return alpha
