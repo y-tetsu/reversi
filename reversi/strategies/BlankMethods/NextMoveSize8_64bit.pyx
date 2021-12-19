@@ -364,7 +364,7 @@ def get_best_move(color, board, params, moves, alpha, beta, depth, pid, timer, m
 cdef inline tuple _next_move(str color, board, params, int depth, str pid, int timer, int measure):
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
-        double alpha = -10000000, beta = 10000000
+        signed int alpha = -10000000, beta = 10000000
         unsigned int int_color = 0
         unsigned int x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
@@ -428,7 +428,7 @@ cdef inline tuple _next_move(str color, board, params, int depth, str pid, int t
     return best_move
 
 
-cdef inline _get_best_move_wrap(str color, board, params, moves, double alpha, double beta, int depth, str pid, int timer, int measure):
+cdef inline _get_best_move_wrap(str color, board, params, moves, signed int alpha, signed int beta, int depth, str pid, int timer, int measure):
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
         unsigned long long[64] moves_bit_list
@@ -492,10 +492,10 @@ cdef inline _get_best_move_wrap(str color, board, params, moves, double alpha, d
     return (best_move, scores)
 
 
-cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, int timer):
+cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, signed int alpha, signed int beta, int depth, int timer):
     global timer_timeout
     cdef:
-        double score = alpha
+        signed int score = alpha
         unsigned int int_color_next = 1, i, best = 0
     scores = {}
     # 手番
@@ -525,12 +525,12 @@ cdef inline signed int check_timeout():
     return <signed int>0
 
 
-cdef inline double _get_score(unsigned int int_color, double alpha, double beta, unsigned int depth, int t, unsigned int pas):
+cdef inline signed int _get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, int t, unsigned int pas):
     """_get_score
     """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        double tmp, null_window
+        signed int tmp, null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, int_color_next = 1, count = 0, index = 0
         signed int timeout, sign = -1
