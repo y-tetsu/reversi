@@ -496,7 +496,7 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
     global timer_timeout
     cdef:
         double score = alpha
-        unsigned int int_color_next = 1, i, best = 64
+        unsigned int int_color_next = 1, i, best = 0
     scores = {}
     # 手番
     if int_color:
@@ -508,8 +508,6 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
         _undo()
         scores[(moves_x[i], moves_y[i])] = score
         if timer_timeout:
-            if best == 64:
-                best = i
             break
         if score > alpha:  # 最善手を更新
             alpha = score
