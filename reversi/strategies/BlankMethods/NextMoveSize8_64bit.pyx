@@ -29,9 +29,6 @@ cdef:
     unsigned int timer_timeout
     signed int timer_timeout_value
     signed int corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
-    # !tp!
-    unsigned int tpcnt
-    # !tp!
     signed int[8][8] t_table= [
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -350,10 +347,8 @@ cdef:
         3, 3, 3, 4, 3, 3, 3, 5,
         4, 4, 4, 5, 5, 5, 6, 13
     ]
-
-# !tp!
     dict tp_table = {}  # Trans Position Table
-# !tp!
+
 
 def next_move(color, board, params, depth, pid, timer, measure):
     """next_move
@@ -503,17 +498,11 @@ cdef inline _get_best_move_wrap(str color, board, params, moves, signed int alph
 
 
 cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, signed int alpha, signed int beta, int depth, int timer):
-    global timer_timeout
-    # !tp!
-    global tpcnt, tp_table
-    # !tp!
+    global timer_timeout, tp_table
     cdef:
         signed int score = alpha
         unsigned int int_color_next = 1, i, best = 0
-    # !tp!
-    tpcnt, tp_table = 0, {}
-    # !tp!
-    scores = {}
+    scores, tp_table = {}, {}
     # 手番
     if int_color:
         int_color_next = <unsigned int>0
@@ -528,14 +517,6 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
         if score > alpha:  # 最善手を更新
             alpha = score
             best = i
-    # !tp!
-    print('----- aft -----')
-    print('tplen :', len(tp_table))
-    print('tpcnt :', tpcnt)
-    print('t_out :', timer_timeout)
-    print('best  :', best, (moves_x[best], moves_y[best]))
-    print(scores)
-    # !tp!
     return (moves_x[best], moves_y[best]), scores
 
 
@@ -552,7 +533,7 @@ cdef inline signed int check_timeout():
 cdef inline signed int _get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, int t, unsigned int pas):
     """_get_score
     """
-    global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
+    global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail, tp_table
     cdef:
         signed int null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
@@ -568,13 +549,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         unsigned long long legal_moves_bits_opponent
         signed int score
         unsigned long long bits_count
-    # !tp!
-        signed int upper, lower, score_max, alpha_ini
-
-    global tpcnt, tp_table
-    score_max = NEGATIVE_INFINITY
-    alpha_ini = alpha
-    # !tp!
+        signed int upper, lower, score_max = NEGATIVE_INFINITY, alpha_ini = alpha
 
     # タイムアウト判定
     if t:
@@ -585,26 +560,21 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     # 探索ノード数カウント
     measure_count += 1
 
-    # !tp!
     # 置換表に結果が存在する場合、その値を返す
     key = (bb, wb, int_color)
     if depth >= TRANSPOSITION_TABLE_DEPTH:
         if key in tp_table:
             lower, upper = tp_table[key]
             if upper <= alpha:
-                tpcnt += 1
                 return upper
             if lower >= beta:
-                tpcnt += 1
                 return lower
             if upper == lower:
-                tpcnt += 1
                 return upper
             if lower > alpha:
                 alpha = lower
             if upper < beta:
                 beta = upper
-    # !tp!
 
     # 合法手を取得
     # -- _get_legal_moves_bits(int_color, bb, wb) --
