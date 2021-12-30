@@ -1,4 +1,4 @@
-#cython: language_level=3, profile=True, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
+#cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
 """Next Move(Size8,64bit) of Blank strategy
 """
 
