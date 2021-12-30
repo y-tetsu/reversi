@@ -7,11 +7,12 @@ import time
 from reversi.strategies.common import Timer, Measure
 
 
-DEF POSITIVE_INIFINITY = 10000000
+DEF POSITIVE_INFINITY = 10000000
 DEF NEGATIVE_INFINITY = -10000000
 DEF MAX_POSSIBILITY = 40  # 着手可能数の最大(想定)
 DEF POSSIBILITY_RANGE = MAX_POSSIBILITY * 2 + 1
 DEF BUCKET_SIZE = MAX_POSSIBILITY
+DEF TRANSPOSITION_TABLE_DEPTH = 3  # 置換表を有効にする残りの探索深さ
 cdef:
     unsigned long long measure_count
     unsigned long long bb
@@ -28,6 +29,9 @@ cdef:
     unsigned int timer_timeout
     signed int timer_timeout_value
     signed int corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
+    # !tp!
+    unsigned int tpcnt
+    # !tp!
     signed int[8][8] t_table= [
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -347,6 +351,10 @@ cdef:
         4, 4, 4, 5, 5, 5, 6, 13
     ]
 
+# !tp!
+    dict tp_table = {}  # Trans Position Table
+# !tp!
+
 def next_move(color, board, params, depth, pid, timer, measure):
     """next_move
     """
@@ -366,7 +374,7 @@ def get_best_move(color, board, params, moves, alpha, beta, depth, pid, timer, m
 cdef inline tuple _next_move(str color, board, params, int depth, str pid, int timer, int measure):
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
-        signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INIFINITY
+        signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INFINITY
         unsigned int int_color = 0
         unsigned int x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
@@ -496,9 +504,15 @@ cdef inline _get_best_move_wrap(str color, board, params, moves, signed int alph
 
 cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, signed int alpha, signed int beta, int depth, int timer):
     global timer_timeout
+    # !tp!
+    global tpcnt, tp_table
+    # !tp!
     cdef:
         signed int score = alpha
         unsigned int int_color_next = 1, i, best = 0
+    # !tp!
+    tpcnt, tp_table = 0, {}
+    # !tp!
     scores = {}
     # 手番
     if int_color:
@@ -514,6 +528,14 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
         if score > alpha:  # 最善手を更新
             alpha = score
             best = i
+    # !tp!
+    print('----- aft -----')
+    print('tplen :', len(tp_table))
+    print('tpcnt :', tpcnt)
+    print('t_out :', timer_timeout)
+    print('best  :', best, (moves_x[best], moves_y[best]))
+    print(scores)
+    # !tp!
     return (moves_x[best], moves_y[best]), scores
 
 
@@ -532,7 +554,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        signed int tmp, null_window
+        signed int null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, int_color_next = 1, count = 0, index = 0
         signed int timeout, sign = -1
@@ -546,6 +568,14 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         unsigned long long legal_moves_bits_opponent
         signed int score
         unsigned long long bits_count
+    # !tp!
+        signed int upper, lower, score_max, alpha_ini
+
+    global tpcnt, tp_table
+    score_max = NEGATIVE_INFINITY
+    alpha_ini = alpha
+    # !tp!
+
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -554,6 +584,27 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
 
     # 探索ノード数カウント
     measure_count += 1
+
+    # !tp!
+    # 置換表に結果が存在する場合、その値を返す
+    key = (bb, wb, int_color)
+    if depth >= TRANSPOSITION_TABLE_DEPTH:
+        if key in tp_table:
+            lower, upper = tp_table[key]
+            if upper <= alpha:
+                tpcnt += 1
+                return upper
+            if lower >= beta:
+                tpcnt += 1
+                return lower
+            if upper == lower:
+                tpcnt += 1
+                return upper
+            if lower > alpha:
+                alpha = lower
+            if upper < beta:
+                beta = upper
+    # !tp!
 
     # 合法手を取得
     # -- _get_legal_moves_bits(int_color, bb, wb) --
@@ -825,7 +876,8 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     # 次の手の探索
     null_window = beta
     for i in range(count):
-        if alpha < beta:
+        #if alpha < beta:
+        if True:
             # 一手打つ
             # --- _put_disc(int_color, next_moves_list[i]) ---
             # ひっくり返せる石を取得
@@ -914,20 +966,39 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
                 bs -= <unsigned int>bits_count
                 ws += <unsigned int>1 + <unsigned int>bits_count
             # --- _put_disc(int_color, next_moves_list[i]) ---
-            tmp = -_get_score(int_color_next, -null_window, -alpha, depth-1, t, <unsigned int>0)
-            if alpha < tmp:
-                if tmp <= null_window and index:
-                    alpha = -_get_score(int_color_next, -beta, -tmp, depth-1, t, <unsigned int>0)
-                else:
-                    alpha = tmp
+            score = -_get_score(int_color_next, -null_window, -alpha, depth-1, t, <unsigned int>0)
+            #if alpha < score:
+            #    if score <= null_window and index:
+            #        score = -_get_score(int_color_next, -beta, -score, depth-1, t, <unsigned int>0)
+            #    alpha = score
             _undo()
             if timer_timeout:
                 return alpha
-            null_window = alpha + 1
+            #null_window = alpha + 1
+            # !tp!
+            if score >= beta:
+                if depth >= TRANSPOSITION_TABLE_DEPTH:
+                    tp_table[key] = (score, POSITIVE_INFINITY)
+                return score
+            if score > score_max:
+                if score > alpha:
+                    alpha = score
+                score_max = score
+            # !tp!
         else:
-            return alpha
-        index += <unsigned int>1
-    return alpha
+            # beta cut
+            break
+        #index += <unsigned int>1
+    # !tp!
+    if depth >= TRANSPOSITION_TABLE_DEPTH:
+        # 置換表に結果を格納
+            if score_max > alpha_ini:
+                tp_table[key] = (score_max, score_max)
+            else:
+                tp_table[key] = (NEGATIVE_INFINITY, score_max)
+    # !tp!
+    #return alpha
+    return score_max
 
 
 cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
