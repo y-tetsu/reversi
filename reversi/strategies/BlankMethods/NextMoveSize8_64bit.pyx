@@ -984,10 +984,10 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             score_max = alpha
 
         # beta cut
-        if alpha >= beta:
+        if score_max >= beta:
             if depth >= TRANSPOSITION_TABLE_DEPTH:
-                tp_table[key] = (alpha, POSITIVE_INFINITY)
-            return alpha
+                tp_table[key] = (score_max, POSITIVE_INFINITY)
+            return score_max
 
     if depth >= TRANSPOSITION_TABLE_DEPTH:
         # 置換表に結果を格納
