@@ -700,7 +700,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             legal_moves_b_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount -- }}}
 
-        if legal_moves_b_bits:
+        if legal_moves_w_bits:
             # {{{ -- _popcount --
             bits = legal_moves_w_bits
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
