@@ -29,6 +29,7 @@ cdef:
     unsigned int timer_timeout
     signed int timer_timeout_value
     signed int corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
+    # {{{ -- signed int[8][8] t_table= [ --
     signed int[8][8] t_table= [
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -39,6 +40,8 @@ cdef:
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
     ]
+    # -- signed int[8][8] t_table= [ -- }}}
+    # {{{ --- signed int[8][256] table_values= [ ---
     signed int[8][256] table_values= [
         [
             0, 0, 0, 0, 0, 0, 0, 0,
@@ -313,6 +316,8 @@ cdef:
             0, 0, 0, 0, 0, 0, 0, 0,
         ],
     ]
+    # --- signed int[8][256] table_values= [ --- }}}
+    # {{{ -- signed int[256] edge_table8 = [ --
     signed int[256] edge_table8 = [
         0, 0, 0, 1, 0, 0, 0, 2,
         0, 0, 0, 1, 0, 0, 0, 3,
@@ -347,6 +352,7 @@ cdef:
         3, 3, 3, 4, 3, 3, 3, 5,
         4, 4, 4, 5, 5, 5, 6, 13
     ]
+    # -- signed int[256] edge_table8 = [ -- }}}
     dict tp_table = {}  # Trans Position Table
 
 
@@ -577,7 +583,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
                 beta = upper
 
     # 合法手を取得
-    # -- _get_legal_moves_bits(int_color, bb, wb) --
+    # {{{ -- _get_legal_moves_bits(int_color, bb, wb) --
     player, opponent = wb, bb
     if int_color:
         player, opponent = bb, wb
@@ -614,7 +620,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     legal_moves_bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-    # -- _get_legal_moves_bits(int_color, bb, wb) --
+    # -- _get_legal_moves_bits(int_color, bb, wb) -- }}}
 
     # 次の手番
     if int_color:
@@ -625,21 +631,21 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     if not legal_moves_bits:
         # 前回もパスの場合ゲーム終了
         if pas:
-            # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign ---
+            # {{{ --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign ---
             score = bs - ws
             if score > 0:    # 黒が勝った
                 score += ww
             elif score < 0:  # 白が勝った
                 score -= ww
             return score * sign
-            # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign ---
+            # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign --- }}}
 
         return -_get_score(int_color_next, -beta, -alpha, depth, t, <unsigned int>1)
 
     # 最大深さに到達
     if not depth:
         # 相手の着手可能数を取得
-        # -- _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
+        # {{{ -- _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
         player, opponent = opponent, player  # reversed for opponent
         blank = ~(player | opponent)
         horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
@@ -674,7 +680,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         legal_moves_bits_opponent =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-        # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
+        # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb) -- }}}
 
         if int_color:
             legal_moves_b_bits = legal_moves_bits
@@ -684,7 +690,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             legal_moves_w_bits = legal_moves_bits
 
         if legal_moves_b_bits:
-            # -- _popcount --
+            # {{{ -- _popcount --
             bits = legal_moves_b_bits
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
             bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
@@ -692,10 +698,10 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             bits = bits + (bits >> <unsigned int>8)
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_b_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-            # -- _popcount --
+            # -- _popcount -- }}}
 
         if legal_moves_b_bits:
-            # -- _popcount --
+            # {{{ -- _popcount --
             bits = legal_moves_w_bits
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
             bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
@@ -703,10 +709,10 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             bits = bits + (bits >> <unsigned int>8)
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_w_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-            # -- _popcount --
+            # -- _popcount -- }}}
 
         # 評価値を返す
-        # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
+        # {{{ --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
         # 勝敗が決まっている場合
         if not legal_moves_b_bits and not legal_moves_w_bits:
             score = bs - ws
@@ -718,17 +724,16 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         # 勝敗が決まっていない場合
         score = _get_t() + _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) + _get_e() + _get_b()
         return score * sign
-        # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
+        # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign --- }}}
 
-    # 着手可能数に応じて手を並び替え
+    # 合法手と着手可能数の格納
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
         next_moves_list[count] = move
-
-        # ひっくり返せる石を取得
         b, w = bb, wb
 
-        # -- _get_flippable_discs_num --
+        # ひっくり返せる石を取得
+        # {{{ -- _get_flippable_discs_num --
         flippable_discs_num = 0
         t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
         rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
@@ -779,7 +784,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             flippable_discs_num |= bf_l_
         if lt & player:
             flippable_discs_num |= bf_lt
-        # -- _get_flippable_discs_num --
+        # -- _get_flippable_discs_num -- }}}
 
         # 自分の石を置いて相手の石をひっくり返す
         if int_color:
@@ -789,7 +794,8 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             w ^= move | flippable_discs_num
             b ^= flippable_discs_num
 
-        # -- _get_legal_moves_bits(int_color, b, w) --
+        # 着手可能数を格納
+        # {{{ -- _get_legal_moves_bits(int_color, b, w) --
         player, opponent = w, b
         if int_color:
             player, opponent = b, w
@@ -826,16 +832,15 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-        # -- _get_legal_moves_bits(int_color, b, w) --
-
-        # -- _popcount --
+        # -- _get_legal_moves_bits(int_color, b, w) -- }}}
+        # {{{ -- possibilities[count] = _popcount --
         bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
         bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
         bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
         bits = bits + (bits >> <unsigned int>8)
         bits = bits + (bits >> <unsigned int>16)
         possibilities[count] = -<signed int>((bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F)
-        # -- _popcount --
+        # -- _popcount -- }}}
 
         count += 1
         legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
@@ -846,9 +851,9 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     # 次の手の探索
     for i in range(count):
         # 一手打つ
-        # --- _put_disc(int_color, next_moves_list[i]) ---
+        # {{{ --- _put_disc(int_color, next_moves_list[i]) ---
         # ひっくり返せる石を取得
-        # -- _get_flippable_discs_num --
+        # {{{ -- _get_flippable_discs_num --
         flippable_discs_num = 0
         bf_t_, bf_rt, bf_r_, bf_rb, bf_b_, bf_lb, bf_l_, bf_lt = 0, 0, 0, 0, 0, 0, 0, 0
         move = next_moves_list[i]
@@ -905,8 +910,8 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         if lt & player:
             flippable_discs_num |= bf_lt
         fd = flippable_discs_num
-        # -- _get_flippable_discs_num --
-        # -- _popcount --
+        # -- _get_flippable_discs_num -- }}}
+        # {{{ -- _popcount --
         bits = fd
         bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
         bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
@@ -914,7 +919,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         bits = bits + (bits >> <unsigned int>8)
         bits = bits + (bits >> <unsigned int>16)
         bits_count = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-        # -- _popcount --
+        # -- _popcount -- }}}
         # 打つ前の状態を格納
         pbb[tail] = bb
         pwb[tail] = wb
@@ -932,7 +937,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             bb ^= fd
             bs -= <unsigned int>bits_count
             ws += <unsigned int>1 + <unsigned int>bits_count
-        # --- _put_disc(int_color, next_moves_list[i]) ---
+        # --- _put_disc(int_color, next_moves_list[i]) --- }}}
 
         # Null Window Search
         null_window = beta if not i else alpha + 1
@@ -1097,7 +1102,7 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
         unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
         unsigned long long player, opponent, flippable_discs_num = 0
     # ひっくり返せる石を取得
-    # -- _get_flippable_discs_num --
+    # {{{ -- _get_flippable_discs_num --
     player = wb
     opponent = bb
     if int_color:
@@ -1153,8 +1158,8 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
     if lt & player:
         flippable_discs_num |= bf_lt
     fd = flippable_discs_num
-    # -- _get_flippable_discs_num --
-    # -- _popcount --
+    # -- _get_flippable_discs_num -- }}}
+    # {{{ -- _popcount --
     bits = fd
     bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
     bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
@@ -1162,7 +1167,7 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
     bits = bits + (bits >> <unsigned int>8)
     bits = bits + (bits >> <unsigned int>16)
     count = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-    # -- _popcount --
+    # -- _popcount -- }}}
     # 打つ前の状態を格納
     pbb[tail] = bb
     pwb[tail] = wb
@@ -1448,25 +1453,25 @@ cdef inline signed int _get_b():
         # black
         bits = blanks[i] & black
         if bits:
-            # -- _popcount --
+            # {{{ -- _popcount --
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
             bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
             bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
             bits = bits + (bits >> <unsigned int>8)
             bits = bits + (bits >> <unsigned int>16)
             score += <signed int>(bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-            # -- _popcount --
+            # -- _popcount -- }}}
         # white
         bits = blanks[i] & white
         if bits:
-            # -- _popcount --
+            # -- {{{ _popcount --
             bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
             bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
             bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
             bits = bits + (bits >> <unsigned int>8)
             bits = bits + (bits >> <unsigned int>16)
             score -= <signed int>(bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
-            # -- _popcount --
+            # -- _popcount -- }}}
     score *= wb1
     # wb2の計算
     lt_x = lt_blank & <unsigned long long>0x0040000000000000  # 左上のX打ち
@@ -1636,3 +1641,5 @@ cdef inline signed int _get_b():
 #    # 勝敗が決まっていない場合
 #    score = _get_t() + _get_p(pos_b, pos_w) + _get_e() + _get_b()
 #    return score
+
+# vim: set foldmethod=marker:
