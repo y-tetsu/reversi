@@ -59,6 +59,9 @@
                 and the board candidates are rearranged so as to preferentially search for
                 a move with a larger number of possible moves to read the board more efficiently.
                 In addition, read the discs difference from the last 10 moves to the final phase of the game.
+
+            Blank
+                Now developping.
 """
 
 from reversi import Reversi, strategies
@@ -80,5 +83,8 @@ Reversi(
         'Iterative': strategies.AbIF9J_B_TPW(),
         'Edge': strategies.AbIF9J_B_TPWE(),
         'Switch': strategies.SwitchNsIF10J_B_TPWE_F(),
+        'TPWEB8_16': strategies.SwitchJ_Negascout8_TPWEB_EndGame16(),  # test sample
+        'Blank8_16': strategies.SwitchJ_Blank8_EndGame16(),            # test sample
+        'BlankI_16': strategies.SwitchJ_BlankI_EndGame16(),            # test sample
     }
 ).start()
