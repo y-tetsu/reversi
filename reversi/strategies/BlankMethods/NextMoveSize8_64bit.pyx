@@ -1271,7 +1271,7 @@ cdef inline signed int _set_t_table():
             for col in range(8):
                 if mask & bit8:
                     value += t_table[row][col]
-                    mask >>= 1
+                mask >>= 1
             table_values[row][bit8] = value
 
 
