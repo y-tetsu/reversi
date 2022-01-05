@@ -747,11 +747,11 @@ Reversi(
 
  |Scorerクラス|説明|パラメータ|
  |:---|:---|:---|
- |TableScorer|盤面の位置に応じた重みづけでスコアを算出します。|size=盤面のサイズ<br> corner, c, a1, a2, b1, b2, b3, x, o1, o2=[マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)と同じ<br>デフォルト:size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5|
+ |TableScorer|盤面の位置に応じた重みづけでスコアを算出します。<br>![table2](https://raw.githubusercontent.com/y-tetsu/reversi/images/table.png)|size=盤面のサイズ<br> corner, c, a1, a2, b1, b2, b3, x, o1, o2=[マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)と同じ<br>デフォルト:size=8, corner=50, c=-20, a1=0, a2=-1, b1=-1, b2=-1, b3=-1, x=-25, o1=-5, o2=-5|
  |PossibilityScorer|着手可能数に基づいてスコアを算出します。|w=(自分の着手可能数 - 相手の着手可能数)の重み<br>デフォルト:5|
  |WinLoseScorer|勝敗に基づいてスコアを算出します。勝敗が決まっていない場合はスコアなしとします。|w=自分が勝ちの場合のスコア<br>デフォルト:10000|
  |NumberScorer|石差(自分の石数 - 相手の石数)をスコアとして算出します。|パラメータなし|
- |EdgeScorer|辺の確定石の数に基づいてスコアを算出します。下図の4隅から8方向探索し、同じ石が連続する数に応じてスコアを決定します。相手のスコアは合計値からマイナスされます。<br>![edge_score](https://raw.githubusercontent.com/y-tetsu/reversi/images/edge_score.png)|w=確定石一つあたりの重み<br>デフォルト:100|
+ |EdgeScorer|辺の確定石の数に基づいてスコアを算出します。下図の4隅から8方向を探索し、同じ石が連続する数に応じてスコアを決定します。相手のスコアは合計値からマイナスされます。<br>![edge_score](https://raw.githubusercontent.com/y-tetsu/reversi/images/edge_score.png)|w=確定石一つあたりの重み<br>デフォルト:100|
 
 (使用例)<br>
 以下に、評価関数をカスタマイズする例を示します。<br>
