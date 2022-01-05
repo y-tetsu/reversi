@@ -752,6 +752,7 @@ Reversi(
  |WinLoseScorer|勝敗に基づいてスコアを算出します。勝敗が決まっていない場合はスコアなしとします。|w=自分が勝ちの場合のスコア<br>デフォルト:10000|
  |NumberScorer|石差(自分の石数 - 相手の石数)をスコアとして算出します。|パラメータなし|
  |EdgeScorer|辺の確定石の数に基づいてスコアを算出します。下図の4隅から8方向を探索し、同じ石が連続する数に応じてスコアを決定します。相手のスコアは合計値からマイナスされます。<br>![edge_score](https://raw.githubusercontent.com/y-tetsu/reversi/images/edge_score.png)|w=確定石一つあたりの重み<br>デフォルト:100|
+ |BlankScorer|石が空きマスに接する数に基づいてスコアを算出します。算出するスコアは以下の3種類。<br>1. 置かれた石の周囲8方向の空きマスに接する数<br>![blank_score1](https://raw.githubusercontent.com/y-tetsu/reversi/images/blank_score1.png)<br>2. 空いた隅に接するX打ち<br>![blank_score2](https://raw.githubusercontent.com/y-tetsu/reversi/images/blank_score2.png)<br>3. 空いた隅に接するC打ち時の辺の空きマスの数<br>![blank_score3](https://raw.githubusercontent.com/y-tetsu/reversi/images/blank_score3.png)<br>※上記3種類ともに相手のスコアはマイナスします。|w1=左記1<br>w2=左記2<br>w3=左記3<br>デフォルト:w1から順に-1、-4、-2
 
 (使用例)<br>
 以下に、評価関数をカスタマイズする例を示します。<br>
