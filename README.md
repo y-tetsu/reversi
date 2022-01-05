@@ -751,7 +751,7 @@ Reversi(
  |PossibilityScorer|着手可能数に基づいてスコアを算出します。|w=(自分の着手可能数 - 相手の着手可能数)の重み<br>デフォルト:5|
  |WinLoseScorer|勝敗に基づいてスコアを算出します。勝敗が決まっていない場合はスコアなしとします。|w=自分が勝ちの場合のスコア<br>デフォルト:10000|
  |NumberScorer|石差(自分の石数 - 相手の石数)をスコアとして算出します。|パラメータなし|
- |EdgeScorer|辺の確定石の数に基づいてスコアを算出します。|w=確定石一つあたりの重み<br>デフォルト:100|
+ |EdgeScorer|辺の確定石の数に基づいてスコアを算出します。下図の4隅から8方向探索し、同じ石が連続する数に応じてスコアを決定します。相手のスコアは合計値からマイナスされます。<br>![edge_score](https://raw.githubusercontent.com/y-tetsu/reversi/images/edge_score.png)|w=確定石一つあたりの重み<br>デフォルト:100|
 
 (使用例)<br>
 以下に、評価関数をカスタマイズする例を示します。<br>
@@ -1211,6 +1211,7 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 - 「強いオセロプログラムの内部動作」http://www.amy.hi-ho.ne.jp/okuhara/howtoj.htm
 - 「オセロAI入門」https://qiita.com/na-o-ys/items/10d894635c2a6c07ac70
 - 「Thellのアルゴリズムについて」http://sealsoft.jp/thell/algorithm.html
+- 「ブラウザで打てる自分より強いオセロAIを作る」https://github.com/trineutron/othello
 
 
 ## 脚注
