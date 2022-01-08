@@ -10,7 +10,7 @@ from reversi.board import Board
 class TestMove(unittest.TestCase):
     """move
     """
-    def test_move_init(self):
+    def test_init(self):
         # default of Move and M
         patterns = [Move(), M]
         for pattern in patterns:
