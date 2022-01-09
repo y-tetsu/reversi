@@ -23,7 +23,7 @@ class TestMove(unittest.TestCase):
         for pattern in patterns:
             self.assertIsNone(pattern._Move__x)
             self.assertIsNone(pattern._Move__y)
-            self.assertIsNone(pattern._Move__str)
+            self.assertEqual(pattern._Move__str, '')
             self.assertEqual(pattern._Move__case, LOWER)
 
         # x, y, str
@@ -52,9 +52,18 @@ class TestMove(unittest.TestCase):
         self.assertEqual((x, y), (0, 1))
 
     def test_repr(self):
-        self.assertEqual(repr(m()), 'Move(None, None) "None"')
+        self.assertEqual(repr(m()), 'Move(None, None) ""')
         self.assertEqual(repr(m(1, 2)), 'Move(1, 2) "b3"')
+        self.assertEqual(repr(m('b3')), 'Move(1, 2) "b3"')
         self.assertEqual(repr(m(7, 8, case='upper')), 'Move(7, 8) "H9"')
+        self.assertEqual(repr(m('H9', case='upper')), 'Move(7, 8) "H9"')
+
+    def test_str(self):
+        self.assertEqual(str(m()), '')
+        self.assertEqual(str(m(1, 2)), 'b3')
+        self.assertEqual(str(m('b3')), 'b3')
+        self.assertEqual(str(m(7, 8, case='upper')), 'H9')
+        self.assertEqual(str(m('H9', case='upper')), 'H9')
 
     def test_get_xy(self):
         self.assertEqual(m._get_xy(), (None, None))
