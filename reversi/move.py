@@ -20,6 +20,10 @@ class Move(tuple):
     def __iter__(self):
         return (i for i in (self.__x, self.__y))
 
+    def __repr__(self):
+        class_name = type(self).__name__
+        return '{}({}, {}) "{}"'.format(class_name, self.__x, self.__y, self.__str)
+
     @classmethod
     def _get_xy(cls, *args):
         x, y = None, None

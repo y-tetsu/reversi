@@ -51,6 +51,11 @@ class TestMove(unittest.TestCase):
         x, y = m('a2')
         self.assertEqual((x, y), (0, 1))
 
+    def test_repr(self):
+        self.assertEqual(repr(m()), 'Move(None, None) "None"')
+        self.assertEqual(repr(m(1, 2)), 'Move(1, 2) "b3"')
+        self.assertEqual(repr(m(7, 8, case='upper')), 'Move(7, 8) "H9"')
+
     def test_get_xy(self):
         self.assertEqual(m._get_xy(), (None, None))
         self.assertEqual(m._get_xy(3, 5), (3, 5))
