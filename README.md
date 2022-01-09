@@ -550,7 +550,8 @@ print(board)
 ![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
 
 #### moveオブジェクトの使い方
-`move`オブジェクトを使うと、手を打つ座標の指定に、これまでのXY座標形式だけではなく、'a1'・'c3'などのstr形式が使えるようになります。
+`move`オブジェクトを使うと、手を打つ座標の指定に、これまでのXY座標形式だけではなく、'a1'・'c3'などのstr形式が使えるようになります。<br>
+str形式のアルファベットは大文字・小文字どちらでもOKです。
 
 `Move`クラスをインポートして、下記のように使用してください。
 ```Python
@@ -570,20 +571,21 @@ print(board)
 ![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
 
 また、`move`オブジェクトはXY座標形式でも生成でき、str関数を使ってstr形式へ変換できます。<br>
-`move`オブジェクトをprint表示した場合も同様にstr形式となります。
+`move`オブジェクトをprint表示した場合も同様にstr形式となります。<br>
+caseオプションに`upper`を指定すると大文字表記になります。
 ```Python
 from reversi import BitBoard
 from reversi import Move as m
 
 move = str(m(5, 4))
 print(move)
-print(m(5, 5))
+print(m(5, 5, case='upper'))
 ```
 
 上記の実行結果は下記となります。
 ```
 f5
-f6
+F6
 ```
 
 ### AIクラス編
