@@ -3,35 +3,60 @@
 
 import unittest
 
-from reversi.move import Move, M, LOWER
+from reversi.move import Move as m, M, LOWER
 from reversi.board import Board
 
 
 class TestMove(unittest.TestCase):
     """move
     """
+    def test_new(self):
+        # objects are work as tuple
+        self.assertEqual(m(0, 0), (0, 0))
+        self.assertEqual(m(7, 7), (7, 7))
+        self.assertEqual(m('c8'), (2, 7))
+        self.assertEqual(m('Z8'), (25, 7))
+
     def test_init(self):
-        # default of Move and M
-        patterns = [Move(), M]
+        # none
+        patterns = [m(), M]
         for pattern in patterns:
-            self.assertIsNone(pattern.x)
-            self.assertIsNone(pattern.y)
-            self.assertIsNone(pattern.str)
-            self.assertEqual(pattern.case, LOWER)
+            self.assertIsNone(pattern._Move__x)
+            self.assertIsNone(pattern._Move__y)
+            self.assertIsNone(pattern._Move__str)
+            self.assertEqual(pattern._Move__case, LOWER)
 
         # x, y, str
-        patterns = [Move(0, 1), Move('a2')]
+        patterns = [m(0, 1), m('a2')]
         for pattern in patterns:
-            self.assertEqual(pattern.x, 0)
-            self.assertEqual(pattern.y, 1)
-            self.assertEqual(pattern.str, 'a2')
+            self.assertEqual(pattern._Move__x, 0)
+            self.assertEqual(pattern._Move__y, 1)
+            self.assertEqual(pattern._Move__str, 'a2')
 
         # case
-        move = Move(case='upper')
-        self.assertEqual(move.case, 'upper')
+        move = m(case='upper')
+        self.assertEqual(move._Move__case, 'upper')
 
-    def test_to_xy_ok(self):
-        move = Move()
+        # put_disc
+        board = Board()
+        board.put_disc('black', *m('f5'))
+        self.assertEqual(board.get_bitboard_info(), (34829500416, 68719476736))
+        board.put_disc('white', *m('d6'))
+        self.assertEqual(board.get_bitboard_info(), (34561064960, 68988960768))
+
+    def test_iter(self):
+        x, y = m(0, 1)
+        self.assertEqual((x, y), (0, 1))
+
+        x, y = m('a2')
+        self.assertEqual((x, y), (0, 1))
+
+    def test_get_xy(self):
+        self.assertEqual(m._get_xy(), (None, None))
+        self.assertEqual(m._get_xy(3, 5), (3, 5))
+        self.assertEqual(m._get_xy('K15'), (10, 14))
+
+    def test_to_xy(self):
         patterns = [
             ('a1', (0, 0)),
             ('A1', (0, 0)),  # upper case is also ok.
@@ -46,16 +71,15 @@ class TestMove(unittest.TestCase):
             ('z26', (25, 25)),
         ]
         for pattern, expected in patterns:
-            self.assertEqual(move.to_xy(pattern), expected)
+            self.assertEqual(M.to_xy(pattern), expected)
 
         board = Board()
-        board.put_disc('black', *move.to_xy('f5'))
+        board.put_disc('black', *M.to_xy('f5'))
         self.assertEqual(board.get_bitboard_info(), (34829500416, 68719476736))
-        board.put_disc('white', *move.to_xy('d6'))
+        board.put_disc('white', *M.to_xy('d6'))
         self.assertEqual(board.get_bitboard_info(), (34561064960, 68988960768))
 
-    def test_to_str_ok(self):
-        move = Move()
+    def test_to_str(self):
         # lower
         patterns = [
             (0, 0, 'a1'),
@@ -70,9 +94,8 @@ class TestMove(unittest.TestCase):
             (25, 25, 'z26'),
         ]
         for x, y, expected in patterns:
-            self.assertEqual(move.to_str(x, y), expected)
+            self.assertEqual(M.to_str(x, y), expected)
         # upper
-        move.case = 'upper'
         patterns = [
             (0, 0, 'A1'),
             (0, 1, 'A2'),
@@ -86,4 +109,4 @@ class TestMove(unittest.TestCase):
             (25, 25, 'Z26'),
         ]
         for x, y, expected in patterns:
-            self.assertEqual(move.to_str(x, y), expected)
+            self.assertEqual(M.to_str(x, y, case='upper'), expected)
