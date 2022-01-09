@@ -28,6 +28,7 @@
     - [オブジェクト編](#オブジェクト編)
         - [boardオブジェクトの使い方](#boardオブジェクトの使い方)
         - [colorオブジェクトの使い方](#colorオブジェクトの使い方)
+        - [moveオブジェクトの使い方](#moveオブジェクトの使い方)
     - [AIクラス編](#AIクラス編)
         - [単純思考なAI](#単純思考なAI)
         - [マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)
@@ -548,6 +549,43 @@ print(board)
 上記の実行結果は下記となります。<br>
 ![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
 
+#### moveオブジェクトの使い方
+`move`オブジェクトを使うと、手を打つ座標の指定に、これまでのXY座標形式だけではなく、'a1'・'c3'などのstr形式が使えるようになります。
+
+`Move`クラスをインポートして、下記のように使用してください。
+```Python
+from reversi import BitBoard
+from reversi import C as c
+from reversi import Move as m
+
+board = BitBoard()
+board.put_disc(c.black, *m('f5'))
+print(board)
+
+board.put_disc(c.white, *m('f6'))
+print(board)
+```
+
+上記の実行結果は下記となります。<br>
+![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
+
+また、`move`オブジェクトはXY座標形式でも生成でき、str関数を使ってstr形式へ変換できます。<br>
+`move`オブジェクトをprint表示した場合も同様にstr形式となります。
+```Python
+from reversi import BitBoard
+from reversi import Move as m
+
+move = str(m(5, 4))
+print(move)
+print(m(5, 5))
+```
+
+上記の実行結果は下記となります。
+```
+f5
+f6
+```
+
 ### AIクラス編
 本ライブラリに用意されている各種AIクラスについて説明します。
 
@@ -989,7 +1027,7 @@ Reversi(
 
 ### ダウンロード
 下記リンクをクリックし、"reversi.zip"をダウンロードしてください(無料)。<br>
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.18/reversi.zip)
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.19/reversi.zip)
 
 "reversi.zip"を解凍後、reversi.exeをダブルクリックするとアプリケーションで遊ぶ事ができます。
 
@@ -1204,6 +1242,7 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 - 「日経ソフトウェア2019年11月号」 日経BP [ISSN1347-4685](https://books.google.co.jp/books?id=qhCxDwAAQBAJ&pg=PA146&lpg=PA146&dq=ISSN1347-4685&source=bl&ots=_3Z0k4Y_WE&sig=ACfU3U1urxBdw_srrg62Kr5UJD1sXLEQbQ&hl=ja&sa=X&ved=2ahUKEwjlkqzArY_nAhVTc3AKHXlBA6YQ6AEwAHoECAkQAQ#v=onepage&q=ISSN1347-4685&f=false)
 - 「Python計算機科学新教本」 David Kopec著 黒川 利明訳 株式会社オライリー・ジャパン [ISBN978-4-87311-881-9](https://www.oreilly.co.jp/books/9784873118819/)
 - 「Cython Cとの融合によるPythonの高速化」 Krurt W. Smith著 中田 秀基監訳 長尾 高弘訳 株式会社オライリー・ジャパン [ISBN978-4-87311-727-0](https://www.oreilly.co.jp/books/9784873117270/)
+- 「Fluent Python ----Pythonicな思考とコーディング手法」 Luciano Ramalho著 豊沢 聡、桑井 博之監訳 梶原 玲子訳 株式会社オライリー・ジャパン [ISBN978-4-87311-817-8](https://www.oreilly.co.jp/books/9784873118178/)
 
 
 ## 参考サイト
