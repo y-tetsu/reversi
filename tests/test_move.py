@@ -3,7 +3,8 @@
 
 import unittest
 
-from reversi.move import Move as m, M, LOWER
+from reversi import Move as m
+from reversi.move import M, LOWER
 from reversi.board import Board
 
 

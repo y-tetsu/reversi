@@ -1,5 +1,6 @@
 from .board import Board, BitBoard, PyBitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE
 from .color import C
+from .move import Move
 from .player import Player
 from .display import ConsoleDisplay, NoneDisplay, WindowDisplay
 from .game import Game
@@ -18,6 +19,7 @@ __all__ = [
     'MIN_BOARD_SIZE',
     'MAX_BOARD_SIZE',
     'C',
+    'Move',
     'Player',
     'ConsoleDisplay',
     'NoneDisplay',
