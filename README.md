@@ -52,7 +52,7 @@
 
 
 ## 概要
-**reversi**は<a id="return1">Python</a>で作られた<sup>[[1]](#note1)</sup>Pythonで使えるリバーシのライブラリです。<br>
+**reversi**は<a id="return1">Python</a>で作られた<sup>[1](#note1)</sup>Pythonで使えるリバーシのライブラリです。<br>
 **reversi**をインストールすると、リバーシAIのプログラミングを手軽に試せるようになります。<br>
 
 他にも、以下のような用途に使えます。
