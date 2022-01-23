@@ -37,7 +37,8 @@
             matches              : number of matches for estimating fitness
             threshold            : Fitness threshold for completion of the calculation
             random_opening       : number of turns in the early stages of random moves
-            process              : number of distributed processing(max == 2)
+            process              : number of distributed processing
+            parallel             : multi process type. (default is by "game")
 """
 
 import os

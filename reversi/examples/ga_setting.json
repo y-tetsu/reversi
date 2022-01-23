@@ -10,5 +10,6 @@
     "matches": 5,
     "threshold": 65,
     "random_opening": 8,
-    "processes": 2
+    "processes": 2,
+    "parallel": "game"
 }
