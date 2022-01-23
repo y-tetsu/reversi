@@ -3,6 +3,7 @@
     "board_type": "bitboard",
     "matches": 50,
     "processes": 2,
+    "prallel": "player",
     "random_opening": 0,
     "player_names": [
         "Unselfish",
