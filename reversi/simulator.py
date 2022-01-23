@@ -24,6 +24,7 @@ class Simulator:
                 "board_type": "bitboard",
                 "matches": 10,
                 "processes": 1,
+                "parallel": "player",
                 "random_opening": 8,
                 "player_names": [
                     "Unselfish",
@@ -35,6 +36,7 @@ class Simulator:
             }
 
         self.matches = setting['matches']
+        self.parallel = setting['parallel']
         self.board_size = setting['board_size']
 
         if 'board_type' in setting:
@@ -125,28 +127,44 @@ class Simulator:
         self.result_ratio = {}
 
         if self.processes > 1:
-            with Pool(processes=self.processes) as pool:
-                ret = pool.map(self._game_play, itertools.product(self.black_players, self.white_players))
-                self.game_results = list(itertools.chain.from_iterable(ret))  # 1次元配列に展開する
+            if self.parallel == "player":
+                with Pool(processes=self.processes) as pool:
+                    players = list(itertools.product(self.black_players, self.white_players))
+                    infos = zip(itertools.repeat(self.matches, len(players)), players)
+                    ret = pool.map(self._game_play, infos)
+                    self.game_results = list(itertools.chain.from_iterable(ret))  # 1次元配列に展開する
+            else:
+                with Pool(processes=self.processes) as pool:
+                    for players in itertools.product(self.black_players, self.white_players):
+                        matches = list(itertools.repeat(self.matches // self.processes, self.processes))
+                        for i in range(self.matches % self.processes):
+                            matches[i] += 1
+                        infos = zip(matches, itertools.repeat(players, len(matches)))
+                        ret = pool.map(self._game_play, infos)
+                        self.game_results += list(itertools.chain.from_iterable(ret))  # 1次元配列に展開する
         else:
             for players in itertools.product(self.black_players, self.white_players):
-                self.game_results += self._game_play(players)
+                info = (self.matches, players)
+                self.game_results += self._game_play(info)
 
         self._totalize_results()
 
-    def _game_play(self, players):
+    def _game_play(self, info):
         """
         ゲームを実行
         """
-        black, white = players
+        matches, (black, white) = info
 
         if black.name == white.name:
             return []
 
-        print(black.name, white.name)
+        if self.parallel == 'player':
+            print(black.name, white.name)
+        else:
+            print(black.name, white.name, matches)
 
         ret = []
-        for i in range(self.matches):
+        for i in range(matches):
             if (i + 1) % 5 == 0:
                 print("    -", black.name, white.name, i + 1)
 
