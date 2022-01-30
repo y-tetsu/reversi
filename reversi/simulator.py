@@ -36,7 +36,12 @@ class Simulator:
             }
 
         self.matches = setting['matches']
-        self.parallel = setting['parallel']
+
+        if 'parallel' in setting:
+            self.parallel = setting['parallel']
+        else:
+            self.parallel = "player"
+
         self.board_size = setting['board_size']
 
         if 'board_type' in setting:
