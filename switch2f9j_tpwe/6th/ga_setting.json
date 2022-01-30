@@ -1,0 +1,15 @@
+{
+    "max_generations": 200,
+    "population_num": 12,
+    "offspring_num": 6,
+    "mutation_chance": 0.1,
+    "mutation_value": 6,
+    "large_mutation": 100,
+    "large_mutation_value": 25,
+    "turns": [12, 24, 36, 48, 60],
+    "board_size": 8,
+    "matches": 75,
+    "threshold": 80,
+    "random_opening": 8,
+    "processes": 2
+}
