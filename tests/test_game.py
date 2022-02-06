@@ -5,14 +5,37 @@ import unittest
 from test.support import captured_stdout
 
 from reversi.game import Game
-from reversi.board import Board
+from reversi.board import Board, BitBoardMethods
 from reversi.player import Player
+from reversi.display import NoneDisplay
 from reversi.strategies.common import AbstractStrategy
 
 
 class TestGame(unittest.TestCase):
     """game
     """
+    def test_game_init(self):
+        class Black(AbstractStrategy):
+            def next_move(self, color, board):
+                return (0, 0)
+
+        class White(AbstractStrategy):
+            def next_move(self, color, board):
+                return (0, 0)
+
+        black = Player('black', 'Black', Black())
+        white = Player('white', 'White', White())
+        game = Game(black, white)
+        self.assertIsInstance(game.black_player.strategy, Black)
+        self.assertIsInstance(game.white_player.strategy, White)
+        self.assertIsInstance(game.board, BitBoardMethods.CyBoard8_64bit.CythonBitBoard)
+        self.assertEqual(game.players, [black, white])
+        self.assertEqual(game.black_player, game.players[0])
+        self.assertEqual(game.white_player, game.players[1])
+        self.assertIsInstance(game.display, NoneDisplay)
+        self.assertEqual(game.cancel, None)
+        self.assertEqual(game.result, [])
+
     def test_game(self):
         class TestDisplay:
             def progress(self, board, black_player, white_player):
@@ -59,7 +82,7 @@ class TestGame(unittest.TestCase):
         p5 = Player('white', 'Foul', Foul())
 
         # init
-        game1 = Game(Board(4), p1, p2, TestDisplay())
+        game1 = Game(p1, p2, Board(4), TestDisplay())
         self.assertIsInstance(game1.board, Board)
         self.assertIsInstance(game1.black_player.strategy, TopLeft)
         self.assertIsInstance(game1.white_player.strategy, BottomRight)
@@ -68,7 +91,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game1.cancel, None)
         self.assertEqual(game1.result, [])
 
-        game2 = Game(Board(4), p1, p3, TestDisplay())
+        game2 = Game(p1, p3, Board(4), TestDisplay())
         self.assertIsInstance(game2.board, Board)
         self.assertIsInstance(game2.black_player.strategy, TopLeft)
         self.assertIsInstance(game2.white_player.strategy, TopLeft)
@@ -77,7 +100,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game2.cancel, None)
         self.assertEqual(game2.result, [])
 
-        game3 = Game(Board(4), p1, p2, TestDisplay(), 'white', TestCancel())
+        game3 = Game(p1, p2, Board(4), TestDisplay(), 'white', TestCancel())
         self.assertIsInstance(game3.board, Board)
         self.assertIsInstance(game3.black_player.strategy, TopLeft)
         self.assertIsInstance(game3.white_player.strategy, BottomRight)
@@ -86,7 +109,7 @@ class TestGame(unittest.TestCase):
         self.assertTrue(game3.cancel, TestCancel)
         self.assertEqual(game3.result, [])
 
-        game4 = Game(Board(4), p4, p2, TestDisplay())
+        game4 = Game(p4, p2, Board(4), TestDisplay())
         self.assertIsInstance(game4.board, Board)
         self.assertIsInstance(game4.black_player.strategy, Foul)
         self.assertIsInstance(game4.white_player.strategy, BottomRight)
@@ -95,7 +118,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game4.cancel, None)
         self.assertEqual(game4.result, [])
 
-        game5 = Game(Board(4), p1, p5, TestDisplay())
+        game5 = Game(p1, p5, Board(4), TestDisplay())
         self.assertIsInstance(game5.board, Board)
         self.assertIsInstance(game5.black_player.strategy, TopLeft)
         self.assertIsInstance(game5.white_player.strategy, Foul)

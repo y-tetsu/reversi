@@ -60,7 +60,7 @@ class MonteCarlo(AbstractStrategy):
 
             # 勝敗が決まるまでゲームを進める
             next_color = 'white' if color == 'black' else 'black'  # 相手の色を調べる
-            game = Game(playout_board, self._black_player, self._white_player, NoneDisplay(), next_color)
+            game = Game(self._black_player, self._white_player, playout_board, NoneDisplay(), next_color)
             game.play()
 
             # 結果を返す

@@ -212,9 +212,9 @@ class Reversi:
         strategies.common.Timer.time_limit = self.window.cputime
 
         Game(
-            board,
             players['black'],
             players['white'],
+            board,
             WindowDisplay(self.window, sleep_time_turn=self.sleep_time_turn, sleep_time_move=self.sleep_time_move),
             cancel=self.window.menu,
         ).play()
@@ -404,9 +404,9 @@ class Reversic:
 
         # ゲーム開始
         Game(
-            board,
             selected_players['black'],
             selected_players['white'],
+            board,
             ConsoleDisplay(sleep_time_turn=self.sleep_time_turn, sleep_time_move=self.sleep_time_move),
         ).play()
 

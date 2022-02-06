@@ -174,7 +174,7 @@ class Simulator:
                 print("    -", black.name, white.name, i + 1)
 
             board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
-            game = Game(board, black, white, NoneDisplay())
+            game = Game(black, white, board, NoneDisplay())
             game.play()
 
             ret.append(game.result)

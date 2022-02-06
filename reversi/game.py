@@ -1,16 +1,18 @@
 """Game
 """
 
+from reversi import BitBoard, NoneDisplay
+
 
 class Game:
     """Game
     """
     BLACK_WIN, WHITE_WIN, DRAW = 0, 1, 2
 
-    def __init__(self, board, black_player, white_player, display, color='black', cancel=None):
-        self.board = board
+    def __init__(self, black_player, white_player, board=BitBoard(), display=NoneDisplay(), color='black', cancel=None):
         self.black_player = black_player
         self.white_player = white_player
+        self.board = board
         self.players = [self.black_player, self.white_player] if color == 'black' else [self.white_player, self.black_player]
         self.display = display
         self.cancel = cancel
