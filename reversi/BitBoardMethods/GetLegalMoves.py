@@ -2,11 +2,11 @@
 """
 
 
-def get_legal_moves(color, size, b, w, mask):
+def get_legal_moves(color, size, b, w, h, mask):
     """
     石が置ける場所をすべて返す
     """
-    legal_moves_bits = get_legal_moves_bits(color, size, b, w, mask)
+    legal_moves_bits = get_legal_moves_bits(color, size, b, w, h, mask)
 
     # 石が置ける場所を格納
     ret = []
@@ -21,7 +21,7 @@ def get_legal_moves(color, size, b, w, mask):
     return ret
 
 
-def get_legal_moves_bits(color, size, b, w, mask):
+def get_legal_moves_bits(color, size, b, w, h, mask):
     """
     石が置ける場所をすべて返す
     """
@@ -42,6 +42,9 @@ def get_legal_moves_bits(color, size, b, w, mask):
     legal_moves_bits |= get_legal_moves_lshift(size, diagonal, player, blank, size-1)  # 右斜め上方向
     legal_moves_bits |= get_legal_moves_rshift(size, diagonal, player, blank, size-1)  # 左斜め下方向
     legal_moves_bits |= get_legal_moves_rshift(size, diagonal, player, blank, size+1)  # 右斜め下方向
+
+    # 穴抜き
+    legal_moves_bits &= ~h
 
     return legal_moves_bits
 

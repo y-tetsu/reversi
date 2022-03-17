@@ -12,20 +12,37 @@ cdef class CythonBitBoard():
     """Cython BitBoard
     """
     cdef readonly size
-    cdef public _black_score, _white_score, prev, _black_bitboard, _white_bitboard, _mask, _flippable_discs_num
+    cdef public _black_score, _white_score, prev, _green_bitboard, _black_bitboard, _white_bitboard, _hole_bitboard, _ini_green, _ini_black, _ini_white, _mask, _flippable_discs_num
 
-    def __init__(self):
+    def __init__(self, hole=0x0, ini_black=None, ini_white=None):
         self.size = 8
-        (self._black_score, self._white_score) = (2, 2)
         self.prev = []
-        self._black_bitboard = 1 << 35
-        self._black_bitboard |= 1 << 28
-        self._white_bitboard = 1 << 36
-        self._white_bitboard |= 1 << 27
+        self._green_bitboard = 0
+        self._black_bitboard = 0
+        self._white_bitboard = 0
+
+        # 初期配置
+        size = self.size
+        center = size // 2
+        self._ini_black = 1 << ((size*size-1)-(size*(center-1)+center))
+        self._ini_black |= 1 << ((size*size-1)-(size*center+(center-1)))
+        self._ini_white = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
+        self._ini_white |= 1 << ((size*size-1)-(size*center+center))
+        if ini_black is not None:
+            self._ini_black = ini_black
+        if ini_white is not None:
+            self._ini_white = ini_white
+
+        self._ini_green = self._ini_black & self._ini_white
+        self._ini_black &= ~self._ini_green
+        self._ini_white &= ~self._ini_green
+        self._green_bitboard |= self._ini_green
+        self._black_bitboard |= self._ini_black
+        self._white_bitboard |= self._ini_white
+        self._hole_bitboard = hole
 
         # 置ける場所の検出用マスク
         BitMask = namedtuple('BitMask', 'h v d u ur r br b bl l ul')
-        size = self.size
         self._mask = BitMask(
             int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2),                                      # 水平方向のマスク値
             int(''.join(['0'] * size + ['1'] * size * (size-2) + ['0'] * size), 2),                          # 垂直方向のマスク値
@@ -40,6 +57,12 @@ cdef class CythonBitBoard():
             int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
         )
 
+        # 穴をあける
+        self._green_bitboard &= ~self._hole_bitboard
+        self._black_bitboard &= ~self._hole_bitboard
+        self._white_bitboard &= ~self._hole_bitboard
+        self.update_score()
+
     def _is_invalid_size(self, size):
         return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
 
@@ -49,10 +72,14 @@ cdef class CythonBitBoard():
         mask = 1 << 63
         for y in range(8):
             for x in range(8):
-                if self._black_bitboard & mask:
+                if self._hole_bitboard & mask:
+                    board[y][x] = '　'
+                elif self._black_bitboard & mask:
                     board[y][x] = '〇'
                 elif self._white_bitboard & mask:
                     board[y][x] = '●'
+                elif self._green_bitboard & mask:
+                    board[y][x] = '◎'
                 mask >>= 1
 
         body = ''
@@ -62,10 +89,10 @@ cdef class CythonBitBoard():
         return header + body
 
     def get_legal_moves(self, str color):
-        return _get_legal_moves_size8_64bit(color, self._black_bitboard, self._white_bitboard)
+        return _get_legal_moves_size8_64bit(color, self._black_bitboard, self._white_bitboard, self._hole_bitboard)
 
     def get_legal_moves_bits(self, str color):
-        return _get_legal_moves_bits_size8_64bit(color, self._black_bitboard, self._white_bitboard)
+        return _get_legal_moves_bits_size8_64bit(color, self._black_bitboard, self._white_bitboard, self._hole_bitboard)
 
     def get_flippable_discs(self, str color, x, y):
         return _get_flippable_discs_size8_64bit(color == 'black', self._black_bitboard, self._white_bitboard, x, y)
@@ -91,18 +118,18 @@ cdef class CythonBitBoard():
         return _popcount_size8_64bit(bits)
 
     def get_bitboard_info(self):
-        return self._black_bitboard, self._white_bitboard
+        return self._black_bitboard, self._white_bitboard, self._hole_bitboard
 
     def undo(self):
         (self._black_bitboard, self._white_bitboard, self._black_score, self._white_score) = self.prev.pop()
 
 
-cdef inline _get_legal_moves_size8_64bit(str color, unsigned long long b, unsigned long long w):
+cdef inline _get_legal_moves_size8_64bit(str color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_size8_64bit
     """
     cdef:
         unsigned long long legal_moves
-    legal_moves = _get_legal_moves_bits_size8_64bit(color, b, w)
+    legal_moves = _get_legal_moves_bits_size8_64bit(color, b, w, h)
 
     ret = []
     cdef:
@@ -117,7 +144,7 @@ cdef inline _get_legal_moves_size8_64bit(str color, unsigned long long b, unsign
     return ret
 
 
-cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(str color, unsigned long long b, unsigned long long w):
+cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(str color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_bits_size8_64bit
     """
     cdef:
@@ -131,7 +158,7 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(str color, unsi
         opponent = b
 
     cdef:
-        unsigned long long blank = ~(player | opponent)
+        unsigned long long blank = ~(player | opponent | h)
         unsigned long long horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         unsigned long long vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         unsigned long long diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value

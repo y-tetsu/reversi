@@ -8,26 +8,26 @@ import sys
 MAXSIZE64 = 2**63 - 1
 
 
-def get_legal_moves(color, size, b, w, mask):
+def get_legal_moves(color, size, b, w, h, mask):
     """get_legal_moves
            return all legal moves
     """
     if size == 8:
         if sys.maxsize == MAXSIZE64:
-            return _get_legal_moves_size8_64bit(color, b, w)
+            return _get_legal_moves_size8_64bit(color, b, w, h)
 
-    return _get_legal_moves(color, size, b, w, mask)
+    return _get_legal_moves(color, size, b, w, h, mask)
 
 
-def get_legal_moves_bits(color, size, b, w, mask):
+def get_legal_moves_bits(color, size, b, w, h, mask):
     """get_legal_moves_bits
            return all legal moves bits
     """
     if size == 8:
         if sys.maxsize == MAXSIZE64:
-            return _get_legal_moves_bits_size8_64bit(color, b, w)
+            return _get_legal_moves_bits_size8_64bit(color, b, w, h)
 
-    return _get_legal_moves_bits(color, size, b, w, mask)
+    return _get_legal_moves_bits(color, size, b, w, h, mask)
 
 
 def get_bit_count(size, bits):
@@ -41,12 +41,12 @@ def get_bit_count(size, bits):
     return _get_bit_count(size, bits)
 
 
-cdef inline _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long long w):
+cdef inline _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_size8_64bit
     """
     cdef:
         unsigned long long legal_moves
-    legal_moves = _get_legal_moves_bits_size8_64bit(color, b, w)
+    legal_moves = _get_legal_moves_bits_size8_64bit(color, b, w, h)
 
     ret = []
     cdef:
@@ -61,7 +61,7 @@ cdef inline _get_legal_moves_size8_64bit(color, unsigned long long b, unsigned l
     return ret
 
 
-cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(color, unsigned long long b, unsigned long long w):
+cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_bits_size8_64bit
     """
     cdef:
@@ -75,7 +75,7 @@ cdef inline unsigned long long _get_legal_moves_bits_size8_64bit(color, unsigned
         opponent = b
 
     cdef:
-        unsigned long long blank = ~(player | opponent)
+        unsigned long long blank = ~(player | opponent | h)
         unsigned long long horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         unsigned long long vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         unsigned long long diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
@@ -128,10 +128,10 @@ cdef inline unsigned long long _get_bit_count_size8_64bit(unsigned long long bit
     return (bits & <unsigned long long>0x00000000FFFFFFFF) + (bits >> <unsigned int>32 & <unsigned long long>0x00000000FFFFFFFF)
 
 
-cdef _get_legal_moves(color, size, b, w, mask):
+cdef _get_legal_moves(color, size, b, w, h, mask):
     """_get_legal_moves
     """
-    legal_moves_bits = _get_legal_moves_bits(color, size, b, w, mask)
+    legal_moves_bits = _get_legal_moves_bits(color, size, b, w, h, mask)
 
     # 石が置ける場所を格納
     ret = []
@@ -146,7 +146,7 @@ cdef _get_legal_moves(color, size, b, w, mask):
     return ret
 
 
-cdef _get_legal_moves_bits(color, size, b, w, mask):
+cdef _get_legal_moves_bits(color, size, b, w, h, mask):
     """_get_legal_moves_bits
     """
     # 前準備
@@ -155,7 +155,7 @@ cdef _get_legal_moves_bits(color, size, b, w, mask):
     horizontal = opponent & mask.h                             # 水平方向のチェック値
     vertical = opponent & mask.v                               # 垂直方向のチェック値
     diagonal = opponent & mask.d                               # 斜め方向のチェック値
-    blank = ~(player | opponent)                               # 空きマス位置
+    blank = ~(player | opponent | h)                           # 空きマス位置
 
     # 置ける場所を探す
     legal_moves_bits |= _get_legal_moves_lshift(size, horizontal, player, blank, 1)     # 左方向
