@@ -59,7 +59,7 @@ cdef inline signed int _evaluate_tpw_size8_64bit(table, params, color, board, po
         unsigned long long t_mask = 0x8000000000000000
         unsigned long long b_bitboard, w_bitboard, all_bitboard, bit_pos, lt, rt, lb, rb, b_t, w_t, b_b, w_b, b_l, w_l, b_r, w_r
 
-    b_bitboard, w_bitboard = board.get_bitboard_info()
+    b_bitboard, w_bitboard, h_bitboard = board.get_bitboard_info()
 
     # 勝敗が決まっている場合
     if not possibility_b and not possibility_w:
@@ -116,7 +116,7 @@ cdef inline signed int _evaluate_tpwe_size8_64bit(table, params, color, board, p
         unsigned long long t_mask = 0x8000000000000000
         unsigned long long b_bitboard, w_bitboard, all_bitboard, bit_pos, lt, rt, lb, rb, b_t, w_t, b_b, w_b, b_l, w_l, b_r, w_r
 
-    b_bitboard, w_bitboard = board.get_bitboard_info()
+    b_bitboard, w_bitboard, h_bitboard = board.get_bitboard_info()
 
     # 勝敗が決まっている場合
     if not possibility_b and not possibility_w:
@@ -258,7 +258,7 @@ cdef inline signed int _evaluate_tpwe(t, params, color, board, possibility_b, po
     score_p = (possibility_b - possibility_w) * wp  # 着手可能数によるスコア
     # 辺のパターンによるスコア
     size = board.size
-    b_bitboard, w_bitboard = board.get_bitboard_info()
+    b_bitboard, w_bitboard, h_bitboard = board.get_bitboard_info()
     all_bitboard = b_bitboard | w_bitboard
     bit_pos = 1 << (size * size - 1)
 

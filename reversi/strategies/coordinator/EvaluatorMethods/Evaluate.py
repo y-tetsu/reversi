@@ -79,7 +79,7 @@ def evaluate_tpwe(t, table, params, color, board, possibility_b, possibility_w):
     if board.size != 8:
         return t.get_score(None, board, None, None) + (possibility_b - possibility_w) * params[0]
     score = 0
-    b_bitboard, w_bitboard = board.get_bitboard_info()
+    b_bitboard, w_bitboard, h_bitboard = board.get_bitboard_info()
     for maskvalue in EDGE_MASKVALUE:
         score_b = params[2] if (b_bitboard & maskvalue) == maskvalue else 0
         score_w = params[2] if (w_bitboard & maskvalue) == maskvalue else 0

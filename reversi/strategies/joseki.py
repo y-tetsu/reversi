@@ -1074,7 +1074,7 @@ class _Joseki_(AbstractStrategy):
         次の一手
         """
         if board.size == 8:
-            bitboard_b, bitboard_w = board.get_bitboard_info()
+            bitboard_b, bitboard_w, bitboard_h = board.get_bitboard_info()
             key = (color, bitboard_b, bitboard_w)
 
             # 定石リストに手が含まれる場合

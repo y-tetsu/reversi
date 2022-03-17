@@ -17,6 +17,7 @@ cdef:
     unsigned long long measure_count
     unsigned long long bb
     unsigned long long wb
+    unsigned long long hb
     unsigned long long fd
     unsigned long long[64] pbb
     unsigned long long[64] pwb
@@ -373,7 +374,7 @@ def get_best_move(color, board, params, moves, alpha, beta, depth, pid, timer, m
 
 
 cdef inline tuple _next_move(str color, board, params, int depth, str pid, int timer, int measure):
-    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, hb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
         signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INFINITY
         unsigned int int_color = 0
@@ -414,14 +415,14 @@ cdef inline tuple _next_move(str color, board, params, int depth, str pid, int t
     if color == 'black':
         int_color = <unsigned int>1
     # ボード情報取得
-    bb, wb = board.get_bitboard_info()
+    bb, wb, hb = board.get_bitboard_info()
     bs = board._black_score
     ws = board._white_score
     # 最大深さ調整
     if depth > <int>(64 - (bs + ws)):
         depth =  <int>64 - (bs + ws)
     # 最善手を取得
-    legal_moves = _get_legal_moves_bits(int_color, bb, wb)
+    legal_moves = _get_legal_moves_bits(int_color, bb, wb, hb)
     for y in range(8):
         for x in range(8):
             if legal_moves & mask:
@@ -440,7 +441,7 @@ cdef inline tuple _next_move(str color, board, params, int depth, str pid, int t
 
 
 cdef inline _get_best_move_wrap(str color, board, params, moves, signed int alpha, signed int beta, int depth, str pid, int timer, int measure):
-    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, hb, bs, ws, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
         unsigned long long[64] moves_bit_list
         unsigned int[64] moves_x
@@ -480,7 +481,7 @@ cdef inline _get_best_move_wrap(str color, board, params, moves, signed int alph
     if color == 'black':
         int_color = <unsigned int>1
     # ボード情報取得
-    bb, wb = board.get_bitboard_info()
+    bb, wb, hb = board.get_bitboard_info()
     bs = board._black_score
     ws = board._white_score
     # 最大深さ調整
@@ -539,7 +540,7 @@ cdef inline signed int check_timeout():
 cdef inline signed int _get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, int t, unsigned int pas):
     """_get_score
     """
-    global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail, tp_table
+    global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail, tp_table
     cdef:
         signed int null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
@@ -583,11 +584,11 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
                 beta = upper
 
     # 合法手を取得
-    # {{{ -- _get_legal_moves_bits(int_color, bb, wb) --
+    # {{{ -- _get_legal_moves_bits(int_color, bb, wb, hb) --
     player, opponent = wb, bb
     if int_color:
         player, opponent = bb, wb
-    blank = ~(player | opponent)
+    blank = ~(player | opponent | hb)
     horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
     vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
     diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
@@ -620,7 +621,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     legal_moves_bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-    # -- _get_legal_moves_bits(int_color, bb, wb) -- }}}
+    # -- _get_legal_moves_bits(int_color, bb, wb, hb) -- }}}
 
     # 次の手番
     if int_color:
@@ -645,9 +646,9 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
     # 最大深さに到達
     if not depth:
         # 相手の着手可能数を取得
-        # {{{ -- _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb) --
+        # {{{ -- _get_legal_moves_bits(<unsigned int>0 if int_color else <unsigned int>1, bb, wb, hb) --
         player, opponent = opponent, player  # reversed for opponent
-        blank = ~(player | opponent)
+        blank = ~(player | opponent | hb)
         horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
@@ -680,7 +681,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         legal_moves_bits_opponent =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-        # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb) -- }}}
+        # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb, hb) -- }}}
 
         if int_color:
             legal_moves_b_bits = legal_moves_bits
@@ -795,11 +796,11 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
             b ^= flippable_discs_num
 
         # 着手可能数を格納
-        # {{{ -- _get_legal_moves_bits(int_color, b, w) --
+        # {{{ -- _get_legal_moves_bits(int_color, b, w, hb) --
         player, opponent = w, b
         if int_color:
             player, opponent = b, w
-        blank = ~(player | opponent)
+        blank = ~(player | opponent | hb)
         horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value
@@ -832,7 +833,7 @@ cdef inline signed int _get_score(unsigned int int_color, signed int alpha, sign
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
-        # -- _get_legal_moves_bits(int_color, b, w) -- }}}
+        # -- _get_legal_moves_bits(int_color, b, w, hb) -- }}}
         # {{{ -- possibilities[count] = _popcount --
         bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
         bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
@@ -1047,7 +1048,7 @@ cdef inline void _merge(unsigned int len1, unsigned int len2, unsigned long long
             j += 1
 
 
-cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w):
+cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_bits
     """
     cdef:
@@ -1056,7 +1057,7 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
         player = b
         opponent = w
     cdef:
-        unsigned long long blank = ~(player | opponent)
+        unsigned long long blank = ~(player | opponent | h)
         unsigned long long horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         unsigned long long vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         unsigned long long diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value

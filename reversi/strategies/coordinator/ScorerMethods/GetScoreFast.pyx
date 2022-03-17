@@ -21,15 +21,15 @@ cdef:
 cdef inline signed int _get_blank_score_size8_64bit(board, signed int w1, signed int w2, signed int w3):
     cdef:
         signed int score = 0
-        unsigned long long black, white, blackwhite, not_blackwhite
+        unsigned long long black, white, hole, blackwhite, not_blackwhite
         unsigned long long horizontal, vertical, diagonal
         unsigned long long l_blank, r_blank, t_blank, b_blank, lt_blank, rt_blank, lb_blank, rb_blank
         unsigned long long lt_x, rt_x, lb_x, rb_x
         unsigned long long lt_r, lt_b, rt_l, rt_b, lb_t, lb_r, rb_t, rb_l
         signed int lt_r_sign = 1, lt_b_sign = 1, rt_l_sign = 1, rt_b_sign = 1, lb_t_sign = 1, lb_r_sign = 1, rb_t_sign = 1, rb_l_sign = 1
 
-    black, white = board.get_bitboard_info()
-    blackwhite = black | white
+    black, white, hole = board.get_bitboard_info()
+    blackwhite = (black | white) & ~hole
 
     horizontal = blackwhite & <unsigned long long>0x7E7E7E7E7E7E7E7E  # 左右チェック用マスク
     vertical = blackwhite & <unsigned long long>0x00FFFFFFFFFFFF00    # 上下チェック用マスク

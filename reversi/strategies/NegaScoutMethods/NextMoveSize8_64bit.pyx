@@ -14,6 +14,7 @@ cdef:
     signed int timer_timeout_value
     unsigned long long bb
     unsigned long long wb
+    unsigned long long hb
     unsigned long long fd
     unsigned long long[64] pbb
     unsigned long long[64] pwb
@@ -89,7 +90,7 @@ cdef inline _get_best_move_wrap(str color, board, moves, double alpha, double be
 
 
 cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, double beta, int depth, evaluator, int timer):
-    global timer_timeout, bb, wb, bs, ws
+    global timer_timeout, bb, wb, hb, bs, ws
     cdef:
         double score = alpha
         unsigned int int_color_next = 1, board_bs, board_ws
@@ -99,7 +100,7 @@ cdef inline _get_best_move(unsigned int int_color, board, moves, double alpha, d
     if int_color:
         int_color_next = <unsigned int>0
     # ボード情報取得
-    bb, wb = board.get_bitboard_info()
+    bb, wb, hb = board.get_bitboard_info()
     bs = board._black_score
     ws = board._white_score
     # ボード情報退避
@@ -143,7 +144,7 @@ cdef inline signed int check_timeout():
 cdef inline double _get_score(unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, int t, unsigned int pas):
     """_get_score
     """
-    global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
+    global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
@@ -159,7 +160,7 @@ cdef inline double _get_score(unsigned int int_color, board, double alpha, doubl
     # 探索ノード数カウント
     measure_count += 1
     # 合法手を取得
-    legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb)
+    legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb, hb)
     # 前回パス and 打てる場所なし の場合ゲーム終了
     if pas and not legal_moves_bits:
         is_game_end = <unsigned int>1
@@ -167,11 +168,11 @@ cdef inline double _get_score(unsigned int int_color, board, double alpha, doubl
     if not depth or is_game_end:
         if int_color:
             legal_moves_b_bits = legal_moves_bits
-            legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb)
+            legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb, hb)
             sign = <signed int>1
             str_color = 'black'
         else:
-            legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb)
+            legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb, hb)
             legal_moves_w_bits = legal_moves_bits
             str_color = 'white'
         board._black_bitboard = bb
@@ -224,6 +225,7 @@ cdef inline double _get_score(unsigned int int_color, board, double alpha, doubl
 cdef inline signed int _get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move, signed int sign):
     """_get_possibility
     """
+    global hb
     cdef:
         unsigned long long flippable_discs_num
         signed int pb, pw
@@ -236,8 +238,8 @@ cdef inline signed int _get_possibility(unsigned int int_color, unsigned long lo
     else:
         w ^= move | flippable_discs_num
         b ^= flippable_discs_num
-    pb = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>1, b, w))
-    pw = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, b, w))
+    pb = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>1, b, w, hb))
+    pw = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, b, w, hb))
     return (pb - pw) * sign
 
 
@@ -280,7 +282,7 @@ cdef inline void _merge(unsigned int len1, unsigned int len2, unsigned long long
             j += 1
 
 
-cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w):
+cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_bits
     """
     cdef:
@@ -289,7 +291,7 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
         player = b
         opponent = w
     cdef:
-        unsigned long long blank = ~(player | opponent)
+        unsigned long long blank = ~(player | opponent | h)
         unsigned long long horizontal = opponent & <unsigned long long>0x7E7E7E7E7E7E7E7E  # horizontal mask value
         unsigned long long vertical = opponent & <unsigned long long>0x00FFFFFFFFFFFF00    # vertical mask value
         unsigned long long diagonal = opponent & <unsigned long long>0x007E7E7E7E7E7E00    # diagonal mask value

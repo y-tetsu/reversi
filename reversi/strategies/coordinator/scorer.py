@@ -186,8 +186,8 @@ class EdgeScorer(AbstractScorer):
         size = board.size
         weight = self._W
         score = 0
-        b_bitboard, w_bitboard = board.get_bitboard_info()
-        all_bitboard = b_bitboard | w_bitboard
+        b_bitboard, w_bitboard, hole_bitboard = board.get_bitboard_info()
+        all_bitboard = (b_bitboard | w_bitboard) & ~hole_bitboard
         bit_pos = 1 << (size * size - 1)
 
         lt = bit_pos
@@ -688,7 +688,7 @@ class CornerScorer(AbstractScorer):
         評価値の算出
         """
         score = 0
-        b_bitboard, w_bitboard = board.get_bitboard_info()
+        b_bitboard, w_bitboard, h_bitboard = board.get_bitboard_info()
 
         # ボードサイズ8以外は考慮なし
         if board.size != 8:
