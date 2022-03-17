@@ -929,7 +929,7 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board.put_disc(c.white, 3, 2), 0x0220)
             self.assertEqual(board.put_disc(c.black, 3, 1), 0x0020)
             self.assertEqual(board.put_disc(c.white, 3, 3), 0x0020)
-            self.assertEqual(board.get_bitboard_info(), (4366, 61169))
+            self.assertEqual(board.get_bitboard_info(), (4366, 61169, 0))
 
     def test_board_update_score(self):
         min_size, max_size, step = 4, 26, 2
@@ -1028,7 +1028,7 @@ class TestBoard(unittest.TestCase):
         size = 4
         for board_class in self.board_classes:
             board = board_class(size)
-            self.assertEqual(board.get_bitboard_info(), (0x0240, 0x0420))
+            self.assertEqual(board.get_bitboard_info(), (0x0240, 0x0420, 0))
 
     def test_board_undo(self):
         for board_class in self.board_classes:
@@ -1111,7 +1111,7 @@ class TestBoard(unittest.TestCase):
 
             self.assertEqual(str(board), board_str)
             self.assertEqual(board.get_board_info(), board_info_ret)
-            self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000))
+            self.assertEqual(board.get_bitboard_info(), (0x0000221408002000, 0x00000008141C1000, 0))
             self.assertEqual(board._black_score, 6)
             self.assertEqual(board._white_score, 7)
 

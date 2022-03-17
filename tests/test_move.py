@@ -37,13 +37,15 @@ class TestMove(unittest.TestCase):
         # case
         move = m(case='upper')
         self.assertEqual(move._Move__case, 'upper')
+        move = m(case='LOWER')
+        self.assertEqual(move._Move__case, LOWER)
 
         # put_disc
         board = Board()
         board.put_disc('black', *m('f5'))
-        self.assertEqual(board.get_bitboard_info(), (34829500416, 68719476736))
+        self.assertEqual(board.get_bitboard_info(), (34829500416, 68719476736, 0))
         board.put_disc('white', *m('d6'))
-        self.assertEqual(board.get_bitboard_info(), (34561064960, 68988960768))
+        self.assertEqual(board.get_bitboard_info(), (34561064960, 68988960768, 0))
 
     def test_iter(self):
         x, y = m(0, 1)
@@ -90,9 +92,9 @@ class TestMove(unittest.TestCase):
 
         board = Board()
         board.put_disc('black', *M.to_xy('f5'))
-        self.assertEqual(board.get_bitboard_info(), (34829500416, 68719476736))
+        self.assertEqual(board.get_bitboard_info(), (34829500416, 68719476736, 0))
         board.put_disc('white', *M.to_xy('d6'))
-        self.assertEqual(board.get_bitboard_info(), (34561064960, 68988960768))
+        self.assertEqual(board.get_bitboard_info(), (34561064960, 68988960768, 0))
 
     def test_to_str(self):
         # lower
