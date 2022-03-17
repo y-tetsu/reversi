@@ -3,6 +3,7 @@
 
 
 LOWER = 'lower'
+UPPER = 'upper'
 
 
 class Move(tuple):
@@ -14,8 +15,8 @@ class Move(tuple):
 
     def __init__(self, *args, case=LOWER):
         self.__x, self.__y = self[:2]
-        self.__str = self.to_str(self.__x, self.__y, case=case)
-        self.__case = case
+        self.__str = self.to_str(self.__x, self.__y, case=case.lower())
+        self.__case = case.lower()
 
     def __iter__(self):
         return (i for i in (self.__x, self.__y))
@@ -46,8 +47,8 @@ class Move(tuple):
     def to_str(self, x, y, case=None):
         if x is None or y is None:
             return''
-        case = case if case else self.__case
-        key = 'a' if case == LOWER else 'A'
+        case = case.lower() if case else self.__case
+        key = 'a' if case != UPPER else 'A'
         return chr(ord(key) + x) + str(y + 1)
 
 
