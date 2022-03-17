@@ -63,25 +63,55 @@ class BoardSizeError(Exception):
 class Board(AbstractBoard):
     """Board
     """
-    def __init__(self, size=8):
+    def __init__(self, size=8, hole=0x0, ini_black=None, ini_white=None):
         if self._is_invalid_size(size):
             raise BoardSizeError(str(size) + ' is invalid size!')
 
-        self.size = size                                 # ボードサイズ
-        (self._black_score, self._white_score) = (2, 2)  # スコア
-        self.prev = []                                   # 前回の手
+        self.prev = []    # 前回の手
+        self.size = size  # ボードサイズ
 
-        # 盤面
-        self._board = [[d.blank for _ in range(size)] for _ in range(size)]  # 一旦ブランクで埋める
+        # 初期配置
+        self._set_ini(size, ini_black, ini_white)
+
+        # 穴をあける(サイズ8のみ
+        self._hole_bitboard = hole
+        if self.size == 8:
+            self._set_hole()
+
+
+    def _set_ini(self, size, ini_black, ini_white):
         center = size // 2
-        init_discs = [
-            (center,   center-1, d.black),
-            (center-1, center,   d.black),
-            (center-1, center-1, d.white),
-            (center,   center,   d.white),
-        ]
-        for x, y, disc in init_discs:  # 中央の4石を置く
-            self._board[y][x] = disc
+        self._ini_black = 1 << ((size*size-1)-(size*(center-1)+center))
+        self._ini_black |= 1 << ((size*size-1)-(size*center+(center-1)))
+        self._ini_white = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
+        self._ini_white |= 1 << ((size*size-1)-(size*center+center))
+        if ini_black is not None:
+            self._ini_black = ini_black
+        if ini_white is not None:
+            self._ini_white = ini_white
+
+        self._board = [[d.blank for _ in range(size)] for _ in range(size)]  # 一旦ブランクで埋める
+        mask = 1 << (size*size-1)
+        for y in range(self.size):
+            for x in range(self.size):
+                if (mask & self._ini_black) and (mask & self._ini_white):
+                    self._board[y][x] = d.green
+                elif mask & self._ini_black:
+                    self._board[y][x] = d.black
+                elif mask & self._ini_white:
+                    self._board[y][x] = d.white
+                mask >>= 1
+        self.update_score()
+
+    def _set_hole(self):
+        size = self.size
+        mask = 1 << (size*size-1)
+        for y in range(self.size):
+            for x in range(self.size):
+                if mask & self._hole_bitboard:
+                    self._board[y][x] = d.hole
+                mask >>= 1
+        self.update_score()
 
     def _is_invalid_size(self, size):
         """_is_invalid_size
@@ -164,8 +194,8 @@ class Board(AbstractBoard):
         dx, dy = direction
         while True:
             next_x, next_y = next_x + dx, next_y + dy
-            # 座標が範囲内 かつ 石が置かれている(ブランクではない)
-            if self._in_range(next_x, next_y) and not self._is_blank(next_x, next_y):
+            # 座標が範囲内 かつ 石が置かれている
+            if self._in_range(next_x, next_y) and self._is_color(next_x, next_y):
                 # 置いた石と同じ色が見つかった場合
                 if self._is_same_color(next_x, next_y, color):
                     return ret
@@ -190,6 +220,13 @@ class Board(AbstractBoard):
         """
         return self._board[y][x] == d.blank
 
+    def _is_color(self, x, y):
+        """_is_color
+
+               座標上に石が置かれている(黒か白)場合True
+        """
+        return self._board[y][x] == d.black or self._board[y][x] == d.white
+
     def _is_black(self, x, y):
         """_is_black
 
@@ -203,6 +240,13 @@ class Board(AbstractBoard):
                座標上に白が置かれている場合True
         """
         return self._board[y][x] == d.white
+
+    def _is_hole(self, x, y):
+        """_is_hole
+
+               座標上に穴が置かれている場合True
+        """
+        return self._board[y][x] == d.hole
 
     def _is_same_color(self, x, y, color):
         """_is_same_color
@@ -287,7 +331,7 @@ class Board(AbstractBoard):
         """get_bitboard_info
         """
         size = self.size
-        black_bitboard, white_bitboard = 0, 0
+        black_bitboard, white_bitboard, hole_bitboard = 0, 0, 0
         put = 1 << size * size - 1
         for y in range(self.size):
             for x in range(self.size):
@@ -295,9 +339,11 @@ class Board(AbstractBoard):
                     black_bitboard |= put
                 elif self._is_white(x, y):
                     white_bitboard |= put
+                elif self._is_hole(x, y):
+                    hole_bitboard |= put
                 put >>= 1
 
-        return black_bitboard, white_bitboard
+        return black_bitboard, white_bitboard, hole_bitboard
 
     def undo(self):
         """undo
@@ -309,29 +355,27 @@ class Board(AbstractBoard):
         self.update_score()
 
 
-def BitBoard(size=8):
+def BitBoard(size=8, hole=0x0, ini_black=None, ini_white=None):
     if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
-        return BitBoardMethods.CythonBitBoard()
-    return PyBitBoard(size)
+        return BitBoardMethods.CythonBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
+    return PyBitBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
 
 
 class PyBitBoard(AbstractBoard):
     """PyBitBoard
     """
-    def __init__(self, size=8):
+    def __init__(self, size=8, hole=0x0, ini_black=None, ini_white=None):
         if self._is_invalid_size(size):
             raise BoardSizeError(str(size) + ' is invalid size!')
 
-        self.size = size                                 # ボードサイズ
-        (self._black_score, self._white_score) = (2, 2)  # スコア
-        self.prev = []                                   # 前回の手
+        self.size = size          # ボードサイズ
+        self.prev = []            # 前回の手
+        self._green_bitboard = 0  # 緑
+        self._black_bitboard = 0  # 黒
+        self._white_bitboard = 0  # 白
 
-        # ビットボードの初期配置
-        center = size // 2
-        self._black_bitboard = 1 << ((size*size-1)-(size*(center-1)+center))
-        self._black_bitboard |= 1 << ((size*size-1)-(size*center+(center-1)))
-        self._white_bitboard = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
-        self._white_bitboard |= 1 << ((size*size-1)-(size*center+center))
+        # 初期配置
+        self._set_ini(size, ini_black, ini_white)
 
         # 置ける場所の検出用マスク
         BitMask = namedtuple('BitMask', 'h v d u ur r br b bl l ul')
@@ -349,6 +393,36 @@ class PyBitBoard(AbstractBoard):
             int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
         )
 
+        # 穴をあける(サイズ8のみ
+        self._hole_bitboard = hole
+        if self.size == 8:
+            self._set_hole()
+
+    def _set_ini(self, size, ini_black, ini_white):
+        center = size // 2
+        self._ini_black = 1 << ((size*size-1)-(size*(center-1)+center))
+        self._ini_black |= 1 << ((size*size-1)-(size*center+(center-1)))
+        self._ini_white = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
+        self._ini_white |= 1 << ((size*size-1)-(size*center+center))
+        if ini_black is not None:
+            self._ini_black = ini_black
+        if ini_white is not None:
+            self._ini_white = ini_white
+
+        self._ini_green = self._ini_black & self._ini_white
+        self._ini_black &= ~self._ini_green
+        self._ini_white &= ~self._ini_green
+        self._green_bitboard |= self._ini_green
+        self._black_bitboard |= self._ini_black
+        self._white_bitboard |= self._ini_white
+        self.update_score()
+
+    def _set_hole(self):
+        self._green_bitboard &= ~self._hole_bitboard
+        self._black_bitboard &= ~self._hole_bitboard
+        self._white_bitboard &= ~self._hole_bitboard
+        self.update_score()
+
     def _is_invalid_size(self, size):
         """_is_invalid_size
 
@@ -363,7 +437,11 @@ class PyBitBoard(AbstractBoard):
         mask = 1 << (size * size - 1)
         for y in range(size):
             for x in range(size):
-                if self._black_bitboard & mask:
+                if self._hole_bitboard & mask:
+                    board[y][x] = d.hole
+                elif self._green_bitboard & mask:
+                    board[y][x] = d.green
+                elif self._black_bitboard & mask:
                     board[y][x] = d.black
                 elif self._white_bitboard & mask:
                     board[y][x] = d.white
@@ -384,7 +462,7 @@ class PyBitBoard(AbstractBoard):
         Returns:
             legal_moves list
         """
-        return BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
+        return BitBoardMethods.get_legal_moves(color, self.size, self._black_bitboard, self._white_bitboard, self._hole_bitboard, self._mask)
 
     def get_legal_moves_bits(self, color):
         """get_legal_moves_bits
@@ -395,7 +473,7 @@ class PyBitBoard(AbstractBoard):
         Returns:
             legal_moves bits
         """
-        return BitBoardMethods.get_legal_moves_bits(color, self.size, self._black_bitboard, self._white_bitboard, self._mask)
+        return BitBoardMethods.get_legal_moves_bits(color, self.size, self._black_bitboard, self._white_bitboard, self._hole_bitboard, self._mask)
 
     def get_flippable_discs(self, color, x, y):
         """get_flippable_discs
@@ -438,7 +516,7 @@ class PyBitBoard(AbstractBoard):
     def get_bitboard_info(self):
         """get_bitboard_info
         """
-        return self._black_bitboard, self._white_bitboard
+        return self._black_bitboard, self._white_bitboard, self._hole_bitboard
 
     def undo(self):
         """undo
