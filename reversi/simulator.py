@@ -4,9 +4,10 @@
 import os
 import json
 import itertools
+import datetime
 from multiprocessing import Pool
 
-from reversi import Board, BitBoard, Player, NoneDisplay, Game
+from reversi import Board, BitBoard, Player, NoneDisplay, Game, Elucidator
 from reversi.strategies import RandomOpening
 
 
@@ -14,50 +15,129 @@ class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self, players_info, setting_file):
-        if os.path.isfile(setting_file):
-            with open(setting_file) as f:
-                setting = json.load(f)
+    def __init__(self,
+            players_info,
+            setting_file=None,
+            board_size=8,
+            board_type='bitboard',
+            first='black',
+            board_hole=0x0000000000000000,
+            ini_black=None,
+            ini_white=None,
+            matches=10,
+            processes=1,
+            progress=True,
+            parallel='player',
+            random_opening=8,
+            swap=True,
+            perfect_check=False,
+            player_names=None,
+        ):
+        setting = {}
+        if setting_file is not None:
+            if os.path.isfile(setting_file):
+                with open(setting_file) as f:
+                    setting = json.load(f)
+            else:
+                setting = {
+                    "board_size": 8,
+                    "board_type": "bitboard",
+                    "first": "black",
+                    "board_hole": 0x0000000000000000,
+                    "ini_black": None,
+                    "ini_white": None,
+                    "matches": 10,
+                    "processes": 1,
+                    "progress": True,
+                    "parallel": "player",
+                    "random_opening": 8,
+                    "swap": True,
+                    "perfect_check": False,
+                    "player_names": [
+                        "Unselfish",
+                        "Random",
+                        "Greedy",
+                        "SlowStarter",
+                        "Table",
+                    ]
+                }
+
+        if 'board_size' in setting:
+            self.board_size = setting['board_size']
         else:
-            setting = {
-                "board_size": 8,
-                "board_type": "bitboard",
-                "matches": 10,
-                "processes": 1,
-                "parallel": "player",
-                "random_opening": 8,
-                "player_names": [
-                    "Unselfish",
-                    "Random",
-                    "Greedy",
-                    "SlowStarter",
-                    "Table",
-                ]
-            }
-
-        self.matches = setting['matches']
-
-        if 'parallel' in setting:
-            self.parallel = setting['parallel']
-        else:
-            self.parallel = "player"
-
-        self.board_size = setting['board_size']
+            self.board_size = board_size
 
         if 'board_type' in setting:
             self.board_type = setting['board_type']
         else:
-            self.board_type = "bitboard"
+            self.board_type = board_type
 
-        self.processes = setting['processes']
-        self.random_opening = setting['random_opening']
+        if 'first' in setting:
+            self.first = setting['first']
+        else:
+            self.first = first
+
+        if 'board_hole' in setting:
+            self.board_hole = setting['board_hole']
+        else:
+            self.board_hole = board_hole
+
+        if 'ini_black' in setting:
+            self.ini_black = setting['ini_black']
+        else:
+            self.ini_black = ini_black
+
+        if 'ini_white' in setting:
+            self.ini_white = setting['ini_white']
+        else:
+            self.ini_white = ini_white
+
+        if 'matches' in setting:
+            self.matches = setting['matches']
+        else:
+            self.matches = matches
+
+        if 'parallel' in setting:
+            self.parallel = setting['parallel']
+        else:
+            self.parallel = parallel
+
+        if 'processes' in setting:
+            self.processes = setting['processes']
+        else:
+            self.processes = processes
+
+        if 'progress' in setting:
+            self.progress = setting['progress']
+        else:
+            self.progress = progress
+
+        if 'random_opening' in setting:
+            self.random_opening = setting['random_opening']
+        else:
+            self.random_opening = random_opening
+
+        if 'swap' in setting:
+            self.swap = setting['swap']
+        else:
+            self.swap = swap
+
+        if 'perfect_check' in setting:
+            self.perfect_check = setting['perfect_check']
+        else:
+            self.perfect_check = perfect_check
 
         if 'player_names' in setting:
-            black_players = [Player('black', c, players_info[c]) for c in setting['player_names']]
-            white_players = [Player('white', c, players_info[c]) for c in setting['player_names']]
+            player_names = setting['player_names']
         else:
-            black_players = [Player('black', c, players_info[c]) for c in players_info.keys()]
-            white_players = [Player('white', c, players_info[c]) for c in players_info.keys()]
+            player_names = players_info.keys()
+
+        if len(player_names) > 2 or self.swap:
+            black_players = [Player('black', c, players_info[c]) for c in player_names]
+            white_players = [Player('white', c, players_info[c]) for c in player_names]
+        else:
+            black_players = [Player('black', list(player_names)[0], players_info[list(player_names)[0]])]
+            white_players = [Player('white', list(player_names)[1], players_info[list(player_names)[1]])]
 
         # Adapt Random Opening
         if self.random_opening:
@@ -128,7 +208,8 @@ class Simulator:
         """
         シミュレーションを開始する
         """
-        print('processes', self.processes)
+        if self.progress:
+            print('processes', self.processes)
         self.result_ratio = {}
 
         if self.processes > 1:
@@ -163,22 +244,24 @@ class Simulator:
         if black.name == white.name:
             return []
 
-        if self.parallel == 'player':
-            print(black.name, white.name)
-        else:
-            print(black.name, white.name, matches)
+        if self.progress:
+            if self.parallel == 'player':
+                print(black.name, white.name)
+            else:
+                print(black.name, white.name, matches)
 
         ret = []
         for i in range(matches):
-            if (i + 1) % 5 == 0:
+            if (i + 1) % 5 == 0 and self.progress:
                 print("    -", black.name, white.name, i + 1)
 
-            board = BitBoard(self.board_size) if self.board_type == 'bitboard' else Board(self.board_size)
-            game = Game(black, white, board, NoneDisplay())
+            board = BitBoard(self.board_size, hole=self.board_hole, ini_black=self.ini_black, ini_white=self.ini_white) if self.board_type == 'bitboard' else Board(self.board_size, hole=self.board_hole, ini_black=self.ini_black, ini_white=self.ini_white)
+            game = Game(black, white, board, NoneDisplay(), self.first)
             game.play()
-
             ret.append(game.result)
 
+            if self.perfect_check:
+                Elucidator(board).make_perfect_win_txt()
         return ret
 
     def _totalize_results(self):
@@ -221,3 +304,4 @@ class Simulator:
                 total[white_name][black_name]['matches'] += 1
 
         self.total = total
+        str(self)
