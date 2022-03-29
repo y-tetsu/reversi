@@ -340,7 +340,7 @@ cdef inline double _get_score_taker(unsigned int int_color, double alpha, double
     # 最大深さに到達 or ゲーム終了
     if not depth or is_game_end:
         if rol == BLACK_SHORT_TAKER or rol == WHITE_SHORT_TAKER:
-            if is_game_end and bs * taker_sign > ws * taker_sign:
+            if is_game_end and <signed int>(bs * taker_sign) > <signed int>(ws * taker_sign):
                 reward = (max_depth - (bs + ws)) * SHORT_TAKER_REWARD
                 if reward > SHORT_TAKER_REWARD:
                     score = <double>((<double>bs - <double>ws) * taker_sign + <double>reward)
