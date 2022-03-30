@@ -16,7 +16,7 @@ class _EndGame_(AbstractStrategy):
     """
     石差読みで次の手を決める
     """
-    def __init__(self, depth=60, role='normal'):
+    def __init__(self, depth=60, role='best_match'):
         self._MIN = -10000000
         self._MAX = 10000000
         self.evaluator = Evaluator_N_Fast()

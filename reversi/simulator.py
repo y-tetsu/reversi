@@ -7,7 +7,7 @@ import itertools
 import datetime
 from multiprocessing import Pool
 
-from reversi import Board, BitBoard, Player, NoneDisplay, Game, Elucidator
+from reversi import Board, BitBoard, Player, NoneDisplay, Game
 from reversi.strategies import RandomOpening
 
 
@@ -126,6 +126,7 @@ class Simulator:
             self.perfect_check = setting['perfect_check']
         else:
             self.perfect_check = perfect_check
+        self.perfect_win_txt = './perfect_win.txt'
 
         if 'player_names' in setting:
             player_names = setting['player_names']
@@ -261,7 +262,8 @@ class Simulator:
             ret.append(game.result)
 
             if self.perfect_check:
-                Elucidator(board).make_perfect_win_txt()
+                from reversi import Elucidator
+                Elucidator(board=board).make_perfect_win_txt(self.perfect_win_txt)
         return ret
 
     def _totalize_results(self):

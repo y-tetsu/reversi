@@ -8,13 +8,13 @@ from reversi.strategies.common import Timer, Measure
 from reversi.recorder import Recorder
 
 
-DEF NORMAL = 0
-DEF BLACK_MUCH_TAKER = 1
-DEF WHITE_MUCH_TAKER = 2
-DEF BLACK_SHORT_TAKER = 3
-DEF WHITE_SHORT_TAKER = 4
+DEF BEST_MATCH = 0
+DEF BLACK_MAX = 1
+DEF WHITE_MAX = 2
+DEF BLACK_SHORTEST = 3
+DEF WHITE_SHORTEST = 4
 
-DEF SHORT_TAKER_REWARD = 10000
+DEF SHORTEST_REWARD = 10000
 
 
 cdef:
@@ -195,25 +195,25 @@ cdef inline void _init_recorder(unsigned int recorder, unsigned int  depth):
 
 cdef inline double _set_role(str role, double beta):
     global rol, hb, max_depth, taker_sign
-    rol = NORMAL
+    rol = BEST_MATCH
     max_depth = <unsigned int>64 - <unsigned int>_popcount(hb)
-    if role != 'normal':
+    if role != 'best_match':
         # TODO : MUCH_TAKER:確定石の場所を記憶し、相手が確定石に置く手を後回しにする
-        if role == 'black_much_taker':
+        if role == 'black_max':
             beta = <double>max_depth
-            rol = BLACK_MUCH_TAKER
+            rol = BLACK_MAX
             taker_sign = <signed int>1
-        elif role == 'white_much_taker':
+        elif role == 'white_max':
             beta = <double>max_depth
-            rol = WHITE_MUCH_TAKER
+            rol = WHITE_MAX
             taker_sign = <signed int>-1
-        elif role == 'black_short_taker':
-            beta = <double>SHORT_TAKER_REWARD * 64
-            rol = BLACK_SHORT_TAKER
+        elif role == 'black_shortest':
+            beta = <double>SHORTEST_REWARD * 64
+            rol = BLACK_SHORTEST
             taker_sign = <signed int>1
-        elif role == 'white_short_taker':
-            beta = <double>SHORT_TAKER_REWARD * 64
-            rol = WHITE_SHORT_TAKER
+        elif role == 'white_shortest':
+            beta = <double>SHORTEST_REWARD * 64
+            rol = WHITE_SHORTEST
             taker_sign = <signed int>-1
     return beta
 
@@ -230,7 +230,7 @@ cdef inline _get_best_move(unsigned int int_color, unsigned int index, unsigned 
     # 各手のスコア取得
     for i in range(index):
         _put_disc(int_color, moves_bit_list[i])
-        if rol == NORMAL:
+        if rol == BEST_MATCH:
             score = -_get_score(int_color_next, -beta, -alpha, depth-1, <unsigned int>0)
         else:
             score = _get_score_taker(int_color_next, alpha, beta, depth-1, <unsigned int>0)
@@ -294,7 +294,7 @@ cdef inline double _get_score(unsigned int int_color, double alpha, double beta,
     if bs + ws == <unsigned int>(max_depth - 1):
         measure_count += 1
         count = _popcount(_get_flippable_discs_num(int_color, bb, wb, legal_moves_bits))
-        if rol == NORMAL:
+        if rol == BEST_MATCH:
             if int_color:
                 return <double>(<double>bs - <double>ws + <double>(1 + count*2))
             else:
@@ -339,10 +339,10 @@ cdef inline double _get_score_taker(unsigned int int_color, double alpha, double
         is_game_end = <unsigned int>1
     # 最大深さに到達 or ゲーム終了
     if not depth or is_game_end:
-        if rol == BLACK_SHORT_TAKER or rol == WHITE_SHORT_TAKER:
+        if rol == BLACK_SHORTEST or rol == WHITE_SHORTEST:
             if is_game_end and <signed int>(bs * taker_sign) > <signed int>(ws * taker_sign):
-                reward = (max_depth - (bs + ws)) * SHORT_TAKER_REWARD
-                if reward > SHORT_TAKER_REWARD:
+                reward = (max_depth - (bs + ws)) * SHORTEST_REWARD
+                if reward > SHORTEST_REWARD:
                     score = <double>((<double>bs - <double>ws) * taker_sign + <double>reward)
                     #print(depth, score, hex(bs), hex(ws))
                     _save_record(score, depth)
