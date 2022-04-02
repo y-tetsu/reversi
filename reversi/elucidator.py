@@ -189,7 +189,7 @@ class Elucidator:
 
             if depth:
                 move_count = len(record) // 2
-                Recorder(self.board).play(record, result_only=True)
+                Recorder(self.board).play(record, show_moves=False)
                 print('move count =', move_count)
                 print('record     =', record)
             else:
@@ -203,3 +203,31 @@ class Elucidator:
             print()
             print(now.strftime('%Y/%m/%d %H:%M:%S'))
         return ret[0], ret[1], ret[2], ret[3]
+
+    def verify_record(self, record, black_score=None, white_score=None, move_count=None):
+        self.board = BitBoard(size=self.size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white)
+        recorder = Recorder(self.board)
+        is_valid_record = recorder.play(record, show_moves=False)
+        black_score_verify = '---'
+        white_score_verify = '---'
+        move_count_verify = '---'
+        print('is_valid_record    :', is_valid_record)
+        if is_valid_record:
+            if black_score is not None:
+                if recorder.board._black_score == black_score:
+                    black_score_verify = 'OK'
+                else:
+                    black_score_verify = 'NG'
+                print('black_score_verify :', black_score_verify, recorder.board._black_score, black_score)
+            if white_score is not None:
+                if recorder.board._white_score == white_score:
+                    white_score_verify = 'OK'
+                else:
+                    white_score_verify = 'NG'
+                print('white_score_verify :', white_score_verify, recorder.board._white_score, white_score)
+            if move_count is not None:
+                if (len(record) // 2) == move_count:
+                    move_count_verify = 'OK'
+                else:
+                    move_count_verify = 'NG'
+                print('move_verify        :', move_count_verify, len(record) // 2, move_count)

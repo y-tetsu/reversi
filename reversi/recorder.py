@@ -67,31 +67,33 @@ class Recorder:
                 mask >>= 1
         return -1, -1
 
-    def play(self, record=None, board=None, result_only=False):
+    def play(self, record=None, board=None, show_moves=True, show_result=True):
         if record is None:
             record = self.record
         else:
             self.record = record
         if board is None:
             board = self.board
-        else:
-            self.board = board
         size, hole, ini_black, ini_white = board.size, board._hole_bitboard, board._ini_black, board._ini_white
         bitboard = BitBoard(size=size, hole=hole, ini_black=ini_black, ini_white=ini_white)
         print(bitboard)
         if not record:
             print('* no record *')
         else:
-            if not result_only:
+            if show_moves:
                 print(' play :', record)
                 print()
         for index in range(0, len(record) - 1, 2):
             str_move = record[index:index+2]
             color = c.black if str_move.isupper() else c.white
             xy_move = Move(str_move)
-            bitboard.put_disc(color, *xy_move)
-            if not result_only:
-                print('>>>', str_move)
-                print(bitboard)
-        if result_only:
+            if bitboard.put_disc(color, *xy_move):
+                if show_moves:
+                    print('>>>', str_move)
+                    print(bitboard)
+            else:
+                return False
+        if show_result:
             print(bitboard)
+        self.board = bitboard
+        return True
