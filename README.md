@@ -112,6 +112,7 @@ $ install_reversi_examples
 - [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
 - [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
 - [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
+- [10_x_elucidator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_x_elucidator.py) - [Reversi-X](https://y-tetsu.github.io/reversi-x/)の特殊形状のボード解明補助ツール
 
 サンプルの実行方法はそれぞれ下記のとおりです。
 ```
@@ -125,6 +126,7 @@ $ py -3.7 06_table_strategy.py
 $ py -3.7 07_minmax_strategy.py
 $ py -3.7 08_alphabeta_strategy.py
 $ py -3.7 09_genetic_algorithm.py
+$ py -3.7 10_x_elucidator.py
 ```
 
 
