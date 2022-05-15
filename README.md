@@ -49,6 +49,7 @@
 - [参考書籍](#参考書籍)
 - [参考サイト](#参考サイト)
 - [脚注](#脚注)
+- [ライセンス](#ライセンス)
 
 
 ## 概要
@@ -1260,3 +1261,9 @@ C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scrip
 
 ## 脚注
 <a id="note1">[1]</a>: 一部でCythonを使用しています。<sup>[↑](#return1)</sup>
+
+
+---
+## ライセンス
+本リポジトリのソースコードは[MITライセンス](http://www.opensource.org/licenses/MIT)です。
+商用・非商用問わず、ご自由にお使い下さい。
