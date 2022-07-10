@@ -314,6 +314,28 @@ class Board(AbstractBoard):
 
         return board_info
 
+    def get_board_line_info(self, player, black='*', white='O', empty='-'):
+        """get_board_line_info
+        """
+        board_line_info = ''
+        # board
+        for row in self._board:
+            for col in row:
+                if d.is_black(col):
+                    board_line_info += black
+                elif d.is_white(col):
+                    board_line_info += white
+                else:
+                    board_line_info += empty
+        # player
+        if player == c.black:
+            board_line_info += black
+        elif player == c.white:
+            board_line_info += white
+        else:
+            board_line_info += empty
+        return board_line_info
+
     def get_bit_count(self, bits):
         """get_bit_count
         """
@@ -507,6 +529,31 @@ class PyBitBoard(AbstractBoard):
         """get_board_info
         """
         return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
+
+    def get_board_line_info(self, player, black='*', white='O', empty='-'):
+        """get_board_line_info
+        """
+        board_line_info = ''
+        # board
+        size = self.size
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            for x in range(size):
+                if self._black_bitboard & mask:
+                    board_line_info += black
+                elif self._white_bitboard & mask:
+                    board_line_info += white
+                else:
+                    board_line_info += empty
+                mask >>= 1
+        # player
+        if player == c.black:
+            board_line_info += black
+        elif player == c.white:
+            board_line_info += white
+        else:
+            board_line_info += empty
+        return board_line_info
 
     def get_bit_count(self, bits):
         """get_git_count

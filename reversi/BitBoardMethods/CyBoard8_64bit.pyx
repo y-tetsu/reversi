@@ -114,6 +114,29 @@ cdef class CythonBitBoard():
     def get_board_info(self):
         return _get_board_info_size8_64bit(self._black_bitboard, self._white_bitboard)
 
+    def get_board_line_info(self, player, black='*', white='O', empty='-'):
+        board_line_info = ''
+        # board
+        size = self.size
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            for x in range(size):
+                if self._black_bitboard & mask:
+                    board_line_info += black
+                elif self._white_bitboard & mask:
+                    board_line_info += white
+                else:
+                    board_line_info += empty
+                mask >>= 1
+        # player
+        if player == 'black':
+            board_line_info += black
+        elif player == 'white':
+            board_line_info += white
+        else:
+            board_line_info += empty
+        return board_line_info
+
     def get_bit_count(self, bits):
         return _popcount_size8_64bit(bits)
 

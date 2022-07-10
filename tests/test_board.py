@@ -989,6 +989,18 @@ class TestBoard(unittest.TestCase):
             board = board_class(size)
             self.assertEqual(board.get_board_info(), board_info_ret)
 
+    def test_board_get_board_line_info(self):
+        size = 4
+        for board_class in self.board_classes:
+            board = board_class(size)
+            self.assertEqual(board.get_board_line_info(c.black), '-----O*--*O-----*')
+
+        size = 8
+        for board_class in self.board_classes:
+            board = board_class(size)
+            board.put_disc(c.black, 5, 4)
+            self.assertEqual(board.get_board_line_info(c.white), '---------------------------O*------***--------------------------O')
+
     def test_board_size_4_get_bit_count(self):
         board = Board(4)
         blank, black, white = d.blank, d.black, d.white
