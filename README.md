@@ -532,7 +532,7 @@ print(board.get_board_line_info(player='black', black='0', white='1', empty='.')
 ```
 ...........................10......01...........................0
 ```
-- player : 'black'(黒)か'white'白を指定してください。
+- player : 'black'(黒)か'white'(白)を指定してください。
 - black : 黒に割り当てる文字を指定してください
 - white : 白に割り当てる文字を指定してください
 - empty : 空きマスに割り当てる文字を指定してください
