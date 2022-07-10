@@ -497,6 +497,46 @@ pprint(board_info)
 上記の実行結果は下記となります。<br>
 ![get_board_info](https://raw.githubusercontent.com/y-tetsu/reversi/images/get_board_info.png)
 
+###### get_board_line_info
+盤面の情報を1行の文字列で返します。
+
+```Python
+from pprint import pprint
+from reversi import BitBoard
+
+board = BitBoard()
+
+print(board.get_board_line_info('black'))
+```
+
+上記の表示結果は以下です。
+```
+---------------------------O*------*O---------------------------*
+```
+盤面のマス目情報 + プレイヤー情報の形式となっています。
+
+引数にはプレイヤーを示す文字列('black'または'white')を指定してください。
+
+デフォルトの文字の割り当ては以下の通りです
+- "*" : 黒プレイヤー
+- "O" : 白プレイヤー
+- "-" : 空きマス
+
+オプション引数の指定で、お好みの文字に変更可能です。
+```Python
+print(board.get_board_line_info(player='black', black='0', white='1', empty='.'))
+```
+
+上記実行時は、以下の出力になります。
+
+```
+...........................10......01...........................0
+```
+- player : 'black'(黒)か'white'白を指定してください。
+- black : 黒に割り当てる文字を指定してください
+- white : 白に割り当てる文字を指定してください
+- empty : 空きマスに割り当てる文字を指定してください
+
 ###### put_disc
 指定位置に石を配置し、取れる石をひっくり返します。
 第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定してください。
