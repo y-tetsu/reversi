@@ -65,7 +65,7 @@
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
 
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="550px">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo2.gif" width="550px">
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">
 
