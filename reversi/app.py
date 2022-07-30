@@ -269,9 +269,30 @@ class Reversic:
     リバーシゲーム
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
+    BOARDS = {
+        'X':         [0x3C18C3E7E7C3183C, None, None],
+        'x':         [0x3C1842C3C342183C, None, None],
+        'Square-8':  [0x0000000000000000, None, None],
+        'Square-6':  [0xFF818181818181FF, None, None],
+        'Square-4':  [0xFFFFC3C3C3C3FFFF, None, None],
+        'Octagon':   [0xC3810000000081C3, None, None],
+        'Diamond':   [0xE7C381000081C3E7, None, None],
+        'Clover':    [0x8100000000000081, None, None],
+        'Cross':     [0xC3C300000000C3C3, None, None],
+        'Plus':      [0xE7E7E70000E7E7E7, None, None],
+        'Drone':     [0x1800008181000018, None, None],
+        'Kazaguruma':[0x8F808080010101F1, None, None],
+        'Manji':     [0x0404E40000272020, None, None],
+        'Rectangle': [0xFFFF00000000FFFF, None, None],
+        'T':         [0x00000000C3C3C3C3, 0x0022440000081000, 0x0044220000100800],
+        'Torus':     [0xC180001818000183, 0x0000002244000000, 0x0000004422000000],
+        'Two':       [0x0000999999990000, 0x0000002244000000, 0x0000004422000000],
+        'Equal':     [0x000000FFFF000000, 0x0022440000224400, 0x0044220000442200],
+        'Xhole':     [0x8142241818244281, 0x0008102244081000, 0x0010084422100800],
+    }
 
     def __init__(self, players_info={}, sleep_time_play=2, sleep_time_turn=1, sleep_time_move=1):
-        self.board_size = 8
+        self.board_type = 'Square-8'
         self.player_names = {'black': 'User1', 'white': 'User2'}
         self.state = Reversic.START
 
@@ -315,7 +336,7 @@ class Reversic:
         設定を表示
         """
         print('\n=============================')
-        print('BoardSize   =', self.board_size)
+        print('BoardType   =', self.board_type)
         print('BlackPlayer =', self.player_names['black'])
         print('WhitePlayer =', self.player_names['white'])
         print('=============================\n')
@@ -328,7 +349,7 @@ class Reversic:
         print('press any key')
         print('-----------------------------')
         print(' enter  : start game')
-        print(' s      : change board size')
+        print(' t      : change board type')
         print(' b      : change black player')
         print(' w      : change white player')
         print(' q      : quit')
@@ -340,8 +361,8 @@ class Reversic:
             if not user_in:
                 self.state = Reversic.PLAY
                 break
-            elif user_in == 's':
-                self.board_size = self._get_board_size()
+            elif user_in == 't':
+                self.board_type = self._get_board_type()
                 self.state = Reversic.START
                 break
             elif user_in == 'b':
@@ -356,18 +377,24 @@ class Reversic:
                 print('See you!')
                 return True
 
-    def _get_board_size(self):
+    def _get_board_type(self):
         """
-        ボードサイズの取得
+        ボードタイプの取得
         """
-        print('press board size')
+        board_list = list(Reversic.BOARDS.keys())
+
+        print('select board type')
+        print('-----------------------------')
+        for num, value in enumerate(board_list, 1):
+            print(f' {num:2d} : {value}')
+        print('-----------------------------')
 
         while True:
             user_in = input('>> ')
             if re.match(r'^[1-9]+\d*$', user_in):
-                size = int(user_in)
-                if MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and not size % 2:
-                    return size
+                index = int(user_in)
+                if 1 <= index <= len(board_list):
+                    return board_list[index-1]
 
     def _get_player(self, players):
         """
@@ -393,7 +420,10 @@ class Reversic:
         ゲームプレイ
         """
         # ボード準備
-        board = BitBoard(self.board_size)
+        hole = Reversic.BOARDS[self.board_type][0]
+        ini_black = Reversic.BOARDS[self.board_type][1]
+        ini_white = Reversic.BOARDS[self.board_type][2]
+        board = BitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
 
         # プレイヤー準備
         selected_players = {}

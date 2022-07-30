@@ -713,7 +713,7 @@ class TestApp(unittest.TestCase):
     # for Reversic
     def test_reversic_init(self):
         app = Reversic()
-        self.assertEqual(app.board_size, 8)
+        self.assertEqual(app.board_type, 'Square-8')
         self.assertEqual(app.player_names, {'black': 'User1', 'white': 'User2'})
         self.assertEqual(app.state, app.START)
         self.assertTrue('User1' in app.players_info['black'])
@@ -782,7 +782,7 @@ class TestApp(unittest.TestCase):
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], '')
         self.assertEqual(lines[1], '=============================')
-        self.assertEqual(lines[2], 'BoardSize   = 8')
+        self.assertEqual(lines[2], 'BoardType   = Square-8')
         self.assertEqual(lines[3], 'BlackPlayer = User1')
         self.assertEqual(lines[4], 'WhitePlayer = User2')
         self.assertEqual(lines[5], '=============================')
@@ -812,7 +812,7 @@ class TestApp(unittest.TestCase):
             self.assertEqual(lines[0], 'press any key')
             self.assertEqual(lines[1], '-----------------------------')
             self.assertEqual(lines[2], ' enter  : start game')
-            self.assertEqual(lines[3], ' s      : change board size')
+            self.assertEqual(lines[3], ' t      : change board type')
             self.assertEqual(lines[4], ' b      : change black player')
             self.assertEqual(lines[5], ' w      : change white player')
             self.assertEqual(lines[6], ' q      : quit')
@@ -824,23 +824,6 @@ class TestApp(unittest.TestCase):
             print(lines[9])
 
         self.assertEqual(app.state, Reversic.PLAY)
-
-        # size
-        app.state = None
-        with captured_stdout() as stdout:
-            with captured_stdin() as stdin:
-                stdin.write('s')
-                stdin.seek(0)
-                app._Reversic__menu()
-
-        lines = stdout.getvalue().splitlines()
-        check_header(self, lines)
-        self.assertEqual(lines[8], '>> ')
-        with self.assertRaises(IndexError):
-            print(lines[9])
-
-        self.assertEqual(app.board_size, 26)
-        self.assertEqual(app.state, Reversic.START)
 
         # black
         app.state = None
@@ -894,54 +877,45 @@ class TestApp(unittest.TestCase):
         self.assertTrue(ret)
         self.assertIsNone(app.state)
 
-    def test_reversic_get_board_size(self):
+    def test_reversic_get_board_type(self):
         app = Reversic()
 
         # normal pattern
-        for i in range(MIN_BOARD_SIZE, MAX_BOARD_SIZE+1, 2):
+        for i, _ in enumerate(Reversic.BOARDS.keys()):
             with captured_stdout() as stdout:
                 with captured_stdin() as stdin:
-                    stdin.write(str(i))
+                    stdin.write(str(i+1))
                     stdin.seek(0)
-                    ret = app._get_board_size()
+                    ret = app._get_board_type()
 
             lines = stdout.getvalue().splitlines()
-            self.assertEqual(lines[0], 'press board size')
-            self.assertEqual(lines[1], '>> ')
+            self.assertEqual(lines[0], 'select board type')
+            self.assertEqual(lines[1], '-----------------------------')
+            self.assertEqual(lines[2], '  1 : X')
+            self.assertEqual(lines[3], '  2 : x')
+            self.assertEqual(lines[4], '  3 : Square-8')
+            self.assertEqual(lines[5], '  4 : Square-6')
+            self.assertEqual(lines[6], '  5 : Square-4')
+            self.assertEqual(lines[7], '  6 : Octagon')
+            self.assertEqual(lines[8], '  7 : Diamond')
+            self.assertEqual(lines[9], '  8 : Clover')
+            self.assertEqual(lines[10], '  9 : Cross')
+            self.assertEqual(lines[11], ' 10 : Plus')
+            self.assertEqual(lines[12], ' 11 : Drone')
+            self.assertEqual(lines[13], ' 12 : Kazaguruma')
+            self.assertEqual(lines[14], ' 13 : Manji')
+            self.assertEqual(lines[15], ' 14 : Rectangle')
+            self.assertEqual(lines[16], ' 15 : T')
+            self.assertEqual(lines[17], ' 16 : Torus')
+            self.assertEqual(lines[18], ' 17 : Two')
+            self.assertEqual(lines[19], ' 18 : Equal')
+            self.assertEqual(lines[20], ' 19 : Xhole')
+            self.assertEqual(lines[21], '-----------------------------')
+            self.assertEqual(lines[22], '>> ')
             with self.assertRaises(IndexError):
-                print(lines[2])
+                print(lines[23])
 
-            self.assertEqual(ret, i)
-
-        # illegal pattern
-        for i in range(MIN_BOARD_SIZE-1, MAX_BOARD_SIZE+2, 2):
-            with captured_stdout() as stdout:
-                with captured_stdin() as stdin:
-                    stdin.write(str(i) + '\n' + str(MIN_BOARD_SIZE))
-                    stdin.seek(0)
-                    ret = app._get_board_size()
-
-            lines = stdout.getvalue().splitlines()
-            self.assertEqual(lines[0], 'press board size')
-            self.assertEqual(lines[1], '>> >> ')
-            with self.assertRaises(IndexError):
-                print(lines[2])
-
-            self.assertEqual(ret, MIN_BOARD_SIZE)
-
-        with captured_stdout() as stdout:
-            with captured_stdin() as stdin:
-                stdin.write('a\n08\n１\nあ\n' + str(MAX_BOARD_SIZE))
-                stdin.seek(0)
-                ret = app._get_board_size()
-
-        lines = stdout.getvalue().splitlines()
-        self.assertEqual(lines[0], 'press board size')
-        self.assertEqual(lines[1], '>> >> >> >> >> ')
-        with self.assertRaises(IndexError):
-            print(lines[2])
-
-        self.assertEqual(ret, MAX_BOARD_SIZE)
+            self.assertEqual(ret, list(Reversic.BOARDS.keys())[i])
 
     def test_reversic_get_player(self):
         app = Reversic()
@@ -1017,7 +991,7 @@ class TestApp(unittest.TestCase):
 
         app = Reversic({'BLACK_FOUL': BlackFoul()}, sleep_time_play=0.001, sleep_time_turn=0.001, sleep_time_move=0.001)
         app.player_names = {'black': 'BLACK_FOUL', 'white': 'BLACK_FOUL'}
-        app.board_size = 4
+        app.board_type = 'X'
         app.state = None
         with captured_stdout() as stdout:
             app._Reversic__play()
@@ -1025,25 +999,31 @@ class TestApp(unittest.TestCase):
         lines = stdout.getvalue().splitlines()
         expected = """
 〇BLACK_FOUL:2 ●BLACK_FOUL:2
-   a b c d
- 1□□□□
- 2□●〇□
- 3□〇●□
- 4□□□□
+   a b c d e f g h
+ 1□□　　　　□□
+ 2□□□　　□□□
+ 3　　□□□□　　
+ 4　　　●〇　　　
+ 5　　　〇●　　　
+ 6　　□□□□　　
+ 7□□□　　□□□
+ 8□□　　　　□□
 
 〇BLACK_FOUL's turn
- 1: ('b', '1')
- 2: ('a', '2')
- 3: ('d', '3')
- 4: ('c', '4')
+ 1: ('d', '3')
+ 2: ('e', '6')
 putted on ('a', '1')
 
 〇BLACK_FOUL:3 ●BLACK_FOUL:2
-   a b c d
- 1〇□□□
- 2□●〇□
- 3□〇●□
- 4□□□□
+   a b c d e f g h
+ 1〇□　　　　□□
+ 2□□□　　□□□
+ 3　　□□□□　　
+ 4　　　●〇　　　
+ 5　　　〇●　　　
+ 6　　□□□□　　
+ 7□□□　　□□□
+ 8□□　　　　□□
 
 〇BLACK_FOUL foul
 ●BLACK_FOUL win

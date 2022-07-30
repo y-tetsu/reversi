@@ -1,6 +1,6 @@
 """Reversi Console Application
 
-    This is a reversi Console Application.
+    This is a reversi with various boards that can be played on the console.
 """
 
 from reversi import Reversic, strategies
@@ -8,18 +8,8 @@ from reversi import Reversic, strategies
 
 Reversic(
     {
-        'Unselfish': strategies.Unselfish(),
         'Random': strategies.Random(),
-        'Greedy': strategies.Greedy(),
         'SlowStarter': strategies.SlowStarter(),
-        'Table': strategies.Table(),
-        'MonteCarlo': strategies.MonteCarlo1000(),
-        'MinMax': strategies.MinMax2_TPW(),
-        'NegaMax': strategies.NegaMax3_TPW(),
-        'AlphaBeta': strategies.AlphaBeta4_TPW(),
-        'Joseki': strategies.AlphaBeta4J_TPW(),
-        'FullReading': strategies.AlphaBeta4F9J_TPW(),
-        'Iterative': strategies.AbIF9J_B_TPW(),
-        'Edge': strategies.AbIF9J_B_TPWE(),
+        'Blank': strategies.SwitchJ_BlankI_EndGame16(),
     },
 ).start()
