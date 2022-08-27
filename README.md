@@ -39,12 +39,18 @@
         - [序盤の定石打ちを追加する方法](#序盤の定石打ちを追加する方法)
         - [手の進行に応じてAIを切り替える方法](#手の進行に応じてAIを切り替える方法)
         - [終盤に完全読みを追加する方法](#終盤に完全読みを追加する方法)
-- [Windows版アプリケーションについて](#Windows版アプリケーションについて)
+- [tkinterアプリケーションの遊び方](#tkinterアプリケーションの遊び方)
     - [ゲーム紹介](#ゲーム紹介)
     - [ダウンロード](#ダウンロード)
     - [メニュー一覧](#メニュー一覧)
     - [プレイヤー紹介](#プレイヤー紹介)
     - [プレイヤー追加機能](#プレイヤー追加機能)
+- [コンソールアプリケーションの遊び方](#コンソールアプリケーションの遊び方)
+    - [ゲーム紹介](#ゲーム紹介)
+    - [メニュー画面](#メニュー画面)
+    - [ボードを変更する](#ボードを変更する)
+    - [プレイヤーを変更する](#プレイヤーを変更する)
+    - [手を打つ](#手を打つ)
 - [インストールがうまくいかない場合](#インストールがうまくいかない場合)
 - [参考書籍](#参考書籍)
 - [参考サイト](#参考サイト)
@@ -104,8 +110,8 @@ $ install_reversi_examples
 
 コピーされるサンプルは下記のとおりです。
 
-- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション
-- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション(変則ボードで遊べます)
+- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション([#遊び方](#tkinterアプリケーションの遊び方))
+- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション([#遊び方](#コンソールアプリケーションの遊び方))
 - [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
 - [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
 - [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
@@ -1066,14 +1072,21 @@ Reversi(
 
 
 ---
-## Windows版アプリケーションについて
+## tkinterアプリケーションの遊び方
 ### ゲーム紹介
 盤面のサイズや対戦プレイヤーをいろいろ選べるリバーシです。
 難易度の異なる多種多様なAIがお相手いたします。<br>
 おまけ要素として、お好きなプログラミング言語で作ったAIをゲームに追加して遊べる機能もございます。
 
+tkinterアプリケーションで遊ぶには、以下の2通りの方法がございます。
+
+1. [サンプルをインストールする](#サンプル)<br>
+2. Windows版のアプリケーションをダウンロードする(インストール不要)
+
 ### ダウンロード
-下記リンクをクリックし、"reversi.zip"をダウンロードしてください(無料)。<br>
+Windows版のアプリケーションで遊ぶ場合は下記リンクをクリックし、<br>
+"reversi.zip"をダウンロードしてください(無料)。<br>
+
 - [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.19/reversi.zip)
 
 "reversi.zip"を解凍後、reversi.exeをダブルクリックするとアプリケーションで遊ぶ事ができます。
@@ -1211,6 +1224,82 @@ Reversi(
     "timeouttime": 60
 }
 ```
+
+
+---
+## コンソールアプリケーションの遊び方
+### ゲーム紹介
+コマンドプロンプト(Windowsの場合)のようなコンソール上で遊べるリバーシです。
+多種多様な通常と異なる盤面で遊ぶ事ができます。<br>
+
+[サンプルをインストール](#サンプル)すると遊べます。
+
+### メニュー画面
+アプリケーションを起動すると、以下の画面が表示されます。
+
+![select_menu2](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_menu2.png)
+
+|メニューの項目 |内容 |
+|---|---|
+|BoardType |現在選択中のボードの種類 |
+|BlackPlayer |現在選択中の黒のプレイヤー名 |
+|WhitePlayer |現在選択中の白のプレイヤー名 |
+
+キー入力により、設定変更やゲームの開始および終了を行えます。
+
+|キー入力 |内容 |
+|---|---|
+|enter |Enterキー入力でゲームを開始します。 |
+|t + enter |ボードの種類を変更します。 |
+|b + enter |黒のプレイヤーを変更します。 |
+|w + enter |白のプレイヤーを変更します。 |
+|q + enter |ゲームを終了します。 |
+|ctrl + c  |Ctrl+cでゲームを強制終了します。(ゲーム途中で終了する場合) |
+
+### ボードを変更する
+ボードの種類に対応する番号を入力すると、ボードを変更できます。
+
+![select_board](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_board2.png)
+
+|キー入力 |ボード名 |形状 |
+|---|---|---|
+|1  + enter |X          |![X](https://raw.githubusercontent.com/y-tetsu/reversi/images/X.png)                   |
+|2  + enter |x          |![x](https://raw.githubusercontent.com/y-tetsu/reversi/images/x2.png)                  |
+|3  + enter |Square-8   |![Square-8](https://raw.githubusercontent.com/y-tetsu/reversi/images/Square-8.png)     |
+|4  + enter |Square-6   |![Square-6](https://raw.githubusercontent.com/y-tetsu/reversi/images/Square-6.png)     |
+|5  + enter |Square-4   |![Square-4](https://raw.githubusercontent.com/y-tetsu/reversi/images/Square-4.png)     |
+|6  + enter |Octagon    |![Octagon](https://raw.githubusercontent.com/y-tetsu/reversi/images/Octagon.png)       |
+|7  + enter |Diamond    |![Diamond](https://raw.githubusercontent.com/y-tetsu/reversi/images/Diamond.png)       |
+|8  + enter |Clover     |![Clover](https://raw.githubusercontent.com/y-tetsu/reversi/images/Clover.png)         |
+|9  + enter |Cross      |![Cross](https://raw.githubusercontent.com/y-tetsu/reversi/images/Cross.png)           |
+|10 + enter |Plus       |![Plus](https://raw.githubusercontent.com/y-tetsu/reversi/images/Plus.png)             |
+|11 + enter |Drone      |![Drone](https://raw.githubusercontent.com/y-tetsu/reversi/images/Drone.png)           |
+|12 + enter |Kazaguruma |![Kazaguruma](https://raw.githubusercontent.com/y-tetsu/reversi/images/Kazaguruma.png) |
+|13 + enter |Manji      |![Manji](https://raw.githubusercontent.com/y-tetsu/reversi/images/Manji.png)           |
+|14 + enter |Rectangle  |![Rectangle](https://raw.githubusercontent.com/y-tetsu/reversi/images/Rectangle.png)   |
+|15 + enter |T          |![T](https://raw.githubusercontent.com/y-tetsu/reversi/images/T.png)                   |
+|16 + enter |Torus      |![Torus](https://raw.githubusercontent.com/y-tetsu/reversi/images/Torus.png)           |
+|17 + enter |Two        |![Two](https://raw.githubusercontent.com/y-tetsu/reversi/images/Two.png)               |
+|18 + enter |Equal      |![Equal](https://raw.githubusercontent.com/y-tetsu/reversi/images/Equal.png)           |
+|19 + enter |Xhole      |![Xhole](https://raw.githubusercontent.com/y-tetsu/reversi/images/Xhole.png)           |
+
+### プレイヤーを変更する
+黒と白ともにプレイヤー名に対応する番号を入力すると、プレイヤー(AI)を変更できます。
+
+![select_player](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_player.png)
+
+|キー入力 |名前 |難易度 |
+|---|---|---|
+|1 + enter |User1, User2 |人が操作 |
+|2 + enter |Random       |★       |
+|3 + enter |SlowStarter  |★★     |
+|4 + enter |Table        |★★★   |
+|5 + enter |Blank        |★★★★ |
+
+### 手を打つ
+ゲーム開始後、打てる手(座標)に対応する番号(+ enter)を入力すると、手を打つことができます。
+
+![select_move](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_move.png)
 
 
 ---
