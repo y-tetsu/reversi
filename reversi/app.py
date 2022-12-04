@@ -335,6 +335,8 @@ class Reversic:
         """
         設定を表示
         """
+        os.system('cls')
+
         print('\n=============================')
         print('BoardType   =', self.board_type)
         print('BlackPlayer =', self.player_names['black'])
@@ -381,6 +383,8 @@ class Reversic:
         """
         ボードタイプの取得
         """
+        os.system('cls')
+
         board_list = list(Reversic.BOARDS.keys())
 
         print('select board type')
@@ -400,6 +404,8 @@ class Reversic:
         """
         プレイヤーの取得
         """
+        os.system('cls')
+
         player_list = list(players.keys())
 
         print('select number for player')

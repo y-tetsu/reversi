@@ -17,6 +17,8 @@ class TestErrMsg:
 class TestApp(unittest.TestCase):
     """app
     """
+    tmp = None
+
     def setUp(self):
         with open('./not_json.json', 'w') as wf:
             wf.write('This is not a json file.\n')
@@ -28,9 +30,14 @@ class TestApp(unittest.TestCase):
             wf.write('    "timeouttime": 10\n')
             wf.write('}\n')
 
+        self.tmp = os.system
+        os.system = lambda x: False
+
     def tearDown(self):
         os.remove('./not_json.json')
         os.remove('./extra_file.json')
+
+        os.system = self.tmp
 
     # for Reversi
     def test_reversi_init(self):

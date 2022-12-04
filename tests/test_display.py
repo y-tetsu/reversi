@@ -1,6 +1,7 @@
 """Tests of display.py
 """
 
+import os
 import unittest
 from test.support import captured_stdout
 
@@ -13,6 +14,15 @@ from reversi.strategies import ConsoleUserInput
 class TestDisplay(unittest.TestCase):
     """display
     """
+    tmp = None
+
+    def setUp(self):
+        self.tmp = os.system
+        os.system = lambda x: False
+
+    def tearDown(self):
+        os.system = self.tmp
+
     def test_console_display(self):
         board8x8 = Board()
 

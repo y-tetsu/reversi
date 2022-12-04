@@ -1,6 +1,7 @@
 """Display
 """
 
+import os
 import time
 import abc
 
@@ -42,6 +43,8 @@ class ConsoleDisplay(AbstractDisplay):
 
     def progress(self, board, black_player, white_player):
         """display progress"""
+        os.system('cls')
+
         score_b = str(black_player) + ':' + str(board._black_score)
         score_w = str(white_player) + ':' + str(board._white_score)
 
