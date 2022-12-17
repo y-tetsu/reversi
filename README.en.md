@@ -56,6 +56,8 @@ The examples to be copied are below.
 - [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - A example of Reversi minmax  strategy
 - [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - A example of Reversi alpha beta AI strategy
 - [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - A example for discovering the parameters of a reversi strategy using a genetic algorithm
+- [10_x_elucidator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_x_elucidator.py) - Analysis tool for deformation boards
+
 
 You can run examples below.
 ```
@@ -69,13 +71,14 @@ $ py -3.7 06_table_strategy.py
 $ py -3.7 07_minmax_strategy.py
 $ py -3.7 08_alphabeta_strategy.py
 $ py -3.7 09_genetic_algorithm.py
+$ py -3.7 10_x_elucidator.py
 ```
 
 ### Demo
 #### 01_tkinter_app.py
 [<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)
 #### 02_console_app.py
-[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
+[<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo3.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py)
 #### 04_reversi_simulator.py
 [<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="650px">](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py)
 
