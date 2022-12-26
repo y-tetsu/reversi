@@ -1,7 +1,6 @@
 """Tests of display.py
 """
 
-import os
 import unittest
 from test.support import captured_stdout
 
@@ -14,15 +13,6 @@ from reversi.strategies import ConsoleUserInput
 class TestDisplay(unittest.TestCase):
     """display
     """
-    tmp = None
-
-    def setUp(self):
-        self.tmp = os.system
-        os.system = lambda x: False
-
-    def tearDown(self):
-        os.system = self.tmp
-
     def test_console_display(self):
         board8x8 = Board()
 
@@ -38,6 +28,9 @@ class TestDisplay(unittest.TestCase):
         self.assertEqual(display.sleep_time_move, 1)
 
         display = ConsoleDisplay(sleep_time_turn=0.001, sleep_time_move=0.001)
+        display._setup_screen = lambda : False
+        display._teardown_screen = lambda : False
+        display._show_board = print
         self.assertEqual(display.sleep_time_turn, 0.001)
         self.assertEqual(display.sleep_time_move, 0.001)
 
