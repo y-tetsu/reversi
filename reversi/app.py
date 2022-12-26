@@ -7,6 +7,8 @@ import re
 import tkinter as tk
 import json
 import threading
+from platform import system
+from ctypes import windll
 
 from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies
 
@@ -308,6 +310,10 @@ class Reversic:
         self.sleep_time_turn = sleep_time_turn
         self.sleep_time_move = sleep_time_move
 
+        if 'win' in system().lower():
+            kernel = windll.kernel32
+            kernel.SetConsoleMode(kernel.GetStdHandle(-11), 7)
+
     @property
     def state(self):
         return self._state
@@ -327,15 +333,18 @@ class Reversic:
         """
         アプリ開始
         """
-        while True:
-            if self.game():
-                break
+        try:
+            while True:
+                if self.game():
+                    break
+        except KeyboardInterrupt:
+            return
 
     def __start(self):
         """
         設定を表示
         """
-        os.system('cls')
+        print("\033[;H\033[2J")
 
         print('\n=============================')
         print('BoardType   =', self.board_type)
@@ -383,7 +392,7 @@ class Reversic:
         """
         ボードタイプの取得
         """
-        os.system('cls')
+        print("\033[;H\033[2J")
 
         board_list = list(Reversic.BOARDS.keys())
 
@@ -404,7 +413,7 @@ class Reversic:
         """
         プレイヤーの取得
         """
-        os.system('cls')
+        print("\033[;H\033[2J")
 
         player_list = list(players.keys())
 
@@ -425,6 +434,8 @@ class Reversic:
         """
         ゲームプレイ
         """
+        print("\033[;H\033[2J")
+
         # ボード準備
         hole = Reversic.BOARDS[self.board_type][0]
         ini_black = Reversic.BOARDS[self.board_type][1]
@@ -446,6 +457,6 @@ class Reversic:
             ConsoleDisplay(sleep_time_turn=self.sleep_time_turn, sleep_time_move=self.sleep_time_move),
         ).play()
 
-        # 少し待ってスタートに戻る
-        time.sleep(self.sleep_time_play)
+        # Enterでスタートに戻る
+        input('\nPress "Enter" to return.')
         self.state = Reversic.START
