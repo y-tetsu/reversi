@@ -42,24 +42,15 @@ class ConsoleDisplay(AbstractDisplay):
 
     def progress(self, board, black_player, white_player):
         """display progress"""
-        # cursor-hyde, cursor-move-12row, erase-upto-end, cursor-move-top
-        print("\033[?25l\033[12H\033[J\033[;H", end='')
+        self._setup_screen()
+
         score_b = str(black_player) + ':' + str(board._black_score)
         score_w = str(white_player) + ':' + str(board._white_score)
 
         print(score_b, score_w)
+        self._show_board(board)
 
-        disp = str(board)
-        default = '\x1b[0m'
-        fg = '\033[38;2;0;0;0m'
-        bg = '\033[48;2;112;128;144m'
-        disp = disp.replace('●', bg + '●' + default)
-        disp = disp.replace('〇', bg + fg + '●' + default)
-        disp = disp.replace('□', bg + '□' + default)
-        print(disp)
-
-        # cursor-show
-        print("\033[?25h", end='')
+        self._teardown_screen()
 
     def turn(self, player, legal_moves):
         """display turn"""
@@ -90,6 +81,24 @@ class ConsoleDisplay(AbstractDisplay):
     def draw(self):
         """display draw"""
         print('draw')
+
+    def _setup_screen(self):
+        # cursor-hyde, cursor-move-12row, erase-upto-end, cursor-move-top
+        print("\033[?25l\033[12H\033[J\033[;H", end='')
+
+    def _teardown_screen(self):
+        # cursor-show
+        print("\033[?25h", end='')
+
+    def _show_board(self, board):
+        disp = str(board)
+        default = '\x1b[0m'
+        fg = '\033[38;2;0;0;0m'
+        bg = '\033[48;2;112;128;144m'
+        disp = disp.replace('●', bg + '●' + default)
+        disp = disp.replace('〇', bg + fg + '●' + default)
+        disp = disp.replace('□', bg + '□' + default)
+        print(disp)
 
 
 class NoneDisplay(AbstractDisplay):

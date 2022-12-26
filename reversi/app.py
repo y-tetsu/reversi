@@ -344,7 +344,7 @@ class Reversic:
         """
         設定を表示
         """
-        print("\033[;H\033[2J")
+        self._clear_screen()
 
         print('\n=============================')
         print('BoardType   =', self.board_type)
@@ -388,11 +388,14 @@ class Reversic:
                 print('See you!')
                 return True
 
+    def _clear_screen(self):
+        print("\033[;H\033[2J")
+
     def _get_board_type(self):
         """
         ボードタイプの取得
         """
-        print("\033[;H\033[2J")
+        self._clear_screen()
 
         board_list = list(Reversic.BOARDS.keys())
 
@@ -413,7 +416,7 @@ class Reversic:
         """
         プレイヤーの取得
         """
-        print("\033[;H\033[2J")
+        self._clear_screen()
 
         player_list = list(players.keys())
 
@@ -434,7 +437,7 @@ class Reversic:
         """
         ゲームプレイ
         """
-        print("\033[;H\033[2J")
+        self._clear_screen()
 
         # ボード準備
         hole = Reversic.BOARDS[self.board_type][0]
@@ -458,5 +461,8 @@ class Reversic:
         ).play()
 
         # Enterでスタートに戻る
-        input('\nPress "Enter" to return.')
+        self._wait_enter()
         self.state = Reversic.START
+
+    def _wait_enter(self):
+        input('\nPress "Enter" to return.')

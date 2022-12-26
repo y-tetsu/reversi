@@ -30,14 +30,9 @@ class TestApp(unittest.TestCase):
             wf.write('    "timeouttime": 10\n')
             wf.write('}\n')
 
-        self.tmp = os.system
-        os.system = lambda x: False
-
     def tearDown(self):
         os.remove('./not_json.json')
         os.remove('./extra_file.json')
-
-        os.system = self.tmp
 
     # for Reversi
     def test_reversi_init(self):
@@ -783,6 +778,7 @@ class TestApp(unittest.TestCase):
 
     def test_reversic__start(self):
         app = Reversic()
+        app._clear_screen = lambda : False
         with captured_stdout() as stdout:
             app._Reversic__start()
 
@@ -886,6 +882,7 @@ class TestApp(unittest.TestCase):
 
     def test_reversic_get_board_type(self):
         app = Reversic()
+        app._clear_screen = lambda : False
 
         # normal pattern
         for i, _ in enumerate(Reversic.BOARDS.keys()):
@@ -926,6 +923,7 @@ class TestApp(unittest.TestCase):
 
     def test_reversic_get_player(self):
         app = Reversic()
+        app._clear_screen = lambda : False
         test_players = {'Test1': None, 'Test2': None}
 
         # normal pattern
@@ -997,6 +995,8 @@ class TestApp(unittest.TestCase):
                 return move
 
         app = Reversic({'BLACK_FOUL': BlackFoul()}, sleep_time_play=0.001, sleep_time_turn=0.001, sleep_time_move=0.001)
+        app._clear_screen = lambda : False
+        app._wait_enter = lambda : False
         app.player_names = {'black': 'BLACK_FOUL', 'white': 'BLACK_FOUL'}
         app.board_type = 'X'
         app.state = None
@@ -1005,34 +1005,34 @@ class TestApp(unittest.TestCase):
 
         lines = stdout.getvalue().splitlines()
         expected = """
-〇BLACK_FOUL:2 ●BLACK_FOUL:2
+\x1b[?25l\x1b[12H\x1b[J\x1b[;H〇BLACK_FOUL:2 ●BLACK_FOUL:2
    a b c d e f g h
- 1□□　　　　□□
- 2□□□　　□□□
- 3　　□□□□　　
- 4　　　●〇　　　
- 5　　　〇●　　　
- 6　　□□□□　　
- 7□□□　　□□□
- 8□□　　　　□□
+ 1\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
+ 2\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
+ 3\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000
+ 4\u3000\u3000\u3000\x1b[48;2;112;128;144m●\x1b[0m\x1b[48;2;112;128;144m\x1b[38;2;0;0;0m●\x1b[0m\u3000\u3000\u3000
+ 5\u3000\u3000\u3000\x1b[48;2;112;128;144m\x1b[38;2;0;0;0m●\x1b[0m\x1b[48;2;112;128;144m●\x1b[0m\u3000\u3000\u3000
+ 6\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000
+ 7\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
+ 8\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
 
-〇BLACK_FOUL's turn
+\x1b[?25h〇BLACK_FOUL's turn
  1: ('d', '3')
  2: ('e', '6')
 putted on ('a', '1')
 
-〇BLACK_FOUL:3 ●BLACK_FOUL:2
+\x1b[?25l\x1b[12H\x1b[J\x1b[;H〇BLACK_FOUL:3 ●BLACK_FOUL:2
    a b c d e f g h
- 1〇□　　　　□□
- 2□□□　　□□□
- 3　　□□□□　　
- 4　　　●〇　　　
- 5　　　〇●　　　
- 6　　□□□□　　
- 7□□□　　□□□
- 8□□　　　　□□
+ 1\x1b[48;2;112;128;144m\x1b[38;2;0;0;0m●\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
+ 2\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
+ 3\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000
+ 4\u3000\u3000\u3000\x1b[48;2;112;128;144m●\x1b[0m\x1b[48;2;112;128;144m\x1b[38;2;0;0;0m●\x1b[0m\u3000\u3000\u3000
+ 5\u3000\u3000\u3000\x1b[48;2;112;128;144m\x1b[38;2;0;0;0m●\x1b[0m\x1b[48;2;112;128;144m●\x1b[0m\u3000\u3000\u3000
+ 6\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000
+ 7\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
+ 8\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m\u3000\u3000\u3000\u3000\x1b[48;2;112;128;144m□\x1b[0m\x1b[48;2;112;128;144m□\x1b[0m
 
-〇BLACK_FOUL foul
+\x1b[?25h〇BLACK_FOUL foul
 ●BLACK_FOUL win
 """.split('\n')[1:-1]
 
