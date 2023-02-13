@@ -52,13 +52,11 @@ You can easily program reversi AI and create applications.<br>
     - [Change Player](#Change-Player)
     - [Make a move](#Make-a-move)
 - [If the installation does not work](#If-the-installation-does-not-work)
-- [Referece Book](#Referece-Book)
-- [Reference Site](#Reference-Site)
 - [Footnotes](#Footnotes)
 - [License](#License)
 
 
-## 概要
+## Overview
 **reversi** is a Reversi library made in <a id="return1">Python</a><sup>[1](#note1)</sup> that can be used with Python.<br>
 After installing **reversi**, you can easily experiment with Reversi AI programming.<br>
 
@@ -85,11 +83,6 @@ This one allows you to play a game of reversi for free immediately after downloa
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing)<br>
-
-
-## Download
-For Windows OS, you can download the Reversi Application(using tkinter) from the following.<br>
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.18/reversi.zip)
 
 
 ## How to Install
@@ -187,3 +180,13 @@ Player names can be set arbitrarily.<br>
     'PlayerName3': AI-Object3,
 }
 ```
+
+---
+## Footnotes
+<a id="note1">[1]</a>: Cython is used in some parts.<sup>[↑](#return1)</sup>
+
+
+---
+## License
+The source code of this repository is [MIT License](http://www.opensource.org/licenses/MIT).
+Please feel free to use it for both commercial and non-commercial purposes.
