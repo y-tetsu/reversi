@@ -181,6 +181,89 @@ Player names can be set arbitrarily.<br>
 }
 ```
 
+#### Programming an AI
+The following shows how to use this library to create your own AI and add it to your application.
+
+##### How to create an AI class
+Coding as follows will complete the AI class.
+```Python
+from reversi.strategies import AbstractStrategy
+
+class OriginalAI(AbstractStrategy):
+    def next_move(self, color, board):
+        #
+        # Please code the logic to determine the next move (X, Y).
+        #
+
+        return (X, Y)
+```
+The `next_move` method implements logic to return where to place a stone (the next move) at a particular move number and board level. <br>
+See below for the arguments of the `next_move` method.
+ |Arguments|Description|
+ |:---|:---|
+ |`color` variable|`black` or `white` string of type `str` is passed to determine whether the number is black or white, respectively. |
+ |`board` object| object containing information about the reversi board. The object contains parameters and methods necessary for the game to progress, such as the placement of black and white stones, and the acquisition of the positions where stones can be placed. |
+
+Note that the (X, Y) coordinates of the return value are the values when the upper left corner of the board is set to (0, 0).<br>
+The following figure shows the coordinates of each square when the board size is 8.
+
+![coordinate](https://raw.githubusercontent.com/y-tetsu/reversi/images/coordinate.png)
+
+As for the `board` object, for simplicity, we will focus on two of them: the `get_legal_moves` method to get the position where a stone can be placed, and the `size` parameter to get the size of the board.
+For a more detailed explanation, please refer to [How to use the board object](#How-to-use-the-board-object).
+
+##### How to get the positions where stones can be placed
+You can get the positions (coordinates) where stones can be placed on a board by using the `get_legal_moves` method of the `board` object.<br>
+When calling `get_legal_moves`, give either the black or white move number (`color` variable) as an argument.
+
+```Python
+legal_moves = board.get_legal_moves(color)
+```
+
+The return value of `get_legal_moves` is "a list of coordinates where stones can be placed".
+
+The result of the black move with the initial state (board size 8) is as follows.
+
+```
+[(3, 2), (2, 3), (5, 4), (4, 5)]
+```
+
+##### Board Size
+This application is designed to allow an even number of board sizes from 4 to 26 to be selected.
+If necessary, please consider the size of the board so that it will work in either case.
+
+The size of the board can be obtained by the following description.
+
+```Python
+size = board.size
+```
+
+##### Implementing the "Always take a corner when you can" AI
+The following is an example of creating an AI named `Corner` that always takes 4 corners when it can, and makes random moves when it cannot(The player name is "CORNER").
+
+```Python
+import random
+
+from reversi import Reversi
+from reversi.strategies import AbstractStrategy
+
+class Corner(AbstractStrategy):
+    def next_move(self, color, board):
+        size = board.size
+        legal_moves = board.get_legal_moves(color)
+        for corner in [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]:
+            if corner in legal_moves:
+                return corner
+
+        return random.choice(legal_moves)
+
+Reversi({'CORNER': Corner()}).start()
+```
+
+After the above is done, "CORNER" can be selected as a player to play against.<br>
+If you actually play against a player, you will see that he will always take the corner when he can!
+
+
 ---
 ## Footnotes
 <a id="note1">[1]</a>: Cython is used in some parts.<sup>[↑](#return1)</sup>
