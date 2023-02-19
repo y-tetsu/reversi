@@ -69,6 +69,21 @@ class TestX(unittest.TestCase):
             self.assertEqual(board._black_score, 2)
             self.assertEqual(board._white_score, 2)
 
+    def test_board_remain(self):
+        name = 'x'
+        ini_black = BOARDS[name][1]
+        ini_white = BOARDS[name][2]
+        board = Board(ini_black=ini_black, ini_white=ini_white, hole=BOARDS[name][0])
+        print(board)
+        self.assertEqual(board.get_remain(), 36)
+
+        name = 'Torus'
+        ini_black = BOARDS[name][1]
+        ini_white = BOARDS[name][2]
+        board = Board(ini_black=ini_black, ini_white=ini_white, hole=BOARDS[name][0])
+        print(board)
+        self.assertEqual(board.get_remain(), 44)
+
     def test_move(self):
         name = 'X'  # * Can not change *
         patterns = [
