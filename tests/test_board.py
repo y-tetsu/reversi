@@ -1127,6 +1127,19 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board._black_score, 6)
             self.assertEqual(board._white_score, 7)
 
+    def test_board_get_remain(self):
+        for board_class in self.board_classes:
+            board = board_class(4)
+            self.assertEqual(board.get_remain(), 12)
+
+        for board_class in self.board_classes:
+            board = board_class(8)
+            self.assertEqual(board.get_remain(), 60)
+
+        for board_class in self.board_classes:
+            board = board_class(10)
+            self.assertEqual(board.get_remain(), 96)
+
     def test_board_random_play(self):
         class TestPlayer(Player):
             def put_disc(self, board, bitboard):

@@ -146,6 +146,17 @@ cdef class CythonBitBoard():
     def undo(self):
         (self._black_bitboard, self._white_bitboard, self._black_score, self._white_score) = self.prev.pop()
 
+    def get_remain(self):
+        size = self.size
+        mask = 1 << (size * size - 1)
+        remain = size * size
+        hole = self._hole_bitboard
+        green = self._green_bitboard
+        black = self._black_bitboard
+        white = self._white_bitboard
+        not_blank = hole | green | black | white
+        return remain - self.get_bit_count(not_blank)
+
 
 cdef inline _get_legal_moves_size8_64bit(str color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_size8_64bit

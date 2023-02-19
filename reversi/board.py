@@ -376,6 +376,14 @@ class Board(AbstractBoard):
             self._board[prev_y][prev_x] = d[c.next_color(prev['color'])]
         self.update_score()
 
+    def get_remain(self):
+        """get_remain
+        """
+        remain = 0
+        for row in self._board:
+            remain += row.count(d.blank)
+        return remain
+
 
 def BitBoard(size=8, hole=0x0, ini_black=None, ini_white=None):
     if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
@@ -569,3 +577,16 @@ class PyBitBoard(AbstractBoard):
         """undo
         """
         BitBoardMethods.undo(self)
+
+    def get_remain(self):
+        """get_remain
+        """
+        size = self.size
+        mask = 1 << (size * size - 1)
+        remain = size * size
+        hole = self._hole_bitboard
+        green = self._green_bitboard
+        black = self._black_bitboard
+        white = self._white_bitboard
+        not_blank = hole | green | black | white
+        return remain - self.get_bit_count(not_blank)
