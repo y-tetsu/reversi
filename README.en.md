@@ -22,8 +22,8 @@ You can easily program reversi AI and create applications.<br>
 - [How to use the library](#How-to-use-the-library)
     - [Basics](#Basics)
         - [Launching an Application](#Launching-an-Application)
-        - [Adding AI to your application](#Adding-AI-to-your-application)
-        - [Programming AI](#Programming-AI)
+        - [Adding an AI to your application](#Adding-an-AI-to-your-application)
+        - [Programming an AI](#Programming-an-AI)
         - [Simulate a match between AIs](#Simulate-a-match-between-AIs)
     - [Objects](#Objects)
         - [How to use board object](#How-to-use-board-object)
@@ -74,7 +74,7 @@ This one allows you to play a game of reversi for free immediately after downloa
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">
 
 
-## System Requirement
+## System Requirements
 - Windows10 64bit<br>
 - Display size 1366x768
 - Processor 1.6GHz
@@ -262,6 +262,124 @@ Reversi({'CORNER': Corner()}).start()
 
 After the above is done, "CORNER" can be selected as a player to play against.<br>
 If you actually play against a player, you will see that he will always take the corner when he can!
+
+
+#### Simulate a match between AIs
+The simulator in this library can be used to play AIs against each other multiple times to produce a winning percentage.<br>
+Use it to measure the strength of your own AI.<br>
+If the AI's moves are fixed for a particular board, you can reduce the bias of the results by setting the random_opening parameter described separately below.
+
+As an example of running the simulator The following is an example of running the simulator, showing the "RANDOM," "GREEDY," and "CORNER" games that have appeared so far in a round-robin competition, up to the display of the results.
+
+##### Running the Simulator
+Execute the following to start the simulation.
+```Python
+from reversi import Simulator
+
+if __name__ == '__main__':
+    simulator = Simulator(
+        {
+            'RANDOM': Random(),
+            'GREEDY': Greedy(),
+            'CORNER': Corner(),
+        },
+        './simulator_setting.json',
+    )
+    simulator.start()
+```
+The simulator must be executed in the main module (\_\_main\_\_).<br>
+The simulator argument should be "player information" and "simulator configuration file".
+
+##### Simulator Configuration File
+An example of creating a simulator configuration file (JSON format) is shown below.
+Specify the name of this file (in the above example, `. /simulator_setting.json` in the above example, but it is optional.
+
+```JSON
+{
+    "board_size": 8,
+    "board_type": "bitboard",
+    "matches": 100,
+    "processes": 1,
+    "parallel": "player",
+    "random_opening": 0,
+    "player_names": [
+        "RANDOM",
+        "GREEDY",
+        "CORNER"
+    ]
+}
+```
+
+ |parameter name|description|
+ |:---|:---|
+ |board_size|Specify the size of the board. |
+ |board_type|Select board type (board or bitboard). bitboard is faster and should usually be used. |
+ |matches|Specify the number of games played between AIs. 100 means 100 games for each combination of AIs, one for the first move and one for the second move. |
+ |processes|Specify the number of parallel runs. The larger the setting, the faster the simulation results may be obtained, depending on the number of cores in your PC. |
+ |parallel|Specify the unit of parallel execution. If you specify "player" (default), parallel processing is performed for each combination of AI matches. If "game" is specified, the number of matches in "matches" is divided by the number of processes and parallel processing is performed. If the number of AI matchups to be simulated is smaller than the number of cores in your PC, you may get faster results by specifying "game". |
+ |random_opening|From the start of the game until the specified number of moves, the AI will play random moves against each other. When the number of moves exceeds the specified number, the AI will play its original move. By randomizing the starting situation of the game, it reduces the bias of the result and makes it easier to measure the strength of the AI. If you don't need it, please specify 0. |
+ |player_names|List the names of the AIs you want to play against. If specified, select one of the names included in the first argument "player information". If omitted, it is treated as the same as the first argument "player information". All listed AIs compete against each other in a round-robin game. |
+
+
+##### Execution Result
+The simulation results can be seen in the printout below after the simulation is run (after the start method is executed).
+```Python
+print(simulator)
+```
+
+##### Running example
+Run the simulator against players "RANDOM" and "GREEDY" using the library's built-in AI, and "CORNER" using our own AI. and "CORNER" using our own AI, respectively, and outputs the results. The following is an example of the code to run the simulator and output the results.
+
+```Python
+import random
+
+from reversi import Simulator
+from reversi.strategies import AbstractStrategy, Random, Greedy
+
+class Corner(AbstractStrategy):
+    def next_move(self, color, board):
+        size = board.size
+        legal_moves = board.get_legal_moves(color)
+        for corner in [(0, 0), (0, size-1), (size-1, 0), (size-1, size-1)]:
+            if corner in legal_moves:
+                return corner
+
+        return random.choice(legal_moves)
+
+if __name__ == '__main__':
+    simulator = Simulator(
+        {
+            'RANDOM': Random(),
+            'GREEDY': Greedy(),
+            'CORNER': Corner(),
+        },
+        './simulator_setting.json',
+    )
+    simulator.start()
+
+    print(simulator)
+```
+
+The following results were obtained after 100 rounds of "RANDOM," "GREEDY," and "CORNER" games, played first and second hand, respectively.
+
+```
+Size : 8
+                          | RANDOM                    GREEDY                    CORNER
+---------------------------------------------------------------------------------------------------------
+RANDOM                    | ------                     32.5%                     21.5%
+GREEDY                    |  66.0%                    ------                     29.5%
+CORNER                    |  76.0%                     68.5%                    ------
+---------------------------------------------------------------------------------------------------------
+
+                          | Total  | Win   Lose  Draw  Match
+------------------------------------------------------------
+RANDOM                    |  27.0% |   108   284     8   400
+GREEDY                    |  47.8% |   191   202     7   400
+CORNER                    |  72.2% |   289   102     9   400
+------------------------------------------------------------
+```
+
+The results show that it seems to be more advantageous to take more each time than to hit randomly, and even more so to always take a corner.
 
 
 ---
