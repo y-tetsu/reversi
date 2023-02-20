@@ -1245,19 +1245,17 @@ class SwitchJ_Negascout8_TPWEB_EndGame16(Ushi):
 # -------------------- #
 # MonteCarlo + EndGame #
 # -------------------- #
-class MonteCarlo1000_EndGame16():
+class MonteCarlo_EndGame():
     """
-    MonteCalro1000
-    (完全読み開始:残り16手)
+    MonteCalro + EndGame
     """
-    def __init__(self, count=1000, remain=16):
-        self.remain = remain
-        self.m = MonteCarlo(count)
+    def __init__(self, count=10, end=16):
+        self.end = end
+        self.m = MonteCarlo(count=count)
         self.e = _EndGame_()
 
     def next_move(self, color, board):
         remain = board.get_remain()
-        if remain > self.remain:
+        if remain > self.end:
             return self.m.next_move(color, board)
-        else:
-            return self.e.next_move(color, board)
+        return self.e.next_move(color, board)
