@@ -1,6 +1,7 @@
 """MonteCarlo
 """
 
+import sys
 import random
 import copy
 
@@ -10,6 +11,10 @@ from reversi.display import NoneDisplay
 
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.easy import Random
+import reversi.strategies.MonteCarloMethods as MonteCarloMethods
+
+
+MAXSIZE64 = 2**63 - 1
 
 
 class MonteCarlo(AbstractStrategy):
@@ -55,6 +60,9 @@ class MonteCarlo(AbstractStrategy):
         remain = board.size * board.size - (board._black_score + board._white_score)
 
         if remain <= self.remain:
+            if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not MonteCarloMethods.MONTECARLO_SIZE8_64BIT_ERROR:
+                return MonteCarloMethods.playout(color, board, move)
+
             playout_board = copy.deepcopy(board)  # 現在の盤面をコピー
             playout_board.put_disc(color, *move)  # 調べたい手を打つ
 
