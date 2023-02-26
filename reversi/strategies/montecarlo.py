@@ -69,7 +69,7 @@ class MonteCarlo(AbstractStrategy):
             if game.result.winlose == win:
                 ret = 1  # 勝った場合
             elif game.result.winlose == Game.DRAW:
-                ret = 0  # 引き分けた場合
+                ret = 0.5  # 引き分けた場合
         else:
             ret = 0  # 盤面サイズが大きい場合は残り手数が減るまでしばらくランダムに打つ
 
