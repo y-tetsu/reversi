@@ -5,7 +5,7 @@ import unittest
 from test.support import captured_stdin, captured_stdout
 import os
 
-from reversi import Reversi, Reversic, Window, ErrorMessage, MIN_BOARD_SIZE, MAX_BOARD_SIZE
+from reversi import Reversi, Reversic, Window, ErrorMessage, MIN_BOARD_SIZE, MAX_BOARD_SIZE, X
 from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
 
 
@@ -885,7 +885,7 @@ class TestApp(unittest.TestCase):
         app._clear_screen = lambda : False
 
         # normal pattern
-        for i, _ in enumerate(Reversic.BOARDS.keys()):
+        for i, _ in enumerate(X.keys()):
             with captured_stdout() as stdout:
                 with captured_stdin() as stdin:
                     stdin.write(str(i+1))
@@ -919,7 +919,7 @@ class TestApp(unittest.TestCase):
             with self.assertRaises(IndexError):
                 print(lines[23])
 
-            self.assertEqual(ret, list(Reversic.BOARDS.keys())[i])
+            self.assertEqual(ret, list(X.keys())[i])
 
     def test_reversic_get_player(self):
         app = Reversic()

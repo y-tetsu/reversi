@@ -1,4 +1,4 @@
-"""Tests of X
+"""Tests of x.py
 """
 
 import unittest
@@ -7,6 +7,7 @@ from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, PyBitB
 from reversi.color import C as c
 from reversi.disc import D as d
 from reversi.move import Move
+from reversi.x import X
 from reversi.game import Game
 from reversi.player import Player
 from reversi.strategies import Random
@@ -14,30 +15,12 @@ from reversi.simulator import Simulator
 from reversi.display import NoneDisplay
 
 
-BOARDS = {
-    'X':         [0x3C18C3E7E7C3183C, None, None],
-    'x':         [0x3C1842C3C342183C, None, None],
-    'Square-8':  [0x0000000000000000, None, None],
-    'Square-6':  [0xFF818181818181FF, None, None],
-    'Square-4':  [0xFFFFC3C3C3C3FFFF, None, None],
-    'Octagon':   [0xC3810000000081C3, None, None],
-    'Diamond':   [0xE7C381000081C3E7, None, None],
-    'Clover':    [0x8100000000000081, None, None],
-    'Cross':     [0xC3C300000000C3C3, None, None],
-    'Plus':      [0xE7E7E70000E7E7E7, None, None],
-    'Manji':     [0x0404E40000272020, None, None],
-    'Rectangle': [0xFFFF00000000FFFF, None, None],
-    'T':         [0x00000000C3C3C3C3, 0x0022440000081000, 0x0044220000100800],
-    'Torus':     [0xC180001818000183, 0x0000002244000000, 0x0000004422000000],
-}
-
-
 class TestX(unittest.TestCase):
     def test_board_hole(self):
-        for key in BOARDS.keys():
-            hole = BOARDS[key][0]
-            ini_black = BOARDS[key][1]
-            ini_white = BOARDS[key][2]
+        for key in X.keys():
+            hole = X[key][0]
+            ini_black = X[key][1]
+            ini_white = X[key][2]
             aryboard = Board(hole=hole, ini_black=ini_black, ini_white=ini_white)
             pybitboard = PyBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
             bitboard = BitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
@@ -71,16 +54,16 @@ class TestX(unittest.TestCase):
 
     def test_board_remain(self):
         name = 'x'
-        ini_black = BOARDS[name][1]
-        ini_white = BOARDS[name][2]
-        board = Board(ini_black=ini_black, ini_white=ini_white, hole=BOARDS[name][0])
+        ini_black = X[name][1]
+        ini_white = X[name][2]
+        board = Board(ini_black=ini_black, ini_white=ini_white, hole=X[name][0])
         print(board)
         self.assertEqual(board.get_remain(), 36)
 
         name = 'Torus'
-        ini_black = BOARDS[name][1]
-        ini_white = BOARDS[name][2]
-        board = Board(ini_black=ini_black, ini_white=ini_white, hole=BOARDS[name][0])
+        ini_black = X[name][1]
+        ini_white = X[name][2]
+        board = Board(ini_black=ini_black, ini_white=ini_white, hole=X[name][0])
         print(board)
         self.assertEqual(board.get_remain(), 44)
 
@@ -96,7 +79,7 @@ class TestX(unittest.TestCase):
         ]
 
         # (1)配列ボード
-        board = Board(hole=BOARDS[name][0])
+        board = Board(hole=X[name][0])
         for color, expected in patterns:
             moves = [str(Move(*m)) for m in board.get_legal_moves(color)]
             self.assertEqual(moves, expected)
@@ -111,7 +94,7 @@ class TestX(unittest.TestCase):
         importlib.reload(reversi.BitBoardMethods)
         # ---
 
-        board = PyBitBoard(hole=BOARDS[name][0])
+        board = PyBitBoard(hole=X[name][0])
         for color, expected in patterns:
             moves = [str(Move(*m)) for m in board.get_legal_moves(color)]
             self.assertEqual(moves, expected)
@@ -123,14 +106,14 @@ class TestX(unittest.TestCase):
         # ---
 
         # (3)ビットボード(Python版:高速)
-        board = PyBitBoard(hole=BOARDS[name][0])
+        board = PyBitBoard(hole=X[name][0])
         for color, expected in patterns:
             moves = [str(Move(*m)) for m in board.get_legal_moves(color)]
             self.assertEqual(moves, expected)
             board.put_disc(color, *Move(moves[0]))
 
         # (4)ビットボード(Cython版)
-        board = BitBoard(hole=BOARDS[name][0])
+        board = BitBoard(hole=X[name][0])
         for color, expected in patterns:
             moves = [str(Move(*m)) for m in board.get_legal_moves(color)]
             self.assertEqual(moves, expected)
@@ -138,9 +121,9 @@ class TestX(unittest.TestCase):
 
     def test_game(self):
         name = 'T'
-        hole = BOARDS[name][0]
-        ini_black = BOARDS[name][1]
-        ini_white = BOARDS[name][2]
+        hole = X[name][0]
+        ini_black = X[name][1]
+        ini_white = X[name][2]
         #board = Board(hole=hole, ini_black=ini_black, ini_white=ini_white)
         #board = PyBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
         board = BitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
@@ -168,9 +151,9 @@ class TestX(unittest.TestCase):
                         players_info,
                         board_type='bitboard',
                         first='black',
-                        board_hole=BOARDS[name][0],
-                        ini_black=BOARDS[name][1],
-                        ini_white=BOARDS[name][2],
+                        board_hole=X[name][0],
+                        ini_black=X[name][1],
+                        ini_white=X[name][2],
                         random_opening=0,
                         swap=False,
                         matches=10,
