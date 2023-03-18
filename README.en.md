@@ -381,6 +381,256 @@ CORNER                    |  72.2% |   289   102     9   400
 
 The results show that it seems to be more advantageous to take more each time than to hit randomly, and even more so to always take a corner.
 
+### Objects
+This section describes the various objects provided in this library.
+
+#### How to use board object
+This section describes how to use the `board` object, which manages the reversi board.
+
+##### Creating a board object
+A `board` object can be created by importing the `Board` or `BitBoard` class from **reversi**.
+Import the `Board` or `BitBoard` class from **reversi** to create a `board` object.
+
+The only difference between the `Board` and `BitBoard` classes is the structure of the internal data representing the board, and their usage is the same.
+Since the `BitBoard` class is faster, you should usually use this class.
+
+When instantiating the `BitBoard` class, you can specify the size of the board by entering a numerical value as an argument.
+The size should be an even number from 4 to 26. If omitted, the size is 8.
+You can also check the size of the board with the `size` property.
+
+A coding example is shown below.
+
+```Python
+from reversi import Board, BitBoard
+
+board = Board()
+print(board.size)
+
+bitboard = BitBoard(10)
+print(bitboard.size)
+```
+
+The results of the above execution are as follows.
+```
+8
+10
+```
+
+##### Standard output of a board object
+When you `print` a `board` object, the state of the board is printed as standard output.
+
+```Python
+from reversi import BitBoard
+
+board = BitBoard()
+print(board)
+
+board = BitBoard(4)
+print(board)
+```
+
+The results of the above execution are as follows.<br>
+![board_print](https://raw.githubusercontent.com/y-tetsu/reversi/images/board_print.png)
+
+##### Methods of the `board` object
+Here are the available methods of the `board` object.
+
+###### get_legal_moves
+Returns the possible move positions for the black or white board.
+The possible moves are a "list of tuples of XY coordinates".
+The argument must be a `black` or `white` string (hereafter called `color`).
+
+```Python
+from reversi import BitBoard
+
+board = BitBoard()
+legal_moves = board.get_legal_moves('black')
+
+print(legal_moves)
+```
+
+The results of the above execution are as follows.
+```
+[(3, 2), (2, 3), (5, 4), (4, 5)]
+```
+
+In this case, the position of the yellow square in the figure below is returned as the possible starting position.<br>
+![legal_moves](https://raw.githubusercontent.com/y-tetsu/reversi/images/legal_moves.png)
+
+###### get_flippable_discs
+Returns the stones that can be flipped if the move is made at the specified position.
+The flippable stones are "a list of tuples of XY coordinates".
+The first argument is the `color`, the second is the X coordinate at which to place the stone, and the third is the Y coordinate.
+
+```Python
+from reversi import BitBoard
+
+board = BitBoard()
+flippable_discs = board.get_flippable_discs('black', 5, 4)
+
+print(flippable_discs)
+```
+
+The results of the above execution are as follows.
+```
+[(4, 4)]
+```
+
+In this case, the position of the yellow square in the diagram below is returned as the position of the stone that can be turned over.<br>
+![flippable_discs](https://raw.githubusercontent.com/y-tetsu/reversi/images/flippable_discs2.png)
+
+###### get_board_info
+Returns a "two-dimensional list" of stones on the board.
+1" means black, "-1" means white, and "0" means empty. There is no argument.
+
+
+```Python
+from pprint import pprint
+from reversi import BitBoard
+
+board = BitBoard()
+board_info = board.get_board_info()
+
+print(board)
+pprint(board_info)
+```
+
+The results of the above execution are as follows.
+![get_board_info](https://raw.githubusercontent.com/y-tetsu/reversi/images/get_board_info.png)
+
+###### get_board_line_info
+Returns information about the board as a one-line string.
+
+```Python
+from pprint import pprint
+from reversi import BitBoard
+
+board = BitBoard()
+
+print(board.get_board_line_info('black'))
+```
+
+The results of the above execution are as follows.
+```
+---------------------------O*------*O---------------------------*
+```
+
+The format is: board square information + player information.
+
+The argument must be a string ('black' or 'white') indicating the player.
+
+The default character assignments are as follows
+- "*" : black player
+- "O" : white player
+- "-" : empty square
+
+You can change it to a character of your choice by specifying an optional argument.
+```Python
+print(board.get_board_line_info(player='black', black='0', white='1', empty='.'))
+```
+
+The above execution produces the following output.
+```
+...........................10......01...........................0
+```
+
+- player : Please specify 'black' or 'white'.
+- black : Specify the character to be assigned to black
+- white : Specify the character to be assigned to the white square.
+- empty : Specify the character to be assigned to the empty square
+
+###### put_disc
+Places a stone at the specified position and turns over the stone to be taken.
+Specify `color` as the first argument, X coordinate to place the stone as the second argument, and Y coordinate as the third argument.
+
+```Python
+from reversi import BitBoard
+
+board = BitBoard()
+print(board)
+
+board.put_disc('black', 5, 4)
+print(board)
+```
+
+The above execution produces the following output.<br>
+![put_disc](https://raw.githubusercontent.com/y-tetsu/reversi/images/put_disc.png)
+
+###### undo
+Undo a stone placed by the `put_disc` method. There is no argument.
+You can undo as many times as you call the `put_disc` method.
+Do not call this method more times than you called the `put_disc` method.
+
+```Python
+from reversi import BitBoard
+
+board = BitBoard()
+board.put_disc('black', 5, 4)
+print(board)
+
+board.undo()
+print(board)
+```
+
+The above execution produces the following output.<br>
+![undo](https://raw.githubusercontent.com/y-tetsu/reversi/images/undo.png)
+
+#### How to use color object
+So far, we have shown how to use the string `black' or `white' to determine the black or white move number, but it is also possible to specify the black or white move number using a `color` object.
+
+You can import a `color` object, `C`, as shown below, and specify the black and white numbers with the black and white properties, respectively.
+
+```Python
+from reversi import BitBoard
+from reversi import C as c
+
+board = BitBoard()
+board.put_disc(c.black, 5, 4)
+print(board)
+
+board.put_disc(c.white, 5, 5)
+print(board)
+```
+
+The above execution produces the following output.<br>
+![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
+
+#### How to use the move object
+The `move` object allows you to specify the coordinates of a move not only in XY coordinate format, but also in str format, such as 'a1', 'c3', etc. The str format allows both upper and lower case alphabets.
+
+Import the `Move` class and use it as follows.
+```Python
+from reversi import BitBoard
+from reversi import C as c
+from reversi import Move as m
+
+board = BitBoard()
+board.put_disc(c.black, *m('f5'))
+print(board)
+
+board.put_disc(c.white, *m('f6'))
+print(board)
+```
+
+The above execution produces the following output.<br>
+![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
+
+Also, a A `move` object can also be generated in XY coordinate format and converted to str format using the str function. If you print a `move` object, it will be in str format as well, and if you specify `upper` as the case option, it will be in upper case.
+
+```Python
+from reversi import BitBoard
+from reversi import Move as m
+
+move = str(m(5, 4))
+print(move)
+print(m(5, 5, case='upper'))
+```
+
+The above execution produces the following output.<br>
+```
+f5
+F6
+```
 
 ---
 ## Footnotes
