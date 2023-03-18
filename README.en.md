@@ -27,7 +27,7 @@ You can easily program reversi AI and create applications.<br>
         - [Simulate a match between AIs](#Simulate-a-match-between-AIs)
     - [Objects](#Objects)
         - [How to use board object](#How-to-use-board-object)
-        - [How to use color object](#How-to-use-board-object)
+        - [How to use color object](#How-to-use-color-object)
         - [How to use move object](#How-to-use-move-object)
     - [AI class](#AI-class)
         - [Simple-minded AI](#AI-class-Section)
@@ -595,7 +595,7 @@ print(board)
 The above execution produces the following output.<br>
 ![color](https://raw.githubusercontent.com/y-tetsu/reversi/images/color.png)
 
-#### How to use the move object
+#### How to use move object
 The `move` object allows you to specify the coordinates of a move not only in XY coordinate format, but also in str format, such as 'a1', 'c3', etc. The str format allows both upper and lower case alphabets.
 
 Import the `Move` class and use it as follows.
