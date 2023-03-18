@@ -410,7 +410,7 @@ bitboard = BitBoard(10)
 print(bitboard.size)
 ```
 
-The results of the above execution are as follows.
+The results of the above execution are as follows.<br>
 ```
 8
 10
@@ -449,7 +449,7 @@ legal_moves = board.get_legal_moves('black')
 print(legal_moves)
 ```
 
-The results of the above execution are as follows.
+The results of the above execution are as follows.<br>
 ```
 [(3, 2), (2, 3), (5, 4), (4, 5)]
 ```
@@ -471,7 +471,7 @@ flippable_discs = board.get_flippable_discs('black', 5, 4)
 print(flippable_discs)
 ```
 
-The results of the above execution are as follows.
+The results of the above execution are as follows.<br>
 ```
 [(4, 4)]
 ```
@@ -495,7 +495,7 @@ print(board)
 pprint(board_info)
 ```
 
-The results of the above execution are as follows.
+The results of the above execution are as follows.<br>
 ![get_board_info](https://raw.githubusercontent.com/y-tetsu/reversi/images/get_board_info.png)
 
 ###### get_board_line_info
@@ -510,7 +510,7 @@ board = BitBoard()
 print(board.get_board_line_info('black'))
 ```
 
-The results of the above execution are as follows.
+The results of the above execution are as follows.<br>
 ```
 ---------------------------O*------*O---------------------------*
 ```
@@ -519,7 +519,7 @@ The format is: board square information + player information.
 
 The argument must be a string ('black' or 'white') indicating the player.
 
-The default character assignments are as follows
+The default character assignments are as follows.<br>
 - "*" : black player
 - "O" : white player
 - "-" : empty square
@@ -529,7 +529,7 @@ You can change it to a character of your choice by specifying an optional argume
 print(board.get_board_line_info(player='black', black='0', white='1', empty='.'))
 ```
 
-The above execution produces the following output.
+The above execution produces the following output.<br>
 ```
 ...........................10......01...........................0
 ```
@@ -598,7 +598,7 @@ The above execution produces the following output.<br>
 #### How to use move object
 The `move` object allows you to specify the coordinates of a move not only in XY coordinate format, but also in str format, such as 'a1', 'c3', etc. The str format allows both upper and lower case alphabets.
 
-Import the `Move` class and use it as follows.
+Import the `Move` class and use it as follows.<br>
 ```Python
 from reversi import BitBoard
 from reversi import C as c
