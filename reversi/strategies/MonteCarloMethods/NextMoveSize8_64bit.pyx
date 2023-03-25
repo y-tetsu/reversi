@@ -1,71 +1,147 @@
 #cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
-"""Playout(Size8,64bit) of MonteCarlo strategy
+"""Next Move(Size8,64bit) of MonteCarlo strategy
 """
 
 from libc.stdlib cimport rand
 
+import time
+
+from reversi.strategies.common import Timer, Measure
+
 
 cdef:
+    unsigned long long measure_count
+    unsigned long long[64] legal_moves_bit_list
+    unsigned int[64] legal_moves_x
+    unsigned int[64] legal_moves_y
     unsigned long long bb
     unsigned long long wb
     unsigned long long hb
     unsigned long long fd
     unsigned int bs
     unsigned int ws
+    double timer_deadline
+    unsigned int timer_timeout
+    signed int timer_timeout_value
+    signed int[64] scores
 
 
-def playout(color, board, move):
-    """playout
+def next_move(color, board, count, remain, pid, timer, measure):
+    """next_move
     """
-    return _playout(color, board, move)
+    if pid is None:
+        timer, measure = False, False
+    return _next_move(color, board, count, remain, pid, timer, measure)
 
 
-cdef _playout(str color, board, move):
-    global bb, wb, hb, bs, ws
+cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int remain, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, scores
     cdef:
-        unsigned int int_color = 0, turn
+        unsigned long long b, w, h
+        unsigned int int_color = 0
+        unsigned int i, x, y, index = 0
+        unsigned long long legal_moves, mask = 0x8000000000000000
+        signed int max_score
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        measure_count = Measure.count[pid]
+    if color == 'black':
+        int_color = <unsigned int>1
+    b, w, h = board.get_bitboard_info()
+    legal_moves = _get_legal_moves_bits(int_color, b, w, h)
+    for y in range(8):
+        for x in range(8):
+            if legal_moves & mask:
+                legal_moves_bit_list[index] = mask
+                legal_moves_x[index] = x
+                legal_moves_y[index] = y
+                scores[index] = 0
+                index += 1
+            mask >>= 1
+    for j in range(count):
+        for i in range(index):
+            scores[i] += _playout(int_color, board, legal_moves_bit_list[i], remain)
+            if timer and check_timeout():
+                break
+        if timer and check_timeout():
+            break
+    max_score = scores[0];
+    best_move = (legal_moves_x[0], legal_moves_y[0])
+    for i in range(index):
+        if scores[i] > max_score:
+            max_score = scores[i]
+            best_move = (legal_moves_x[i], legal_moves_y[i])
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
+    return best_move
+
+
+cdef inline signed int _playout(unsigned int int_color, board, unsigned long long move_bit, unsigned int remain):
+    global bb, wb, hb, bs, ws, measure_count
+    cdef:
+        unsigned int turn
         unsigned int x, y, pass_count = 0, random_index
         unsigned long long random_put, legal_moves_bits
+        signed int ret
     # ボード情報取得
     bb, wb, hb = board.get_bitboard_info()
     bs = board._black_score
     ws = board._white_score
-    # 手番
-    if color == 'black':
-        int_color = <unsigned int>1
-    # 1手打つ
-    x, y = move
-    _put_disc(int_color, <unsigned long long>1 << (63-(y*8+x)))
-    # 決着までランダムに打つ
-    turn = int_color
-    while True:
-        # 次の手番
-        turn = <unsigned int>0 if turn else <unsigned int>1
-        # 合法手を取得
-        legal_moves_bits = _get_legal_moves_bits(turn, bb, wb, hb)
-        # 打てる場所なし
-        if not legal_moves_bits:
-            pass_count += 1
-            if pass_count == 2:
-                break
-        # 打てる場所あり
-        else:
-            pass_count = 0
-            # ランダムに手を選ぶ
-            count = _popcount(legal_moves_bits)
-            random_index = rand() % count + 1
-            for _ in range(random_index):
-                random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
-                legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
-            # 1手打つ
-            _put_disc(turn, random_put)
-    # 結果を返す
-    ret = -1
-    if int_color and bs > ws:
-        ret = 1
-    elif bs == ws:
-        ret = 0.5
+    if <unsigned int>64 - (bs + ws) <= remain:
+        # 1手打つ
+        _put_disc(int_color, move_bit)
+        # 決着までランダムに打つ
+        turn = int_color
+        while True:
+            # 次の手番
+            turn = <unsigned int>0 if turn else <unsigned int>1
+            # 合法手を取得
+            legal_moves_bits = _get_legal_moves_bits(turn, bb, wb, hb)
+            # 打てる場所なし
+            if not legal_moves_bits:
+                pass_count += 1
+                if pass_count == 2:
+                    break
+            # 打てる場所あり
+            else:
+                pass_count = 0
+                # ランダムに手を選ぶ
+                count = _popcount(legal_moves_bits)
+                random_index = rand() % count + 1
+                for _ in range(random_index):
+                    random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+                    legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
+                # 1手打つ
+                _put_disc(turn, random_put)
+        # 結果を返す
+        ret = -2
+        if (int_color and bs > ws) or (not int_color and ws > bs):
+            ret = 2
+        elif bs == ws:
+            ret = 1
+        # 探索ノード数カウント
+        measure_count += 1
+    else:
+        ret = 0
     return ret
+
+
+cdef inline signed int check_timeout():
+    """check_timeout
+    """
+    global timer_deadline, timer_timeout, timer_timeout_value
+    if time.time() > timer_deadline:
+        timer_timeout = <unsigned int>1
+        return timer_timeout_value
+    return <signed int>0
 
 
 cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long h):
