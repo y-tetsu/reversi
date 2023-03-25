@@ -8,6 +8,7 @@ import datetime
 from multiprocessing import Pool
 
 from reversi import Board, BitBoard, Player, NoneDisplay, Game
+from reversi import C as c
 from reversi.strategies import RandomOpening
 
 
@@ -260,6 +261,10 @@ class Simulator:
             game = Game(black, white, board, NoneDisplay(), self.first)
             game.play()
             ret.append(game.result)
+
+            for p in [black, white]:
+                if hasattr(p.strategy, 'get_result'):
+                    p.strategy.get_result(game.result)
 
             if self.perfect_check:
                 from reversi import Elucidator
