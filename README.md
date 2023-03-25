@@ -389,6 +389,33 @@ CORNER                    |  72.2% |   289   102     9   400
 
 ランダムに打つよりも毎回多めに取る方が、さらにそれよりも角は必ず取る方が、より有利になりそうだという結果が得られました。
 
+##### 対戦結果を1試合ごとにAIへ通知する
+AIに以下の`get_result`メソッドを実装することで、シミュレータ実行時に1試合ごとの対戦結果を、AIに渡し何らか処理させることができます。
+```python
+from reversi.strategies import AbstractStrategy
+
+class OriginalAI(AbstractStrategy):
+    def next_move(self, color, board):
+        #
+        # 次の一手(X, Y)を決めるロジックをコーディングして下さい。
+        #
+
+        return (X, Y)
+
+    def get_result(self, result):
+        #
+        # 1試合終わるごとにSimulatorからコールされます。
+        #
+        # (resultには以下の情報が格納されています)
+        # result.winlose : 対戦結果(0=黒の勝ち、1=白の勝ち、2=引き分け)
+        # result.black_name : 黒のAIの名前
+        # result.white_name : 白のAIの名前
+        # result.black_num : 黒の石の数
+        # result.white_num : 白の石の数
+        #
+```
+
+
 ### オブジェクト編
 本ライブラリに用意されている各種オブジェクトについて説明します。
 
