@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='reversi',
-    version='0.0.36',
+    version='0.0.37',
     license='MIT License',
     install_requires=[
         'cython',
