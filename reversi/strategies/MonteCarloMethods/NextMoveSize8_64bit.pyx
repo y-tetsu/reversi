@@ -89,7 +89,7 @@ cdef inline signed int _playout(unsigned int int_color, board, unsigned long lon
     cdef:
         unsigned int turn
         unsigned int x, y, pass_count = 0, random_index
-        unsigned long long random_put, legal_moves_bits
+        unsigned long long random_put, legal_moves_bits, count
         signed int ret
     # ボード情報取得
     bb, wb, hb = board.get_bitboard_info()

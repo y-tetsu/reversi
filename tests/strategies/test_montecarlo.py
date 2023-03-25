@@ -59,7 +59,7 @@ class TestMonteCarlo(unittest.TestCase):
         key = montecarlo.__class__.__name__ + str(os.getpid())
         print()
         print(key)
-        print(' count(17000) :', Measure.count[key])
+        print(' count(25000) :', Measure.count[key])
         print(' min          :', Measure.elp_time[key]['min'], '(s)')
         print(' max          :', Measure.elp_time[key]['max'], '(s)')
         print(' ave          :', Measure.elp_time[key]['ave'], '(s)')
