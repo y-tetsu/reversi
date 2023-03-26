@@ -80,6 +80,8 @@ cdef inline tuple _next_move(str color, board, unsigned int count, str pid, int 
             bs = tbs
             ws = tws
             scores[i] += _playout(int_color, legal_moves_bit_list[i])
+            # 探索ノード数カウント
+            measure_count += 1
         if timer and check_timeout():
             break
     max_score = scores[0];
@@ -96,7 +98,7 @@ cdef inline tuple _next_move(str color, board, unsigned int count, str pid, int 
 
 
 cdef inline signed int _playout(unsigned int int_color, unsigned long long move_bit):
-    global bb, wb, hb, bs, ws, measure_count
+    global bb, wb, hb, bs, ws
     cdef:
         unsigned int turn
         unsigned int x, y, pass_count = 0, random_index
@@ -133,8 +135,6 @@ cdef inline signed int _playout(unsigned int int_color, unsigned long long move_
         ret = 2
     elif bs == ws:
         ret = 1
-    # 探索ノード数カウント
-    measure_count += 1
     return ret
 
 
