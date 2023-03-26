@@ -8,8 +8,10 @@ from reversi import Reversic, strategies
 
 Reversic(
     {
-        'Random': strategies.Random(),
-        'SlowStarter': strategies.SlowStarter(),
-        'Blank': strategies.SwitchJ_BlankI_EndGame16(),
+        'X': strategies.Random(),
+        'M-10': strategies.MonteCarlo(count=10),
+        'M-100': strategies.MonteCarlo(count=100),
+        'M-1000': strategies.MonteCarlo(count=1000),
+        'TheEnd': strategies.MonteCarlo_EndGame(count=10000, end=14),
     },
 ).start()

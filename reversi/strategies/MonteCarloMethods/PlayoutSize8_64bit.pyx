@@ -2,7 +2,7 @@
 """Playout(Size8,64bit) of MonteCarlo strategy
 """
 
-import random
+from libc.stdlib cimport rand
 
 
 cdef:
@@ -53,7 +53,7 @@ cdef _playout(str color, board, move):
             pass_count = 0
             # ランダムに手を選ぶ
             count = _popcount(legal_moves_bits)
-            random_index = random.randint(1, count)
+            random_index = rand() % count + 1
             for _ in range(random_index):
                 random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
                 legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする

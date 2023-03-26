@@ -26,6 +26,8 @@ class MonteCarlo(AbstractStrategy):
         self.remain = remain  # モンテカルロ法開始手数
         self._black_player = Player('black', 'Random_B', Random())
         self._white_player = Player('white', 'Random_W', Random())
+        self.timer = True
+        self.measure = True
 
     @Measure.time
     @Timer.start(-10000000)
@@ -33,7 +35,11 @@ class MonteCarlo(AbstractStrategy):
         """
         次の一手
         """
-        pid = Timer.get_pid(self)                # タイムアウト監視用のプロセスID
+        pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
+
+        if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not MonteCarloMethods.MONTECARLO_SIZE8_64BIT_ERROR:
+            return MonteCarloMethods.next_move(color, board, self.count, pid, self.timer, self.measure)
+
         moves = board.get_legal_moves(color)     # 手の候補を取得
         scores = [0 for _ in range(len(moves))]  # スコアの初期化
 
