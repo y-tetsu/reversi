@@ -38,7 +38,7 @@ class MonteCarlo(AbstractStrategy):
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
 
         if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not MonteCarloMethods.MONTECARLO_SIZE8_64BIT_ERROR:
-            return MonteCarloMethods.next_move(color, board, self.count, self.remain, pid, self.timer, self.measure)
+            return MonteCarloMethods.next_move(color, board, self.count, pid, self.timer, self.measure)
 
         moves = board.get_legal_moves(color)     # 手の候補を取得
         scores = [0 for _ in range(len(moves))]  # スコアの初期化

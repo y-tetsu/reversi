@@ -29,15 +29,15 @@ cdef:
     signed int[64] scores
 
 
-def next_move(color, board, count, remain, pid, timer, measure):
+def next_move(color, board, count, pid, timer, measure):
     """next_move
     """
     if pid is None:
         timer, measure = False, False
-    return _next_move(color, board, count, remain, pid, timer, measure)
+    return _next_move(color, board, count, pid, timer, measure)
 
 
-cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int remain, str pid, int timer, int measure):
+cdef inline tuple _next_move(str color, board, unsigned int count, str pid, int timer, int measure):
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, scores, bb, wb, hb, bs, ws
     cdef:
         unsigned long long b, w, h
@@ -79,7 +79,7 @@ cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int 
             bb, wb, hb = b, w, h
             bs = tbs
             ws = tws
-            scores[i] += _playout(int_color, legal_moves_bit_list[i], remain)
+            scores[i] += _playout(int_color, legal_moves_bit_list[i])
         if timer and check_timeout():
             break
     max_score = scores[0];
@@ -95,49 +95,46 @@ cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int 
     return best_move
 
 
-cdef inline signed int _playout(unsigned int int_color, unsigned long long move_bit, unsigned int remain):
+cdef inline signed int _playout(unsigned int int_color, unsigned long long move_bit):
     global bb, wb, hb, bs, ws, measure_count
     cdef:
         unsigned int turn
         unsigned int x, y, pass_count = 0, random_index
         unsigned long long random_put, legal_moves_bits, count
         signed int ret
-    if <unsigned int>64 - (bs + ws) <= remain:
-        # 1手打つ
-        _put_disc(int_color, move_bit)
-        # 決着までランダムに打つ
-        turn = int_color
-        while True:
-            # 次の手番
-            turn = <unsigned int>0 if turn else <unsigned int>1
-            # 合法手を取得
-            legal_moves_bits = _get_legal_moves_bits(turn, bb, wb, hb)
-            # 打てる場所なし
-            if not legal_moves_bits:
-                pass_count += 1
-                if pass_count == 2:
-                    break
-            # 打てる場所あり
-            else:
-                pass_count = 0
-                # ランダムに手を選ぶ
-                count = _popcount(legal_moves_bits)
-                random_index = rand_int() % count + 1
-                for _ in range(random_index):
-                    random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
-                    legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
-                # 1手打つ
-                _put_disc(turn, random_put)
-        # 結果を返す
-        ret = -2
-        if (int_color and bs > ws) or (not int_color and ws > bs):
-            ret = 2
-        elif bs == ws:
-            ret = 1
-        # 探索ノード数カウント
-        measure_count += 1
-    else:
-        ret = 0
+    # 1手打つ
+    _put_disc(int_color, move_bit)
+    # 決着までランダムに打つ
+    turn = int_color
+    while True:
+        # 次の手番
+        turn = <unsigned int>0 if turn else <unsigned int>1
+        # 合法手を取得
+        legal_moves_bits = _get_legal_moves_bits(turn, bb, wb, hb)
+        # 打てる場所なし
+        if not legal_moves_bits:
+            pass_count += 1
+            if pass_count == 2:
+                break
+        # 打てる場所あり
+        else:
+            pass_count = 0
+            # ランダムに手を選ぶ
+            count = _popcount(legal_moves_bits)
+            random_index = rand_int() % count + 1
+            for _ in range(random_index):
+                random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+                legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
+            # 1手打つ
+            _put_disc(turn, random_put)
+    # 結果を返す
+    ret = -2
+    if (int_color and bs > ws) or (not int_color and ws > bs):
+        ret = 2
+    elif bs == ws:
+        ret = 1
+    # 探索ノード数カウント
+    measure_count += 1
     return ret
 
 
