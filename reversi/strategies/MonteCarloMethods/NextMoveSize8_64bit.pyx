@@ -35,9 +35,11 @@ def next_move(color, board, count, remain, pid, timer, measure):
 
 
 cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int remain, str pid, int timer, int measure):
-    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, scores
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, scores, bb, wb, hb, bs, ws
     cdef:
         unsigned long long b, w, h
+        unsigned int tbs
+        unsigned int tws
         unsigned int int_color = 0
         unsigned int i, x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
@@ -54,6 +56,8 @@ cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int 
     if color == 'black':
         int_color = <unsigned int>1
     b, w, h = board.get_bitboard_info()
+    tbs = board._black_score
+    tws = board._white_score
     legal_moves = _get_legal_moves_bits(int_color, b, w, h)
     for y in range(8):
         for x in range(8):
@@ -66,9 +70,11 @@ cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int 
             mask >>= 1
     for j in range(count):
         for i in range(index):
-            scores[i] += _playout(int_color, board, legal_moves_bit_list[i], remain)
-            if timer and check_timeout():
-                break
+            # ボード情報取得
+            bb, wb, hb = b, w, h
+            bs = tbs
+            ws = tws
+            scores[i] += _playout(int_color, legal_moves_bit_list[i], remain)
         if timer and check_timeout():
             break
     max_score = scores[0];
@@ -84,17 +90,13 @@ cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int 
     return best_move
 
 
-cdef inline signed int _playout(unsigned int int_color, board, unsigned long long move_bit, unsigned int remain):
+cdef inline signed int _playout(unsigned int int_color, unsigned long long move_bit, unsigned int remain):
     global bb, wb, hb, bs, ws, measure_count
     cdef:
         unsigned int turn
         unsigned int x, y, pass_count = 0, random_index
         unsigned long long random_put, legal_moves_bits, count
         signed int ret
-    # ボード情報取得
-    bb, wb, hb = board.get_bitboard_info()
-    bs = board._black_score
-    ws = board._white_score
     if <unsigned int>64 - (bs + ws) <= remain:
         # 1手打つ
         _put_disc(int_color, move_bit)
