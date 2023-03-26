@@ -2,11 +2,14 @@
 """Next Move(Size8,64bit) of MonteCarlo strategy
 """
 
-from libc.stdlib cimport rand
-
 import time
 
 from reversi.strategies.common import Timer, Measure
+
+
+cdef extern from "xorshift.h":
+    void init_rand(unsigned long s)
+    unsigned long rand_int()
 
 
 cdef:
@@ -68,6 +71,8 @@ cdef inline tuple _next_move(str color, board, unsigned int count, unsigned int 
                 scores[index] = 0
                 index += 1
             mask >>= 1
+    # seed
+    init_rand(<unsigned long>time.time())
     for j in range(count):
         for i in range(index):
             # ボード情報取得
@@ -117,7 +122,7 @@ cdef inline signed int _playout(unsigned int int_color, unsigned long long move_
                 pass_count = 0
                 # ランダムに手を選ぶ
                 count = _popcount(legal_moves_bits)
-                random_index = rand() % count + 1
+                random_index = rand_int() % count + 1
                 for _ in range(random_index):
                     random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
                     legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
