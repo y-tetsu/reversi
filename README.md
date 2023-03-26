@@ -71,7 +71,7 @@
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
 
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo4.gif" width="550px">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo5.gif" width="550px">
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">
 
@@ -1286,7 +1286,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 ### ボードを変更する
 ボードの種類に対応する番号を入力すると、ボードを変更できます。
 
-![select_board](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_board2.png)
+![select_board](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_board3.png)
 
 |キー入力 |ボード名 |形状 |
 |---|---|---|
@@ -1313,20 +1313,21 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 ### プレイヤーを変更する
 黒と白ともにプレイヤー名に対応する番号を入力すると、プレイヤー(AI)を変更できます。
 
-![select_player](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_player.png)
+![select_player](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_player2.png)
 
-|キー入力 |名前 |難易度 |
-|---|---|---|
-|1 + enter |User1, User2 |人が操作 |
-|2 + enter |Random       |★       |
-|3 + enter |SlowStarter  |★★     |
-|4 + enter |Table        |★★★   |
-|5 + enter |Blank        |★★★★ |
+|キー入力 |名前 |難易度 |特徴 |
+|---|---|---|---|
+|1 + enter |User1, User2 |人が操作 |- |
+|2 + enter |X      |★         |ランダム |
+|3 + enter |M-10   |★★       |モンテカルロ10回 |
+|4 + enter |M-100  |★★★     |モンテカルロ100回 |
+|5 + enter |M-1000 |★★★★   |モンテカルロ1000回 |
+|6 + enter |TheEnd |★★★★★ |モンテカルロ10000回 + 終盤14手完全読み|
 
 ### 手を打つ
 ゲーム開始後、打てる手(座標)に対応する番号(+ enter)を入力すると、手を打つことができます。
 
-![select_move](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_move.png)
+![select_move](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_move2.png)
 
 
 ---
