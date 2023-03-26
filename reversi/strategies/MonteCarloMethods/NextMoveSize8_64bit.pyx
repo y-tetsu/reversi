@@ -232,58 +232,50 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
     """
     cdef:
         unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
-        unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
+        unsigned long long m_t_, m_rt, m_r_, m_rb, m_b_, m_lb, m_l_, m_lt
         unsigned long long player = w, opponent = b, flippable_discs_num = 0
     if int_color:
         player = b
         opponent = w
-    t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (move << <unsigned int>8)  # top
-    rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (move << <unsigned int>7)  # right-top
-    r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (move >> <unsigned int>1)  # right
-    rb = <unsigned long long>0x007F7F7F7F7F7F7F & (move >> <unsigned int>9)  # right-bottom
-    b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (move >> <unsigned int>8)  # bottom
-    lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (move >> <unsigned int>7)  # left-bottom
-    l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (move << <unsigned int>1)  # left
-    lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (move << <unsigned int>9)  # left-top
-    for _ in range(6):
-        if t_ & opponent:
-            bf_t_ |= t_
-            t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)
-        if rt & opponent:
-            bf_rt |= rt
-            rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & (rt << <unsigned int>7)
-        if r_ & opponent:
-            bf_r_ |= r_
-            r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)
-        if rb & opponent:
-            bf_rb |= rb
-            rb = <unsigned long long>0x007F7F7F7F7F7F7F & (rb >> <unsigned int>9)
-        if b_ & opponent:
-            bf_b_ |= b_
-            b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)
-        if lb & opponent:
-            bf_lb |= lb
-            lb = <unsigned long long>0x00FEFEFEFEFEFEFE & (lb >> <unsigned int>7)
-        if l_ & opponent:
-            bf_l_ |= l_
-            l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & (l_ << <unsigned int>1)
-        if lt & opponent:
-            bf_lt |= lt
-            lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)
-    if t_ & player:
-        flippable_discs_num |= bf_t_
-    if rt & player:
-        flippable_discs_num |= bf_rt
-    if r_ & player:
-        flippable_discs_num |= bf_r_
-    if rb & player:
-        flippable_discs_num |= bf_rb
-    if b_ & player:
-        flippable_discs_num |= bf_b_
-    if lb & player:
-        flippable_discs_num |= bf_lb
-    if l_ & player:
-        flippable_discs_num |= bf_l_
-    if lt & player:
-        flippable_discs_num |= bf_lt
+    m_t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & opponent
+    m_rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & opponent
+    m_r_ = <unsigned long long>0x7F7F7F7F7F7F7F7F & opponent
+    m_rb = <unsigned long long>0x007F7F7F7F7F7F7F & opponent
+    m_b_ = <unsigned long long>0x00FFFFFFFFFFFFFF & opponent
+    m_lb = <unsigned long long>0x00FEFEFEFEFEFEFE & opponent
+    m_l_ = <unsigned long long>0xFEFEFEFEFEFEFEFE & opponent
+    m_lt = <unsigned long long>0xFEFEFEFEFEFEFE00 & opponent
+    t_ = m_t_ & (move << <unsigned int>8)  # top
+    rt = m_rt & (move << <unsigned int>7)  # right-top
+    r_ = m_r_ & (move >> <unsigned int>1)  # right
+    rb = m_rb & (move >> <unsigned int>9)  # right-bottom
+    b_ = m_b_ & (move >> <unsigned int>8)  # bottom
+    lb = m_lb & (move >> <unsigned int>7)  # left-bottom
+    l_ = m_l_ & (move << <unsigned int>1)  # left
+    lt = m_lt & (move << <unsigned int>9)  # left-top
+    for _ in range(5):
+        t_ |= m_t_ & (t_ << <unsigned int>8)
+        rt |= m_rt & (rt << <unsigned int>7)
+        r_ |= m_r_ & (r_ >> <unsigned int>1)
+        rb |= m_rb & (rb >> <unsigned int>9)
+        b_ |= m_b_ & (b_ >> <unsigned int>8)
+        lb |= m_lb & (lb >> <unsigned int>7)
+        l_ |= m_l_ & (l_ << <unsigned int>1)
+        lt |= m_lt & (lt << <unsigned int>9)
+    if (t_ << <unsigned int>8) & player:
+        flippable_discs_num |= t_
+    if (rt << <unsigned int>7) & player:
+        flippable_discs_num |= rt
+    if (r_ >> <unsigned int>1) & player:
+        flippable_discs_num |= r_
+    if (rb >> <unsigned int>9) & player:
+        flippable_discs_num |= rb
+    if (b_ >> <unsigned int>8) & player:
+        flippable_discs_num |= b_
+    if (lb >> <unsigned int>7) & player:
+        flippable_discs_num |= lb
+    if (l_ << <unsigned int>1) & player:
+        flippable_discs_num |= l_
+    if (lt << <unsigned int>9) & player:
+        flippable_discs_num |= lt
     return flippable_discs_num
