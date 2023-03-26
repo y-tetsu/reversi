@@ -1257,7 +1257,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 ## コンソールアプリケーションの遊び方
 ### ゲーム紹介
 コマンドプロンプト(Windowsの場合)のようなコンソール上で遊べるリバーシです。
-多種多様な通常と異なる盤面で遊ぶ事ができます。<br>
+通常と異なる多種多様な20種類にも及ぶ盤面で遊ぶ事ができます。<br>
 
 [サンプルをインストール](#サンプル)すると遊べます。
 
@@ -1290,25 +1290,26 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 
 |キー入力 |ボード名 |形状 |
 |---|---|---|
-|1  + enter |X          |![X](https://raw.githubusercontent.com/y-tetsu/reversi/images/X.png)                   |
-|2  + enter |x          |![x](https://raw.githubusercontent.com/y-tetsu/reversi/images/x2.png)                  |
-|3  + enter |Square-8   |![Square-8](https://raw.githubusercontent.com/y-tetsu/reversi/images/Square-8.png)     |
-|4  + enter |Square-6   |![Square-6](https://raw.githubusercontent.com/y-tetsu/reversi/images/Square-6.png)     |
-|5  + enter |Square-4   |![Square-4](https://raw.githubusercontent.com/y-tetsu/reversi/images/Square-4.png)     |
-|6  + enter |Octagon    |![Octagon](https://raw.githubusercontent.com/y-tetsu/reversi/images/Octagon.png)       |
-|7  + enter |Diamond    |![Diamond](https://raw.githubusercontent.com/y-tetsu/reversi/images/Diamond.png)       |
-|8  + enter |Clover     |![Clover](https://raw.githubusercontent.com/y-tetsu/reversi/images/Clover.png)         |
-|9  + enter |Cross      |![Cross](https://raw.githubusercontent.com/y-tetsu/reversi/images/Cross.png)           |
-|10 + enter |Plus       |![Plus](https://raw.githubusercontent.com/y-tetsu/reversi/images/Plus.png)             |
-|11 + enter |Drone      |![Drone](https://raw.githubusercontent.com/y-tetsu/reversi/images/Drone.png)           |
-|12 + enter |Kazaguruma |![Kazaguruma](https://raw.githubusercontent.com/y-tetsu/reversi/images/Kazaguruma.png) |
-|13 + enter |Manji      |![Manji](https://raw.githubusercontent.com/y-tetsu/reversi/images/Manji.png)           |
-|14 + enter |Rectangle  |![Rectangle](https://raw.githubusercontent.com/y-tetsu/reversi/images/Rectangle.png)   |
-|15 + enter |T          |![T](https://raw.githubusercontent.com/y-tetsu/reversi/images/T.png)                   |
-|16 + enter |Torus      |![Torus](https://raw.githubusercontent.com/y-tetsu/reversi/images/Torus.png)           |
-|17 + enter |Two        |![Two](https://raw.githubusercontent.com/y-tetsu/reversi/images/Two.png)               |
-|18 + enter |Equal      |![Equal](https://raw.githubusercontent.com/y-tetsu/reversi/images/Equal.png)           |
-|19 + enter |Xhole      |![Xhole](https://raw.githubusercontent.com/y-tetsu/reversi/images/Xhole.png)           |
+|1  + enter |X          |![t1](https://raw.githubusercontent.com/y-tetsu/reversi/images/t1.png)   |
+|2  + enter |x          |![t1](https://raw.githubusercontent.com/y-tetsu/reversi/images/t2.png)   |
+|3  + enter |Square-8   |![t3](https://raw.githubusercontent.com/y-tetsu/reversi/images/t3.png)   |
+|4  + enter |Square-6   |![t4](https://raw.githubusercontent.com/y-tetsu/reversi/images/t4.png)   |
+|5  + enter |Square-4   |![t5](https://raw.githubusercontent.com/y-tetsu/reversi/images/t5.png)   |
+|6  + enter |Octagon    |![t6](https://raw.githubusercontent.com/y-tetsu/reversi/images/t6.png)   |
+|7  + enter |Diamond    |![t7](https://raw.githubusercontent.com/y-tetsu/reversi/images/t7.png)       |
+|8  + enter |Clover     |![t8](https://raw.githubusercontent.com/y-tetsu/reversi/images/t8.png)   |
+|9  + enter |Cross      |![t9](https://raw.githubusercontent.com/y-tetsu/reversi/images/t9.png)   |
+|10 + enter |Plus       |![t10](https://raw.githubusercontent.com/y-tetsu/reversi/images/t10.png) |
+|11 + enter |Drone      |![t11](https://raw.githubusercontent.com/y-tetsu/reversi/images/t11.png) |
+|12 + enter |Kazaguruma |![t12](https://raw.githubusercontent.com/y-tetsu/reversi/images/t12.png) |
+|13 + enter |Manji      |![t13](https://raw.githubusercontent.com/y-tetsu/reversi/images/t13.png) |
+|14 + enter |Rectangle  |![t14](https://raw.githubusercontent.com/y-tetsu/reversi/images/t14.png) |
+|15 + enter |Heart      |![t15](https://raw.githubusercontent.com/y-tetsu/reversi/images/t15.png) |
+|16 + enter |T          |![t16](https://raw.githubusercontent.com/y-tetsu/reversi/images/t16.png) |
+|17 + enter |Torus      |![t17](https://raw.githubusercontent.com/y-tetsu/reversi/images/t17.png) |
+|18 + enter |Two        |![t18](https://raw.githubusercontent.com/y-tetsu/reversi/images/t18.png) |
+|19 + enter |Equal      |![t19](https://raw.githubusercontent.com/y-tetsu/reversi/images/t19.png) |
+|20 + enter |Xhole      |![t20](https://raw.githubusercontent.com/y-tetsu/reversi/images/t20.png) |
 
 ### プレイヤーを変更する
 黒と白ともにプレイヤー名に対応する番号を入力すると、プレイヤー(AI)を変更できます。
