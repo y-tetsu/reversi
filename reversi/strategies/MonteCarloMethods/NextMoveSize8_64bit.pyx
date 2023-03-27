@@ -262,20 +262,20 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
         lb |= m_lb & (lb >> <unsigned int>7)
         l_ |= m_l_ & (l_ << <unsigned int>1)
         lt |= m_lt & (lt << <unsigned int>9)
-    if (t_ << <unsigned int>8) & player:
+    if (<unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)) & player:
         flippable_discs_num |= t_
-    if (rt << <unsigned int>7) & player:
+    if (<unsigned long long>0x7F7F7F7F7F7F7F00 & (rt << <unsigned int>7)) & player:
         flippable_discs_num |= rt
-    if (r_ >> <unsigned int>1) & player:
+    if (<unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)) & player:
         flippable_discs_num |= r_
-    if (rb >> <unsigned int>9) & player:
+    if (<unsigned long long>0x007F7F7F7F7F7F7F & (rb >> <unsigned int>9)) & player:
         flippable_discs_num |= rb
-    if (b_ >> <unsigned int>8) & player:
+    if (<unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)) & player:
         flippable_discs_num |= b_
-    if (lb >> <unsigned int>7) & player:
+    if (<unsigned long long>0x00FEFEFEFEFEFEFE & (lb >> <unsigned int>7)) & player:
         flippable_discs_num |= lb
-    if (l_ << <unsigned int>1) & player:
+    if (<unsigned long long>0xFEFEFEFEFEFEFEFE & (l_ << <unsigned int>1)) & player:
         flippable_discs_num |= l_
-    if (lt << <unsigned int>9) & player:
+    if (<unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)) & player:
         flippable_discs_num |= lt
     return flippable_discs_num
