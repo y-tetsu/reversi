@@ -478,3 +478,33 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(lines[19], "WhiteWin1                 |  50.0% |    10    10     0    20")
         self.assertEqual(lines[20], "WhiteWin2                 |  50.0% |    10    10     0    20")
         self.assertEqual(lines[21], "------------------------------------------------------------")
+
+    def test_simulator_board_name(self):
+        json_file = './simulator_setting.json'
+        simulator_setting = {
+            "board_name": "Diamond",
+            "matches": 5,
+            "processes": 1,
+            "random_opening": 0,
+        }
+        with open(json_file, 'w') as f:
+            json.dump(simulator_setting, f)
+
+        players_info = {
+            'AlphaBeta1': _AlphaBeta(depth=2, evaluator=Evaluator_TPW()),
+            'AlphaBeta2': _AlphaBeta(depth=2, evaluator=Evaluator_TPW()),
+        }
+        with captured_stdout() as stdout:
+            simulator = Simulator(players_info, json_file)
+        os.remove(json_file)
+        lines = stdout.getvalue().splitlines()
+        self.assertEqual(lines[0], "[Diamond]")
+        self.assertEqual(lines[1], "   a b c d e f g h")
+        self.assertEqual(lines[2], " 1　　　□□　　　")
+        self.assertEqual(lines[3], " 2　　□□□□　　")
+        self.assertEqual(lines[4], " 3　□□□□□□　")
+        self.assertEqual(lines[5], " 4□□□●〇□□□")
+        self.assertEqual(lines[6], " 5□□□〇●□□□")
+        self.assertEqual(lines[7], " 6　□□□□□□　")
+        self.assertEqual(lines[8], " 7　　□□□□　　")
+        self.assertEqual(lines[9], " 8　　　□□　　　")

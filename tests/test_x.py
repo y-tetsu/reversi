@@ -150,10 +150,8 @@ class TestX(unittest.TestCase):
         simulator = Simulator(
                         players_info,
                         board_type='bitboard',
+                        board_name=name,
                         first='black',
-                        board_hole=X[name][0],
-                        ini_black=X[name][1],
-                        ini_white=X[name][2],
                         random_opening=0,
                         swap=False,
                         matches=10,

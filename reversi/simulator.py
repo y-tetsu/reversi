@@ -7,7 +7,7 @@ import itertools
 import datetime
 from multiprocessing import Pool
 
-from reversi import Board, BitBoard, Player, NoneDisplay, Game
+from reversi import Board, BitBoard, Player, NoneDisplay, Game, X
 from reversi import C as c
 from reversi.strategies import RandomOpening
 
@@ -21,10 +21,8 @@ class Simulator:
             setting_file=None,
             board_size=8,
             board_type='bitboard',
+            board_name=None,
             first='black',
-            board_hole=0x0000000000000000,
-            ini_black=None,
-            ini_white=None,
             matches=10,
             processes=1,
             progress=True,
@@ -43,10 +41,8 @@ class Simulator:
                 setting = {
                     "board_size": 8,
                     "board_type": "bitboard",
+                    "board_name": None,
                     "first": "black",
-                    "board_hole": 0x0000000000000000,
-                    "ini_black": None,
-                    "ini_white": None,
                     "matches": 10,
                     "processes": 1,
                     "progress": True,
@@ -73,25 +69,15 @@ class Simulator:
         else:
             self.board_type = board_type
 
+        if 'board_name' in setting:
+            self.board_name = setting['board_name']
+        else:
+            self.board_name = board_name
+
         if 'first' in setting:
             self.first = setting['first']
         else:
             self.first = first
-
-        if 'board_hole' in setting:
-            self.board_hole = setting['board_hole']
-        else:
-            self.board_hole = board_hole
-
-        if 'ini_black' in setting:
-            self.ini_black = setting['ini_black']
-        else:
-            self.ini_black = ini_black
-
-        if 'ini_white' in setting:
-            self.ini_white = setting['ini_white']
-        else:
-            self.ini_white = ini_white
 
         if 'matches' in setting:
             self.matches = setting['matches']
@@ -151,6 +137,18 @@ class Simulator:
 
         self.black_players = black_players
         self.white_players = white_players
+
+        # board_name
+        self.hole = 0x0000000000000000
+        self.ini_black = None
+        self.ini_white = None
+        if self.board_name in X:
+            self.board_size = 8
+            self.hole = X[self.board_name][0]
+            self.ini_black = X[self.board_name][1]
+            self.ini_white = X[self.board_name][2]
+            print(f'[{self.board_name}]')
+        print(BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white))
 
         self.game_results = []
         self.total = []
@@ -257,7 +255,7 @@ class Simulator:
             if (i + 1) % 5 == 0 and self.progress:
                 print("    -", black.name, white.name, i + 1)
 
-            board = BitBoard(self.board_size, hole=self.board_hole, ini_black=self.ini_black, ini_white=self.ini_white) if self.board_type == 'bitboard' else Board(self.board_size, hole=self.board_hole, ini_black=self.ini_black, ini_white=self.ini_white)
+            board = BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white) if self.board_type == 'bitboard' else Board(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white)
             game = Game(black, white, board, NoneDisplay(), self.first)
             game.play()
             ret.append(game.result)
