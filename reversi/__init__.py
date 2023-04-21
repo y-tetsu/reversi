@@ -7,8 +7,8 @@ from .display import ConsoleDisplay, NoneDisplay, WindowDisplay
 from .game import Game
 from .window import Window
 from .error_message import ErrorMessage
-from .app import Reversi, Reversic
 from .recorder import Recorder
+from .app import Reversi, Reversic
 from .elucidator import Elucidator
 from .simulator import Simulator
 from . import strategies

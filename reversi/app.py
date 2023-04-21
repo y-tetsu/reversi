@@ -3,6 +3,7 @@
 
 import os
 import time
+import datetime
 import re
 import tkinter as tk
 import json
@@ -10,7 +11,7 @@ import threading
 from platform import system
 from ctypes import windll
 
-from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, X
+from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, X, Recorder
 
 
 class Reversi:
@@ -221,6 +222,23 @@ class Reversi:
             cancel=self.window.menu,
         ).play()
 
+        if self.window.record == 'ON':
+            t_delta = datetime.timedelta(hours=9)
+            JST = datetime.timezone(t_delta, 'JST')
+            now = datetime.datetime.now(JST)
+            black_name = players['black'].name
+            white_name = players['white'].name
+            record_name = now.strftime('%Y%m%d%H%M%S') + '_' + black_name + '_vs_' + white_name + '.txt'
+            with open(record_name, 'w') as f:
+                f.write('\n')
+                f.write('-------------------------------------------\n')
+                f.write(now.strftime('%Y/%m/%d %H:%M:%S') + '\n')
+                f.write('-------------------------------------------\n')
+                f.write('\n')
+                f.write(str(board) + '\n')
+                f.write("(black:" + black_name + ") " + str(board._black_score) + " - " + str(board._white_score) + " (white:" + white_name + ")\n")
+                f.write(str(Recorder(board)) + '\n')
+
         time.sleep(self.sleep_time_play)  # 少し待って終了状態へ
         self.state = Reversi.END
 
@@ -259,6 +277,7 @@ class Reversi:
             self.window.player['white'] = self.window.menu.white_player
             self.window.assist = self.window.menu.assist
             self.window.language = self.window.menu.language
+            self.window.record = self.window.menu.record
             self.window.menu.event.clear()
 
             return True

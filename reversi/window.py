@@ -64,6 +64,10 @@ ASSIST_OFFSET_X = 20   # アシストのXオフセット
 ASSIST_OFFSET_Y = 40   # アシストのYオフセット
 ASSIST_FONT_SIZE = 12  # アシストのフォントサイズ
 
+RECORD_OFFSET_X = 1270 # 棋譜出力のXオフセット
+RECORD_OFFSET_Y = 40   # 棋譜出力のYオフセット
+RECORD_FONT_SIZE = 12  # 棋譜出力のフォントサイズ
+
 CPUTIME_OFFSET_X = 20   # CPUの持ち時間のXオフセット
 CPUTIME_OFFSET_Y = 20   # CPUの持ち時間のYオフセット
 CPUTIME_FONT_SIZE = 12  # CPUの持ち時間のフォントサイズ
@@ -85,6 +89,7 @@ TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の�
 TURN_DISC_WAIT = 0.1                                                   # 石をひっくり返す待ち時間(s)
 
 ASSIST_MENU = ['ON', 'OFF']              # 打てる場所のハイライト表示の有無
+RECORD_MENU = ['ON', 'OFF']              # 棋譜保存の有無
 LANGUAGE_MENU = ['English', 'Japanese']  # 表示言語
 CANCEL_MENU = ['OK']                     # ゲームのキャンセル
 
@@ -167,6 +172,7 @@ class Window(tk.Frame):
         self.size = DEFAULT_BOARD_SIZE
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.assist = ASSIST_MENU[1]
+        self.record = RECORD_MENU[0]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
@@ -188,10 +194,10 @@ class Window(tk.Frame):
         """
         ゲーム画面の初期化
         """
-        self.canvas.delete('all')                                                    # 全オブジェクト削除
-        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player, self.language)              # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas, self.language)                         # スタートテキスト配置
+        self.canvas.delete('all')                                                                 # 全オブジェクト削除
+        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player, self.language)                           # 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas, self.language)                                      # スタートテキスト配置
 
     def set_state(self, state):
         """
@@ -213,6 +219,7 @@ class Menu(tk.Menu):
         self.black_player = black_players[0]
         self.white_player = white_players[0]
         self.assist = ASSIST_MENU[1]
+        self.record = RECORD_MENU[0]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
@@ -229,6 +236,7 @@ class Menu(tk.Menu):
         self.menu_items['cputime'] = CPUTIME_MENU
         self.menu_items['extra'] = EXTRA_MENU
         self.menu_items['assist'] = ASSIST_MENU
+        self.menu_items['record'] = RECORD_MENU
         self.menu_items['language'] = LANGUAGE_MENU
         self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
@@ -265,6 +273,7 @@ class Menu(tk.Menu):
                     self.extradialog = ExtraDialog(window=self.window, event=self.event, language=self.language)
 
                 self.assist = item if name == 'assist' else self.assist
+                self.record = item if name == 'record' else self.record
                 self.language = item if name == 'language' else self.language
                 self.cancel = item if name == 'cancel' else self.cancel
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
@@ -382,10 +391,11 @@ class ScreenBoard:
     """
     ボードの表示
     """
-    def __init__(self, canvas, size, cputime, assist):
+    def __init__(self, canvas, size, cputime, assist, record):
         self.size = size
         self.cputime = cputime
         self.assist = assist
+        self.record = record
         self.canvas = canvas
         self._squares = []
         self._xlines = []
@@ -415,6 +425,17 @@ class ScreenBoard:
             font=('', ASSIST_FONT_SIZE),
             anchor='w',
             fill=COLOR_WHITE
+        )
+
+        # 棋譜出力表示
+        record_text = 'REC' if self.record == 'ON' else ''
+        self.canvas.create_text(
+            RECORD_OFFSET_X,
+            RECORD_OFFSET_Y,
+            text=record_text,
+            font=('', RECORD_FONT_SIZE),
+            anchor='w',
+            fill=COLOR_TOMATO
         )
 
         # 低速モードの表示

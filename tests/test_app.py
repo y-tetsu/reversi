@@ -4,6 +4,8 @@
 import unittest
 from test.support import captured_stdin, captured_stdout
 import os
+import re
+from pathlib import Path
 
 from reversi import Reversi, Reversic, Window, ErrorMessage, MIN_BOARD_SIZE, MAX_BOARD_SIZE, X
 from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
@@ -403,6 +405,7 @@ class TestApp(unittest.TestCase):
                 self.player = {'black': 'WhiteWin', 'white': 'WhiteWin'}
                 self.cputime = 0.1
                 self.info = Info()
+                self.record = 'ON'
 
             def set_state(self, state):
                 print(state)
@@ -577,6 +580,15 @@ class TestApp(unittest.TestCase):
 
         self.assertEqual(app.state, Reversi.END)
 
+        # record
+        record_exists = False
+        path = Path('./')
+        for f in path.glob('*.txt'):
+            if re.match(r'^\d+_WhiteWin_vs_WhiteWin.txt$', str(f)):
+                record_exists = True
+                os.remove(str(f))
+        self.assertTrue(record_exists)
+
     def test_reversi__end(self):
         class TestWindow:
             def __init__(self):
@@ -665,6 +677,7 @@ class TestApp(unittest.TestCase):
                         self.black_player = 'BLACK2'
                         self.white_player = 'WHITE2'
                         self.assist = True
+                        self.record = True
                         self.language = 'Japanese'
 
                 self.menu = Menu()
@@ -672,6 +685,7 @@ class TestApp(unittest.TestCase):
                 self.size = 4
                 self.player = {'black': 'BLACK', 'white': 'WHITE'}
                 self.assist = False
+                self.record = False
                 self.language = 'English'
 
         app = Reversi()
@@ -690,6 +704,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.window.player['black'], 'BLACK')
         self.assertEqual(app.window.player['white'], 'WHITE')
         self.assertEqual(app.window.assist, False)
+        self.assertEqual(app.window.record, False)
         self.assertEqual(app.window.language, 'English')
         self.assertEqual(ret, False)
 
@@ -709,6 +724,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.window.player['black'], 'BLACK2')
         self.assertEqual(app.window.player['white'], 'WHITE2')
         self.assertEqual(app.window.assist, True)
+        self.assertEqual(app.window.record, True)
         self.assertEqual(app.window.language, 'Japanese')
         self.assertEqual(ret, True)
 
