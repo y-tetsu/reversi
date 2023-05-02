@@ -19,6 +19,7 @@
 - [インストール方法](#インストール方法)
 - [アンインストール方法](#アンインストール方法)
 - [サンプル](#サンプル)
+- [ライブラリの活用事例](#ライブラリの活用事例)
 - [ライブラリの使い方](#ライブラリの使い方)
     - [基本編](#基本編)
         - [アプリケーションを起動させる](#アプリケーションを起動させる)
@@ -138,6 +139,18 @@ $ py -3.7 08_alphabeta_strategy.py
 $ py -3.7 09_genetic_algorithm.py
 $ py -3.7 10_x_elucidator.py
 ```
+
+
+## ライブラリの活用事例
+本ライブラリを活用して実現できた事例をいくつかご紹介します。
+
+### shirox22さんのページ
+- 「Google音声認識ライブラリを使用して、音声オセロを作成」https://qiita.com/shirox22/items/b9ea6d6c90a172cb9968
+
+### その他
+- 「自作したリバーシAIでEdaxに挑む！」https://qiita.com/y-tetsu/items/2d5a199e401aa846891f
+- 「リバーシの全消しパターンを見てみたい！」https://qiita.com/y-tetsu/items/6856dc50f1b130b26a56
+- 「天下一リバーシAI武道会」https://qiita.com/y-tetsu/items/2a32a157567655fa12ac
 
 
 ## ライブラリの使い方
@@ -780,14 +793,14 @@ print(game.result.white_name, game.result.white_num)
 
 |プロパティ名|内容|
 |---|---|
-|winlose|勝敗(0:黒の勝ち、1:白の勝ち、2:引き分け|
+|winlose|勝敗(0:黒の勝ち、1:白の勝ち、2:引き分け)|
 |black_name|黒プレイヤーの名前|
 |white_name|白プレイヤーの名前|
 |black_num|黒プレイヤーの石数|
 |white_num|白プレイヤーの石数|
 
 #### recorderオブジェクトの使い方
-`record`オブジェクトを使うと、`board`オブジェクトの打ち手の情報から、棋譜情報を取得することができます。
+`recorder`オブジェクトを使うと、`board`オブジェクトの打ち手の情報から、棋譜情報を取得することができます。
 
 以下はランダム対戦を実施し、その時の棋譜を出力する例です。
 ```python
@@ -803,8 +816,8 @@ board4 = BitBoard(4)
 game = Game(black, white, board4)
 game.play()
 
-record = Recorder(board4)
-print(record)
+recorder = Recorder(board4)
+print(recorder)
 ```
 
 (実行結果)
@@ -817,7 +830,7 @@ D3d4B1a1A2d2C4a3B4a4d1c1
 また、`play`メソッドを使うと棋譜通りの進行を1手ずつテキストで表示します。
 
 ```python
-record.play()
+recorder.play()
 ```
 
 (実行結果)<br>
@@ -1417,7 +1430,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 ## コンソールアプリケーションの遊び方
 ### ゲーム紹介
 コマンドプロンプト(Windowsの場合)のようなコンソール上で遊べるリバーシです。
-通常と異なる多種多様な20種類にも及ぶ盤面で遊ぶ事ができます。<br>
+通常と異なる多種多様な20種類以上にも及ぶ盤面で遊ぶ事ができます。<br>
 
 [サンプルをインストール](#サンプル)すると遊べます。
 
@@ -1446,7 +1459,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 ### ボードを変更する
 ボードの種類に対応する番号を入力すると、ボードを変更できます。
 
-![select_board](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_board3.png)
+![select_board](https://raw.githubusercontent.com/y-tetsu/reversi/images/select_board4.png)
 
 |キー入力 |ボード名 |形状 |
 |---|---|---|
@@ -1456,7 +1469,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 |4  + enter |Square-6   |![t4](https://raw.githubusercontent.com/y-tetsu/reversi/images/t4.png)   |
 |5  + enter |Square-4   |![t5](https://raw.githubusercontent.com/y-tetsu/reversi/images/t5.png)   |
 |6  + enter |Octagon    |![t6](https://raw.githubusercontent.com/y-tetsu/reversi/images/t6.png)   |
-|7  + enter |Diamond    |![t7](https://raw.githubusercontent.com/y-tetsu/reversi/images/t7.png)       |
+|7  + enter |Diamond    |![t7](https://raw.githubusercontent.com/y-tetsu/reversi/images/t7.png)   |
 |8  + enter |Clover     |![t8](https://raw.githubusercontent.com/y-tetsu/reversi/images/t8.png)   |
 |9  + enter |Cross      |![t9](https://raw.githubusercontent.com/y-tetsu/reversi/images/t9.png)   |
 |10 + enter |Plus       |![t10](https://raw.githubusercontent.com/y-tetsu/reversi/images/t10.png) |
@@ -1470,6 +1483,8 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 |18 + enter |Two        |![t18](https://raw.githubusercontent.com/y-tetsu/reversi/images/t18.png) |
 |19 + enter |Equal      |![t19](https://raw.githubusercontent.com/y-tetsu/reversi/images/t19.png) |
 |20 + enter |Xhole      |![t20](https://raw.githubusercontent.com/y-tetsu/reversi/images/t20.png) |
+|21 + enter |Inside     |![t21](https://raw.githubusercontent.com/y-tetsu/reversi/images/t21.png) |
+|22 + enter |Outside    |![t22](https://raw.githubusercontent.com/y-tetsu/reversi/images/t22.png) |
 
 ### プレイヤーを変更する
 黒と白ともにプレイヤー名に対応する番号を入力すると、プレイヤー(AI)を変更できます。
@@ -1561,16 +1576,6 @@ $ py -3.7 -m pip install wheel
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
 
-
----
-## 活用事例
-### shirox22さんのページ
-- 「Google音声認識ライブラリを使用して、音声オセロを作成」https://qiita.com/shirox22/items/b9ea6d6c90a172cb9968
-
-### その他
-- 「自作したリバーシAIでEdaxに挑む！」https://qiita.com/y-tetsu/items/2d5a199e401aa846891f
-- 「リバーシの全消しパターンを見てみたい！」https://qiita.com/y-tetsu/items/6856dc50f1b130b26a56
-- 「天下一リバーシAI武道会」https://qiita.com/y-tetsu/items/2a32a157567655fa12ac
 
 ---
 ## 参考書籍
