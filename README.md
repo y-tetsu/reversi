@@ -29,6 +29,9 @@
         - [boardオブジェクトの使い方](#boardオブジェクトの使い方)
         - [colorオブジェクトの使い方](#colorオブジェクトの使い方)
         - [moveオブジェクトの使い方](#moveオブジェクトの使い方)
+        - [playerオブジェクトの使い方](#playerオブジェクトの使い方)
+        - [gameオブジェクトの使い方](#gameオブジェクトの使い方)
+        - [recorderオブジェクトの使い方](#recorderオブジェクトの使い方)
     - [AIクラス編](#AIクラス編)
         - [単純思考なAI](#単純思考なAI)
         - [マス目の位置に応じて手を選ぶAI](#マス目の位置に応じて手を選ぶAI)
@@ -88,15 +91,15 @@
 
 
 ## インストール方法
-1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールしてください。<br>
-2. 下記を実行して**reversi**をインストールしてください。
+1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールして下さい。<br>
+2. 下記を実行して**reversi**をインストールして下さい。
 ```
 $ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
 ```
 
 
 ## アンインストール方法
-**reversi**をアンインストールする場合は、下記を実行してください。
+**reversi**をアンインストールする場合は、下記を実行して下さい。
 ```
 $ py -3.7 -m pip uninstall reversi
 ```
@@ -144,7 +147,7 @@ $ py -3.7 10_x_elucidator.py
 #### アプリケーションを起動させる
 まず最初に、リバーシのGUIアプリケーションを起動させる方法を示します。
 
-下記のコードを実行してください。
+下記のコードを実行して下さい。
 ```Python
 from reversi import Reversi
 
@@ -175,8 +178,8 @@ Reversi(
 上記を実行すると、ユーザ操作に加えて"RANDOM"と"GREEDY"をプレイヤーとして選択できるようになります。
 
 組み込みのAIは、すべて`reversi.strategies`よりインポートすることができます。<br>
-他に使用可能なAIについての詳細は[AIクラス編](#AIクラス編)を参照してください。<br>
-また、追加するプレイヤーの情報(以後、"プレイヤー情報")は、下記フォーマットに従ってください。<br>
+他に使用可能なAIについての詳細は[AIクラス編](#AIクラス編)を参照して下さい。<br>
+また、追加するプレイヤーの情報(以後、"プレイヤー情報")は、下記フォーマットに従って下さい。<br>
 プレイヤー名については任意に設定可能です。
 ```Python
 {
@@ -216,11 +219,11 @@ class OriginalAI(AbstractStrategy):
 
 `board`オブジェクトについてはここでは簡単のため、
 石が置ける位置を取得する`get_legal_moves`メソッドと、<br>盤面のサイズを取得する`size`パラメータの、2つを取り上げます。<br>
-より詳しい説明は[boardオブジェクトの使い方](#boardオブジェクトの使い方)を参照してください。
+より詳しい説明は[boardオブジェクトの使い方](#boardオブジェクトの使い方)を参照して下さい。
 
 ##### 石が置ける位置の取得方法
 ある盤面の石が置ける位置(座標)は`board`オブジェクトの`get_legal_moves`メソッドで取得できます。<br>
-`get_legal_moves`呼び出し時の引数には、黒か白のどちらかの手番(`color`変数)を与えてください。
+`get_legal_moves`呼び出し時の引数には、黒か白のどちらかの手番(`color`変数)を与えて下さい。
 
 ```Python
 legal_moves = board.get_legal_moves(color)
@@ -236,7 +239,7 @@ legal_moves = board.get_legal_moves(color)
 
 ##### 盤面のサイズ
 本アプリケーションは、盤面のサイズとして4～26までの偶数が選べる仕様となっております。
-必要に応じて、いずれの場合でも動作するよう盤面のサイズを考慮するようにしてください。
+必要に応じて、いずれの場合でも動作するよう盤面のサイズを考慮するようにして下さい。
 
 盤面のサイズは下記で取得できます。
 
@@ -272,7 +275,7 @@ Reversi({'CORNER': Corner()}).start()
 
 #### AI同士の対戦をシミュレートする
 本ライブラリのシミュレータを使うと、AI同士を複数回対戦させて勝率を出すことができます。<br>
-自作したAIの強さを測るために活用してください。<br>
+自作したAIの強さを測るために活用して下さい。<br>
 また、AIの打つ手が特定の盤面に対して固定となる場合は、別途後述のrandom_openingパラメータを設定することで、結果の偏りを減らせます。
 
 シミュレータの実行例として、
@@ -295,12 +298,12 @@ if __name__ == '__main__':
     )
     simulator.start()
 ```
-シミュレータは必ずメインモジュール(\_\_main\_\_)内で実行するようにしてください。<br>
-シミュレータの引数には、"プレイヤー情報"と"シミュレータの設定ファイル"を指定してください。
+シミュレータは必ずメインモジュール(\_\_main\_\_)内で実行するようにして下さい。<br>
+シミュレータの引数には、"プレイヤー情報"と"シミュレータの設定ファイル"を指定して下さい。
 
 ##### シミュレータの設定ファイル
 シミュレータの設定ファイル(JSON形式)の作成例は下記のとおりです。
-Simulatorの第二引数に、本ファイル名(上記例では`./simulator_setting.json`ですが任意)を指定してください。
+Simulatorの第二引数に、本ファイル名(上記例では`./simulator_setting.json`ですが任意)を指定して下さい。
 
 ```JSON
 {
@@ -314,20 +317,22 @@ Simulatorの第二引数に、本ファイル名(上記例では`./simulator_set
         "RANDOM",
         "GREEDY",
         "CORNER"
-    ]
+    ],
+    "perfect_check": false
 }
 ```
 
  |パラメータ名|説明|
  |:---|:---|
- |board_size|盤面のサイズを指定してください。|
- |board_type|盤面の種類(board または bitboard)を選択してください。bitboardの方が高速で通常はこちらを使用してください。|
+ |board_size|盤面のサイズを指定して下さい。|
+ |board_type|盤面の種類(board または bitboard)を選択して下さい。bitboardの方が高速で通常はこちらを使用して下さい。|
  |board_name|通常とは異なる形状の盤面を使用する場合は、盤面の名前("Diamond"や"Heart"など)を指定して下さい。選べる名前は[コンソールアプリケーションの遊び方](#ボードを変更する)を参照して下さい。なお、本パラメータ指定時は、盤面サイズは8固定となり、`board_size`の値は無視されます。|
- |matches|AI同士の対戦回数を指定してください。100を指定した場合、AIの各組み合わせにつき先手と後手で100試合ずつ対戦する動作となります。|
- |processes|並列実行数を指定してください。お使いのPCのコア数に合わせて、設定を大きくするほど、シミュレーション結果が早く得られる場合があります。|
- |parallel|並列実行する単位を指定してください。"player"(デフォルト)を指定した場合、AI対戦の組み合わせ毎に並列処理を実施します。また、"game"を指定した場合は、matchesの対戦回数をprocessesの数で分割して並列処理を実施します。シミュレートするAI対戦の組み合わせの数が、お使いのPCのコア数より少ない場合は、"game"を指定することで、より早く結果を得られる場合があります。|
- |random_opening|対戦開始から指定した手数までは、AI同士ランダムな手を打ち試合を進行します。指定された手数を超えるとAIは本来の手を打ちます。対戦開始の状況をランダムに振ることで、結果の偏りを減らしAIの強さを測りやすくします。不要な場合は0を指定してください。|
- |player_names|対戦させたいAI名をリストアップして下さい。指定する場合は第一引数の"プレイヤー情報"に含まれるものの中から選択してください。省略すると第一引数の"プレイヤー情報"と同一と扱います。リストアップされた全てのAI同士の総当たり戦を行います。|
+ |matches|AI同士の対戦回数を指定して下さい。100を指定した場合、AIの各組み合わせにつき先手と後手で100試合ずつ対戦する動作となります。|
+ |processes|並列実行数を指定して下さい。お使いのPCのコア数に合わせて、設定を大きくするほど、シミュレーション結果が早く得られる場合があります。|
+ |parallel|並列実行する単位を指定して下さい。"player"(デフォルト)を指定した場合、AI対戦の組み合わせ毎に並列処理を実施します。また、"game"を指定した場合は、matchesの対戦回数をprocessesの数で分割して並列処理を実施します。シミュレートするAI対戦の組み合わせの数が、お使いのPCのコア数より少ない場合は、"game"を指定することで、より早く結果を得られる場合があります。|
+ |random_opening|対戦開始から指定した手数までは、AI同士ランダムな手を打ち試合を進行します。指定された手数を超えるとAIは本来の手を打ちます。対戦開始の状況をランダムに振ることで、結果の偏りを減らしAIの強さを測りやすくします。不要な場合は0を指定して下さい。|
+ |player_names|対戦させたいAI名をリストアップして下さい。指定する場合は第一引数の"プレイヤー情報"に含まれるものの中から選択して下さい。省略すると第一引数の"プレイヤー情報"と同一と扱います。リストアップされた全てのAI同士の総当たり戦を行います。|
+ |perfect_check|有効にする場合はtrueを指定して下さい。全てのマスが同じ色の石で決着がついた場合に棋譜を残します。結果の棋譜は"./perfect_win.txt"に出力されます。|
 
 ##### 実行結果
 シミュレーション結果はシミュレーション実行後(startメソッド実行後)、下記のようにprint表示で確認できます。
@@ -473,7 +478,7 @@ class OriginalAI(AbstractStrategy):
 `BitBoard`クラスの方が処理速度がより高速なため、通常はこちらをご使用下さい。
 
 `Board`クラスをインスタンス化する際の引数に、数値を入れることで盤面のサイズを指定できます。
-サイズは4～26までの偶数としてください。省略時は8となります。
+サイズは4～26までの偶数として下さい。省略時は8となります。
 また、`size`プロパティにて盤面のサイズを確認することができます。
 
 コーディング例は下記のとおりです。
@@ -516,7 +521,7 @@ print(board)
 ###### get_legal_moves
 黒番または白番での着手可能な位置を返します。
 着手可能な位置は"XY座標のタプルのリスト"となります。
-引数には`black`(黒番)または`white`(白番)の文字列(以後`color`と呼びます)を指定してください。
+引数には`black`(黒番)または`white`(白番)の文字列(以後`color`と呼びます)を指定して下さい。
 
 ```Python
 from reversi import BitBoard
@@ -537,7 +542,7 @@ print(legal_moves)
 ###### get_flippable_discs
 指定位置に着手した場合の、ひっくり返せる石を返します。
 ひっくり返せる石は"XY座標のタプルのリスト"となります。
-第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定してください。
+第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定して下さい。
 
 ```Python
 from reversi import BitBoard
@@ -591,7 +596,7 @@ print(board.get_board_line_info('black'))
 ```
 盤面のマス目情報 + プレイヤー情報の形式となっています。
 
-引数にはプレイヤーを示す文字列('black'または'white')を指定してください。
+引数にはプレイヤーを示す文字列('black'または'white')を指定して下さい。
 
 デフォルトの文字の割り当ては以下の通りです
 - "*" : 黒プレイヤー
@@ -608,14 +613,14 @@ print(board.get_board_line_info(player='black', black='0', white='1', empty='.')
 ```
 ...........................10......01...........................0
 ```
-- player : 'black'(黒)か'white'(白)を指定してください。
-- black : 黒に割り当てる文字を指定してください
-- white : 白に割り当てる文字を指定してください
-- empty : 空きマスに割り当てる文字を指定してください
+- player : 'black'(黒)か'white'(白)を指定して下さい。
+- black : 黒に割り当てる文字を指定して下さい
+- white : 白に割り当てる文字を指定して下さい
+- empty : 空きマスに割り当てる文字を指定して下さい
 
 ###### put_disc
 指定位置に石を配置し、取れる石をひっくり返します。
-第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定してください。
+第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定して下さい。
 
 ```Python
 from reversi import BitBoard
@@ -633,7 +638,7 @@ print(board)
 ###### undo
 `put_disc`メソッドで置いた石を元に戻します。引数はありません。
 `put_disc`メソッドを呼び出した回数だけ、元に戻すことができます。
-`put_disc`メソッドを呼び出した回数を超えて、本メソッドを呼び出さないでください。
+`put_disc`メソッドを呼び出した回数を超えて、本メソッドを呼び出さないで下さい。
 
 ```Python
 from reversi import BitBoard
@@ -674,7 +679,7 @@ print(board)
 `move`オブジェクトを使うと、手を打つ座標の指定に、これまでのXY座標形式だけではなく、'a1'・'c3'などのstr形式が使えるようになります。<br>
 str形式のアルファベットは大文字・小文字どちらでもOKです。
 
-`Move`クラスをインポートして、下記のように使用してください。
+`Move`クラスをインポートして、下記のように使用して下さい。
 ```Python
 from reversi import BitBoard
 from reversi import C as c
@@ -708,6 +713,118 @@ print(m(5, 5, case='upper'))
 f5
 F6
 ```
+
+#### playerオブジェクトの使い方
+`player`オブジェクトは、リバーシのゲームAIをプレイヤーとして対戦に参加させるためのオブジェクトです。
+
+`player`オブジェクトは`color`(手番)と`name`(名前)、`strategy`(戦略)をそれぞれ引数に指定して作成します。`strategy`に指定できるAIの戦略は以降の[AIクラス編](#AIクラス編)で詳しくご紹介します。
+
+以下は`player`オブジェクトの黒番と白番のプレイヤーを準備する例です。AIの戦略はランダムに打ち手を選ぶものとしています。
+
+```python
+from reversi import BitBoard, Player
+from reversi.strategies import Random
+from reversi import C as c
+
+black = Player(c.black, 'BLACK', Random())
+white = Player(c.white, 'White', Random())
+```
+
+|引数|内容|
+|---|---|
+|color|プレイヤーの手番を指定して下さい|
+|name|文字列でプレイヤーの名前をお好きに決めて下さい|
+|strategy|プレイヤーの戦略(AIの頭脳)を指定して下さい|
+
+続いて、実際にAI同士が対戦するための`game`オブジェクトについて説明します。
+
+#### gameオブジェクトの使い方
+`game`オブジェクトを使うと、指定したプレイヤー同士をリバーシのルールに基づいて決着まで対戦させることができます。先述のシミュレータとは異なり、個別の対戦を自由にプログラミングしたい場合などに活用できます。
+
+`game`オブジェクトの作成には、黒プレイヤーオブジェクトと白プレイヤーオブジェクト、ボードオブジェクト(省略可能)を指定します。`play`メソッドを呼ぶと対戦を始めます。
+
+以下に、4x4の盤面にてランダムな打ち手同士で対戦をさせ、結果を表示する例です。
+
+```python
+from reversi import BitBoard, Player, Game
+from reversi.strategies import Random
+from reversi import C as c
+
+black = Player(c.black, 'BLACK', Random())
+white = Player(c.white, 'White', Random())
+
+board4 = BitBoard(4)
+print(board4)
+
+game = Game(black, white, board4)
+game.play()
+
+print(board4)
+print(game.result.winlose)
+print(game.result.black_name, game.result.black_num)
+print(game.result.white_name, game.result.white_num)
+```
+
+|引数|内容|
+|---|---|
+|black_player|黒プレイヤーを指定して下さい|
+|white_player|白プレイヤーを指定して下さい|
+|board|対戦させるボードを指定して下さい(省略可能)|
+|color|`color=c.white`とオプション引数指定すると、白番から開始可能です(省略可能)|
+
+
+(実行結果)<br>
+![game_object](https://raw.githubusercontent.com/y-tetsu/reversi/images/game_object.png)
+
+対戦結果は、`game`オブジェクトの`result`プロパティに格納されています。内容は以下の通りです。
+
+|プロパティ名|内容|
+|---|---|
+|winlose|勝敗(0:黒の勝ち、1:白の勝ち、2:引き分け|
+|black_name|黒プレイヤーの名前|
+|white_name|白プレイヤーの名前|
+|black_num|黒プレイヤーの石数|
+|white_num|白プレイヤーの石数|
+
+#### recorderオブジェクトの使い方
+`record`オブジェクトを使うと、`board`オブジェクトの打ち手の情報から、棋譜情報を取得することができます。
+
+以下はランダム対戦を実施し、その時の棋譜を出力する例です。
+```python
+from reversi import BitBoard, Player, Game, Recorder
+from reversi.strategies import Random
+from reversi import C as c
+
+black = Player(c.black, 'BLACK', Random())
+white = Player(c.white, 'White', Random())
+
+board4 = BitBoard(4)
+
+game = Game(black, white, board4)
+game.play()
+
+record = Recorder(board4)
+print(record)
+```
+
+(実行結果)
+```
+D3d4B1a1A2d2C4a3B4a4d1c1
+```
+
+先手の黒手番の場合はアルファベット大文字、白手番は小文字としております。
+
+また、`play`メソッドを使うと棋譜通りの進行を1手ずつテキストで表示します。
+
+```python
+record.play()
+```
+
+(実行結果)<br>
+![recorder_object](https://raw.githubusercontent.com/y-tetsu/reversi/images/recorder_object.png)
+
+※表示が長いため、途中で省略しております
+
 
 ### AIクラス編
 本ライブラリに用意されている各種AIクラスについて説明します。
@@ -759,7 +876,7 @@ Reversi({"SLOWSTARTER": SlowStarter()}).start()
 盤面のマス目の位置に重み(重要度)を設定して、<br>
 その重みを元に盤面を評価し、スコアが最も高くなる手を選びます。<br>
 マス目の重みは使用例の通り、パラメータにて自由に設定が可能です。<br>
-ただし、パラメータの値には実数値ではなく整数値(負の値も可)を設定してください。
+ただし、パラメータの値には実数値ではなく整数値(負の値も可)を設定して下さい。
 
 (使用例)
 ```Python
@@ -852,7 +969,7 @@ Reversi(
     }
 ).start()
 ```
-※持ち時間制限を外したい場合は、`NegaMax`クラスの代わりに`_NegaMax`クラスを使用してください。
+※持ち時間制限を外したい場合は、`NegaMax`クラスの代わりに`_NegaMax`クラスを使用して下さい。
 
 ##### AlphaBeta
 AlphaBeta法で手を選びます。不要な手(悪手)の読みを枝刈りする(打ち切る)ことでMinMax法より効率よく手を読みます。<br>
@@ -872,7 +989,7 @@ Reversi(
     }
 ).start()
 ```
-※持ち時間制限を外したい場合は、`AlphaBeta`クラスの代わりに`_AlphaBeta`クラスを使用してください。
+※持ち時間制限を外したい場合は、`AlphaBeta`クラスの代わりに`_AlphaBeta`クラスを使用して下さい。
 
 ##### NegaScout
 NegaScout法で手を選びます。AlphaBeta法の枝刈りに加えて自身の着手可能数がより多くなる手を優先的に読むよう設定しています。<br>
@@ -892,7 +1009,7 @@ Reversi(
     }
 ).start()
 ```
-※持ち時間制限を外したい場合は、`NegaScout`クラスの代わりに`_NegaScout`クラスを使用してください。
+※持ち時間制限を外したい場合は、`NegaScout`クラスの代わりに`_NegaScout`クラスを使用して下さい。
 
 #### 評価関数のカスタマイズ方法
 評価関数のカスタマイズにはEvaluatorクラスを使用します。<br>
@@ -1001,7 +1118,7 @@ print(board)
 ![myevaluator](https://raw.githubusercontent.com/y-tetsu/reversi/images/myevaluator.png)
 
 なお、Evaluatorクラスのevaluate関数の引数には以下が渡されます。<br>
-必要に応じて使用してください。
+必要に応じて使用して下さい。
 
  |引数|説明|
  |:---|:---|
@@ -1155,7 +1272,7 @@ tkinterアプリケーションで遊ぶには、以下の2通りの方法がご
 
 ### ダウンロード
 Windows版のアプリケーションで遊ぶ場合は下記リンクをクリックし、<br>
-"reversi.zip"をダウンロードしてください(無料)。<br>
+"reversi.zip"をダウンロードして下さい(無料)。<br>
 
 - [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.19/reversi.zip)
 
@@ -1401,11 +1518,11 @@ Successfully installed pip-20.0.2
 
 ### 3. 関連パッケージのインストール
 **reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
-事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいてください。<br>
+事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいて下さい。<br>
 ```
 $ py -3.7 -m pip install -r requirements.txt
 ```
-もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行してください。
+もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行して下さい。
 
 ### 4. Visual C++のインストール
 **reversi**の実行にはC言語のコンパイル環境が必要となります。<br>
@@ -1413,7 +1530,7 @@ $ py -3.7 -m pip install -r requirements.txt
 [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
 
 ### 5. 動作確認
-[サンプル](https://github.com/y-tetsu/reversi/blob/master/README.md#サンプル)を参照して、サンプルが動作するか確認してください。
+[サンプル](https://github.com/y-tetsu/reversi/blob/master/README.md#サンプル)を参照して、サンプルが動作するか確認して下さい。
 
 ### (パッケージインストールの補足)
 #### cythonパッケージのインストール
@@ -1444,6 +1561,16 @@ $ py -3.7 -m pip install wheel
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
 
+
+---
+## 活用事例
+### shirox22さんのページ
+- 「Google音声認識ライブラリを使用して、音声オセロを作成」https://qiita.com/shirox22/items/b9ea6d6c90a172cb9968
+
+### その他
+- 「自作したリバーシAIでEdaxに挑む！」https://qiita.com/y-tetsu/items/2d5a199e401aa846891f
+- 「リバーシの全消しパターンを見てみたい！」https://qiita.com/y-tetsu/items/6856dc50f1b130b26a56
+- 「天下一リバーシAI武道会」https://qiita.com/y-tetsu/items/2a32a157567655fa12ac
 
 ---
 ## 参考書籍
