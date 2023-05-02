@@ -931,10 +931,12 @@ class TestApp(unittest.TestCase):
             self.assertEqual(lines[19], ' 18 : Two')
             self.assertEqual(lines[20], ' 19 : Equal')
             self.assertEqual(lines[21], ' 20 : Xhole')
-            self.assertEqual(lines[22], '-----------------------------')
-            self.assertEqual(lines[23], '>> ')
+            self.assertEqual(lines[22], ' 21 : Inside')
+            self.assertEqual(lines[23], ' 22 : Outside')
+            self.assertEqual(lines[24], '-----------------------------')
+            self.assertEqual(lines[25], '>> ')
             with self.assertRaises(IndexError):
-                print(lines[24])
+                print(lines[26])
 
             self.assertEqual(ret, list(X.keys())[i])
 
