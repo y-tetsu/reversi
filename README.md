@@ -151,6 +151,7 @@ $ py -3.7 10_x_elucidator.py
 - 「自作したリバーシAIでEdaxに挑む！」https://qiita.com/y-tetsu/items/2d5a199e401aa846891f
 - 「リバーシの全消しパターンを見てみたい！」https://qiita.com/y-tetsu/items/6856dc50f1b130b26a56
 - 「天下一リバーシAI武道会」https://qiita.com/y-tetsu/items/2a32a157567655fa12ac
+- 「リバーシの最短全滅手順を幅優先探索であぶり出す！」https://qiita.com/y-tetsu/items/2ec05d184bf6cf9ac869
 
 
 ## ライブラリの使い方
