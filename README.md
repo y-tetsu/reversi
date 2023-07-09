@@ -43,6 +43,7 @@
         - [序盤の定石打ちを追加する方法](#序盤の定石打ちを追加する方法)
         - [手の進行に応じてAIを切り替える方法](#手の進行に応じてAIを切り替える方法)
         - [終盤に完全読みを追加する方法](#終盤に完全読みを追加する方法)
+        - [対戦の開始前と終了後に特定の処理を入れる方法](#対戦の開始前と終了後に特定の処理を入れる方法)
 - [tkinterアプリケーションの遊び方](#tkinterアプリケーションの遊び方)
     - [ゲーム紹介](#ゲーム紹介)
     - [ダウンロード](#ダウンロード)
@@ -1247,7 +1248,7 @@ Reversi(
 import random
 
 from reversi import Reversi
-from reversi.strategies import Switch, _EndGame
+from reversi.strategies import AbstractStrategy, Switch, _EndGame
 
 class MyAI(AbstractStrategy):
     """自作AI(ランダムに打つ)"""
@@ -1271,6 +1272,39 @@ Reversi(
 ).start()
 ```
 
+#### 対戦の開始前と終了後に特定の処理を入れる方法
+AIクラスに特定のメソッドを追加する事で、シミュレータの実施やアプリケーションでの対戦など、毎ゲームの開始と終了のタイミングで任意の処理を実行することが可能となります。
+
+以下のように、AIクラスのプログラミング時に`setup`と`teardown`メソッドを追加して下さい。
+
+
+`setup`メソッドには対戦開始前に実施したい処理を書いて下さい。引数の`board`オブジェクトが参照可能です。また、`teardown`メソッドには対戦終了後に実施したい処理を書いて下さい。引数の`board`オブジェクトと、対戦結果の`result`オブジェクトが参照可能です。不要な場合はいずれのメソッドも省略可能です。
+
+```Python
+from reversi.strategies import AbstractStrategy
+
+class MyAI(AbstractStrategy):
+    def setup(self, board):
+        # 対戦開始前の処理を書いて下さい。
+        # - 引数からboardオブジェクトのみ参照できます。
+
+    def teardown(self, board, result):
+        # 対戦終了後の処理を書いて下さい。
+        # - 引数からboardオブジェクトと、対戦結果のresultオブジェクトを参照できます。
+        #   (resultには以下の情報が格納されています)
+        #    result.winlose    : 対戦結果(0=黒の勝ち、1=白の勝ち、2=引き分け)
+        #    result.black_name : 黒のAIの名前
+        #    result.white_name : 白のAIの名前
+        #    result.black_num  : 黒の石の数
+        #    result.white_num  : 白の石の数
+
+    def next_move(self, color, board):
+        #
+        # 次の一手(X, Y)を決めるロジックをコーディングして下さい。
+        #
+
+        return (X, Y)
+```
 
 ---
 ## tkinterアプリケーションの遊び方
