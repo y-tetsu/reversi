@@ -24,6 +24,11 @@ class Game:
         if not self.result:
             self.display.progress(self.board, self.black_player, self.white_player)
 
+            # setup for Player
+            for p in [self.black_player, self.white_player]:
+                if hasattr(p.strategy, 'setup'):
+                    p.strategy.setup(self.board)
+
             while True:
                 playable, foul_player = 0, None
 
@@ -57,6 +62,11 @@ class Game:
                 if not playable:
                     self._judge()
                     break
+
+            # teardown for Player
+            for p in [self.black_player, self.white_player]:
+                if hasattr(p.strategy, 'teardown'):
+                    p.strategy.teardown(self.board, self.result)
 
     def _foul(self, player):
         """foul

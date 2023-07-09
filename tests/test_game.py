@@ -482,3 +482,73 @@ class TestGame(unittest.TestCase):
             self.assertEqual(game5.result.white_name, 'Foul')
             self.assertEqual(game5.result.black_num, 4)
             self.assertEqual(game5.result.white_num, 1)
+
+    def test_game_players_setup(self):
+        class SetUp(AbstractStrategy):
+            def init(self):
+                self.info = None
+
+            def setup(self, board):
+                self.info = board.get_board_info()
+
+            def next_move(self, color, board):
+                return board.get_legal_moves(color)[0]
+
+        p1 = Player('black', 'setup1', SetUp())
+        p2 = Player('white', 'setup2', SetUp())
+        board = Board(6)
+        expected = board.get_board_info()
+
+        game = Game(p1, p2, board, NoneDisplay())
+        game.play()
+
+        self.assertEqual(p1.strategy.info, expected)
+        self.assertEqual(p2.strategy.info, expected)
+
+        board = Board(8)
+        expected = board.get_board_info()
+
+        game = Game(p1, p2, board, NoneDisplay())
+        game.play()
+
+        self.assertEqual(p1.strategy.info, expected)
+        self.assertEqual(p2.strategy.info, expected)
+
+    def test_game_players_teardown(self):
+        class TearDown(AbstractStrategy):
+            def init(self):
+                self.info = None
+                self.result = None
+
+            def teardown(self, board, result):
+                self.info = board.get_board_info()
+                self.result = result
+
+            def next_move(self, color, board):
+                return board.get_legal_moves(color)[0]
+
+        p1 = Player('black', 'setup1', TearDown())
+        p2 = Player('white', 'setup2', TearDown())
+        board = Board(6)
+
+        game = Game(p1, p2, board, NoneDisplay())
+        game.play()
+        expected_board = board.get_board_info()
+        expected_result = game.result
+
+        self.assertEqual(p1.strategy.info, expected_board)
+        self.assertEqual(p1.strategy.result, expected_result)
+        self.assertEqual(p2.strategy.info, expected_board)
+        self.assertEqual(p2.strategy.result, expected_result)
+
+        board = Board(8)
+
+        game = Game(p1, p2, board, NoneDisplay())
+        game.play()
+        expected_board = board.get_board_info()
+        expected_result = game.result
+
+        self.assertEqual(p1.strategy.info, expected_board)
+        self.assertEqual(p1.strategy.result, expected_result)
+        self.assertEqual(p2.strategy.info, expected_board)
+        self.assertEqual(p2.strategy.result, expected_result)
