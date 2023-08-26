@@ -66,9 +66,9 @@ ASSIST_OFFSET_X = 20   # アシストのXオフセット
 ASSIST_OFFSET_Y = 40   # アシストのYオフセット
 ASSIST_FONT_SIZE = 12  # アシストのフォントサイズ
 
-RECORD_OFFSET_X = 1270 # 棋譜出力のXオフセット
-RECORD_OFFSET_Y = 40   # 棋譜出力のYオフセット
-RECORD_FONT_SIZE = 12  # 棋譜出力のフォントサイズ
+RECORD_OFFSET_X = 1270  # 棋譜出力のXオフセット
+RECORD_OFFSET_Y = 40    # 棋譜出力のYオフセット
+RECORD_FONT_SIZE = 12   # 棋譜出力のフォントサイズ
 
 CPUTIME_OFFSET_X = 20   # CPUの持ち時間のXオフセット
 CPUTIME_OFFSET_Y = 20   # CPUの持ち時間のYオフセット
