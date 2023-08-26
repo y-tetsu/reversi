@@ -4,11 +4,9 @@
 import os
 import json
 import itertools
-import datetime
 from multiprocessing import Pool
 
 from reversi import Board, BitBoard, Player, NoneDisplay, Game, X
-from reversi import C as c
 from reversi.strategies import RandomOpening
 
 
@@ -16,22 +14,23 @@ class Simulator:
     """
     ゲームをシミュレーションする
     """
-    def __init__(self,
-            players_info,
-            setting_file=None,
-            board_size=8,
-            board_type='bitboard',
-            board_name=None,
-            first='black',
-            matches=10,
-            processes=1,
-            progress=True,
-            parallel='player',
-            random_opening=8,
-            swap=True,
-            perfect_check=False,
-            player_names=None,
-        ):
+    def __init__(
+        self,
+        players_info,
+        setting_file=None,
+        board_size=8,
+        board_type='bitboard',
+        board_name=None,
+        first='black',
+        matches=10,
+        processes=1,
+        progress=True,
+        parallel='player',
+        random_opening=8,
+        swap=True,
+        perfect_check=False,
+        player_names=None,
+    ):
         setting = {}
         if setting_file is not None:
             if os.path.isfile(setting_file):
@@ -255,7 +254,21 @@ class Simulator:
             if (i + 1) % 5 == 0 and self.progress:
                 print("    -", black.name, white.name, i + 1)
 
-            board = BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white) if self.board_type == 'bitboard' else Board(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white)
+            board = None
+            if self.board_type == 'bitboard':
+                board = BitBoard(
+                    self.board_size,
+                    hole=self.hole,
+                    ini_black=self.ini_black,
+                    ini_white=self.ini_white,
+                )
+            else:
+                board = Board(
+                    self.board_size,
+                    hole=self.hole,
+                    ini_black=self.ini_black,
+                    ini_white=self.ini_white,
+                )
             game = Game(black, white, board, NoneDisplay(), self.first)
             game.play()
             ret.append(game.result)
