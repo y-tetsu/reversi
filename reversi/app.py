@@ -118,7 +118,7 @@ class Reversi:
         登録ファイルを読み込む
         """
         if os.path.isfile(extra_file):
-            with open(extra_file, 'r') as f:
+            with open(extra_file, 'r', encoding='utf-8') as f:
                 name, cmd, timeouttime = None, None, None
                 try:
                     # 設定の読み出し
@@ -229,7 +229,7 @@ class Reversi:
             black_name = players['black'].name
             white_name = players['white'].name
             record_name = now.strftime('%Y%m%d%H%M%S') + '_' + black_name + '_vs_' + white_name + '.txt'
-            with open(record_name, 'w') as f:
+            with open(record_name, 'w', encoding='utf-8') as f:
                 f.write('\n')
                 f.write('-------------------------------------------\n')
                 f.write(now.strftime('%Y/%m/%d %H:%M:%S') + '\n')
