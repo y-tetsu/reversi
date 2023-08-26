@@ -35,7 +35,7 @@ class Simulator:
         setting = {}
         if setting_file is not None:
             if os.path.isfile(setting_file):
-                with open(setting_file) as f:
+                with open(setting_file, encoding='utf-8') as f:
                     setting = json.load(f)
             else:
                 setting = {
