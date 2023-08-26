@@ -22,6 +22,8 @@ WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
+CANVAS_MERGINE = 4  # キャンバスの余白
+
 COLOR_SLATEGRAY = 'slategray'  # スレートグレイ
 COLOR_BLACK = 'black'          # 黒
 COLOR_WHITE = 'white'          # 白
@@ -189,6 +191,13 @@ class Window(tk.Frame):
         # キャンバスを配置
         self.canvas = tk.Canvas(self, width=WINDOW_WIDTH, height=WINDOW_HEIGHT, bg=COLOR_SLATEGRAY)
         self.canvas.grid(row=0, column=0)
+
+        # 表示サイズと位置
+        x_offset = (root.winfo_screenwidth() // 2) - (WINDOW_WIDTH // 2)
+        y_offset = (root.winfo_screenheight() // 2) - (WINDOW_HEIGHT // 2)
+        width = WINDOW_WIDTH + CANVAS_MERGINE
+        height = WINDOW_HEIGHT + CANVAS_MERGINE
+        self.root.geometry(f'{width}x{height}+{x_offset}+{y_offset}')
 
     def init_screen(self):
         """
