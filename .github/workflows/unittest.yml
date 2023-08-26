@@ -1,0 +1,27 @@
+name: unittest
+
+on:
+  push:
+    paths:
+      - '**.py'
+      - '**.pyx'
+
+jobs:
+  unittest:
+    runs-on: windows-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.7
+          architecture: x64
+      - name: Checkout reversi
+        uses: actions/checkout@master
+      - name: get python version
+        run: python -V
+      - name: Install requirements.txt
+        run: 
+             python -m pip install --upgrade pip
+             pip install -r requirements.txt
+      - name: unittest for python
+        run: python -m unittest discover tests -v
