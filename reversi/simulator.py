@@ -1,6 +1,5 @@
 """Simulator
 """
-
 import os
 import json
 import itertools
@@ -147,7 +146,10 @@ class Simulator:
             self.ini_black = X[self.board_name][1]
             self.ini_white = X[self.board_name][2]
             print(f'[{self.board_name}]')
-        print(BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white))
+
+        b = BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white)
+        print(str(b).encode('cp932').decode('cp932'))
+        #print((BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white)).decode('cp932'))
 
         self.game_results = []
         self.total = []
