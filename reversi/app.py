@@ -11,7 +11,7 @@ import threading
 from platform import system
 from ctypes import windll
 
-from reversi import BitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, X, Recorder
+from reversi import BitBoard, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, X, Recorder
 
 
 class Reversi:
