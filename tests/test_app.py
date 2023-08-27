@@ -7,7 +7,7 @@ import os
 import re
 from pathlib import Path
 
-from reversi import Reversi, Reversic, Window, ErrorMessage, MIN_BOARD_SIZE, MAX_BOARD_SIZE, X
+from reversi import Reversi, Reversic, Window, ErrorMessage, X
 from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
 
 
@@ -794,7 +794,7 @@ class TestApp(unittest.TestCase):
 
     def test_reversic__start(self):
         app = Reversic()
-        app._clear_screen = lambda : False
+        app._clear_screen = lambda: False
         with captured_stdout() as stdout:
             app._Reversic__start()
 
@@ -898,7 +898,7 @@ class TestApp(unittest.TestCase):
 
     def test_reversic_get_board_type(self):
         app = Reversic()
-        app._clear_screen = lambda : False
+        app._clear_screen = lambda: False
 
         # normal pattern
         for i, _ in enumerate(X.keys()):
@@ -942,7 +942,7 @@ class TestApp(unittest.TestCase):
 
     def test_reversic_get_player(self):
         app = Reversic()
-        app._clear_screen = lambda : False
+        app._clear_screen = lambda: False
         test_players = {'Test1': None, 'Test2': None}
 
         # normal pattern
@@ -1014,8 +1014,8 @@ class TestApp(unittest.TestCase):
                 return move
 
         app = Reversic({'BLACK_FOUL': BlackFoul()}, sleep_time_play=0.001, sleep_time_turn=0.001, sleep_time_move=0.001)
-        app._clear_screen = lambda : False
-        app._wait_enter = lambda : False
+        app._clear_screen = lambda: False
+        app._wait_enter = lambda: False
         app.player_names = {'black': 'BLACK_FOUL', 'white': 'BLACK_FOUL'}
         app.board_type = 'X'
         app.state = None

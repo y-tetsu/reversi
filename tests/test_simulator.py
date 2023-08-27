@@ -12,7 +12,6 @@ from reversi import Simulator
 from reversi.strategies import AbstractStrategy, Unselfish, Random, Greedy, SlowStarter, Table, RandomOpening, _AlphaBeta
 from reversi.strategies.coordinator import Evaluator_TPW
 
-
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
@@ -339,6 +338,7 @@ class TestSimulator(unittest.TestCase):
 
         class WhiteWin(AbstractStrategy):
             done = False
+
             def next_move(self, color, board):
                 depth = board._black_score + board._white_score - 4
                 move = None
@@ -418,6 +418,7 @@ class TestSimulator(unittest.TestCase):
 
         class WhiteWin(AbstractStrategy):
             done = False
+
             def next_move(self, color, board):
                 depth = board._black_score + board._white_score - 4
                 move = None
@@ -446,7 +447,6 @@ class TestSimulator(unittest.TestCase):
                 if not self.done:
                     print(result.winlose)
                     self.done = True
-
 
         players_info = {
             'WhiteWin1': WhiteWin(),
@@ -501,6 +501,8 @@ class TestSimulator(unittest.TestCase):
         }
         with captured_stdout() as stdout:
             simulator = Simulator(players_info, json_file)
+            print(simulator)
+
         os.remove(json_file)
         lines = stdout.getvalue().splitlines()
         self.assertEqual(lines[0], "[Diamond]")

@@ -28,8 +28,8 @@ class TestDisplay(unittest.TestCase):
         self.assertEqual(display.sleep_time_move, 1)
 
         display = ConsoleDisplay(sleep_time_turn=0.001, sleep_time_move=0.001)
-        display._setup_screen = lambda : False
-        display._teardown_screen = lambda : False
+        display._setup_screen = lambda: False
+        display._teardown_screen = lambda: False
         display._show_board = print
         self.assertEqual(display.sleep_time_turn, 0.001)
         self.assertEqual(display.sleep_time_move, 0.001)

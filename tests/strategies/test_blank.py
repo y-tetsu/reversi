@@ -5,7 +5,7 @@ import unittest
 import os
 
 from reversi.board import BitBoard
-from reversi.strategies.common import Measure, Timer
+from reversi.strategies.common import Measure
 from reversi.strategies import _Blank_, _Blank, Blank_, Blank, _NegaScout_, _NegaScout, NegaScout_, NegaScout, IterativeDeepning
 import reversi.strategies.coordinator as coord
 
@@ -76,7 +76,6 @@ class TestBlank(unittest.TestCase):
             search=Blank(),
         )
 
-        #Timer.time_limit = 1.2
         key = iterative.__class__.__name__ + str(os.getpid())
         Measure.elp_time[key] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         key2 = iterative.search.__class__.__name__ + str(os.getpid())

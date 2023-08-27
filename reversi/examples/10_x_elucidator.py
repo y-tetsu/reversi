@@ -2,15 +2,11 @@
 """
 
 import os
-import datetime
-import random
-import shutil
 import re
 import json
 
-from reversi import BitBoard, Game, Player, Move, Elucidator, Simulator, Recorder
+from reversi import BitBoard, Elucidator
 from reversi import C as c
-from reversi.strategies import Random, _EndGame_
 
 
 DO_RANDOM_MOVE_MATCHES = True
@@ -22,61 +18,61 @@ VERIFY_RECORD = True
 RANDOM_MATCH = 10000
 CONTROLL = {
     # name         : [random, best,  max,   shortest]
-    'X'            : [False,  False, False, False],
-    'x'            : [False,  False, False, False],
-    'Cross'        : [False,  False, False, False],
-    'Plus'         : [False,  False, False, False],
-    'Drone-8'      : [False,  False, False, False],
-    'Drone-6'      : [False,  False, False, False],
-    'Kazaguruma-8' : [False,  False, False, False],
-    'Kazaguruma-6' : [False,  False, False, False],
-    'Manji-8'      : [False,  False, False, False],
-    'Manji-6'      : [False,  False, False, False],
-    'S'            : [False,  False, False, False],
-    'Random'       : [False,  False, False, False],
-    'Square-8'     : [False,  False, False, False],
-    'Square-6'     : [False,  False, False, False],
-    'Square-4'     : [True,   True,  True,  True],
-    'Rectangle'    : [False,  False, False, False],
-    'Octagon'      : [False,  False, False, False],
-    'Diamond'      : [False,  False, False, False],
-    'T'            : [False,  False, False, False],
-    'Torus'        : [False,  False, False, False],
-    'Two'          : [False,  False, False, False],
-    'Equal'        : [False,  False, False, False],
-    'Xhole'        : [False,  False, False, False],
-    'C'            : [False,  False, False, False],
-    'Rainbow'      : [False,  False, False, False],
-    'Pylamid'      : [False,  False, False, False],
-    'Heart'        : [False,  False, False, False],
-    'Waffle'       : [False,  False, False, False],
-    'Bonsai'       : [False,  False, False, False],
-    'Satellite'    : [False,  False, False, False],
-    'Peach'        : [False,  False, False, False],
-    'Pumpkin'      : [False,  False, False, False],
-    'Scarab'       : [False,  False, False, False],
-    'Globe'        : [False,  False, False, False],
-    'E'            : [False,  False, False, False],
-    'Ring'         : [False,  False, False, False],
-    'Inside'       : [False,  False, False, False],
-    'Outside'      : [False,  False, False, False],
-    'Skull'        : [False,  False, False, False],
-    'Hourglass'    : [False,  False, False, False],
-    'Treasure'     : [False,  False, False, False],
-    'Rosetta'      : [False,  False, False, False],
-    'Chaos'        : [False,  False, False, False],
-    'B'            : [False,  False, False, False],
-    'Blackhole'    : [False,  False, False, False],
-    'W'            : [False,  False, False, False],
-    'Whitehole'    : [False,  False, False, False],
-    'Reunion'      : [False,  False, False, False],
-    'Universe'     : [False,  False, False, False],
-    'Pioneer'      : [False,  False, False, False],
-    'Chair'        : [False,  False, False, False],
-    'Coffeecup'    : [False,  False, False, False],
-    'House'        : [False,  False, False, False],
-    'Alien'        : [False,  False, False, False],
-    'Cyborg'       : [False,  False, False, False],
+    'X'            : [False,  False, False, False],  # noqa: E203
+    'x'            : [False,  False, False, False],  # noqa: E203
+    'Cross'        : [False,  False, False, False],  # noqa: E203
+    'Plus'         : [False,  False, False, False],  # noqa: E203
+    'Drone-8'      : [False,  False, False, False],  # noqa: E203
+    'Drone-6'      : [False,  False, False, False],  # noqa: E203
+    'Kazaguruma-8' : [False,  False, False, False],  # noqa: E203
+    'Kazaguruma-6' : [False,  False, False, False],  # noqa: E203
+    'Manji-8'      : [False,  False, False, False],  # noqa: E203
+    'Manji-6'      : [False,  False, False, False],  # noqa: E203
+    'S'            : [False,  False, False, False],  # noqa: E203
+    'Random'       : [False,  False, False, False],  # noqa: E203
+    'Square-8'     : [False,  False, False, False],  # noqa: E203
+    'Square-6'     : [False,  False, False, False],  # noqa: E203
+    'Square-4'     : [True,   True,  True,  True],   # noqa: E203
+    'Rectangle'    : [False,  False, False, False],  # noqa: E203
+    'Octagon'      : [False,  False, False, False],  # noqa: E203
+    'Diamond'      : [False,  False, False, False],  # noqa: E203
+    'T'            : [False,  False, False, False],  # noqa: E203
+    'Torus'        : [False,  False, False, False],  # noqa: E203
+    'Two'          : [False,  False, False, False],  # noqa: E203
+    'Equal'        : [False,  False, False, False],  # noqa: E203
+    'Xhole'        : [False,  False, False, False],  # noqa: E203
+    'C'            : [False,  False, False, False],  # noqa: E203
+    'Rainbow'      : [False,  False, False, False],  # noqa: E203
+    'Pylamid'      : [False,  False, False, False],  # noqa: E203
+    'Heart'        : [False,  False, False, False],  # noqa: E203
+    'Waffle'       : [False,  False, False, False],  # noqa: E203
+    'Bonsai'       : [False,  False, False, False],  # noqa: E203
+    'Satellite'    : [False,  False, False, False],  # noqa: E203
+    'Peach'        : [False,  False, False, False],  # noqa: E203
+    'Pumpkin'      : [False,  False, False, False],  # noqa: E203
+    'Scarab'       : [False,  False, False, False],  # noqa: E203
+    'Globe'        : [False,  False, False, False],  # noqa: E203
+    'E'            : [False,  False, False, False],  # noqa: E203
+    'Ring'         : [False,  False, False, False],  # noqa: E203
+    'Inside'       : [False,  False, False, False],  # noqa: E203
+    'Outside'      : [False,  False, False, False],  # noqa: E203
+    'Skull'        : [False,  False, False, False],  # noqa: E203
+    'Hourglass'    : [False,  False, False, False],  # noqa: E203
+    'Treasure'     : [False,  False, False, False],  # noqa: E203
+    'Rosetta'      : [False,  False, False, False],  # noqa: E203
+    'Chaos'        : [False,  False, False, False],  # noqa: E203
+    'B'            : [False,  False, False, False],  # noqa: E203
+    'Blackhole'    : [False,  False, False, False],  # noqa: E203
+    'W'            : [False,  False, False, False],  # noqa: E203
+    'Whitehole'    : [False,  False, False, False],  # noqa: E203
+    'Reunion'      : [False,  False, False, False],  # noqa: E203
+    'Universe'     : [False,  False, False, False],  # noqa: E203
+    'Pioneer'      : [False,  False, False, False],  # noqa: E203
+    'Chair'        : [False,  False, False, False],  # noqa: E203
+    'Coffeecup'    : [False,  False, False, False],  # noqa: E203
+    'House'        : [False,  False, False, False],  # noqa: E203
+    'Alien'        : [False,  False, False, False],  # noqa: E203
+    'Cyborg'       : [False,  False, False, False],  # noqa: E203
 }
 
 
@@ -110,35 +106,35 @@ def output_file(board_conf, ex='json'):
 
             # propaty
             conf = board_conf[name]
-            f.write('        "no"                       : '  + str(conf['no'])                                  + ',\n')
-            f.write('        "continent"                : "' + conf['continent']                                + '",\n')
-            f.write('        "type"                     : "' + conf['type']                                     + '",\n')
-            f.write('        "negative"                 : '  + deco(conf['negative'])                           + ',\n')
-            f.write('        "first"                    : '  + deco(conf['first'])                              + ',\n')
-            f.write('        "size"                     : '  + deco(conf['size'])                               + ',\n')
-            f.write('        "hole"                     : [' + ", ".join([deco(h) for h in conf['hole']])       + '],\n')
-            f.write('        "color_code"               : "' + conf['color_code']                               + '",\n')
-            f.write('        "init_black"               : [' + ", ".join([deco(h) for h in conf['init_black']]) + '],\n')
-            f.write('        "init_white"               : [' + ", ".join([deco(h) for h in conf['init_white']]) + '],\n')
-            f.write('        "init_green"               : [' + ", ".join([deco(h) for h in conf['init_green']]) + '],\n')
-            f.write('        "init_ash"                 : [' + ", ".join([deco(h) for h in conf['init_ash']])   + '],\n')
-            f.write('        "black"                    : '  + '[]'                                             + ',\n')
-            f.write('        "white"                    : '  + '[]'                                             + ',\n')
-            f.write('        "squares"                  : "' + conf['squares']                                  + '",\n')
-            f.write('        "blanks"                   : '  + str(conf['blanks'])                              + ',\n')
-            f.write('        "random_10000_matches"     : "' + conf['random_10000_matches']                     + '",\n')
-            f.write('        "best_match_winner"        : "' + conf['best_match_winner']                        + '",\n')
-            f.write('        "best_match_score"         : "' + conf['best_match_score']                         + '",\n')
-            f.write('        "best_match_record"        : "' + conf['best_match_record']                        + '",\n')
-            f.write('        "black_max_score"          : "' + conf['black_max_score']                          + '",\n')
-            f.write('        "black_max_record"         : "' + conf['black_max_record']                         + '",\n')
-            f.write('        "white_max_score"          : "' + conf['white_max_score']                          + '",\n')
-            f.write('        "white_max_record"         : "' + conf['white_max_record']                         + '",\n')
-            f.write('        "black_shortest_move_count": '  + str(conf['black_shortest_move_count'])           + ',\n')
-            f.write('        "black_shortest_record"    : "' + conf['black_shortest_record']                    + '",\n')
-            f.write('        "white_shortest_move_count": '  + str(conf['white_shortest_move_count'])           + ',\n')
-            f.write('        "white_shortest_record"    : "' + conf['white_shortest_record']                    + '",\n')
-            f.write('        "note"                     : "' + conf['note']                                     + '"\n')
+            f.write('        "no"                       : '  + str(conf['no'])                                  + ',\n')   # noqa: E221
+            f.write('        "continent"                : "' + conf['continent']                                + '",\n')  # noqa: E221
+            f.write('        "type"                     : "' + conf['type']                                     + '",\n')  # noqa: E221
+            f.write('        "negative"                 : '  + deco(conf['negative'])                           + ',\n')   # noqa: E221
+            f.write('        "first"                    : '  + deco(conf['first'])                              + ',\n')   # noqa: E221
+            f.write('        "size"                     : '  + deco(conf['size'])                               + ',\n')   # noqa: E221
+            f.write('        "hole"                     : [' + ", ".join([deco(h) for h in conf['hole']])       + '],\n')  # noqa: E221
+            f.write('        "color_code"               : "' + conf['color_code']                               + '",\n')  # noqa: E221
+            f.write('        "init_black"               : [' + ", ".join([deco(h) for h in conf['init_black']]) + '],\n')  # noqa: E221
+            f.write('        "init_white"               : [' + ", ".join([deco(h) for h in conf['init_white']]) + '],\n')  # noqa: E221
+            f.write('        "init_green"               : [' + ", ".join([deco(h) for h in conf['init_green']]) + '],\n')  # noqa: E221
+            f.write('        "init_ash"                 : [' + ", ".join([deco(h) for h in conf['init_ash']])   + '],\n')  # noqa: E221
+            f.write('        "black"                    : '  + '[]'                                             + ',\n')   # noqa: E221
+            f.write('        "white"                    : '  + '[]'                                             + ',\n')   # noqa: E221
+            f.write('        "squares"                  : "' + conf['squares']                                  + '",\n')  # noqa: E221
+            f.write('        "blanks"                   : '  + str(conf['blanks'])                              + ',\n')   # noqa: E221
+            f.write('        "random_10000_matches"     : "' + conf['random_10000_matches']                     + '",\n')  # noqa: E221
+            f.write('        "best_match_winner"        : "' + conf['best_match_winner']                        + '",\n')  # noqa: E221
+            f.write('        "best_match_score"         : "' + conf['best_match_score']                         + '",\n')  # noqa: E221
+            f.write('        "best_match_record"        : "' + conf['best_match_record']                        + '",\n')  # noqa: E221
+            f.write('        "black_max_score"          : "' + conf['black_max_score']                          + '",\n')  # noqa: E221
+            f.write('        "black_max_record"         : "' + conf['black_max_record']                         + '",\n')  # noqa: E221
+            f.write('        "white_max_score"          : "' + conf['white_max_score']                          + '",\n')  # noqa: E221
+            f.write('        "white_max_record"         : "' + conf['white_max_record']                         + '",\n')  # noqa: E221
+            f.write('        "black_shortest_move_count": '  + str(conf['black_shortest_move_count'])           + ',\n')   # noqa: E221
+            f.write('        "black_shortest_record"    : "' + conf['black_shortest_record']                    + '",\n')  # noqa: E221
+            f.write('        "white_shortest_move_count": '  + str(conf['white_shortest_move_count'])           + ',\n')   # noqa: E221
+            f.write('        "white_shortest_record"    : "' + conf['white_shortest_record']                    + '",\n')  # noqa: E221
+            f.write('        "note"                     : "' + conf['note']                                     + '"\n')   # noqa: E221
 
             if cnt == last - 1:
                 f.write('    }\n')
@@ -241,7 +237,7 @@ if __name__ == '__main__':
             conf["black_max_score"], conf["black_max_record"], conf["white_max_score"], conf["white_max_record"] = elucidator.get_max_winner()
 
         if CONTROLL[name][3] and DO_SHORTEST:
-            conf["black_shortest_move_count"], conf["black_shortest_record"], conf["white_shortest_move_count"], conf["white_shortest_record"] = elucidator.get_shortest_winner()
+            conf["black_shortest_move_count"], conf["black_shortest_record"], conf["white_shortest_move_count"], conf["white_shortest_record"] = elucidator.get_shortest_winner()  # noqa: E501
 
         if VERIFY_RECORD:
             if conf["best_match_record"] != "?":
@@ -269,7 +265,6 @@ if __name__ == '__main__':
                 elucidator.verify_record(conf["white_shortest_record"], move_count=move_count)
 
     print('-------------------------------')
-
 
     # save conf
     output_file(board_conf, 'json')

@@ -94,16 +94,10 @@ class Elucidator:
                         progress=False,
                     )
         simulator.start()
-        #print(simulator)
 
         # print result
-        black_wins = simulator.total[black][white]['wins']
-        white_wins = simulator.total[white][black]['wins']
-        draws = simulator.total[white][black]['draws']
         random_win_black_rate = "{:3.1f}%".format(simulator.result_ratio[black])
-        random_win_black = str(black_wins) + "/" + str(matches) + " " + random_win_black_rate
         random_win_white_rate = "{:3.1f}%".format(simulator.result_ratio[white])
-        random_win_white = random_win_white_rate + " " + str(white_wins) + "/" + str(matches)
         result = "(black) " + random_win_black_rate + " - " + random_win_white_rate + " (white)"
         print("random_" + str(matches) + "_matches :", result)
 

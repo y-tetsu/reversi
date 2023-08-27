@@ -3,16 +3,14 @@
 
 import unittest
 
-from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, PyBitBoard
+from reversi.board import Board, BitBoard, PyBitBoard
 from reversi.color import C as c
-from reversi.disc import D as d
 from reversi.move import Move
 from reversi.x import X
 from reversi.game import Game
 from reversi.player import Player
 from reversi.strategies import Random
 from reversi.simulator import Simulator
-from reversi.display import NoneDisplay
 
 
 class TestX(unittest.TestCase):
@@ -36,7 +34,7 @@ class TestX(unittest.TestCase):
         print(aryboard)
 
     def test_board_ini_green(self):
-        hole      = 0x0F0F0F0F
+        hole = 0x0F0F0F0F
         ini_black = 0x00FF00FF
         ini_white = 0x0000FFFF
         aryboard = Board(hole=hole, ini_black=ini_black, ini_white=ini_white)
@@ -124,8 +122,6 @@ class TestX(unittest.TestCase):
         hole = X[name][0]
         ini_black = X[name][1]
         ini_white = X[name][2]
-        #board = Board(hole=hole, ini_black=ini_black, ini_white=ini_white)
-        #board = PyBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
         board = BitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
         black = Player('black', 'Black', Random())
         white = Player('white', 'White', Random())
@@ -165,7 +161,6 @@ class TestX(unittest.TestCase):
             del os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR']
             importlib.reload(reversi.BitBoardMethods)
         # ---
-
 
 
 class TestDisplay:

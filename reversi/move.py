@@ -46,7 +46,7 @@ class Move(tuple):
 
     def to_str(self, x, y, case=None):
         if x is None or y is None:
-            return''
+            return ''
         case = case.lower() if case else self.__case
         key = 'a' if case != UPPER else 'A'
         return chr(ord(key) + x) + str(y + 1)

@@ -78,7 +78,6 @@ class Board(AbstractBoard):
         if self.size == 8:
             self._set_hole()
 
-
     def _set_ini(self, size, ini_black, ini_white):
         center = size // 2
         self._ini_black = 1 << ((size*size-1)-(size*(center-1)+center))
@@ -118,7 +117,7 @@ class Board(AbstractBoard):
 
                無効なボードサイズの場合Trueを返す
         """
-        return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
+        return not (MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
 
     def __str__(self):
         header = '   ' + ' '.join([chr(97 + i) for i in range(self.size)]) + '\n'
@@ -458,7 +457,7 @@ class PyBitBoard(AbstractBoard):
 
                無効なボードサイズの場合
         """
-        return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
+        return not (MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
 
     def __str__(self):
         size = self.size
@@ -582,7 +581,6 @@ class PyBitBoard(AbstractBoard):
         """get_remain
         """
         size = self.size
-        mask = 1 << (size * size - 1)
         remain = size * size
         hole = self._hole_bitboard
         green = self._green_bitboard
