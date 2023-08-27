@@ -8,6 +8,7 @@
 **reversi**はリバーシ(オセロ)のPython用ライブラリです。<br>
 手軽にリバーシAIをプログラミングして、アプリケーションが作れます。<br>
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![unittest](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml/badge.svg)](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml)
 <br>
 
 

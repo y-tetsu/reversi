@@ -8,6 +8,7 @@
 **reversi** is a library for Reversi (Othello) for Python.<br>
 You can easily program reversi AI and create applications.<br>
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![unittest](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml/badge.svg)](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml)
 <br>
 
 
