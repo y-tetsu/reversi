@@ -4,11 +4,16 @@
 import unittest
 from test.support import captured_stdout
 import os
+import sys
+import io
 import json
 
 from reversi import Simulator
 from reversi.strategies import AbstractStrategy, Unselfish, Random, Greedy, SlowStarter, Table, RandomOpening, _AlphaBeta
 from reversi.strategies.coordinator import Evaluator_TPW
+
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 class TestSimulator(unittest.TestCase):
