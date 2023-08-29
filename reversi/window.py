@@ -199,6 +199,9 @@ class Window(tk.Frame):
         height = WINDOW_HEIGHT + CANVAS_MERGINE
         self.root.geometry(f'{width}x{height}+{x_offset}+{y_offset}')
 
+        # ウィンドウサイズ変更時のイベントをバインド
+        self.root.bind("<Configure>", self.on_resize)
+
     def init_screen(self):
         """
         ゲーム画面の初期化
@@ -214,6 +217,15 @@ class Window(tk.Frame):
         """
         self.start.set_state(state)
         self.menu.set_state(state)
+
+    def on_resize(self, event):
+        """
+        ウィンドウサイズ変更時の処理
+        """
+        new_width = event.width
+        new_height = event.height
+        print("New Width:", new_width)
+        print("New Height:", new_height)
 
 
 class Menu(tk.Menu):
