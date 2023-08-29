@@ -14,7 +14,6 @@ import reversi.strategies.TableMethods as TableMethods
 import reversi.strategies.AlphaBetaMethods as AlphaBetaMethods
 import reversi.strategies.NegaScoutMethods as NegaScoutMethods
 
-
 WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
