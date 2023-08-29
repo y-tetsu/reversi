@@ -9,7 +9,6 @@ import tkinter as tk
 import json
 import threading
 from platform import system
-from ctypes import windll
 
 from reversi import BitBoard, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, X, Recorder
 
@@ -309,6 +308,7 @@ class Reversic:
         self.sleep_time_move = sleep_time_move
 
         if 'win' in system().lower():
+            from ctypes import windll
             kernel = windll.kernel32
             kernel.SetConsoleMode(kernel.GetStdHandle(-11), 7)
 
