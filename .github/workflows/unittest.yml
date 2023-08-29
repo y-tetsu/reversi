@@ -33,9 +33,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install xvfb
-          export DISPLAY=:99
-          Xvfb :99 -screen 0 1366x768x16 &
-          sleep 3
       - name: Setup Python
         uses: actions/setup-python@v3
         with:
@@ -50,6 +47,9 @@ jobs:
              python -m pip install --upgrade pip
              pip install -r requirements.txt
       - name: unittest for python
-        run: python -m unittest discover tests -v
+        run: |
+          Xvfb :99 -screen 0 1366x768x16 &
+          sleep 3
+          python -m unittest discover tests -v
         env:
           DISPLAY: 99
