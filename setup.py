@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='reversi',
-    version='0.0.44',
+    version='0.0.45',
     license='MIT License',
     install_requires=[
         'cython',
@@ -34,7 +34,7 @@ setup(
         'reversi.examples.extra.sample_input',
     ],
     package_data={
-        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt", "*.pyx", "*.pyd", "*.bat"]
+        "": ["*.json", "*.pl", "*.py", "*.vbs", "*.txt", "*.pyx", "*.pyd", "*.bat", "*.c", "*.h"]
     },
     entry_points={
         "console_scripts": [
