@@ -1,8 +1,5 @@
-#!/usr/bin/env python
+"""GUIウィンドウ
 """
-GUIウィンドウ
-"""
-
 import os
 import time
 import tkinter as tk
@@ -162,8 +159,7 @@ TEXTS = {
 
 
 class Window(tk.Frame):
-    """
-    ウィンドウ
+    """ウィンドウ
     """
     def __init__(self, root=None, black_players=None, white_players=None):
         super().__init__(root)
@@ -203,8 +199,7 @@ class Window(tk.Frame):
         self.root.bind("<Configure>", self.on_resize)
 
     def init_screen(self):
-        """
-        ゲーム画面の初期化
+        """ゲーム画面の初期化
         """
         self.canvas.delete('all')                                                                 # 全オブジェクト削除
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record)  # ボード配置
@@ -212,15 +207,13 @@ class Window(tk.Frame):
         self.start = ScreenStart(self.canvas, self.language)                                      # スタートテキスト配置
 
     def set_state(self, state):
-        """
-        ウィンドウを有効化/無効化
+        """ウィンドウを有効化/無効化
         """
         self.start.set_state(state)
         self.menu.set_state(state)
 
     def on_resize(self, event):
-        """
-        ウィンドウサイズ変更時の処理
+        """ウィンドウサイズ変更時の処理
         """
         new_width = event.width
         new_height = event.height
@@ -229,8 +222,7 @@ class Window(tk.Frame):
 
 
 class Menu(tk.Menu):
-    """
-    メニュー
+    """メニュー
     """
     def __init__(self, window, black_players, white_players):
         super().__init__(window.root)
@@ -263,8 +255,7 @@ class Menu(tk.Menu):
         self._create_menu_items()
 
     def _create_menu_items(self):
-        """
-        メニューの追加
+        """メニューの追加
         """
         self.menus = {}
 
@@ -278,8 +269,7 @@ class Menu(tk.Menu):
             self.add_cascade(menu=menu, label=name.title())
 
     def _command(self, name, item):
-        """
-        メニュー設定変更時
+        """メニュー設定変更時
         """
         def change_menu_selection():
             if not self.event.is_set():
@@ -302,8 +292,7 @@ class Menu(tk.Menu):
         return change_menu_selection
 
     def set_state(self, state):
-        """
-        メニューのステータス設定(有効化/無効化)
+        """メニューのステータス設定(有効化/無効化)
         """
         for name in self.menu_items.keys():
             if name == 'cancel':
@@ -312,8 +301,7 @@ class Menu(tk.Menu):
 
 
 class CpuTimeDialog:
-    """
-    CPUの持ち時間設定ダイアログ
+    """CPUの持ち時間設定ダイアログ
     """
     def __init__(self, window=None, event=None, language=None):
         self.window = window
@@ -342,8 +330,7 @@ class CpuTimeDialog:
         self.button.pack()
 
     def set_parameter(self):
-        """
-        パラメータを設定する
+        """パラメータを設定する
         """
         value = self.parameter.get()
         # 入力値が数値である
@@ -357,8 +344,7 @@ class CpuTimeDialog:
 
 
 class ExtraDialog:
-    """
-    Extra設定ダイアログ
+    """Extra設定ダイアログ
     """
     def __init__(self, window=None, event=None, language=None):
         self.window = window
@@ -390,8 +376,7 @@ class ExtraDialog:
         self.button2.pack()
 
     def select_extra_file(self):
-        """
-        登録ファイルを選択する
+        """登録ファイルを選択する
         """
         ini_dir = os.path.abspath(os.path.dirname('./extra/'))
         extra_file = self.askopenfilename(filetypes=[("", "*.json")], initialdir=ini_dir)
@@ -399,8 +384,7 @@ class ExtraDialog:
             self.extra_file.set(extra_file)
 
     def set_parameter(self):
-        """
-        パラメータを設定する
+        """パラメータを設定する
         """
         extra_file = self.extra_file.get()
         self.window.extra_file = extra_file
@@ -409,8 +393,7 @@ class ExtraDialog:
 
 
 class ScreenBoard:
-    """
-    ボードの表示
+    """ボードの表示
     """
     def __init__(self, canvas, size, cputime, assist, record):
         self.size = size
@@ -475,8 +458,7 @@ class ScreenBoard:
         self._draw_squares()
 
     def _draw_squares(self):
-        """
-        マス目を描画
+        """マス目を描画
         """
         size = self.size
         self._squares = [[None for _ in range(size)] for _ in range(size)]
@@ -539,8 +521,7 @@ class ScreenBoard:
         self.put_disc('white', center, center)
 
     def put_disc(self, color, index_x, index_y):
-        """
-        石を置く
+        """石を置く
         """
         x, y = self._get_coordinate(index_x, index_y)
 
@@ -567,8 +548,7 @@ class ScreenBoard:
             self.canvas.create_rectangle(x3, y1, x4, y2, tag=label2, fill=color2, outline=color2)
 
     def remove_disc(self, color, index_x, index_y):
-        """
-        石を消す
+        """石を消す
         """
         ptns = []
         if color == 'black' or color == 'white':
@@ -581,8 +561,7 @@ class ScreenBoard:
             self.canvas.delete(label)
 
     def _get_coordinate(self, index_x, index_y):
-        """
-        座標を計算する
+        """座標を計算する
         """
         x_ini = self.square_x_ini
         y_ini = self.square_y_ini
@@ -591,14 +570,12 @@ class ScreenBoard:
         return x_ini + w * index_x + w // 2, y_ini + w * index_y + w // 2
 
     def _get_label(self, name, x, y):
-        """
-        表示ラベルを返す
+        """表示ラベルを返す
         """
         return name + '_' + chr(x + 97) + str(y + 1)
 
     def turn_disc(self, color, captures):
-        """
-        石をひっくり返す
+        """石をひっくり返す
         """
         ptn = TURN_BLACK_PATTERN if color == 'black' else TURN_WHITE_PATTERN
 
@@ -610,8 +587,7 @@ class ScreenBoard:
             time.sleep(TURN_DISC_WAIT)
 
     def enable_moves(self, moves):
-        """
-        打てる場所をハイライトする
+        """打てる場所をハイライトする
         """
         for x, y in moves:
             x1 = self.square_x_ini + self.square_w * x
@@ -625,14 +601,12 @@ class ScreenBoard:
         self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
-        """
-        打てる場所のハイライトを元に戻す
+        """打てる場所のハイライトを元に戻す
         """
         self.canvas.delete('moves')
 
     def enable_move(self, x, y):
-        """
-        打った場所をハイライトする
+        """打った場所をハイライトする
         """
         x1 = self.square_x_ini + self.square_w * x
         x2 = x1 + self.square_w
@@ -642,14 +616,12 @@ class ScreenBoard:
         self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
-        """
-        打った場所のハイライトを元に戻す
+        """打った場所のハイライトを元に戻す
         """
         self.canvas.delete('move')
 
     def selectable_moves(self, moves):
-        """
-        打てる場所を選択できるようにする
+        """打てる場所を選択できるようにする
         """
         for x, y in moves:
             square = self._squares[y][x]
@@ -658,8 +630,7 @@ class ScreenBoard:
             self.canvas.tag_bind(square, '<ButtonPress-1>', self._press_selectable_moves(x, y))
 
     def unselectable_moves(self, moves):
-        """
-        打てる場所を選択できないようにする
+        """打てる場所を選択できないようにする
         """
         for x, y in moves:
             square = self._squares[y][x]
@@ -668,8 +639,7 @@ class ScreenBoard:
             self.canvas.tag_bind(square, '<ButtonPress-1>', lambda *args: None)
 
     def _enter_selectable_moves(self, square):
-        """
-        打てる場所にカーソルが合ったとき
+        """打てる場所にカーソルが合ったとき
         """
         def _enter(event):
             if self.assist == 'ON':
@@ -678,8 +648,7 @@ class ScreenBoard:
         return _enter
 
     def _leave_selectable_moves(self, square):
-        """
-        打てる場所からカーソルが離れた
+        """打てる場所からカーソルが離れた
         """
         def _leave(event):
             if self.assist == 'ON':
@@ -688,8 +657,7 @@ class ScreenBoard:
         return _leave
 
     def _press_selectable_moves(self, x, y):
-        """
-        打てる場所をクリックしたとき
+        """打てる場所をクリックしたとき
         """
         def _press(event):
             if not self.event.is_set():
@@ -700,8 +668,7 @@ class ScreenBoard:
 
 
 class ScreenInfo:
-    """
-    情報表示テキスト
+    """情報表示テキスト
     """
     def __init__(self, canvas, player, language):
         self.canvas = canvas
@@ -715,8 +682,7 @@ class ScreenInfo:
                 self._create_text(color, name)  # 表示テキスト
 
     def _create_text(self, color, name):
-        """
-        表示テキスト作成
+        """表示テキスト作成
         """
         self.text[color + '_' + name] = self.canvas.create_text(
             INFO_OFFSET_X[color],
@@ -727,72 +693,62 @@ class ScreenInfo:
         )
 
     def set_text(self, color, name, text):
-        """
-        表示テキストの文字列を設定
+        """表示テキストの文字列を設定
         """
         text_id = self.text[color + '_' + name]
         self.canvas.itemconfigure(text_id, text=text)
 
     def set_turn_text_on(self, color):
-        """
-        手番を表示
+        """手番を表示
         """
         text_id = self.text[color + '_' + 'turn']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['TURN_ON'])
 
     def set_turn_text_off(self, color):
-        """
-        手番を表示
+        """手番を表示
         """
         text_id = self.text[color + '_' + 'turn']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['TURN_OFF'])
 
     def set_move_text_on(self, color, x, y):
-        """
-        手を表示
+        """手を表示
         """
         text_id = self.text[color + '_' + 'move']
         self.canvas.itemconfigure(text_id, text=f'({x}, {y})' + TEXTS[self.language]['MOVE_ON'])
 
     def set_move_text_off(self, color):
-        """
-        手を表示
+        """手を表示
         """
         text_id = self.text[color + '_' + 'move']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['MOVE_OFF'])
 
     def set_foul_text_on(self, color):
-        """
-        反則負けを表示
+        """反則負けを表示
         """
         text_id = self.text[color + '_' + 'winlose']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['FOUL_ON'])
 
     def set_win_text_on(self, color):
-        """
-        勝ちを表示
+        """勝ちを表示
         """
         text_id = self.text[color + '_' + 'winlose']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['WIN_ON'])
 
     def set_lose_text_on(self, color):
-        """
-        負けを表示
+        """負けを表示
         """
         text_id = self.text[color + '_' + 'winlose']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['LOSE_ON'])
 
     def set_draw_text_on(self, color):
-        """
-        引き分けを表示
+        """引き分けを表示
         """
         text_id = self.text[color + '_' + 'winlose']
         self.canvas.itemconfigure(text_id, text=TEXTS[self.language]['DRAW_ON'])
 
 
 class ScreenStart:
-    """
-    スタートテキスト
+    """スタートテキスト
     """
     def __init__(self, canvas, language):
         self.canvas = canvas
@@ -816,27 +772,23 @@ class ScreenStart:
         canvas.tag_bind(self.text, '<ButtonPress-1>', self._on_start)
 
     def _enter_start(self, event):
-        """
-        カーソルが合った時
+        """カーソルが合った時
         """
         self.canvas.itemconfigure(self.text, fill=COLOR_TOMATO)
 
     def _leave_start(self, event):
-        """
-        カーソルが離れた時
+        """カーソルが離れた時
         """
         self.canvas.itemconfigure(self.text, fill=COLOR_GOLD)
 
     def _on_start(self, event):
-        """
-        スタートテキストを押した場合
+        """スタートテキストを押した場合
         """
         if not self.event.is_set():
             self.event.set()           # スタートイベントを通知
 
     def set_state(self, state):
-        """
-        スタートを有効化/無効化
+        """スタートを有効化/無効化
         """
         text = TEXTS[self.language]['START_TEXT'] if state == 'normal' else ''
         self.canvas.itemconfigure(self.text, text=text, state=state)
