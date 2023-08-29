@@ -566,7 +566,6 @@ class ScreenBoard:
         x_ini = self.square_x_ini
         y_ini = self.square_y_ini
         w = self.square_w
-
         return x_ini + w * index_x + w // 2, y_ini + w * index_y + w // 2
 
     def _get_label(self, name, x, y):
@@ -644,7 +643,6 @@ class ScreenBoard:
         def _enter(event):
             if self.assist == 'ON':
                 self.canvas.itemconfigure(square, fill=COLOR_TOMATO)
-
         return _enter
 
     def _leave_selectable_moves(self, square):
@@ -653,7 +651,6 @@ class ScreenBoard:
         def _leave(event):
             if self.assist == 'ON':
                 self.canvas.itemconfigure(square, fill=COLOR_KHAKI)
-
         return _leave
 
     def _press_selectable_moves(self, x, y):
@@ -663,7 +660,6 @@ class ScreenBoard:
             if not self.event.is_set():
                 self.move = (x, y)
                 self.event.set()  # ウィンドウへ手の選択を通知
-
         return _press
 
 
@@ -785,7 +781,7 @@ class ScreenStart:
         """スタートテキストを押した場合
         """
         if not self.event.is_set():
-            self.event.set()           # スタートイベントを通知
+            self.event.set()  # スタートイベントを通知
 
     def set_state(self, state):
         """スタートを有効化/無効化
