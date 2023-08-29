@@ -29,10 +29,6 @@ jobs:
     needs: unittest_windows
     runs-on: ubuntu-latest
     steps:
-      - name: setup xvfb
-        run: |
-          sudo apt-get update
-          sudo apt-get install xvfb
       - name: Setup Python
         uses: actions/setup-python@v3
         with:
@@ -48,8 +44,7 @@ jobs:
              pip install -r requirements.txt
       - name: unittest for python
         run: |
-          Xvfb :99 -screen 0 1366x768x16 &
+          exec Xvfb :99 -screen 0 1366x768x16 &
           sleep 3
+          export DISPLAY=:99
           python -m unittest discover tests -v
-        env:
-          DISPLAY: 99
