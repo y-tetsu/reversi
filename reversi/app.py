@@ -1,6 +1,5 @@
 """Application
 """
-
 import os
 import time
 import datetime
@@ -14,8 +13,7 @@ from reversi import BitBoard, Player, Window, WindowDisplay, ConsoleDisplay, Gam
 
 
 class Reversi:
-    """
-    リバーシゲーム
+    """リバーシゲーム
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
@@ -62,44 +60,38 @@ class Reversi:
             self.game = self.__reinit
 
     def gameloop(self):
-        """
-        ゲーム処理
+        """ゲーム処理
         """
         while True:
             if self.game():
                 break
 
     def start(self):
-        """
-        アプリ開始
+        """アプリ開始
         """
         self.game_start()    # ゲーム開始
         self.window_start()  # ウィンドウ開始
 
     def game_start(self):
-        """
-        ゲーム開始
+        """ゲーム開始
         """
         game_thread = threading.Thread(target=self.gameloop)
         game_thread.daemon = True
         self._thread_start(game_thread)
 
     def _thread_start(self, thread):
-        """
-        スレッド開始
+        """スレッド開始
         """
         thread.start()
 
     def window_start(self):
-        """
-        ウィンドウ開始
+        """ウィンドウ開始
         """
         self.window.root.deiconify()  # 表示する
         self.window.root.mainloop()
 
     def __init(self):
-        """
-        画面初期化(初回、設定変更時)
+        """画面初期化(初回、設定変更時)
         """
         self.window.init_screen()
         self.window.set_state('normal')
@@ -113,8 +105,7 @@ class Reversi:
         self.state = Reversi.DEMO
 
     def _load_extra_file(self, extra_file):
-        """
-        登録ファイルを読み込む
+        """登録ファイルを読み込む
         """
         if os.path.isfile(extra_file):
             with open(extra_file, 'r', encoding='utf-8') as f:
@@ -143,8 +134,7 @@ class Reversi:
             self.err_msg.show('指定された登録ファイルが見つかりませんでした')
 
     def __demo(self):
-        """
-        デモ画面
+        """デモ画面
         """
         while True:
             if self.window.start.event.is_set():
@@ -157,8 +147,7 @@ class Reversi:
                 break
 
     def _demo_animation(self):
-        """
-        デモアニメーション継続中
+        """デモアニメーション継続中
         """
         center = self.window.board.size // 2
 
@@ -198,8 +187,7 @@ class Reversi:
         return True
 
     def __play(self):
-        """
-        ゲーム画面
+        """ゲーム画面
         """
         self.window.set_state('disable')
 
@@ -242,8 +230,7 @@ class Reversi:
         self.state = Reversi.END
 
     def __end(self):
-        """
-        終了画面
+        """終了画面
         """
         self.window.set_state('normal')
 
@@ -260,15 +247,13 @@ class Reversi:
                 break
 
     def __reinit(self):
-        """
-        再初期化(ゲーム終了後再スタート時)
+        """再初期化(ゲーム終了後再スタート時)
         """
         self.window.init_screen()
         self.state = Reversi.PLAY
 
     def _setting_changed(self):
-        """
-        ウィンドウの設定が変更されたとき
+        """ウィンドウの設定が変更されたとき
         """
         if self.window.menu.event.is_set():
             self.window.size = self.window.menu.size
@@ -285,8 +270,7 @@ class Reversi:
 
 
 class Reversic:
-    """
-    リバーシゲーム
+    """リバーシゲーム
     """
     START, MENU, PLAY = 'START', 'MENU', 'PLAY'
 
@@ -328,8 +312,7 @@ class Reversic:
             self.game = self.__play
 
     def start(self):
-        """
-        アプリ開始
+        """アプリ開始
         """
         try:
             while True:
@@ -339,8 +322,7 @@ class Reversic:
             return
 
     def __start(self):
-        """
-        設定を表示
+        """設定を表示
         """
         self._clear_screen()
 
@@ -352,8 +334,7 @@ class Reversic:
         self.state = Reversic.MENU
 
     def __menu(self):
-        """
-        メニュー
+        """メニュー
         """
         print('press any key')
         print('-----------------------------')
@@ -390,8 +371,7 @@ class Reversic:
         print("\033[;H\033[2J")
 
     def _get_board_type(self):
-        """
-        ボードタイプの取得
+        """ボードタイプの取得
         """
         self._clear_screen()
 
@@ -411,8 +391,7 @@ class Reversic:
                     return board_list[index-1]
 
     def _get_player(self, players):
-        """
-        プレイヤーの取得
+        """プレイヤーの取得
         """
         self._clear_screen()
 
@@ -432,8 +411,7 @@ class Reversic:
                     return player_list[index-1]
 
     def __play(self):
-        """
-        ゲームプレイ
+        """ゲームプレイ
         """
         self._clear_screen()
 
