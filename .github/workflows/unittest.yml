@@ -29,7 +29,7 @@ jobs:
     needs: unittest_windows
     runs-on: ubuntu-latest
     steps:
-    - name: setup xvfb
+      - name: setup xvfb
         run: |
           sudo apt-get update
           sudo apt-get install xvfb
