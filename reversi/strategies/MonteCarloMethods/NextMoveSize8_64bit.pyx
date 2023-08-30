@@ -7,7 +7,7 @@ import time
 from reversi.strategies.common import Timer, Measure
 
 
-cdef extern from "xorshift.h":
+cdef extern from "./xorshift.h":
     void init_rand(unsigned long s)
     unsigned long rand_int()
 
