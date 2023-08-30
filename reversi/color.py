@@ -3,7 +3,8 @@
 
 
 class Color:
-    """Color"""
+    """Color
+    """
     def __init__(self):
         self.__green = 'green'
         self.__black = 'black'
