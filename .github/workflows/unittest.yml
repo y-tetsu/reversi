@@ -26,7 +26,6 @@ jobs:
       - name: unittest for python
         run: python -m unittest discover tests -v
   unittest_ubuntu:
-    if: github.ref == 'refs/heads/master'
     needs: unittest_windows
     runs-on: ubuntu-latest
     steps:
