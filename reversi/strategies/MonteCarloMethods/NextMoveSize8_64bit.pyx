@@ -7,11 +7,6 @@ import time
 from reversi.strategies.common import Timer, Measure
 
 
-cdef extern from "./xorshift.h":
-    void init_rand(unsigned long s)
-    unsigned long rand_int()
-
-
 cdef:
     unsigned long long measure_count
     unsigned long long[64] legal_moves_bit_list
@@ -27,6 +22,10 @@ cdef:
     unsigned int timer_timeout
     signed int timer_timeout_value
     signed int[64] scores
+    unsigned long tx = 123456789;
+    unsigned long ty = 362436069;
+    unsigned long tz = 521288629;
+    unsigned long tw = 88675123;
 
 
 def next_move(color, board, count, pid, timer, measure):
@@ -279,3 +278,42 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
     if (<unsigned long long>0xFEFEFEFEFEFEFE00 & (lt << <unsigned int>9)) & player:
         flippable_discs_num |= lt
     return flippable_discs_num
+
+
+cdef unsigned long set_s(unsigned long s):
+    """_set_s
+    """
+    s = (s * 1812433253) + 1
+    s ^= s << 13
+    s ^= s >> 17
+    return s
+
+
+cdef init_rand(unsigned long s):
+    """init_rand
+    """
+    while True:
+        s = set_s(s)
+        tx = 123464980 ^ s
+        s = set_s(s)
+        ty = 3447902351 ^ s
+        s = set_s(s)
+        tz = 2859490775 ^ s
+        s = set_s(s)
+        tw = 47621719 ^ s
+        if not ((tx == 0) and (ty == 0) and (tz == 0) and (tw == 0)):
+            break
+
+
+cdef unsigned long rand_int():
+    """rand_int
+    """
+    global tx, ty, tz, tw
+    cdef:
+        unsigned long tt
+    tt = tx ^ (tx << 11)
+    tx = ty
+    ty = tz
+    tz = tw
+    tw = (tw ^ (tw >> 19)) ^ (tt ^ (tt>>8))
+    return tw

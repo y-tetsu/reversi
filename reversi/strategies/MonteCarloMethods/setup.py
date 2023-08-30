@@ -13,13 +13,7 @@ setup(
 )
 
 # NextMoveSize8_64bit
-ext_modules = [
-    Extension(
-        "NextMoveSize8_64bit",
-        sources=["NextMoveSize8_64bit.pyx", "xorshift.c"],
-        include_dirs=["."],
-    )
-]
+ext_modules = [Extension("NextMoveSize8_64bit", ["NextMoveSize8_64bit.pyx"])]
 
 setup(
     name='NextMoveSize8_64bit',
