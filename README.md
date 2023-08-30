@@ -81,28 +81,28 @@
 
 
 ## 動作環境
-- Windows10 64bit<br>
+- Windows、Ubuntu<br>
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)以上<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(Python3.7.6以外の場合)<br>
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(Python3.7以外のWindowsの場合)<br>
 
 
 ## インストール方法
 1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールして下さい。<br>
 2. 下記を実行して**reversi**をインストールして下さい。
 ```
-$ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
+$ pip install git+https://github.com/y-tetsu/reversi
 ```
 
 
 ## アンインストール方法
 **reversi**をアンインストールする場合は、下記を実行して下さい。
 ```
-$ py -3.7 -m pip uninstall reversi
+$ pip uninstall reversi
 ```
 
 
@@ -128,16 +128,16 @@ $ install_reversi_examples
 サンプルの実行方法はそれぞれ下記のとおりです。
 ```
 $ cd reversi_examples
-$ py -3.7 01_tkinter_app.py
-$ py -3.7 02_console_app.py
+$ python 01_tkinter_app.py
+$ python 02_console_app.py
 $ 03_create_exe.bat
-$ py -3.7 04_reversi_simulator.py
-$ py -3.7 05_manual_strategy.py
-$ py -3.7 06_table_strategy.py
-$ py -3.7 07_minmax_strategy.py
-$ py -3.7 08_alphabeta_strategy.py
-$ py -3.7 09_genetic_algorithm.py
-$ py -3.7 10_x_elucidator.py
+$ python 04_reversi_simulator.py
+$ python 05_manual_strategy.py
+$ python 06_table_strategy.py
+$ python 07_minmax_strategy.py
+$ python 08_alphabeta_strategy.py
+$ python 09_genetic_algorithm.py
+$ python 10_x_elucidator.py
 ```
 
 
@@ -1551,7 +1551,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 
 インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
 ```
-$ py -3.7 --version
+$ python --version
 Python 3.7.6
 ```
 
@@ -1559,7 +1559,7 @@ Python 3.7.6
 **reversi**をPythonから実行するためにはいくつかの外部パッケージが必要となります。<br>
 正しくインストールできるようにするために下記を実行してpipをアップデートして下さい。<br>
 ```
-$ py -3.7 -m pip install --upgrade pip
+$ pip install --upgrade pip
  :
 Successfully installed pip-20.0.2
 ```
@@ -1569,7 +1569,7 @@ Successfully installed pip-20.0.2
 **reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
 事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいて下さい。<br>
 ```
-$ py -3.7 -m pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行して下さい。
 
@@ -1586,7 +1586,7 @@ $ py -3.7 -m pip install -r requirements.txt
 **reversi**を実行するためにはcythonという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。
 ```
-$ py -3.7 -m pip install cython
+$ pip install cython
  :
 Successfully installed cython-0.29.15
 ```
@@ -1595,14 +1595,14 @@ Successfully installed cython-0.29.15
 **reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。不要な場合は省略しても構いません。
 ```
-$ py -3.7 -m pip install pyinstaller
+$ pip install pyinstaller
  :
 Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
 ```
 
 うまくいかない場合は下記を実行後に、再度上記を試してみて下さい。
 ```
-$ py -3.7 -m pip install wheel
+$ pip install wheel
 ```
 
 インストール完了後、pyinstallerを実行できるようにするために環境変数に下記を追加して下さい。

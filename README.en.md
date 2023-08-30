@@ -74,27 +74,27 @@ This one allows you to play a game of reversi for free immediately after downloa
 
 
 ## System Requirements
-- Windows10 64bit<br>
+- Windows, Ubuntu<br>
 - Display size 1366x768
 - Processor 1.6GHz
 - Memory 4.00GB
 - [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing)<br>
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing on Windows)<br>
 
 
 ## How to Install
 1. install [Python 3.7.6](https://www.python.org/downloads/release/python-376/) or higher<br>
 2. install **reversi**(run the following)
 ```
-$ py -3.7 -m pip install git+https://github.com/y-tetsu/reversi
+$ pip install git+https://github.com/y-tetsu/reversi
 ```
 
 ## How to Uninstall
 uninstall **reversi**(run the following)
 ```
-$ py -3.7 -m pip uninstall reversi
+$ pip uninstall reversi
 ```
 
 ## Examples
@@ -120,16 +120,16 @@ The examples to be copied are below.
 You can run examples below.
 ```
 $ cd reversi_examples
-$ py -3.7 01_tkinter_app.py
-$ py -3.7 02_console_app.py
+$ python 01_tkinter_app.py
+$ python 02_console_app.py
 $ 03_create_exe.bat
-$ py -3.7 04_reversi_simulator.py
-$ py -3.7 05_easy_strategy.py
-$ py -3.7 06_table_strategy.py
-$ py -3.7 07_minmax_strategy.py
-$ py -3.7 08_alphabeta_strategy.py
-$ py -3.7 09_genetic_algorithm.py
-$ py -3.7 10_x_elucidator.py
+$ python 04_reversi_simulator.py
+$ python 05_easy_strategy.py
+$ python 06_table_strategy.py
+$ python 07_minmax_strategy.py
+$ python 08_alphabeta_strategy.py
+$ python 09_genetic_algorithm.py
+$ python 10_x_elucidator.py
 ```
 
 ## How to use the library
