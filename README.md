@@ -168,7 +168,7 @@ from reversi import Reversi
 Reversi().start()
 ```
 
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/plane_tk.png" width="250px">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/plane_tk.png" width="350px">
 
 上記のようにアプリケーションが起動し、そのまま二人対戦で遊ぶ事ができます。<br>
 (この場合、選択できるプレイヤーはユーザ操作のみとなります)
