@@ -178,6 +178,7 @@ class Window(tk.Frame):
         self.canvas_height = WINDOW_HEIGHT
         self.pre_canvas_width = None
         self.pre_canvas_height = None
+        self.completed = False
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -218,6 +219,10 @@ class Window(tk.Frame):
     def on_resize(self, event):
         """ウィンドウサイズ変更時の処理
         """
+        if not self.completed:
+            self.completed = True
+            return
+
         new_width = event.width - CANVAS_MERGINE
         new_height = event.height - CANVAS_MERGINE
 
@@ -225,7 +230,7 @@ class Window(tk.Frame):
         if self.canvas_width != new_width:
             # 変更終了時に変更前のwidthで1回イベントが入る時の対策
             if new_width > self.canvas_width:
-                self.pre_canvas_width  = self.canvas_width
+                self.pre_canvas_width = self.canvas_width
 
             if new_width != self.pre_canvas_width:
                 print("Width:", new_width)
@@ -236,10 +241,10 @@ class Window(tk.Frame):
         if self.canvas_height != new_height:
             # 変更終了時に変更前のheightで1回イベントが入る時の対策
             if new_height > self.canvas_height:
-                self.pre_canvas_height  = self.canvas_height
+                self.pre_canvas_height = self.canvas_height
 
             if new_height != self.pre_canvas_height:
-                print("Height:", new_height)
+                print("Height:", new_height, self.pre_canvas_height)
                 h = True
                 self.canvas_height = new_height
 
