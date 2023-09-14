@@ -179,6 +179,7 @@ class Window(tk.Frame):
         self.pre_canvas_width = None
         self.pre_canvas_height = None
         self.completed = False
+        self.pre_state = None
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -223,6 +224,8 @@ class Window(tk.Frame):
             self.completed = True
             return
 
+        state = self.root.wm_state()
+
         new_width = event.width - CANVAS_MERGINE
         new_height = event.height - CANVAS_MERGINE
 
@@ -248,8 +251,10 @@ class Window(tk.Frame):
                 h = True
                 self.canvas_height = new_height
 
-        if w or h:
+        if w or h or state != self.pre_state:
             self.canvas.configure(width=new_width, height=new_height)
+
+        self.pre_state = state
 
 
 class Menu(tk.Menu):
