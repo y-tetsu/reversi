@@ -443,6 +443,7 @@ class ScreenBoard:
         self.assist = assist
         self.record = record
         self.canvas = canvas
+        self.cwidth = canvas_width
         self._squares = []
         self._xlines = []
         self._ylines = []
@@ -509,7 +510,7 @@ class ScreenBoard:
         self.square_y_ini = SQUARE_OFFSET_Y
         self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // size
         w = self.square_w
-        self.square_x_ini = WINDOW_WIDTH // 2 - (w * size) // 2
+        self.square_x_ini = self.cwidth // 2 - (w * size) // 2
         self.oval_w1 = int(w * OVAL_SIZE_RATIO)
         self.oval_w2 = int(w // TURNOVAL_SIZE_DIVISOR)
 
