@@ -209,7 +209,7 @@ class Window(tk.Frame):
         self.canvas.delete('all')                                                                                    # 全オブジェクト削除
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width)  # ボード配置
         self.info = ScreenInfo(self.canvas, self.player, self.language)                                              # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas, self.language)                                                         # スタートテキスト配置
+        self.start = ScreenStart(self.canvas, self.language, self.canvas_width)                                      # スタートテキスト配置
 
     def set_state(self, state):
         """ウィンドウを有効化/無効化
@@ -788,13 +788,13 @@ class ScreenInfo:
 class ScreenStart:
     """スタートテキスト
     """
-    def __init__(self, canvas, language):
+    def __init__(self, canvas, language, canvas_width=WINDOW_WIDTH):
         self.canvas = canvas
         self.language = language
 
         # テキスト作成
         self.text = canvas.create_text(
-            START_OFFSET_X,
+            START_OFFSET_X+((canvas_width-WINDOW_WIDTH)//2),
             START_OFFSET_Y,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
