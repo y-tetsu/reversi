@@ -183,7 +183,7 @@ class Window(tk.Frame):
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
-        self.root.minsize(WINDOW_WIDTH, WINDOW_HEIGHT)  # 最小サイズ
+        self.root.minsize(WINDOW_WIDTH-100, WINDOW_HEIGHT)  # 最小サイズ
 
         # メニューを配置
         self.menu = Menu(self, black_players, white_players)
