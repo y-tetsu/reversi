@@ -206,10 +206,10 @@ class Window(tk.Frame):
     def init_screen(self):
         """ゲーム画面の初期化
         """
-        self.canvas.delete('all')                                                                 # 全オブジェクト削除
-        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player, self.language)                           # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas, self.language)                                      # スタートテキスト配置
+        self.canvas.delete('all')                                                                                    # 全オブジェクト削除
+        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player, self.language)                                              # 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas, self.language)                                                         # スタートテキスト配置
 
     def set_state(self, state):
         """ウィンドウを有効化/無効化
@@ -437,7 +437,7 @@ class ExtraDialog:
 class ScreenBoard:
     """ボードの表示
     """
-    def __init__(self, canvas, size, cputime, assist, record):
+    def __init__(self, canvas, size, cputime, assist, record, canvas_width=WINDOW_WIDTH):
         self.size = size
         self.cputime = cputime
         self.assist = assist
@@ -476,7 +476,7 @@ class ScreenBoard:
         # 棋譜出力表示
         record_text = 'REC' if self.record == 'ON' else ''
         self.canvas.create_text(
-            RECORD_OFFSET_X,
+            RECORD_OFFSET_X+(canvas_width-WINDOW_WIDTH),
             RECORD_OFFSET_Y,
             text=record_text,
             font=('', RECORD_FONT_SIZE),
