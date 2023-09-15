@@ -252,6 +252,9 @@ class Window(tk.Frame):
                 self.canvas_height = new_height
 
         if w or h or state != self.pre_state:
+            if self.pre_state == 'zoomed':
+                self.canvas_width = new_width
+
             self.canvas.configure(width=new_width, height=new_height)
 
             # 横幅に応じて移動
