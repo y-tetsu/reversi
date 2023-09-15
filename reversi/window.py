@@ -254,6 +254,12 @@ class Window(tk.Frame):
         if w or h or state != self.pre_state:
             self.canvas.configure(width=new_width, height=new_height)
 
+            # 横幅に応じて移動
+            INFO_OFFSET_X['white'] = new_width - (WINDOW_WIDTH//7)
+
+            # スクリーンを更新
+            self.init_screen()
+
         self.pre_state = state
 
 
