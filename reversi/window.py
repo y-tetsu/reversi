@@ -179,7 +179,7 @@ class Window(tk.Frame):
         self.pre_canvas_width = None
         self.pre_canvas_height = None
         self.completed = False
-        self.pre_state = None
+        self.pre_wm_state = None
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -224,7 +224,7 @@ class Window(tk.Frame):
             self.completed = True
             return
 
-        state = self.root.wm_state()
+        wm_state = self.root.wm_state()
 
         new_width = event.width - CANVAS_MERGINE
         new_height = event.height - CANVAS_MERGINE
@@ -251,8 +251,8 @@ class Window(tk.Frame):
                 h = True
                 self.canvas_height = new_height
 
-        if w or h or state != self.pre_state:
-            if self.pre_state == 'zoomed':
+        if w or h or wm_state != self.pre_wm_state:
+            if self.pre_wm_state == 'zoomed':
                 self.canvas_width = new_width
 
             self.canvas.configure(width=new_width, height=new_height)
@@ -263,7 +263,7 @@ class Window(tk.Frame):
             # スクリーンを更新
             self.init_screen()
 
-        self.pre_state = state
+        self.pre_wm_state = wm_state
 
 
 class Menu(tk.Menu):
