@@ -176,10 +176,10 @@ class Window(tk.Frame):
         self.extra_file = ''
         self.canvas_width = WINDOW_WIDTH
         self.canvas_height = WINDOW_HEIGHT
-        self.pre_canvas_width = None
-        self.pre_canvas_height = None
-        self.completed = False
-        self.pre_wm_state = None
+        self.pre_canvas_width = self.canvas_width
+        self.pre_canvas_height = self.canvas_height
+        self.canvas_width_hist = [0, self.canvas_width]
+        self.canvas_height_hist = [0, self.canvas_height]
 
         # ウィンドウ設定
         self.root.title(WINDOW_TITLE)                   # タイトル
@@ -220,50 +220,31 @@ class Window(tk.Frame):
     def on_resize(self, event):
         """ウィンドウサイズ変更時の処理
         """
-        if not self.completed:
-            self.completed = True
-            return
+        self.canvas_width_hist.pop(0)
+        self.canvas_width_hist.append(event.width)
 
-        wm_state = self.root.wm_state()
+        self.canvas_height_hist.pop(0)
+        self.canvas_height_hist.append(event.height)
 
-        new_width = event.width - CANVAS_MERGINE
-        new_height = event.height - CANVAS_MERGINE
+        w = max(self.canvas_width_hist)
+        h = max(self.canvas_height_hist)
 
-        w = False
-        if self.canvas_width != new_width:
-            # 変更終了時に変更前のwidthで1回イベントが入る時の対策
-            if new_width > self.canvas_width:
-                self.pre_canvas_width = self.canvas_width
+        # ウィンドウサイズ変更時
+        if w != self.pre_canvas_width or h != self.pre_canvas_height:
+            self.canvas_width = w
+            self.canvas_height = h
 
-            if new_width != self.pre_canvas_width:
-                print("Width:", new_width)
-                w = True
-                self.canvas_width = new_width
-
-        h = False
-        if self.canvas_height != new_height:
-            # 変更終了時に変更前のheightで1回イベントが入る時の対策
-            if new_height > self.canvas_height:
-                self.pre_canvas_height = self.canvas_height
-
-            if new_height != self.pre_canvas_height:
-                print("Height:", new_height, self.pre_canvas_height)
-                h = True
-                self.canvas_height = new_height
-
-        if w or h or wm_state != self.pre_wm_state:
-            if self.pre_wm_state == 'zoomed':
-                self.canvas_width = new_width
-
-            self.canvas.configure(width=new_width, height=new_height)
+            print(w, self.canvas_width_hist, h, self.canvas_height_hist)
+            self.canvas.configure(width=w-CANVAS_MERGINE, height=h-CANVAS_MERGINE)
 
             # 横幅に応じて移動
-            INFO_OFFSET_X['white'] = new_width - (WINDOW_WIDTH//7)
+            INFO_OFFSET_X['white'] = w - (WINDOW_WIDTH//7)
 
             # スクリーンを更新
             self.init_screen()
 
-        self.pre_wm_state = wm_state
+        self.pre_canvas_width = w
+        self.pre_canvas_height = h
 
 
 class Menu(tk.Menu):
