@@ -174,8 +174,8 @@ class Window(tk.Frame):
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
         self.extra_file = ''
-        self.canvas_width = WINDOW_WIDTH
-        self.canvas_height = WINDOW_HEIGHT
+        self.canvas_width = WINDOW_WIDTH - CANVAS_MERGINE
+        self.canvas_height = WINDOW_HEIGHT - CANVAS_MERGINE
         self.pre_canvas_width = self.canvas_width
         self.pre_canvas_height = self.canvas_height
         self.canvas_width_hist = [0, self.canvas_width]
@@ -196,12 +196,9 @@ class Window(tk.Frame):
         # 表示サイズと位置
         x_offset = (root.winfo_screenwidth() // 2) - (WINDOW_WIDTH // 2)
         y_offset = (root.winfo_screenheight() // 2) - (WINDOW_HEIGHT // 2)
-        width = WINDOW_WIDTH + CANVAS_MERGINE
-        height = WINDOW_HEIGHT + CANVAS_MERGINE
+        width = WINDOW_WIDTH
+        height = WINDOW_HEIGHT
         self.root.geometry(f'{width}x{height}+{x_offset}+{y_offset}')
-
-        # ウィンドウサイズ変更時のイベントをバインド
-        self.root.bind("<Configure>", self.on_resize)
 
     def init_screen(self):
         """ゲーム画面の初期化
@@ -210,6 +207,9 @@ class Window(tk.Frame):
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width)  # ボード配置
         self.info = ScreenInfo(self.canvas, self.player, self.language)                                              # 情報表示テキスト配置
         self.start = ScreenStart(self.canvas, self.language, self.canvas_width)                                      # スタートテキスト配置
+
+        # ウィンドウサイズ変更時のイベントをバインド
+        self.root.bind("<Configure>", self.on_resize)
 
     def set_state(self, state):
         """ウィンドウを有効化/無効化
@@ -234,17 +234,72 @@ class Window(tk.Frame):
             self.canvas_width = w
             self.canvas_height = h
 
-            print(w, self.canvas_width_hist, h, self.canvas_height_hist)
-            self.canvas.configure(width=w-CANVAS_MERGINE, height=h-CANVAS_MERGINE)
-
-            # 横幅に応じて移動
-            INFO_OFFSET_X['white'] = w - (WINDOW_WIDTH//7)
-
             # スクリーンを更新
-            self.init_screen()
+            self.update_screen(w, h)
 
         self.pre_canvas_width = w
         self.pre_canvas_height = h
+
+    def update_screen(self, w, h):
+        """スクリーンを更新する
+        """
+        dw = w - WINDOW_WIDTH
+        # キャンバスサイズ
+        print(w, self.canvas_width_hist, h, self.canvas_height_hist)
+        self.canvas.configure(width=w-CANVAS_MERGINE, height=h-CANVAS_MERGINE)
+
+        # WHITE-INFO
+        for name in INFO_OFFSET_Y:
+            text = self.info.text['white_' + name]
+            x = w - (WINDOW_WIDTH // 7)
+            y = INFO_OFFSET_Y[name]
+            self.canvas.coords(text, x, y)
+
+        # RECORD
+        self.canvas.coords(self.board.record_text, RECORD_OFFSET_X+dw, RECORD_OFFSET_Y)
+
+        # SLOWMODE
+        if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2 or BitBoardMethods.SLOW_MODE3 or BitBoardMethods.SLOW_MODE4 or BitBoardMethods.SLOW_MODE5 or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE or BitBoardMethods.CYBOARD_ERROR:  # noqa: E501
+            self.canvas.coords(self.board.slowmode_text, SLOWMODE_OFFSET_X+dw, SLOWMODE_OFFSET_Y)
+
+        # START
+        self.canvas.coords(self.start.text, START_OFFSET_X+(dw//2), START_OFFSET_Y)
+
+        # SQUARES
+        square_w = (WINDOW_HEIGHT - self.board.square_y_ini - SQUARE_BOTTOM_MARGIN) // self.size
+        min_x = self.board.square_x_ini
+        max_x = min_x + square_w * self.size
+        # - x lines
+        for xline in self.board._xlines:
+            x1, y1, x2, y2 = self.canvas.coords(xline)
+            self.canvas.coords(xline, min_x+dw//2, y1, max_x+dw//2, y2)
+        # - y lines
+        for num, yline in enumerate(self.board._ylines):
+            x1, y1, x2, y2 = self.canvas.coords(yline)
+            yline_x = (min_x+square_w*num)+dw//2
+            self.canvas.coords(yline, yline_x, y1, yline_x, y2)
+        # - alphabet texts
+        for num, atext in enumerate(self.board._atexts):
+            x, y = self.canvas.coords(atext)
+            self.canvas.coords(atext, min_x+square_w*num+dw//2+square_w//2, y)
+        # - number texts
+        for ntext in self.board._ntexts:
+            x, y = self.canvas.coords(ntext)
+            self.canvas.coords(ntext, min_x-SQUAREHEADER_OFFSET_XY+dw//2, y)
+        # - 4x4 circle
+        if self.size > 4:
+            num = self.size//2 + 2
+            mark_w = int(square_w * OVAL_SIZE_RATIO * 0.2)
+            offset1  = square_w * (num - 4)
+            offset2  = square_w * num
+            index = 0
+            for x_offset in [square_w * (num - 4), square_w * num]:
+                for y_offset in [square_w * (num - 4), square_w * num]:
+                    x1, y1, x2, y2 = self.canvas.coords(self.board._4x4circle[index])
+                    mark_x1 = min_x + x_offset - mark_w//2
+                    mark_x2 = min_x + x_offset + mark_w//2
+                    self.canvas.coords(self.board._4x4circle[index], mark_x1+dw//2, y1, mark_x2+dw//2, y2)
+                    index += 1
 
 
 class Menu(tk.Menu):
@@ -431,6 +486,9 @@ class ScreenBoard:
         self._squares = []
         self._xlines = []
         self._ylines = []
+        self._atexts = []
+        self._ntexts = []
+        self._4x4circle = []
         self.move = None
 
         # イベント生成
@@ -460,8 +518,8 @@ class ScreenBoard:
 
         # 棋譜出力表示
         record_text = 'REC' if self.record == 'ON' else ''
-        self.canvas.create_text(
-            RECORD_OFFSET_X+(canvas_width-WINDOW_WIDTH),
+        self.record_text = self.canvas.create_text(
+            RECORD_OFFSET_X,
             RECORD_OFFSET_Y,
             text=record_text,
             font=('', RECORD_FONT_SIZE),
@@ -472,7 +530,7 @@ class ScreenBoard:
         # 低速モードの表示
         slowmode_text = '■'
         if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2 or BitBoardMethods.SLOW_MODE3 or BitBoardMethods.SLOW_MODE4 or BitBoardMethods.SLOW_MODE5 or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE or BitBoardMethods.CYBOARD_ERROR:  # noqa: E501
-            self.canvas.create_text(
+            self.slowmode_text = self.canvas.create_text(
                 SLOWMODE_OFFSET_X,
                 SLOWMODE_OFFSET_Y,
                 text=slowmode_text,
@@ -506,6 +564,7 @@ class ScreenBoard:
         text_x, text_y = None, None
         square_x1, square_y1, square_x2, square_y2 = None, None, None, None
         line_append, xappend, yappend = None, self._xlines.append, self._ylines.append
+        text_append, aappend, nappend = None, self._atexts.append, self._ntexts.append
 
         # マス目の描画
         for num in range(size + 1):
@@ -516,16 +575,19 @@ class ScreenBoard:
                     square_x1, square_y1 = min_x + w * num, min_y
                     square_x2, square_y2 = square_x1, max_y
                     line_append = yappend
+                    text_append = nappend
                 else:
                     label = chr(num + 97)
                     text_x, text_y = (min_x + w * num) + w // 2, col_y
                     square_x1, square_y1 = min_x, min_y + w * num
                     square_x2, square_y2 = max_x, square_y1
                     line_append = xappend
+                    text_append = aappend
 
                 # 番地
                 if num < size:
-                    self.canvas.create_text(text_x, text_y, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
+                    text = self.canvas.create_text(text_x, text_y, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
+                    text_append(text)
 
                 # マス目の線
                 line = self.canvas.create_line(square_x1, square_y1, square_x2, square_y2, fill=COLOR_WHITE)
@@ -538,7 +600,8 @@ class ScreenBoard:
                     for y_offset in [w * (num - 4), w * num]:
                         mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
                         mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
-                        self.canvas.create_oval(mark_x1, mark_y1, mark_x2, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
+                        oval = self.canvas.create_oval(mark_x1, mark_y1, mark_x2, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
+                        self._4x4circle.append(oval)
 
         # 初期位置に石を置く
         center = size // 2
@@ -779,7 +842,7 @@ class ScreenStart:
 
         # テキスト作成
         self.text = canvas.create_text(
-            START_OFFSET_X+((canvas_width-WINDOW_WIDTH)//2),
+            START_OFFSET_X,
             START_OFFSET_Y,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
