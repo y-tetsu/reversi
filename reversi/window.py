@@ -324,6 +324,17 @@ class Window(tk.Frame):
                         self.canvas.coords(disc, x3, y1, x4, y2)
             except:
                 pass
+        # - moves
+        for y in range(self.size):
+            for x in range(self.size):
+                square = self.board._squares[y][x]
+                try:
+                    x1, y1, x2, y2 = self.canvas.coords(square)
+                    x1 = min_x + square_w * x
+                    x2 = x1 + square_w
+                    self.canvas.coords(square, x1+dwc, y1, x2+dwc, y2)
+                except:
+                    pass
 
 
 class Menu(tk.Menu):
@@ -710,15 +721,16 @@ class ScreenBoard:
     def enable_moves(self, moves):
         """打てる場所をハイライトする
         """
+        dw = (self.canvas_width - CANVAS_WIDTH)//2
         for x, y in moves:
             x1 = self.square_x_ini + self.square_w * x
             x2 = x1 + self.square_w
             y1 = self.square_y_ini + self.square_w * y
             y2 = y1 + self.square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1, x2+dw, y2, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
             else:
-                self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1, x2+dw, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
         self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
@@ -729,11 +741,12 @@ class ScreenBoard:
     def enable_move(self, x, y):
         """打った場所をハイライトする
         """
+        dw = (self.canvas_width - CANVAS_WIDTH)//2
         x1 = self.square_x_ini + self.square_w * x
         x2 = x1 + self.square_w
         y1 = self.square_y_ini + self.square_w * y
         y2 = y1 + self.square_w
-        self._squares[y][x] = self.canvas.create_rectangle(x1, y1, x2, y2, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
+        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1, x2+dw, y2, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
         self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
