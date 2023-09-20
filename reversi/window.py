@@ -18,7 +18,9 @@ WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
 
-CANVAS_MERGINE = 4  # キャンバスの余白
+CANVAS_MERGINE = 4                              # キャンバスの余白
+CANVAS_WIDTH = WINDOW_WIDTH - CANVAS_MERGINE    # キャンバスの幅
+CANVAS_HEIGHT = WINDOW_HEIGHT - CANVAS_MERGINE  # キャンバスの高さ
 
 COLOR_SLATEGRAY = 'slategray'  # スレートグレイ
 COLOR_BLACK = 'black'          # 黒
@@ -174,15 +176,15 @@ class Window(tk.Frame):
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
         self.extra_file = ''
-        self.canvas_width = WINDOW_WIDTH - CANVAS_MERGINE
-        self.canvas_height = WINDOW_HEIGHT - CANVAS_MERGINE
-        self.pre_canvas_width = self.canvas_width
-        self.pre_canvas_height = self.canvas_height
-        self.canvas_width_hist = [0, self.canvas_width]
-        self.canvas_height_hist = [0, self.canvas_height]
+        self.canvas_width = CANVAS_WIDTH
+        self.canvas_height = CANVAS_HEIGHT
+        self.pre_canvas_width = 0
+        self.pre_canvas_height = 0
+        self.canvas_width_hist = [self.pre_canvas_width, self.canvas_width]
+        self.canvas_height_hist = [self.pre_canvas_height, self.canvas_height]
 
         # ウィンドウ設定
-        self.root.title(WINDOW_TITLE)                   # タイトル
+        self.root.title(WINDOW_TITLE)                       # タイトル
         self.root.minsize(WINDOW_WIDTH-100, WINDOW_HEIGHT)  # 最小サイズ
 
         # メニューを配置
@@ -221,37 +223,41 @@ class Window(tk.Frame):
         """ウィンドウサイズ変更時の処理
         """
         self.canvas_width_hist.pop(0)
-        self.canvas_width_hist.append(event.width)
+        self.canvas_width_hist.append(event.width-CANVAS_MERGINE)
 
         self.canvas_height_hist.pop(0)
-        self.canvas_height_hist.append(event.height)
+        self.canvas_height_hist.append(event.height-CANVAS_MERGINE)
 
-        w = max(self.canvas_width_hist)
-        h = max(self.canvas_height_hist)
+        canvas_width = max(self.canvas_width_hist)
+        canvas_height = max(self.canvas_height_hist)
 
         # ウィンドウサイズ変更時
-        if w != self.pre_canvas_width or h != self.pre_canvas_height:
-            self.canvas_width = w
-            self.canvas_height = h
+        if canvas_width != self.pre_canvas_width or canvas_height != self.pre_canvas_height:
+            self.canvas_width = canvas_width
+            self.canvas_height = canvas_height
+
+            self.board.canvas_width = canvas_width
 
             # スクリーンを更新
-            self.update_screen(w, h)
+            self.update_screen(canvas_width, canvas_height)
 
-        self.pre_canvas_width = w
-        self.pre_canvas_height = h
+        self.pre_canvas_width = canvas_width
+        self.pre_canvas_height = canvas_height
 
-    def update_screen(self, w, h):
+    def update_screen(self, canvas_width, canvas_height):
         """スクリーンを更新する
         """
-        dw = w - WINDOW_WIDTH
+        dw = canvas_width - CANVAS_WIDTH
+        dwc = dw // 2
+
         # キャンバスサイズ
-        print(w, self.canvas_width_hist, h, self.canvas_height_hist)
-        self.canvas.configure(width=w-CANVAS_MERGINE, height=h-CANVAS_MERGINE)
+        print(canvas_width, self.canvas_width_hist, canvas_height, self.canvas_height_hist)
+        self.canvas.configure(width=canvas_width, height=canvas_height)
 
         # WHITE-INFO
         for name in INFO_OFFSET_Y:
             text = self.info.text['white_' + name]
-            x = w - (WINDOW_WIDTH // 7)
+            x = (canvas_width+CANVAS_MERGINE)-(WINDOW_WIDTH//7)
             y = INFO_OFFSET_Y[name]
             self.canvas.coords(text, x, y)
 
@@ -263,29 +269,29 @@ class Window(tk.Frame):
             self.canvas.coords(self.board.slowmode_text, SLOWMODE_OFFSET_X+dw, SLOWMODE_OFFSET_Y)
 
         # START
-        self.canvas.coords(self.start.text, START_OFFSET_X+(dw//2), START_OFFSET_Y)
+        self.canvas.coords(self.start.text, START_OFFSET_X+dwc, START_OFFSET_Y)
 
         # SQUARES
-        square_w = (WINDOW_HEIGHT - self.board.square_y_ini - SQUARE_BOTTOM_MARGIN) // self.size
+        square_w = self.board.square_w
         min_x = self.board.square_x_ini
         max_x = min_x + square_w * self.size
         # - x lines
         for xline in self.board._xlines:
             x1, y1, x2, y2 = self.canvas.coords(xline)
-            self.canvas.coords(xline, min_x+dw//2, y1, max_x+dw//2, y2)
+            self.canvas.coords(xline, min_x+dwc, y1, max_x+dwc, y2)
         # - y lines
         for num, yline in enumerate(self.board._ylines):
             x1, y1, x2, y2 = self.canvas.coords(yline)
-            yline_x = (min_x+square_w*num)+dw//2
+            yline_x = (min_x+square_w*num)+dwc
             self.canvas.coords(yline, yline_x, y1, yline_x, y2)
         # - alphabet texts
         for num, atext in enumerate(self.board._atexts):
             x, y = self.canvas.coords(atext)
-            self.canvas.coords(atext, min_x+square_w*num+dw//2+square_w//2, y)
+            self.canvas.coords(atext, min_x+square_w*num+dwc+square_w//2, y)
         # - number texts
         for ntext in self.board._ntexts:
             x, y = self.canvas.coords(ntext)
-            self.canvas.coords(ntext, min_x-SQUAREHEADER_OFFSET_XY+dw//2, y)
+            self.canvas.coords(ntext, min_x-SQUAREHEADER_OFFSET_XY+dwc, y)
         # - 4x4 circle
         if self.size > 4:
             num = self.size//2 + 2
@@ -298,8 +304,26 @@ class Window(tk.Frame):
                     x1, y1, x2, y2 = self.canvas.coords(self.board._4x4circle[index])
                     mark_x1 = min_x + x_offset - mark_w//2
                     mark_x2 = min_x + x_offset + mark_w//2
-                    self.canvas.coords(self.board._4x4circle[index], mark_x1+dw//2, y1, mark_x2+dw//2, y2)
+                    self.canvas.coords(self.board._4x4circle[index], mark_x1+dwc, y1, mark_x2+dwc, y2)
                     index += 1
+        # - discs
+        for (label, color, index_x, index_y), disc in self.board._discs.items():
+            try:
+                x, y = self.board._get_coordinate(index_x, index_y)
+                if color == 'black' or color == 'white':
+                    w = self.board.oval_w1
+                    x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
+                    self.canvas.coords(disc, x1, y1, x2, y2)
+                else:
+                    w1, w2 = self.board.oval_w1, self.board.oval_w2
+                    x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
+                    x3, x4 = x, x + w2
+                    if color.ends_with('1'):
+                        self.canvas.coords(disc, x1, y1, x2, y2)
+                    else:
+                        self.canvas.coords(disc, x3, y1, x4, y2)
+            except:
+                pass
 
 
 class Menu(tk.Menu):
@@ -476,19 +500,20 @@ class ExtraDialog:
 class ScreenBoard:
     """ボードの表示
     """
-    def __init__(self, canvas, size, cputime, assist, record, canvas_width=WINDOW_WIDTH):
+    def __init__(self, canvas, size, cputime, assist, record, canvas_width=CANVAS_WIDTH):
         self.size = size
         self.cputime = cputime
         self.assist = assist
         self.record = record
         self.canvas = canvas
-        self.cwidth = canvas_width
+        self.canvas_width = canvas_width
         self._squares = []
         self._xlines = []
         self._ylines = []
         self._atexts = []
         self._ntexts = []
         self._4x4circle = []
+        self._discs = {}
         self.move = None
 
         # イベント生成
@@ -552,7 +577,7 @@ class ScreenBoard:
         self.square_y_ini = SQUARE_OFFSET_Y
         self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // size
         w = self.square_w
-        self.square_x_ini = self.cwidth // 2 - (w * size) // 2
+        self.square_x_ini = CANVAS_WIDTH // 2 - (w * size) // 2
         self.oval_w1 = int(w * OVAL_SIZE_RATIO)
         self.oval_w2 = int(w // TURNOVAL_SIZE_DIVISOR)
 
@@ -620,8 +645,8 @@ class ScreenBoard:
             w = self.oval_w1
             x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
             label = self._get_label(color, index_x, index_y)
-
-            self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=color, outline=color)
+            oval = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=color, outline=color)
+            self._discs[(label, color, index_x, index_y)] = oval
 
         # ひっくり返す途中
         else:
@@ -632,10 +657,13 @@ class ScreenBoard:
             color2 = 'black' if color == 'turnblack' else 'white'
 
             x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
-            self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
+            rect1 = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
 
             x3, x4 = x, x + w2
-            self.canvas.create_rectangle(x3, y1, x4, y2, tag=label2, fill=color2, outline=color2)
+            rect2 = self.canvas.create_rectangle(x3, y1, x4, y2, tag=label2, fill=color2, outline=color2)
+
+            self._discs[(label1, color + '1', index_x, index_y)] = rect1
+            self._discs[(label2, color + '2', index_x, index_y)] = rect2
 
     def remove_disc(self, color, index_x, index_y):
         """石を消す
@@ -649,6 +677,9 @@ class ScreenBoard:
         for ptn in ptns:
             label = self._get_label(ptn, index_x, index_y)
             self.canvas.delete(label)
+            key = (label, color, index_x, index_y)
+            if key in self._discs:
+                del(self._discs[key])
 
     def _get_coordinate(self, index_x, index_y):
         """座標を計算する
@@ -656,7 +687,8 @@ class ScreenBoard:
         x_ini = self.square_x_ini
         y_ini = self.square_y_ini
         w = self.square_w
-        return x_ini + w * index_x + w // 2, y_ini + w * index_y + w // 2
+        dw = (self.canvas_width - CANVAS_WIDTH)//2
+        return x_ini + w * index_x + w // 2 + dw, y_ini + w * index_y + w // 2
 
     def _get_label(self, name, x, y):
         """表示ラベルを返す
@@ -836,7 +868,7 @@ class ScreenInfo:
 class ScreenStart:
     """スタートテキスト
     """
-    def __init__(self, canvas, language, canvas_width=WINDOW_WIDTH):
+    def __init__(self, canvas, language, canvas_width=CANVAS_WIDTH):
         self.canvas = canvas
         self.language = language
 
