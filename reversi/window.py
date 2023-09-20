@@ -296,8 +296,6 @@ class Window(tk.Frame):
         if self.size > 4:
             num = self.size//2 + 2
             mark_w = int(square_w * OVAL_SIZE_RATIO * 0.2)
-            offset1  = square_w * (num - 4)
-            offset2  = square_w * num
             index = 0
             for x_offset in [square_w * (num - 4), square_w * num]:
                 for y_offset in [square_w * (num - 4), square_w * num]:
@@ -308,22 +306,19 @@ class Window(tk.Frame):
                     index += 1
         # - discs
         for (label, color, index_x, index_y), disc in self.board._discs.items():
-            try:
-                x, y = self.board._get_coordinate(index_x, index_y)
-                if color == 'black' or color == 'white':
-                    w = self.board.oval_w1
-                    x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
+            x, y = self.board._get_coordinate(index_x, index_y)
+            if color == 'black' or color == 'white':
+                w = self.board.oval_w1
+                x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
+                self.canvas.coords(disc, x1, y1, x2, y2)
+            else:
+                w1, w2 = self.board.oval_w1, self.board.oval_w2
+                x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
+                x3, x4 = x, x + w2
+                if color.endswith('1'):
                     self.canvas.coords(disc, x1, y1, x2, y2)
                 else:
-                    w1, w2 = self.board.oval_w1, self.board.oval_w2
-                    x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
-                    x3, x4 = x, x + w2
-                    if color.ends_with('1'):
-                        self.canvas.coords(disc, x1, y1, x2, y2)
-                    else:
-                        self.canvas.coords(disc, x3, y1, x4, y2)
-            except:
-                pass
+                    self.canvas.coords(disc, x3, y1, x4, y2)
         # - moves
         for y in range(self.size):
             for x in range(self.size):
@@ -333,7 +328,9 @@ class Window(tk.Frame):
                     x1 = min_x + square_w * x
                     x2 = x1 + square_w
                     self.canvas.coords(square, x1+dwc, y1, x2+dwc, y2)
-                except:
+                except ValueError:
+                    pass
+                except tk._tkinter.TclError:
                     pass
 
 
@@ -690,7 +687,7 @@ class ScreenBoard:
             self.canvas.delete(label)
             key = (label, color, index_x, index_y)
             if key in self._discs:
-                del(self._discs[key])
+                del self._discs[key]
 
     def _get_coordinate(self, index_x, index_y):
         """座標を計算する
