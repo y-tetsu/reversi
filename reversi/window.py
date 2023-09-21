@@ -205,10 +205,10 @@ class Window(tk.Frame):
     def init_screen(self):
         """ゲーム画面の初期化
         """
-        self.canvas.delete('all')                                                                                    # 全オブジェクト削除
-        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player, self.language, self.canvas_width)                           # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas, self.language, self.canvas_width)                                      # スタートテキスト配置
+        self.canvas.delete('all')                                                                                                        # 全オブジェクト削除
+        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width, self.canvas_height)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player, self.language, self.canvas_width)                                               # 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas, self.language, self.canvas_width, self.canvas_height)                                      # スタートテキスト配置
 
         # ウィンドウサイズ変更時のイベントをバインド
         self.root.bind("<Configure>", self.on_resize)
@@ -237,6 +237,7 @@ class Window(tk.Frame):
             self.canvas_height = canvas_height
 
             self.board.canvas_width = canvas_width
+            self.board.canvas_height = canvas_height
 
             # スクリーンを更新
             self.update_screen(canvas_width, canvas_height)
@@ -249,6 +250,8 @@ class Window(tk.Frame):
         """
         dw = canvas_width - CANVAS_WIDTH
         dwc = dw // 2
+        dh = canvas_height - CANVAS_HEIGHT
+        dhc = dh // 2
 
         # キャンバスサイズ
         print(canvas_width, self.canvas_width_hist, canvas_height, self.canvas_height_hist)
@@ -269,29 +272,31 @@ class Window(tk.Frame):
             self.canvas.coords(self.board.slowmode_text, SLOWMODE_OFFSET_X+dw, SLOWMODE_OFFSET_Y)
 
         # START
-        self.canvas.coords(self.start.text, START_OFFSET_X+dwc, START_OFFSET_Y)
+        self.canvas.coords(self.start.text, START_OFFSET_X+dwc, START_OFFSET_Y+dhc)
 
         # SQUARES
         square_w = self.board.square_w
-        min_x = self.board.square_x_ini
-        max_x = min_x + square_w * self.size
+        min_x, min_y = self.board.square_x_ini, self.board.square_y_ini
+        max_x, max_y = min_x + square_w * self.size, min_y + square_w * self.size
+        row_x, col_y = min_x - SQUAREHEADER_OFFSET_XY, min_y - SQUAREHEADER_OFFSET_XY
         # - x lines
-        for xline in self.board._xlines:
-            x1, y1, x2, y2 = self.canvas.coords(xline)
-            self.canvas.coords(xline, min_x+dwc, y1, max_x+dwc, y2)
+        for num, xline in enumerate(self.board._xlines):
+            square_x1, square_y1 = min_x, min_y + square_w * num
+            square_x2, square_y2 = max_x, square_y1
+            self.canvas.coords(xline, square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc)
         # - y lines
         for num, yline in enumerate(self.board._ylines):
-            x1, y1, x2, y2 = self.canvas.coords(yline)
-            yline_x = (min_x+square_w*num)+dwc
-            self.canvas.coords(yline, yline_x, y1, yline_x, y2)
+            square_x1, square_y1 = min_x + square_w * num, min_y
+            square_x2, square_y2 = square_x1, max_y
+            self.canvas.coords(yline, square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc)
         # - alphabet texts
         for num, atext in enumerate(self.board._atexts):
-            x, y = self.canvas.coords(atext)
-            self.canvas.coords(atext, min_x+square_w*num+dwc+square_w//2, y)
+            text_x, text_y = (min_x + square_w * num) + square_w // 2, col_y
+            self.canvas.coords(atext, text_x+dwc, text_y+dhc)
         # - number texts
-        for ntext in self.board._ntexts:
-            x, y = self.canvas.coords(ntext)
-            self.canvas.coords(ntext, min_x-SQUAREHEADER_OFFSET_XY+dwc, y)
+        for num, ntext in enumerate(self.board._ntexts):
+            text_x, text_y = row_x, (min_y + square_w * num) + square_w // 2
+            self.canvas.coords(ntext, text_x+dwc, text_y+dhc)
         # - 4x4 circle
         if self.size > 4:
             num = self.size//2 + 2
@@ -299,10 +304,9 @@ class Window(tk.Frame):
             index = 0
             for x_offset in [square_w * (num - 4), square_w * num]:
                 for y_offset in [square_w * (num - 4), square_w * num]:
-                    x1, y1, x2, y2 = self.canvas.coords(self.board._4x4circle[index])
-                    mark_x1 = min_x + x_offset - mark_w//2
-                    mark_x2 = min_x + x_offset + mark_w//2
-                    self.canvas.coords(self.board._4x4circle[index], mark_x1+dwc, y1, mark_x2+dwc, y2)
+                    mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
+                    mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
+                    self.canvas.coords(self.board._4x4circle[index], mark_x1+dwc, mark_y1+dhc, mark_x2+dwc, mark_y2+dhc)
                     index += 1
         # - discs
         for (label, color, index_x, index_y), disc in self.board._discs.items():
@@ -324,10 +328,11 @@ class Window(tk.Frame):
             for x in range(self.size):
                 square = self.board._squares[y][x]
                 try:
-                    x1, y1, x2, y2 = self.canvas.coords(square)
                     x1 = min_x + square_w * x
                     x2 = x1 + square_w
-                    self.canvas.coords(square, x1+dwc, y1, x2+dwc, y2)
+                    y1 = min_y + square_w * y
+                    y2 = y1 + square_w
+                    self.canvas.coords(square, x1+dwc, y1+dhc, x2+dwc, y2+dhc)
                 except ValueError:
                     pass
                 except tk._tkinter.TclError:
@@ -508,13 +513,14 @@ class ExtraDialog:
 class ScreenBoard:
     """ボードの表示
     """
-    def __init__(self, canvas, size, cputime, assist, record, canvas_width=CANVAS_WIDTH):
+    def __init__(self, canvas, size, cputime, assist, record, canvas_width=CANVAS_WIDTH, canvas_height=CANVAS_HEIGHT):
         self.size = size
         self.cputime = cputime
         self.assist = assist
         self.record = record
         self.canvas = canvas
         self.canvas_width = canvas_width
+        self.canvas_height = canvas_height
         self._squares = []
         self._xlines = []
         self._ylines = []
@@ -582,6 +588,8 @@ class ScreenBoard:
         """
         dw = self.canvas_width - CANVAS_WIDTH
         dwc = dw // 2
+        dh = self.canvas_height - CANVAS_HEIGHT
+        dhc = dh // 2
 
         size = self.size
         self._squares = [[None for _ in range(size)] for _ in range(size)]
@@ -624,11 +632,11 @@ class ScreenBoard:
 
                 # 番地
                 if num < size:
-                    text = self.canvas.create_text(text_x+dwc, text_y, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
+                    text = self.canvas.create_text(text_x+dwc, text_y+dhc, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
                     text_append(text)
 
                 # マス目の線
-                line = self.canvas.create_line(square_x1+dwc, square_y1, square_x2+dwc, square_y2, fill=COLOR_WHITE)
+                line = self.canvas.create_line(square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc, fill=COLOR_WHITE)
                 line_append(line)
 
             # 目印の描画
@@ -638,7 +646,7 @@ class ScreenBoard:
                     for y_offset in [w * (num - 4), w * num]:
                         mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
                         mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
-                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1, mark_x2+dwc, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
+                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1+dhc, mark_x2+dwc, mark_y2+dhc, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
                         self._4x4circle.append(oval)
 
         # 初期位置に石を置く
@@ -701,7 +709,8 @@ class ScreenBoard:
         y_ini = self.square_y_ini
         w = self.square_w
         dw = (self.canvas_width - CANVAS_WIDTH)//2
-        return x_ini + w * index_x + w // 2 + dw, y_ini + w * index_y + w // 2
+        dh = (self.canvas_height - CANVAS_HEIGHT)//2
+        return x_ini + w * index_x + w // 2 + dw, y_ini + w * index_y + w // 2 + dh
 
     def _get_label(self, name, x, y):
         """表示ラベルを返す
@@ -724,15 +733,16 @@ class ScreenBoard:
         """打てる場所をハイライトする
         """
         dw = (self.canvas_width - CANVAS_WIDTH)//2
+        dh = (self.canvas_height - CANVAS_HEIGHT)//2
         for x, y in moves:
             x1 = self.square_x_ini + self.square_w * x
             x2 = x1 + self.square_w
             y1 = self.square_y_ini + self.square_w * y
             y2 = y1 + self.square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1, x2+dw, y2, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
             else:
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1, x2+dw, y2, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
         self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
@@ -744,11 +754,12 @@ class ScreenBoard:
         """打った場所をハイライトする
         """
         dw = (self.canvas_width - CANVAS_WIDTH)//2
+        dh = (self.canvas_height - CANVAS_HEIGHT)//2
         x1 = self.square_x_ini + self.square_w * x
         x2 = x1 + self.square_w
         y1 = self.square_y_ini + self.square_w * y
         y2 = y1 + self.square_w
-        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1, x2+dw, y2, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
+        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
         self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
@@ -888,16 +899,18 @@ class ScreenInfo:
 class ScreenStart:
     """スタートテキスト
     """
-    def __init__(self, canvas, language, canvas_width=CANVAS_WIDTH):
+    def __init__(self, canvas, language, canvas_width=CANVAS_WIDTH, canvas_height=CANVAS_HEIGHT):
         self.canvas = canvas
         self.language = language
 
         # テキスト作成
         dw = canvas_width - CANVAS_WIDTH
         dwc = dw // 2
+        dh = canvas_height - CANVAS_HEIGHT
+        dhc = dh // 2
         self.text = canvas.create_text(
             START_OFFSET_X+dwc,
-            START_OFFSET_Y,
+            START_OFFSET_Y+dhc,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
             fill=COLOR_GOLD
