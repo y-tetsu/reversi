@@ -207,7 +207,7 @@ class Window(tk.Frame):
         """
         self.canvas.delete('all')                                                                                    # 全オブジェクト削除
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player, self.language)                                              # 情報表示テキスト配置
+        self.info = ScreenInfo(self.canvas, self.player, self.language, self.canvas_width)                           # 情報表示テキスト配置
         self.start = ScreenStart(self.canvas, self.language, self.canvas_width)                                      # スタートテキスト配置
 
         # ウィンドウサイズ変更時のイベントをバインド
@@ -524,6 +524,8 @@ class ScreenBoard:
         self._discs = {}
         self.move = None
 
+        dw = canvas_width - CANVAS_WIDTH
+
         # イベント生成
         self.event = threading.Event()
 
@@ -552,7 +554,7 @@ class ScreenBoard:
         # 棋譜出力表示
         record_text = 'REC' if self.record == 'ON' else ''
         self.record_text = self.canvas.create_text(
-            RECORD_OFFSET_X,
+            RECORD_OFFSET_X+dw,
             RECORD_OFFSET_Y,
             text=record_text,
             font=('', RECORD_FONT_SIZE),
@@ -564,7 +566,7 @@ class ScreenBoard:
         slowmode_text = '■'
         if BitBoardMethods.SLOW_MODE1 or BitBoardMethods.SLOW_MODE2 or BitBoardMethods.SLOW_MODE3 or BitBoardMethods.SLOW_MODE4 or BitBoardMethods.SLOW_MODE5 or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE or BitBoardMethods.CYBOARD_ERROR:  # noqa: E501
             self.slowmode_text = self.canvas.create_text(
-                SLOWMODE_OFFSET_X,
+                SLOWMODE_OFFSET_X+dw,
                 SLOWMODE_OFFSET_Y,
                 text=slowmode_text,
                 font=('', SLOWMODE_FONT_SIZE),
@@ -578,6 +580,9 @@ class ScreenBoard:
     def _draw_squares(self):
         """マス目を描画
         """
+        dw = self.canvas_width - CANVAS_WIDTH
+        dwc = dw // 2
+
         size = self.size
         self._squares = [[None for _ in range(size)] for _ in range(size)]
 
@@ -619,11 +624,11 @@ class ScreenBoard:
 
                 # 番地
                 if num < size:
-                    text = self.canvas.create_text(text_x, text_y, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
+                    text = self.canvas.create_text(text_x+dwc, text_y, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
                     text_append(text)
 
                 # マス目の線
-                line = self.canvas.create_line(square_x1, square_y1, square_x2, square_y2, fill=COLOR_WHITE)
+                line = self.canvas.create_line(square_x1+dwc, square_y1, square_x2+dwc, square_y2, fill=COLOR_WHITE)
                 line_append(line)
 
             # 目印の描画
@@ -633,7 +638,7 @@ class ScreenBoard:
                     for y_offset in [w * (num - 4), w * num]:
                         mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
                         mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
-                        oval = self.canvas.create_oval(mark_x1, mark_y1, mark_x2, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
+                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1, mark_x2+dwc, mark_y2, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
                         self._4x4circle.append(oval)
 
         # 初期位置に石を置く
@@ -798,10 +803,11 @@ class ScreenBoard:
 class ScreenInfo:
     """情報表示テキスト
     """
-    def __init__(self, canvas, player, language):
+    def __init__(self, canvas, player, language, canvas_width=CANVAS_WIDTH):
         self.canvas = canvas
         self.player = player
         self.language = language
+        self.canvas_width = canvas_width
         self.text = {}
 
         # テキスト作成
@@ -812,8 +818,12 @@ class ScreenInfo:
     def _create_text(self, color, name):
         """表示テキスト作成
         """
+        offset_x = INFO_OFFSET_X[color]
+        if color == 'white':
+            offset_x = (self.canvas_width+CANVAS_MERGINE)-(WINDOW_WIDTH//7)
+
         self.text[color + '_' + name] = self.canvas.create_text(
-            INFO_OFFSET_X[color],
+            offset_x,
             INFO_OFFSET_Y[name],
             text=DEFAULT_INFO_TEXT[name][color](self),
             font=('', INFO_FONT_SIZE[name]),
@@ -883,8 +893,10 @@ class ScreenStart:
         self.language = language
 
         # テキスト作成
+        dw = canvas_width - CANVAS_WIDTH
+        dwc = dw // 2
         self.text = canvas.create_text(
-            START_OFFSET_X,
+            START_OFFSET_X+dwc,
             START_OFFSET_Y,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
