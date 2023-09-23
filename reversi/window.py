@@ -254,7 +254,6 @@ class Window(tk.Frame):
         dhc = dh // 2
 
         # キャンバスサイズ
-        print(canvas_width, self.canvas_width_hist, canvas_height, self.canvas_height_hist)
         self.canvas.configure(width=canvas_width, height=canvas_height)
 
         # WHITE-INFO
@@ -272,11 +271,15 @@ class Window(tk.Frame):
             self.canvas.coords(self.board.slowmode_text, SLOWMODE_OFFSET_X+dw, SLOWMODE_OFFSET_Y)
 
         # START
-        self.canvas.coords(self.start.text, START_OFFSET_X+dwc, START_OFFSET_Y+dhc)
+        area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
+        area_ratio = area_size / CANVAS_HEIGHT
+        offset = (area_size - CANVAS_HEIGHT)/4
+
+        self.canvas.coords(self.start.text, START_OFFSET_X+dwc+offset/2, START_OFFSET_Y+dhc+offset*2)
 
         # SQUARES
-        square_w = self.board.square_w
-        min_x, min_y = self.board.square_x_ini, self.board.square_y_ini
+        square_w = self.board.square_w * area_ratio
+        min_x, min_y = self.board.square_x_ini-offset, self.board.square_y_ini-offset
         max_x, max_y = min_x + square_w * self.size, min_y + square_w * self.size
         row_x, col_y = min_x - SQUAREHEADER_OFFSET_XY, min_y - SQUAREHEADER_OFFSET_XY
         # - x lines
@@ -312,11 +315,11 @@ class Window(tk.Frame):
         for (label, color, index_x, index_y), disc in self.board._discs.items():
             x, y = self.board._get_coordinate(index_x, index_y)
             if color == 'black' or color == 'white':
-                w = self.board.oval_w1
+                w = self.board.oval_w1 * area_ratio
                 x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
                 self.canvas.coords(disc, x1, y1, x2, y2)
             else:
-                w1, w2 = self.board.oval_w1, self.board.oval_w2
+                w1, w2 = self.board.oval_w1*area_ratio, self.board.oval_w2*area_ratio
                 x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
                 x3, x4 = x, x + w2
                 if color.endswith('1'):
@@ -594,16 +597,20 @@ class ScreenBoard:
         size = self.size
         self._squares = [[None for _ in range(size)] for _ in range(size)]
 
+        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
+        area_ratio = area_size / CANVAS_HEIGHT
+        offset = (area_size - CANVAS_HEIGHT)/4
+
         # マス目や石のサイズを計算
         self.square_y_ini = SQUARE_OFFSET_Y
         self.square_w = (WINDOW_HEIGHT - self.square_y_ini - SQUARE_BOTTOM_MARGIN) // size
-        w = self.square_w
-        self.square_x_ini = CANVAS_WIDTH // 2 - (w * size) // 2
-        self.oval_w1 = int(w * OVAL_SIZE_RATIO)
-        self.oval_w2 = int(w // TURNOVAL_SIZE_DIVISOR)
+        w = self.square_w * area_ratio
+        self.square_x_ini = CANVAS_WIDTH // 2 - (self.square_w * size) // 2
+        self.oval_w1 = int(self.square_w * OVAL_SIZE_RATIO)
+        self.oval_w2 = int(self.square_w // TURNOVAL_SIZE_DIVISOR)
 
         # マス目や見出しの位置を初期化
-        min_x, min_y = self.square_x_ini, self.square_y_ini
+        min_x, min_y = self.square_x_ini-offset, self.square_y_ini-offset
         max_x, max_y = min_x + w * size, min_y + w * size
         row_x, col_y = min_x - SQUAREHEADER_OFFSET_XY, min_y - SQUAREHEADER_OFFSET_XY
         label = None
@@ -659,11 +666,14 @@ class ScreenBoard:
     def put_disc(self, color, index_x, index_y):
         """石を置く
         """
+        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
+        area_ratio = area_size / CANVAS_HEIGHT
+
         x, y = self._get_coordinate(index_x, index_y)
 
         # 黒か白の石をおく
         if color == 'black' or color == 'white':
-            w = self.oval_w1
+            w = self.oval_w1 * area_ratio
             x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
             label = self._get_label(color, index_x, index_y)
             oval = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=color, outline=color)
@@ -671,7 +681,7 @@ class ScreenBoard:
 
         # ひっくり返す途中
         else:
-            w1, w2 = self.oval_w1, self.oval_w2
+            w1, w2 = self.oval_w1 * area_ratio, self.oval_w2 * area_ratio
             label1 = self._get_label(color + '1', index_x, index_y)
             label2 = self._get_label(color + '2', index_x, index_y)
             color1 = 'white' if color == 'turnblack' else 'black'
@@ -705,9 +715,14 @@ class ScreenBoard:
     def _get_coordinate(self, index_x, index_y):
         """座標を計算する
         """
-        x_ini = self.square_x_ini
-        y_ini = self.square_y_ini
-        w = self.square_w
+        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
+        area_ratio = area_size / CANVAS_HEIGHT
+        offset = (area_size - CANVAS_HEIGHT)/4
+
+        x_ini = self.square_x_ini - offset
+        y_ini = self.square_y_ini - offset
+        w = self.square_w * area_ratio
+
         dw = (self.canvas_width - CANVAS_WIDTH)//2
         dh = (self.canvas_height - CANVAS_HEIGHT)//2
         return x_ini + w * index_x + w // 2 + dw, y_ini + w * index_y + w // 2 + dh
@@ -732,13 +747,18 @@ class ScreenBoard:
     def enable_moves(self, moves):
         """打てる場所をハイライトする
         """
+        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
+        area_ratio = area_size / CANVAS_HEIGHT
+        offset = (area_size - CANVAS_HEIGHT)/4
+        square_w = self.square_w * area_ratio
+
         dw = (self.canvas_width - CANVAS_WIDTH)//2
         dh = (self.canvas_height - CANVAS_HEIGHT)//2
         for x, y in moves:
-            x1 = self.square_x_ini + self.square_w * x
-            x2 = x1 + self.square_w
-            y1 = self.square_y_ini + self.square_w * y
-            y2 = y1 + self.square_w
+            x1 = self.square_x_ini + square_w * x - offset
+            x2 = x1 + square_w
+            y1 = self.square_y_ini + square_w * y - offset
+            y2 = y1 + square_w
             if self.assist == 'ON':
                 self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
             else:
@@ -753,12 +773,17 @@ class ScreenBoard:
     def enable_move(self, x, y):
         """打った場所をハイライトする
         """
+        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
+        area_ratio = area_size / CANVAS_HEIGHT
+        offset = (area_size - CANVAS_HEIGHT)/4
+        square_w = self.square_w * area_ratio
+
         dw = (self.canvas_width - CANVAS_WIDTH)//2
         dh = (self.canvas_height - CANVAS_HEIGHT)//2
-        x1 = self.square_x_ini + self.square_w * x
-        x2 = x1 + self.square_w
-        y1 = self.square_y_ini + self.square_w * y
-        y2 = y1 + self.square_w
+        x1 = self.square_x_ini + square_w * x - offset
+        x2 = x1 + square_w
+        y1 = self.square_y_ini + square_w * y - offset
+        y2 = y1 + square_w
         self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
         self.canvas.tag_raise('mark', 'move')
 
@@ -903,14 +928,17 @@ class ScreenStart:
         self.canvas = canvas
         self.language = language
 
+        area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
+        offset = (area_size - CANVAS_HEIGHT)/4
+
         # テキスト作成
         dw = canvas_width - CANVAS_WIDTH
         dwc = dw // 2
         dh = canvas_height - CANVAS_HEIGHT
         dhc = dh // 2
         self.text = canvas.create_text(
-            START_OFFSET_X+dwc,
-            START_OFFSET_Y+dhc,
+            START_OFFSET_X+dwc+offset/2,
+            START_OFFSET_Y+dhc+offset*2,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
             fill=COLOR_GOLD
