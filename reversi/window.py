@@ -1,7 +1,6 @@
 """GUIウィンドウ
 """
 import os
-import platform
 import time
 import tkinter as tk
 import tkinter.filedialog as filedialog
@@ -14,10 +13,6 @@ import reversi.strategies as strategies
 import reversi.strategies.TableMethods as TableMethods
 import reversi.strategies.AlphaBetaMethods as AlphaBetaMethods
 import reversi.strategies.NegaScoutMethods as NegaScoutMethods
-
-if platform.system == "Darwin":
-    tk.TkVersion = 8.5
-    tk.TCL_VERSION = 8.5
 
 WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
@@ -168,8 +163,6 @@ class Window(tk.Frame):
     """ウィンドウ
     """
     def __init__(self, root=None, black_players=None, white_players=None):
-        print('TkVersion :', tk.TkVersion)
-
         super().__init__(root)
         self.pack()
 
