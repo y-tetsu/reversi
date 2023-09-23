@@ -241,6 +241,8 @@ class Window(tk.Frame):
 
             # スクリーンを更新
             area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
+            self.board.area_size = area_size
+
             area_ratio = area_size / CANVAS_HEIGHT
             offset = (area_size - CANVAS_HEIGHT)/4
             self.update_screen(canvas_width, canvas_height, area_ratio, offset)
@@ -523,6 +525,7 @@ class ScreenBoard:
         self.canvas = canvas
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
+        self.area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
         self._squares = []
         self._xlines = []
         self._ylines = []
@@ -596,9 +599,8 @@ class ScreenBoard:
         size = self.size
         self._squares = [[None for _ in range(size)] for _ in range(size)]
 
-        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
-        area_ratio = area_size / CANVAS_HEIGHT
-        offset = (area_size - CANVAS_HEIGHT)/4
+        area_ratio = self.area_size / CANVAS_HEIGHT
+        offset = (self.area_size - CANVAS_HEIGHT)/4
 
         # マス目や石のサイズを計算
         self.square_y_ini = SQUARE_OFFSET_Y
@@ -665,8 +667,7 @@ class ScreenBoard:
     def put_disc(self, color, index_x, index_y):
         """石を置く
         """
-        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
-        area_ratio = area_size / CANVAS_HEIGHT
+        area_ratio = self.area_size / CANVAS_HEIGHT
 
         x, y = self._get_coordinate(index_x, index_y)
 
@@ -714,9 +715,8 @@ class ScreenBoard:
     def _get_coordinate(self, index_x, index_y):
         """座標を計算する
         """
-        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
-        area_ratio = area_size / CANVAS_HEIGHT
-        offset = (area_size - CANVAS_HEIGHT)/4
+        area_ratio = self.area_size / CANVAS_HEIGHT
+        offset = (self.area_size - CANVAS_HEIGHT)/4
 
         x_ini = self.square_x_ini - offset
         y_ini = self.square_y_ini - offset
@@ -746,9 +746,8 @@ class ScreenBoard:
     def enable_moves(self, moves):
         """打てる場所をハイライトする
         """
-        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
-        area_ratio = area_size / CANVAS_HEIGHT
-        offset = (area_size - CANVAS_HEIGHT)/4
+        area_ratio = self.area_size / CANVAS_HEIGHT
+        offset = (self.area_size - CANVAS_HEIGHT)/4
         square_w = self.square_w * area_ratio
 
         dw = (self.canvas_width - CANVAS_WIDTH)//2
@@ -772,9 +771,8 @@ class ScreenBoard:
     def enable_move(self, x, y):
         """打った場所をハイライトする
         """
-        area_size = max(min(self.canvas_width//2, self.canvas_height), CANVAS_HEIGHT)
-        area_ratio = area_size / CANVAS_HEIGHT
-        offset = (area_size - CANVAS_HEIGHT)/4
+        area_ratio = self.area_size / CANVAS_HEIGHT
+        offset = (self.area_size - CANVAS_HEIGHT)/4
         square_w = self.square_w * area_ratio
 
         dw = (self.canvas_width - CANVAS_WIDTH)//2
