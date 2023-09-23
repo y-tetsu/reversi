@@ -716,7 +716,6 @@ class ScreenBoard:
         x_ini = self.square_x_ini - self.offset
         y_ini = self.square_y_ini - self.offset
         w = self.square_w * self.area_ratio
-
         dw = (self.canvas_width - CANVAS_WIDTH)//2
         dh = (self.canvas_height - CANVAS_HEIGHT)//2
         return x_ini + w * index_x + w // 2 + dw, y_ini + w * index_y + w // 2 + dh
