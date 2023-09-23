@@ -74,11 +74,11 @@ This one allows you to play a game of reversi for free immediately after downloa
 
 
 ## System Requirements
-- Windows, Ubuntu<br>
+- Windows, Ubuntu, MacOS<br>
 - Display size 1366x768
 - Processor 1.6GHz
 - Memory 4.00GB
-- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
+- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(3.11 for MacOS)<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing on Windows)<br>
