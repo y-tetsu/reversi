@@ -65,5 +65,7 @@ jobs:
         run: |
              python -m pip install --upgrade pip
              pip install -r requirements.txt
+      - name: Update Tk
+        run: brew install python-tk
       - name: unittest for python
         run: python -m unittest discover tests -v
