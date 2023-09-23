@@ -291,7 +291,7 @@ class Reversic:
         self.sleep_time_turn = sleep_time_turn
         self.sleep_time_move = sleep_time_move
 
-        if 'win' in system().lower():
+        if 'Windows' in system():
             from ctypes import windll
             kernel = windll.kernel32
             kernel.SetConsoleMode(kernel.GetStdHandle(-11), 7)
