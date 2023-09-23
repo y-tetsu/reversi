@@ -687,7 +687,6 @@ class ScreenBoard:
 
             x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
             rect1 = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
-
             x3, x4 = x, x + w2
             rect2 = self.canvas.create_rectangle(x3, y1, x4, y2, tag=label2, fill=color2, outline=color2)
 
