@@ -240,12 +240,15 @@ class Window(tk.Frame):
             self.board.canvas_height = canvas_height
 
             # スクリーンを更新
-            self.update_screen(canvas_width, canvas_height)
+            area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
+            area_ratio = area_size / CANVAS_HEIGHT
+            offset = (area_size - CANVAS_HEIGHT)/4
+            self.update_screen(canvas_width, canvas_height, area_ratio, offset)
 
         self.pre_canvas_width = canvas_width
         self.pre_canvas_height = canvas_height
 
-    def update_screen(self, canvas_width, canvas_height):
+    def update_screen(self, canvas_width, canvas_height, area_ratio, offset):
         """スクリーンを更新する
         """
         dw = canvas_width - CANVAS_WIDTH
@@ -271,10 +274,6 @@ class Window(tk.Frame):
             self.canvas.coords(self.board.slowmode_text, SLOWMODE_OFFSET_X+dw, SLOWMODE_OFFSET_Y)
 
         # START
-        area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
-        area_ratio = area_size / CANVAS_HEIGHT
-        offset = (area_size - CANVAS_HEIGHT)/4
-
         self.canvas.coords(self.start.text, START_OFFSET_X+dwc+offset/2, START_OFFSET_Y+dhc+offset*2)
 
         # SQUARES
