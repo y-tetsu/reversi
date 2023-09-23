@@ -14,8 +14,6 @@ import reversi.strategies.TableMethods as TableMethods
 import reversi.strategies.AlphaBetaMethods as AlphaBetaMethods
 import reversi.strategies.NegaScoutMethods as NegaScoutMethods
 
-print('TkVersion :', tk.TkVersion)
-
 WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
 WINDOW_HEIGHT = 660       # ウィンドウ高さ
@@ -165,6 +163,8 @@ class Window(tk.Frame):
     """ウィンドウ
     """
     def __init__(self, root=None, black_players=None, white_players=None):
+        print('TkVersion :', tk.TkVersion)
+
         super().__init__(root)
         self.pack()
 
