@@ -52,8 +52,6 @@ jobs:
     needs: unittest_windows
     runs-on: macos-latest
     steps:
-      - name: Update Tk
-        run: brew install tcl-tk
       - name: Setup Python
         uses: actions/setup-python@v3
         with:
