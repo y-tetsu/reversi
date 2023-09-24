@@ -1,4 +1,4 @@
-name: unittest-develop
+name: unittest_ubuntu_macos
 
 on:
   push:
