@@ -7,7 +7,8 @@ UPPER = 'upper'
 
 
 class Move(tuple):
-    """Move"""
+    """Move
+    """
     def __new__(cls, *args, case=LOWER):
         x, y = cls._get_xy(*args)
         cls = super().__new__(cls, (x, y))
