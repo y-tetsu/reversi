@@ -1,4 +1,4 @@
-name: unittest-master
+name: unittest_python_versions
 
 on:
   push:
@@ -11,11 +11,14 @@ on:
 jobs:
   unittest_ubuntu:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
-      - name: Setup Python
+      - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
-          python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+          python-version: ${{ matrix.python-version }}
           architecture: x64
       - name: Checkout reversi
         uses: actions/checkout@master
