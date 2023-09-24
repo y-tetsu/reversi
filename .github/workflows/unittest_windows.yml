@@ -1,4 +1,4 @@
-name: unittest
+name: unittest_windows
 
 on:
   push:
