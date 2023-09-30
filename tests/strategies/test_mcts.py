@@ -2,15 +2,34 @@
 """
 
 import unittest
+import os
 
 from reversi import C as c
 from reversi.board import BitBoard
-from reversi.strategies import Node
+from reversi.strategies import Mcts, Node
+from reversi.strategies.common import Measure
 
 
 class TestMcts(unittest.TestCase):
     """Mcts
     """
+    def test_mcts_performance(self):
+        board = BitBoard()
+        board.put_disc('black', 3, 2)
+        board.put_disc('white', 2, 4)
+        board.put_disc('black', 1, 5)
+
+        mcts = Mcts(count=10000000)
+        mcts.next_move('white', board)
+
+        key = mcts.__class__.__name__ + str(os.getpid())
+        print()
+        print(key)
+        print(' count(1100) :', Measure.count[key])
+        print(' min         :', Measure.elp_time[key]['min'], '(s)')
+        print(' max         :', Measure.elp_time[key]['max'], '(s)')
+        print(' ave         :', Measure.elp_time[key]['ave'], '(s)')
+
     def test_node_init(self):
         color = c.black
         size = 6
