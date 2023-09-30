@@ -3,6 +3,7 @@ from ..strategies.user import ConsoleUserInput, WindowUserInput
 from ..strategies.easy import Random, Greedy, Unselfish, SlowStarter
 from ..strategies.table import Table
 from ..strategies.montecarlo import MonteCarlo
+from ..strategies.mcts import Mcts, Node
 from ..strategies.minmax import _MinMax_, MinMax
 from ..strategies.negamax import _NegaMax_, _NegaMax, NegaMax_, NegaMax
 from ..strategies.alphabeta import _AlphaBeta_, _AlphaBeta, AlphaBeta_, AlphaBeta, _AlphaBetaN_, _AlphaBetaN, AlphaBetaN_, AlphaBetaN  # noqa: E501
@@ -215,6 +216,8 @@ __all__ = [
     'MonteCarlo100',
     'MonteCarlo1000',
     'MonteCarlo_EndGame',
+    'Mcts',
+    'Node',
     'MinMax2',
     'NegaMax3',
     'AlphaBeta4',
