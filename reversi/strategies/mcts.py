@@ -2,6 +2,7 @@
 """
 import random
 import math
+import gc
 
 from reversi import C as c
 from reversi import BitBoard
@@ -42,7 +43,13 @@ class Mcts(AbstractStrategy):
         for child in self.root.child_nodes:
             counts.append(child.count)
 
-        return legal_moves[self.root.argmax(counts)]
+        move = legal_moves[self.root.argmax(counts)]
+        self.root = None
+
+        # ガーベージコレクションを強制実行しメモリを解放する
+        gc.collect()
+
+        return move
 
     @Measure.countup
     @Timer.timeout
