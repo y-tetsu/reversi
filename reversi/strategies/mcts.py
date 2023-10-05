@@ -14,9 +14,10 @@ from reversi.strategies.MonteCarloMethods import playout
 class Mcts(AbstractStrategy):
     """モンテカルロ木探索で次の手を選ぶ
     """
-    def __init__(self, count=1000, remain=60):
+    def __init__(self, count=1000, remain=60, excount=10):
         self.count = count
         self.remain = remain  # モンテカルロ法開始手数
+        self.excount = excount
         self.root = None
         self.timer = True
         self.measure = True
@@ -28,7 +29,7 @@ class Mcts(AbstractStrategy):
         """
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
 
-        self.root = Node(color, board)
+        self.root = Node(color, board, self.excount)
         self.root.expand()
 
         # 指定回数分のシミュレーションを実行する
