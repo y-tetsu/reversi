@@ -177,11 +177,13 @@ class Node:
             # ランダムに手を選び決着まで手を進める
             color = self.color
             moves = self.board.get_legal_moves(color)
+            sign = 1
             # パスの場合
             if not moves:
                 color = c.black if self.color == c.white else c.white
                 moves = self.board.get_legal_moves(color)
-            value = playout(self.color, self.board, random.choice(moves))
+                sign = -1
+            value = playout(self.color, self.board, random.choice(moves)) * sign
             self.total += value
             self.count += 1
             # 子ノードの展開
