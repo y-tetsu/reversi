@@ -44,7 +44,7 @@ class Mcts(AbstractStrategy):
         for child in self.root.child_nodes:
             counts.append(child.count)
 
-        move = legal_moves[self.root.argmax(counts)]
+        move = legal_moves[argmax(counts)]
         self.root = None
 
         # ガーベージコレクションを強制実行しメモリを解放する
@@ -150,13 +150,7 @@ class Node:
             ucb1 = (-total)/count + (2*log_a/count)**0.5
             ucb1_values.append(ucb1)
 
-        return self.child_nodes[self.argmax(ucb1_values)]
-
-    def argmax(self, values):
-        """リストの最大値のインデックスを返す
-        """
-        max_value = max(values)
-        return values.index(max_value)
+        return self.child_nodes[argmax(ucb1_values)]
 
     def evaluate(self):
         """局面の評価
@@ -197,3 +191,10 @@ class Node:
             self.count += 1
 
         return value
+
+
+def argmax(values):
+    """リストの最大値のインデックスを返す
+    """
+    max_value = max(values)
+    return values.index(max_value)

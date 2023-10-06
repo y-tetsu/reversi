@@ -8,6 +8,7 @@ from reversi import C as c
 from reversi.board import BitBoard
 from reversi.strategies import Mcts, Node
 from reversi.strategies.common import Measure
+from reversi.strategies.mcts import argmax
 
 
 class TestMcts(unittest.TestCase):
@@ -158,9 +159,7 @@ class TestMcts(unittest.TestCase):
         self.assertEqual(node.child_nodes, [])
 
     def test_node_argmax(self):
-        board = BitBoard()
-        node = Node(c.black, board)
-        self.assertEqual(node.argmax([0, 1, 1, 3, 3, 2, 3]), 3)
+        self.assertEqual(argmax([0, 1, 1, 3, 3, 2, 3]), 3)
 
     def test_node_get_max_ucb1_child_node(self):
         # has 0-count nodes
