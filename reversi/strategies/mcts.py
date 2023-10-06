@@ -133,17 +133,17 @@ class Node:
     def get_max_ucb1_child_node(self):
         """UCB1が最大の子ノードを取得
         """
+        child_nodes = self.child_nodes
+        all_count = 0
+        ucb1_values = []
         # 試行回数0のノードを返す
-        for child in self.child_nodes:
+        for child in child_nodes:
             if child.count == 0:
                 return child
+            all_count += child.count
 
         # UCB1を計算する
-        all_count = 0
-        for child in self.child_nodes:
-            all_count += child.count
-        ucb1_values = []
-        for child in self.child_nodes:
+        for child in child_nodes:
             total = child.total
             count = child.count
             log_a = math.log(all_count)
