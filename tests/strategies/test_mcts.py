@@ -210,8 +210,8 @@ class TestMcts(unittest.TestCase):
         node = Node(c.black, board)
         node.board = BitBoard(ini_black=0xFFFFFFFF00000000, ini_white=0x00000000FFFFFFFF)
         value = node.evaluate()
-        self.assertEqual(value, 0)
-        self.assertEqual(node.total, 0)
+        self.assertEqual(value, 0.5)
+        self.assertEqual(node.total, 0.5)
         self.assertEqual(node.count, 1)
         # has no child nodes without pass
         node = Node(c.black, board)

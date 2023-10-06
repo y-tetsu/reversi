@@ -164,7 +164,7 @@ class Node:
         # ゲーム終了時
         winlose = self.get_winlose()
         if winlose:
-            value = 0
+            value = 0.5
             if winlose == 'win':
                 value = 1
             elif winlose == 'lose':
