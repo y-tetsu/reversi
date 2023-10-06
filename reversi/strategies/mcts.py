@@ -7,7 +7,6 @@ import gc
 from reversi import C as c
 from reversi import BitBoard
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
-from reversi.strategies.montecarlo import MonteCarlo
 from reversi.strategies.MonteCarloMethods import playout
 
 

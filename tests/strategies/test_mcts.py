@@ -20,18 +20,18 @@ class TestMcts(unittest.TestCase):
         move = mcts.next_move('black', board)
         self.assertEqual(move, (2, 7))
 
-        #mcts = Mcts(count=1000, excount=10)
-        #color = 'black'
-        #board = BitBoard(ini_black=0x7F3919214418003C, ini_white=0x80C6E6DEBAE7FE00)
-        #print(board)
-        #move = mcts.next_move(color, board)
-        #print('--- child ---')
-        #moves = board.get_legal_moves('black')
-        #for num, child in enumerate(mcts.root.child_nodes):
-        #    print('move  :', moves[num])
-        #    print('total :', child.total)
-        #    print('count :', child.count)
-        #    print(child.board)
+        # mcts = Mcts(count=1000, excount=10)
+        # color = 'black'
+        # board = BitBoard(ini_black=0x7F3919214418003C, ini_white=0x80C6E6DEBAE7FE00)
+        # print(board)
+        # move = mcts.next_move(color, board)
+        # print('--- child ---')
+        # moves = board.get_legal_moves('black')
+        # for num, child in enumerate(mcts.root.child_nodes):
+        #     print('move  :', moves[num])
+        #     print('total :', child.total)
+        #     print('count :', child.count)
+        #     print(child.board)
 
     def test_mcts_performance(self):
         board = BitBoard()
