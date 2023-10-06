@@ -125,10 +125,10 @@ class Node:
             for move in moves:
                 board = self.copy_board(self.board)
                 board.put_disc(move_color, *move)
-                self.child_nodes.append(Node(next_color, board))
+                self.child_nodes.append(Node(next_color, board, self.excount))
         else:
             if self.board.get_legal_moves(next_color):
-                self.child_nodes.append(Node(next_color, self.board))
+                self.child_nodes.append(Node(next_color, self.board, self.excount))
 
     def get_max_ucb1_child_node(self):
         """UCB1が最大の子ノードを取得
@@ -183,7 +183,7 @@ class Node:
                 color = c.black if self.color == c.white else c.white
                 moves = self.board.get_legal_moves(color)
                 sign = -1
-            value = playout(self.color, self.board, random.choice(moves)) * sign
+            value = playout(color, self.board, random.choice(moves)) * sign
             self.total += value
             self.count += 1
             # 子ノードの展開

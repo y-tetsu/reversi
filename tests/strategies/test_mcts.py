@@ -13,6 +13,25 @@ from reversi.strategies.common import Measure
 class TestMcts(unittest.TestCase):
     """Mcts
     """
+    def test_mcts_next_move(self):
+        board = BitBoard(ini_black=0x90, ini_white=0x4B)
+        mcts = Mcts(count=10)
+        move = mcts.next_move('black', board)
+        self.assertEqual(move, (2, 7))
+
+        #mcts = Mcts(count=1000, excount=10)
+        #color = 'black'
+        #board = BitBoard(ini_black=0x7F3919214418003C, ini_white=0x80C6E6DEBAE7FE00)
+        #print(board)
+        #move = mcts.next_move(color, board)
+        #print('--- child ---')
+        #moves = board.get_legal_moves('black')
+        #for num, child in enumerate(mcts.root.child_nodes):
+        #    print('move  :', moves[num])
+        #    print('total :', child.total)
+        #    print('count :', child.count)
+        #    print(child.board)
+
     def test_mcts_performance(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
@@ -20,9 +39,11 @@ class TestMcts(unittest.TestCase):
         board.put_disc('black', 1, 5)
 
         mcts = Mcts(count=10000000)
+        key = mcts.__class__.__name__ + str(os.getpid())
+        Measure.count[key] = 0
+
         mcts.next_move('white', board)
 
-        key = mcts.__class__.__name__ + str(os.getpid())
         print()
         print(key)
         print(' count(1100) :', Measure.count[key])
