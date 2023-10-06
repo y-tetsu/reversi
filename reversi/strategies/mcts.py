@@ -15,7 +15,7 @@ class Mcts(AbstractStrategy):
     """
     def __init__(self, count=1000, remain=60, excount=10):
         self.count = count
-        self.remain = remain  # モンテカルロ法開始手数
+        self.remain = remain  # モンテカルロ木探索開始手数
         self.excount = excount
         self.root = None
         self.timer = True
@@ -28,25 +28,28 @@ class Mcts(AbstractStrategy):
         """
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
 
-        self.root = Node(color, board, self.excount)
-        self.root.expand()
+        # モンテカルロ木探索開始手数まではランダムに手を選ぶ
+        legal_moves = board.get_legal_moves(color)
+        remain = board.size * board.size - (board._black_score + board._white_score)
+        if remain > self.remain:
+            return random.choice(legal_moves)
 
         # 指定回数分のシミュレーションを実行する
+        self.root = Node(color, board, self.excount)
+        self.root.expand()
         for _ in range(self.count):
             self._evaluate(pid=pid)
             if Timer.is_timeout(pid):
                 break
 
         # 試行回数が最大の手を返す
-        legal_moves = board.get_legal_moves(color)
         counts = []
         for child in self.root.child_nodes:
             counts.append(child.count)
-
         move = legal_moves[argmax(counts)]
-        self.root = None
 
         # ガーベージコレクションを強制実行しメモリを解放する
+        self.root = None
         gc.collect()
 
         return move
