@@ -69,6 +69,8 @@ class Node:
         self.color = color
         self.board = self.copy_board(board)
         self.excount = excount
+        self.legal_moves = board.get_legal_moves(color)
+        self.legal_moves_o = None
 
         self.total = 0           # 累積価値
         self.count = 0           # 試行回数
@@ -84,14 +86,14 @@ class Node:
     def board_has_legal_moves(self):
         """置く場所があるか
         """
-        # 黒プレイヤーが打てるか
-        moves = self.board.get_legal_moves(c.black)
-        if moves:
+        # 自プレイヤーが打てるか
+        if self.legal_moves:
             return True
 
-        # 白プレイヤーが打てるか
-        moves = self.board.get_legal_moves(c.white)
-        if moves:
+        # 相手プレイヤーが打てるか
+        color = c.black if self.color == c.white else c.white
+        self.legal_moves_o = self.board.get_legal_moves(color)
+        if self.legal_moves_o:
             return True
 
         return False
@@ -119,7 +121,7 @@ class Node:
     def expand(self):
         """子ノードの展開
         """
-        moves = self.board.get_legal_moves(self.color)
+        moves = self.legal_moves
         move_color = self.color
         next_color = c.black if self.color == c.white else c.white
         self.child_nodes = []
@@ -137,15 +139,16 @@ class Node:
         """UCB1が最大の子ノードを取得
         """
         child_nodes = self.child_nodes
-        all_count = 0
-        ucb1_values = []
+
         # 試行回数0のノードを返す
+        all_count = 0
         for child in child_nodes:
             if child.count == 0:
                 return child
             all_count += child.count
 
         # UCB1を計算する
+        ucb1_values = []
         for child in child_nodes:
             total = child.total
             count = child.count
@@ -173,12 +176,12 @@ class Node:
         elif not self.child_nodes:
             # ランダムに手を選び決着まで手を進める
             color = self.color
-            moves = self.board.get_legal_moves(color)
+            moves = self.legal_moves
             sign = 1
             # パスの場合
             if not moves:
                 color = c.black if self.color == c.white else c.white
-                moves = self.board.get_legal_moves(color)
+                moves = self.legal_moves_o
                 sign = -1
             value = playout(color, self.board, random.choice(moves)) * sign
             self.total += value
