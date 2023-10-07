@@ -40,7 +40,7 @@ class TestMcts(unittest.TestCase):
 
         print()
         print(key)
-        print(' count(1100) :', Measure.count[key])
+        print(' count(1700) :', Measure.count[key])
         print(' min         :', Measure.elp_time[key]['min'], '(s)')
         print(' max         :', Measure.elp_time[key]['max'], '(s)')
         print(' ave         :', Measure.elp_time[key]['ave'], '(s)')

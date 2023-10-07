@@ -123,14 +123,15 @@ class Node:
         move_color = self.color
         next_color = c.black if self.color == c.white else c.white
         self.child_nodes = []
+        board = self.board
         if moves:
             for move in moves:
-                board = self.copy_board(self.board)
                 board.put_disc(move_color, *move)
                 self.child_nodes.append(Node(next_color, board, self.excount))
+                board.undo()
         else:
             # パスの場合はプレイヤーの入れ替えのみ
-            self.child_nodes.append(Node(next_color, self.board, self.excount))
+            self.child_nodes.append(Node(next_color, board, self.excount))
 
     def get_max_ucb1_child_node(self):
         """UCB1が最大の子ノードを取得
