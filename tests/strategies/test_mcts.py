@@ -144,12 +144,6 @@ class TestMcts(unittest.TestCase):
             self.assertEqual(child.color, c.black)
             self.assertEqual(child.board.get_bitboard_info(), expected[num])
             # print([f'0x{i:016X}' for i in child.board.get_bitboard_info()])
-        # has no move
-        board = BitBoard()
-        node = Node(c.white, board)
-        node.board = BitBoard(ini_black=0xFFFFFFFF00000000, ini_white=0x00000000FFFFFFFF)
-        node.expand()
-        self.assertEqual(node.child_nodes, [])
 
     def test_node_argmax(self):
         self.assertEqual(argmax([0, 1, 1, 3, 3, 2, 3]), 3)

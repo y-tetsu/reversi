@@ -129,8 +129,8 @@ class Node:
                 board.put_disc(move_color, *move)
                 self.child_nodes.append(Node(next_color, board, self.excount))
         else:
-            if self.board.get_legal_moves(next_color):
-                self.child_nodes.append(Node(next_color, self.board, self.excount))
+            # パスの場合はプレイヤーの入れ替えのみ
+            self.child_nodes.append(Node(next_color, self.board, self.excount))
 
     def get_max_ucb1_child_node(self):
         """UCB1が最大の子ノードを取得
