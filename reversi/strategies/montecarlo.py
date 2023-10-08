@@ -21,9 +21,10 @@ class MonteCarlo(AbstractStrategy):
     """
     MonteCarlo法で次の手を決める
     """
-    def __init__(self, count=100, remain=60):
+    def __init__(self, count=100, remain=60, by_move=True):
         self.count = count
-        self.remain = remain  # モンテカルロ法開始手数
+        self.remain = remain    # モンテカルロ法開始手数
+        self.by_move = by_move  # 各手毎にcount回数プレイアウトするか
         self._black_player = Player('black', 'Random_B', Random())
         self._white_player = Player('white', 'Random_W', Random())
         self.timer = True
@@ -37,13 +38,14 @@ class MonteCarlo(AbstractStrategy):
         """
         pid = Timer.get_pid(self)  # タイムアウト監視用のプロセスID
 
+        moves = board.get_legal_moves(color)  # 手の候補を取得
+        count = self.count if self.by_move else self.count // len(moves)
+
         if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard') and not MonteCarloMethods.MONTECARLO_SIZE8_64BIT_ERROR:
-            return MonteCarloMethods.next_move(color, board, self.count, pid, self.timer, self.measure)
+            return MonteCarloMethods.next_move(color, board, count, pid, self.timer, self.measure)
 
-        moves = board.get_legal_moves(color)     # 手の候補を取得
         scores = [0 for _ in range(len(moves))]  # スコアの初期化
-
-        for _ in range(self.count):
+        for _ in range(count):
             for i, move in enumerate(moves):
                 scores[i] += self._playout(color, board, move, pid=pid)  # この手を選んだ時の勝敗を取得
 
@@ -78,12 +80,12 @@ class MonteCarlo(AbstractStrategy):
             game.play()
 
             # 結果を返す
-            win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, -1
+            win, ret = Game.BLACK_WIN if color == 'black' else Game.WHITE_WIN, -2
 
             if game.result.winlose == win:
-                ret = 1  # 勝った場合
+                ret = 2  # 勝った場合
             elif game.result.winlose == Game.DRAW:
-                ret = 0.5  # 引き分けた場合
+                ret = 1  # 引き分けた場合
         else:
             ret = 0  # 盤面サイズが大きい場合は残り手数が減るまでしばらくランダムに打つ
 

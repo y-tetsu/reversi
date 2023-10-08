@@ -17,6 +17,7 @@ class TestMonteCarlo(unittest.TestCase):
 
         self.assertEqual(montecarlo.count, 100)
         self.assertEqual(montecarlo.remain, 60)
+        self.assertTrue(montecarlo.by_move)
         self.assertEqual(montecarlo._black_player.color, 'black')
         self.assertEqual(montecarlo._black_player.name, 'Random_B')
         self.assertIsInstance(montecarlo._black_player.strategy, Random)
@@ -45,7 +46,7 @@ class TestMonteCarlo(unittest.TestCase):
         board.put_disc('black', 3, 0)
         board.put_disc('white', 1, 3)
 
-        self.assertEqual(montecarlo._playout('black', board, (3, 3)), 0.5)
+        self.assertEqual(montecarlo._playout('black', board, (3, 3)), 1)
 
     def test_montecarlo_performance(self):
         board = BitBoard()
@@ -63,6 +64,13 @@ class TestMonteCarlo(unittest.TestCase):
         print(' min          :', Measure.elp_time[key]['min'], '(s)')
         print(' max          :', Measure.elp_time[key]['max'], '(s)')
         print(' ave          :', Measure.elp_time[key]['ave'], '(s)')
+
+        montecarlo = MonteCarlo(count=10000, by_move=False)
+        key = montecarlo.__class__.__name__ + str(os.getpid())
+        Measure.count[key] = 0
+        montecarlo.next_move('white', board)
+        print()
+        print(' not_by_move(count=10000) :', Measure.count[key])
 
     def test_montecarlo_force_import_error(self):
         import os
@@ -92,6 +100,13 @@ class TestMonteCarlo(unittest.TestCase):
         print(' min         :', Measure.elp_time[key]['min'], '(s)')
         print(' max         :', Measure.elp_time[key]['max'], '(s)')
         print(' ave         :', Measure.elp_time[key]['ave'], '(s)')
+
+        montecarlo = MonteCarlo(count=100, by_move=False)
+        key = montecarlo.__class__.__name__ + str(os.getpid())
+        Measure.count[key] = 0
+        montecarlo.next_move('white', board)
+        print()
+        print(' not_by_move(count=100) :', Measure.count[key])
 
         # -------------------------------
         # recover environment and reload module
