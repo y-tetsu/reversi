@@ -164,11 +164,11 @@ class Node:
         # ゲーム終了時
         winlose = self.get_winlose()
         if winlose:
-            value = 0.5
+            value = 1
             if winlose == 'win':
-                value = 1
+                value = 2
             elif winlose == 'lose':
-                value = -1
+                value = -2
             self.total += value
             self.count += 1
 

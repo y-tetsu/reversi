@@ -20,12 +20,13 @@ def playout(color, board, move):
     return _playout(color, board, move)
 
 
-cdef _playout(str color, board, move):
+cdef inline signed int _playout(str color, board, move):
     global bb, wb, hb, bs, ws
     cdef:
         unsigned int int_color = 0, turn
         unsigned int x, y, pass_count = 0, random_index
         unsigned long long random_put, legal_moves_bits
+        signed int ret
     # ボード情報取得
     bb, wb, hb = board.get_bitboard_info()
     bs = board._black_score
@@ -60,11 +61,11 @@ cdef _playout(str color, board, move):
             # 1手打つ
             _put_disc(turn, random_put)
     # 結果を返す
-    ret = -1
-    if int_color and bs > ws:
-        ret = 1
+    ret = -2
+    if (int_color and bs > ws) or (not int_color and ws > bs):
+        ret = 2
     elif bs == ws:
-        ret = 0.5
+        ret = 1
     return ret
 
 

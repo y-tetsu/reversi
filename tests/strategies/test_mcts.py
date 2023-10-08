@@ -16,9 +16,26 @@ class TestMcts(unittest.TestCase):
     """
     def test_mcts_next_move(self):
         board = BitBoard(ini_black=0x90, ini_white=0x4B)
-        mcts = Mcts(count=10)
+        mcts = Mcts(count=100)
         move = mcts.next_move('black', board)
         self.assertEqual(move, (2, 7))
+
+        # print(board)
+        # moves = board.get_legal_moves('black')
+        # for num, child in enumerate(mcts.root.child_nodes):
+        #     print('(1)')
+        #     print(child.board)
+        #     print(moves[num])
+        #     print('color :', child.color)
+        #     print('total :', child.total)
+        #     print('count :', child.count)
+        #     if child.child_nodes:
+        #         for num, child2 in enumerate(child.child_nodes):
+        #             print('(2)')
+        #             print(child2.board)
+        #             print('  color :', child2.color)
+        #             print('  total :', child2.total)
+        #             print('  count :', child2.count)
 
     def test_mcts_next_move_before_remain(self):
         board = BitBoard()
@@ -40,7 +57,7 @@ class TestMcts(unittest.TestCase):
 
         print()
         print(key)
-        print(' count(1800) :', Measure.count[key])
+        print(' count(1400) :', Measure.count[key])
         print(' min         :', Measure.elp_time[key]['min'], '(s)')
         print(' max         :', Measure.elp_time[key]['max'], '(s)')
         print(' ave         :', Measure.elp_time[key]['ave'], '(s)')
@@ -188,37 +205,37 @@ class TestMcts(unittest.TestCase):
         board = BitBoard(ini_black=0xFFFFFFFFF0000000, ini_white=0x000000000FFFFFFF)
         node = Node(c.black, board)
         value = node.evaluate()
-        self.assertEqual(value, 1)
-        self.assertEqual(node.total, 1)
+        self.assertEqual(value, 2)
+        self.assertEqual(node.total, 2)
         self.assertEqual(node.count, 1)
         # game end lose
         board = BitBoard(ini_black=0xFFFFFFF000000000, ini_white=0x0000000FFFFFFFFF)
         node = Node(c.black, board)
         value = node.evaluate()
-        self.assertEqual(value, -1)
-        self.assertEqual(node.total, -1)
+        self.assertEqual(value, -2)
+        self.assertEqual(node.total, -2)
         self.assertEqual(node.count, 1)
         # game end draw
         board = BitBoard(ini_black=0xFFFFFFFF00000000, ini_white=0x00000000FFFFFFFF)
         node = Node(c.black, board)
         value = node.evaluate()
-        self.assertEqual(value, 0.5)
-        self.assertEqual(node.total, 0.5)
+        self.assertEqual(value, 1)
+        self.assertEqual(node.total, 1)
         self.assertEqual(node.count, 1)
         # has no child nodes without pass
         board = BitBoard(ini_black=0x1, ini_white=0x2)
         node = Node(c.black, board)
         value = node.evaluate()
-        self.assertEqual(value, 1)
-        self.assertEqual(node.total, 1)
+        self.assertEqual(value, 2)
+        self.assertEqual(node.total, 2)
         self.assertEqual(node.count, 1)
         # has no child nodes with pass without expand
         board = BitBoard(ini_black=0x1, ini_white=0x2)
         node = Node(c.white, board)
         node.count = excount - 2
         value = node.evaluate()
-        self.assertEqual(value, -1)
-        self.assertEqual(node.total, -1)
+        self.assertEqual(value, -2)
+        self.assertEqual(node.total, -2)
         self.assertEqual(node.count, excount - 1)
         self.assertIsNone(node.child_nodes)
         # has no child nodes without pass with expand
@@ -226,8 +243,8 @@ class TestMcts(unittest.TestCase):
         node = Node(c.black, board)
         node.count = excount - 1
         value = node.evaluate()
-        self.assertEqual(value, 1)
-        self.assertEqual(node.total, 1)
+        self.assertEqual(value, 2)
+        self.assertEqual(node.total, 2)
         self.assertEqual(node.count, excount)
         expected = (
             (0x0000000000000007, 0x0000000000000008, 0x0000000000000000),
@@ -236,8 +253,8 @@ class TestMcts(unittest.TestCase):
             self.assertEqual(child.board.get_bitboard_info(), expected[num])
         # has child nodes
         value = node.evaluate()
-        self.assertEqual(value, 1)
-        self.assertEqual(node.total, 2)
+        self.assertEqual(value, 2)
+        self.assertEqual(node.total, 4)
         self.assertEqual(node.count, excount + 1)
-        self.assertEqual(node.child_nodes[0].total, -1)
+        self.assertEqual(node.child_nodes[0].total, -2)
         self.assertEqual(node.child_nodes[0].count, 1)
