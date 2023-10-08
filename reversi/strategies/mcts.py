@@ -67,6 +67,7 @@ class Node:
     """
     def __init__(self, color, board, excount=10):
         self.color = color
+        self.opponent_color = c.black if color == c.white else c.white
         self.board = self.copy_board(board)
         self.excount = excount
         self.legal_moves = board.get_legal_moves(color)
@@ -91,8 +92,8 @@ class Node:
             return True
 
         # 相手プレイヤーが打てるか
-        color = c.black if self.color == c.white else c.white
-        self.legal_moves_o = self.board.get_legal_moves(color)
+        if self.legal_moves_o is None:
+            self.legal_moves_o = self.board.get_legal_moves(self.opponent_color)
         if self.legal_moves_o:
             return True
 
@@ -123,7 +124,7 @@ class Node:
         """
         moves = self.legal_moves
         move_color = self.color
-        next_color = c.black if self.color == c.white else c.white
+        next_color = self.opponent_color
         self.child_nodes = []
         board = self.board
         if moves:
@@ -180,7 +181,7 @@ class Node:
             sign = 1
             # パスの場合
             if not moves:
-                color = c.black if self.color == c.white else c.white
+                color = self.opponent_color
                 moves = self.legal_moves_o
                 sign = -1
             value = playout(color, self.board, random.choice(moves)) * sign
