@@ -70,7 +70,7 @@
 - アプリケーションを作って、自作したAIと対戦し遊ぶ
 - シミュレータを使って、AI同士をたくさん対戦させ強さを調べる
 
-また、本ライブラリを使って作成した[Windows版アプリケーション](#Windows版アプリケーションについて)も用意しています。<br>
+また、本ライブラリを使って作成した[Windows版アプリケーション](#tkinterアプリケーションの遊び方)も用意しています。<br>
 こちらはダウンロード後、インストール不要で、すぐにリバーシのゲームを無料でプレイできます。
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
@@ -1317,14 +1317,14 @@ class MyAI(AbstractStrategy):
 
 tkinterアプリケーションで遊ぶには、以下の2通りの方法がございます。
 
-1. [サンプルをインストールする](#サンプル)<br>
+1. [サンプルをコピーする](#サンプル)(本ライブラリのインストールが必要)<br>
 2. Windows版のアプリケーションをダウンロードする(インストール不要)
 
 ### ダウンロード
 Windows版のアプリケーションで遊ぶ場合は下記リンクをクリックし、<br>
 "reversi.zip"をダウンロードして下さい(無料)。<br>
 
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.19/reversi.zip)
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.20/reversi.zip) (Release Test20)
 
 "reversi.zip"を解凍後、reversi.exeをダブルクリックするとアプリケーションで遊ぶ事ができます。
 
