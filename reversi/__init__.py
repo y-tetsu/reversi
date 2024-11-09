@@ -1,4 +1,4 @@
-from .board import Board, BitBoard, PyBitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE
+from .board import Board, BitBoard, PyListBoard, PyBitBoard, MIN_BOARD_SIZE, MAX_BOARD_SIZE
 from .color import C
 from .move import Move, LOWER, UPPER
 from .x import X
@@ -19,6 +19,7 @@ __all__ = [
     'Board',
     'BitBoard',
     'PyBitBoard',
+    'PyListBoard',
     'MIN_BOARD_SIZE',
     'MAX_BOARD_SIZE',
     'C',

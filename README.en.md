@@ -387,25 +387,22 @@ This section describes the various objects provided in this library.
 This section describes how to use the `board` object, which manages the reversi board.
 
 ##### Creating a board object
-A `board` object can be created by importing the `Board` or `BitBoard` class from **reversi**.
-Import the `Board` or `BitBoard` class from **reversi** to create a `board` object.
+A `board` object can be created by importing the `Board` class from **reversi**.
+Import the `Board` class from **reversi** to create a `board` object.
 
-The only difference between the `Board` and `BitBoard` classes is the structure of the internal data representing the board, and their usage is the same.
-Since the `BitBoard` class is faster, you should usually use this class.
-
-When instantiating the `BitBoard` class, you can specify the size of the board by entering a numerical value as an argument.
+When instantiating the `Board` class, you can specify the size of the board by entering a numerical value as an argument.
 The size should be an even number from 4 to 26. If omitted, the size is 8.
 You can also check the size of the board with the `size` property.
 
 A coding example is shown below.
 
 ```Python
-from reversi import Board, BitBoard
+from reversi import Board
 
 board = Board()
 print(board.size)
 
-bitboard = BitBoard(10)
+bitboard = Board(10)
 print(bitboard.size)
 ```
 
@@ -419,12 +416,12 @@ The results of the above execution are as follows.<br>
 When you `print` a `board` object, the state of the board is printed as standard output.
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 print(board)
 
-board = BitBoard(4)
+board = Board(4)
 print(board)
 ```
 
@@ -440,9 +437,9 @@ The possible moves are a "list of tuples of XY coordinates".
 The argument must be a `black` or `white` string (hereafter called `color`).
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 legal_moves = board.get_legal_moves('black')
 
 print(legal_moves)
@@ -462,9 +459,9 @@ The flippable stones are "a list of tuples of XY coordinates".
 The first argument is the `color`, the second is the X coordinate at which to place the stone, and the third is the Y coordinate.
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 flippable_discs = board.get_flippable_discs('black', 5, 4)
 
 print(flippable_discs)
@@ -485,9 +482,9 @@ Returns a "two-dimensional list" of stones on the board.
 
 ```Python
 from pprint import pprint
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 board_info = board.get_board_info()
 
 print(board)
@@ -502,9 +499,9 @@ Returns information about the board as a one-line string.
 
 ```Python
 from pprint import pprint
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 
 print(board.get_board_line_info('black'))
 ```
@@ -543,9 +540,9 @@ Places a stone at the specified position and turns over the stone to be taken.
 Specify `color` as the first argument, X coordinate to place the stone as the second argument, and Y coordinate as the third argument.
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 print(board)
 
 board.put_disc('black', 5, 4)
@@ -561,9 +558,9 @@ You can undo as many times as you call the `put_disc` method.
 Do not call this method more times than you called the `put_disc` method.
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 board.put_disc('black', 5, 4)
 print(board)
 
@@ -580,10 +577,10 @@ So far, we have shown how to use the string `black' or `white' to determine the 
 You can import a `color` object, `C`, as shown below, and specify the black and white numbers with the black and white properties, respectively.
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import C as c
 
-board = BitBoard()
+board = Board()
 board.put_disc(c.black, 5, 4)
 print(board)
 
@@ -599,11 +596,11 @@ The `move` object allows you to specify the coordinates of a move not only in XY
 
 Import the `Move` class and use it as follows.<br>
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import C as c
 from reversi import Move as m
 
-board = BitBoard()
+board = Board()
 board.put_disc(c.black, *m('f5'))
 print(board)
 
@@ -617,7 +614,7 @@ The above execution produces the following output.<br>
 Also, a A `move` object can also be generated in XY coordinate format and converted to str format using the str function. If you print a `move` object, it will be in str format as well, and if you specify `upper` as the case option, it will be in upper case.
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import Move as m
 
 move = str(m(5, 4))

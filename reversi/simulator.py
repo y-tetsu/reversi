@@ -5,7 +5,7 @@ import json
 import itertools
 from multiprocessing import Pool
 
-from reversi import Board, BitBoard, Player, NoneDisplay, Game, X
+from reversi import BitBoard, PyListBoard, Player, NoneDisplay, Game, X
 from reversi.strategies import RandomOpening
 
 
@@ -263,7 +263,7 @@ class Simulator:
                     ini_white=self.ini_white,
                 )
             else:
-                board = Board(
+                board = PyListBoard(
                     self.board_size,
                     hole=self.hole,
                     ini_black=self.ini_black,

@@ -5,7 +5,7 @@ import unittest
 from test.support import captured_stdout
 
 from reversi.game import Game
-from reversi.board import Board, BitBoardMethods
+from reversi.board import Board, PyListBoard, PyBitBoard, BitBoardMethods
 from reversi.player import Player
 from reversi.display import NoneDisplay
 from reversi.strategies.common import AbstractStrategy
@@ -83,7 +83,7 @@ class TestGame(unittest.TestCase):
 
         # init
         game1 = Game(p1, p2, Board(4), TestDisplay())
-        self.assertIsInstance(game1.board, Board)
+        self.assertIsInstance(game1.board, PyBitBoard)
         self.assertIsInstance(game1.black_player.strategy, TopLeft)
         self.assertIsInstance(game1.white_player.strategy, BottomRight)
         self.assertEqual(game1.black_player, game1.players[0])
@@ -92,7 +92,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game1.result, [])
 
         game2 = Game(p1, p3, Board(4), TestDisplay())
-        self.assertIsInstance(game2.board, Board)
+        self.assertIsInstance(game2.board, PyBitBoard)
         self.assertIsInstance(game2.black_player.strategy, TopLeft)
         self.assertIsInstance(game2.white_player.strategy, TopLeft)
         self.assertEqual(game2.black_player, game2.players[0])
@@ -101,7 +101,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game2.result, [])
 
         game3 = Game(p1, p2, Board(4), TestDisplay(), 'white', TestCancel())
-        self.assertIsInstance(game3.board, Board)
+        self.assertIsInstance(game3.board, PyBitBoard)
         self.assertIsInstance(game3.black_player.strategy, TopLeft)
         self.assertIsInstance(game3.white_player.strategy, BottomRight)
         self.assertEqual(game3.black_player, game3.players[1])
@@ -109,8 +109,8 @@ class TestGame(unittest.TestCase):
         self.assertTrue(game3.cancel, TestCancel)
         self.assertEqual(game3.result, [])
 
-        game4 = Game(p4, p2, Board(4), TestDisplay())
-        self.assertIsInstance(game4.board, Board)
+        game4 = Game(p4, p2, PyListBoard(4), TestDisplay())
+        self.assertIsInstance(game4.board, PyListBoard)
         self.assertIsInstance(game4.black_player.strategy, Foul)
         self.assertIsInstance(game4.white_player.strategy, BottomRight)
         self.assertEqual(game4.black_player, game4.players[0])
@@ -118,8 +118,8 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game4.cancel, None)
         self.assertEqual(game4.result, [])
 
-        game5 = Game(p1, p5, Board(4), TestDisplay())
-        self.assertIsInstance(game5.board, Board)
+        game5 = Game(p1, p5, PyListBoard(4), TestDisplay())
+        self.assertIsInstance(game5.board, PyListBoard)
         self.assertIsInstance(game5.black_player.strategy, TopLeft)
         self.assertIsInstance(game5.white_player.strategy, Foul)
         self.assertEqual(game5.black_player, game5.players[0])

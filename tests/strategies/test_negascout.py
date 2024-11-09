@@ -175,7 +175,7 @@ class TestNegaScout(unittest.TestCase):
     def test_negascout_timer_timeout(self):
         board = BitBoard()
         board.put_disc('black', 3, 2)
-        negascout = NegaScout(depth=10, evaluator=coord.Evaluator_TPOW())
+        negascout = NegaScout(depth=60, evaluator=coord.Evaluator_TPOW())
         pid = negascout.__class__.__name__ + str(os.getpid())
         Measure.elp_time[pid] = {'min': 10000, 'max': 0, 'ave': 0, 'cnt': 0}
         Measure.count[pid] = 0

@@ -325,7 +325,6 @@ Simulatorの第二引数に、本ファイル名(上記例では`./simulator_set
 ```JSON
 {
     "board_size": 8,
-    "board_type": "bitboard",
     "matches": 100,
     "processes": 1,
     "parallel": "player",
@@ -342,7 +341,6 @@ Simulatorの第二引数に、本ファイル名(上記例では`./simulator_set
  |パラメータ名|説明|
  |:---|:---|
  |board_size|盤面のサイズを指定して下さい。|
- |board_type|盤面の種類(board または bitboard)を選択して下さい。bitboardの方が高速で通常はこちらを使用して下さい。|
  |board_name|通常とは異なる形状の盤面を使用する場合は、盤面の名前("Diamond"や"Heart"など)を指定して下さい。選べる名前は[コンソールアプリケーションの遊び方](#ボードを変更する)を参照して下さい。なお、本パラメータ指定時は、盤面サイズは8固定となり、`board_size`の値は無視されます。|
  |matches|AI同士の対戦回数を指定して下さい。100を指定した場合、AIの各組み合わせにつき先手と後手で100試合ずつ対戦する動作となります。|
  |processes|並列実行数を指定して下さい。お使いのPCのコア数に合わせて、設定を大きくするほど、シミュレーション結果が早く得られる場合があります。|
@@ -418,7 +416,6 @@ CORNER                    |  72.2% |   289   102     9   400
 ```JSON
 {
     "board_size": 8,
-    "board_type": "bitboard",
     "board_name": "x",
     "matches": 100,
     "processes": 1,
@@ -488,11 +485,7 @@ class OriginalAI(AbstractStrategy):
 ここでは、リバーシの盤面を管理する`board`オブジェクトの使い方について説明します。
 
 ##### boardオブジェクトの生成
-`board`オブジェクトは**reversi**より、`Board`クラスまたは`BitBoard`クラスを
-インポートすることで、生成できるようになります。
-
-`Board`クラスと`BitBoard`クラスの違いは、盤面を表現する内部データの構造のみで、使い方は同じです。
-`BitBoard`クラスの方が処理速度がより高速なため、通常はこちらをご使用下さい。
+`board`オブジェクトは**reversi**より、`Board`クラスをインポートすることで、生成できるようになります。
 
 `Board`クラスをインスタンス化する際の引数に、数値を入れることで盤面のサイズを指定できます。
 サイズは4～26までの偶数として下さい。省略時は8となります。
@@ -501,31 +494,27 @@ class OriginalAI(AbstractStrategy):
 コーディング例は下記のとおりです。
 
 ```Python
-from reversi import Board, BitBoard
+from reversi import Board
 
 board = Board()
 print(board.size)
-
-bitboard = BitBoard(10)
-print(bitboard.size)
 ```
 
 上記の実行結果は下記となります。
 ```
 8
-10
 ```
 
 ##### boardオブジェクトの標準出力
 `board`オブジェクトを`print`すると盤面の状態が標準出力されます。
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 print(board)
 
-board = BitBoard(4)
+board = Board(4)
 print(board)
 ```
 
@@ -541,9 +530,9 @@ print(board)
 引数には`black`(黒番)または`white`(白番)の文字列(以後`color`と呼びます)を指定して下さい。
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 legal_moves = board.get_legal_moves('black')
 
 print(legal_moves)
@@ -562,9 +551,9 @@ print(legal_moves)
 第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定して下さい。
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 flippable_discs = board.get_flippable_discs('black', 5, 4)
 
 print(flippable_discs)
@@ -583,9 +572,9 @@ print(flippable_discs)
 
 ```Python
 from pprint import pprint
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 board_info = board.get_board_info()
 
 print(board)
@@ -600,9 +589,9 @@ pprint(board_info)
 
 ```Python
 from pprint import pprint
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 
 print(board.get_board_line_info('black'))
 ```
@@ -640,9 +629,9 @@ print(board.get_board_line_info(player='black', black='0', white='1', empty='.')
 第一引数に`color`、第二引数に石を置くX座標、第三引数にY座標を指定して下さい。
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 print(board)
 
 board.put_disc('black', 5, 4)
@@ -658,9 +647,9 @@ print(board)
 `put_disc`メソッドを呼び出した回数を超えて、本メソッドを呼び出さないで下さい。
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 
-board = BitBoard()
+board = Board()
 board.put_disc('black', 5, 4)
 print(board)
 
@@ -678,10 +667,10 @@ print(board)
 以下のように`color`オブジェクトである`C`をインポートして、<br>
 blackプロパティやwhiteプロパティにてそれぞれ黒番、白番を指定できます。
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import C as c
 
-board = BitBoard()
+board = Board()
 board.put_disc(c.black, 5, 4)
 print(board)
 
@@ -698,11 +687,11 @@ str形式のアルファベットは大文字・小文字どちらでもOKです
 
 `Move`クラスをインポートして、下記のように使用して下さい。
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import C as c
 from reversi import Move as m
 
-board = BitBoard()
+board = Board()
 board.put_disc(c.black, *m('f5'))
 print(board)
 
@@ -717,7 +706,7 @@ print(board)
 `move`オブジェクトをprint表示した場合も同様にstr形式となります。<br>
 caseオプションに`upper`を指定すると大文字表記になります。
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import Move as m
 
 move = str(m(5, 4))
@@ -739,7 +728,7 @@ F6
 以下は`player`オブジェクトの黒番と白番のプレイヤーを準備する例です。AIの戦略はランダムに打ち手を選ぶものとしています。
 
 ```python
-from reversi import BitBoard, Player
+from reversi import Board, Player
 from reversi.strategies import Random
 from reversi import C as c
 
@@ -763,14 +752,14 @@ white = Player(c.white, 'White', Random())
 以下に、4x4の盤面にてランダムな打ち手同士で対戦をさせ、結果を表示する例です。
 
 ```python
-from reversi import BitBoard, Player, Game
+from reversi import Board, Player, Game
 from reversi.strategies import Random
 from reversi import C as c
 
 black = Player(c.black, 'BLACK', Random())
 white = Player(c.white, 'White', Random())
 
-board4 = BitBoard(4)
+board4 = Board(4)
 print(board4)
 
 game = Game(black, white, board4)
@@ -808,14 +797,14 @@ print(game.result.white_name, game.result.white_num)
 
 以下はランダム対戦を実施し、その時の棋譜を出力する例です。
 ```python
-from reversi import BitBoard, Player, Game, Recorder
+from reversi import Board, Player, Game, Recorder
 from reversi.strategies import Random
 from reversi import C as c
 
 black = Player(c.black, 'BLACK', Random())
 white = Player(c.white, 'White', Random())
 
-board4 = BitBoard(4)
+board4 = Board(4)
 
 game = Game(black, white, board4)
 game.play()
@@ -1110,7 +1099,7 @@ Evaluatorクラスを自作することで、より自由度の高い評価関�
  - 盤面を表示する
 
 ```Python
-from reversi import BitBoard
+from reversi import Board
 from reversi import C as c
 from reversi.strategies.common import AbstractEvaluator
 from reversi.strategies import _AlphaBeta
@@ -1124,7 +1113,7 @@ class MyEvaluator(AbstractEvaluator):
         return score
 
 my_ai = _AlphaBeta(depth=6, evaluator=MyEvaluator())
-board = BitBoard()
+board = Board()
 print(board)
 x, y = my_ai.next_move(c.black, board)
 board.put_disc(c.black, x, y)
@@ -1154,7 +1143,7 @@ print(board)
 ```Python
 import random
 
-from reversi import BitBoard
+from reversi import Board
 from reversi import C as c
 from reversi.strategies import AbstractStrategy, Usagi
 
@@ -1165,7 +1154,7 @@ class MyAI(AbstractStrategy):
         return random.choice(legal_moves)
 
 my_ai = Usagi(base=MyAI())  # base引数に自作AIを与える
-board = BitBoard()
+board = Board()
 print(board)
 for color in [c.black, c.white, c.black]:  # 3手進める
     x, y = my_ai.next_move(color, board)

@@ -1,7 +1,7 @@
 """Recorder
 """
 
-from reversi import Board, BitBoard, Move, LOWER, UPPER
+from reversi import BitBoard, PyListBoard, Move, LOWER, UPPER
 from reversi import C as c
 
 
@@ -19,13 +19,13 @@ class Recorder:
         return self.record
 
     def get_record(self, board):
-        if isinstance(board, Board):
-            record = self.get_record_for_board(board)
+        if isinstance(board, PyListBoard):
+            record = self.get_record_for_listboard(board)
         else:
             record = self.get_record_for_bitboard(board)
         return record
 
-    def get_record_for_board(self, board):
+    def get_record_for_listboard(self, board):
         record = []
         for i in board.prev:
             case = UPPER if i['color'] == c.black else LOWER

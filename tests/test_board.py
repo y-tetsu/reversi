@@ -3,7 +3,7 @@
 
 import unittest
 
-from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, PyBitBoard
+from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, PyListBoard, PyBitBoard
 from reversi.color import C as c
 from reversi.disc import D as d
 from reversi.game import Game
@@ -16,7 +16,19 @@ class TestBoard(unittest.TestCase):
     """board
     """
     def setUp(self):
-        self.board_classes = [Board, BitBoard, PyBitBoard]
+        self.board_classes = [Board, BitBoard, PyListBoard, PyBitBoard]
+
+    def test_board_kind_is_default(self):
+        board = Board()
+        self.assertIn(board.__class__.__name__, ["PyBitBoard", "CythonBitBoard"])
+
+    def test_board_kind_is_listboard(self):
+        board = Board(kind="ListBoard")
+        self.assertIn(board.__class__.__name__, ["PyListBoard"])
+
+    def test_board_kind_is_bitboard(self):
+        board = Board(kind="BitBoard")
+        self.assertIn(board.__class__.__name__, ["PyBitBoard", "CythonBitBoard"])
 
     def test_board_invalid_size(self):
         minus_value = -1
@@ -49,11 +61,11 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board._white_score, initial_score)
             self.assertEqual(board.prev, [])
 
-    def test_board_initial_board(self):
+    def test_listboard_initial_board(self):
         min_size, max_size, step = 4, 26, 2
         for size in range(min_size, max_size+1, step):
             center1, center2 = size // 2, (size // 2) - 1
-            board = Board(size)
+            board = PyListBoard(size)
             board_ini = [[d.blank for _ in range(size)] for _ in range(size)]
             board_ini[center1][center2] = d.black
             board_ini[center2][center1] = d.black
@@ -122,8 +134,8 @@ class TestBoard(unittest.TestCase):
             board = board_class()
             self.assertEqual(str(board), board_str)
 
-    def test_board_size_4_get_legal_moves(self):
-        board = Board(4)
+    def test_listboard_size_4_get_legal_moves(self):
+        board = PyListBoard(4)
         blank, black, white = d.blank, d.black, d.white
 
         board._board = [
@@ -202,8 +214,8 @@ class TestBoard(unittest.TestCase):
             legal_moves = board.get_legal_moves(c.white)
             self.assertEqual(legal_moves, [(2, 0), (3, 0), (3, 1)])
 
-    def test_board_size_8_get_legal_moves(self):
-        board = Board(8)
+    def test_listboard_size_8_get_legal_moves(self):
+        board = PyListBoard(8)
         blank, black, white = d.blank, d.black, d.white
         legal_moves = board.get_legal_moves(c.black)
         self.assertEqual(legal_moves, [(3, 2), (2, 3), (5, 4), (4, 5)])
@@ -354,8 +366,8 @@ class TestBoard(unittest.TestCase):
             legal_moves = board.get_legal_moves(c.black)
             self.assertEqual(legal_moves, [(3, 2), (4, 2), (2, 3), (6, 3), (2, 5), (6, 5)])
 
-    def test_board_size_4_get_legal_moves_bits(self):
-        board = Board(4)
+    def test_listboard_size_4_get_legal_moves_bits(self):
+        board = PyListBoard(4)
         blank, black, white = d.blank, d.black, d.white
 
         board._board = [
@@ -380,8 +392,8 @@ class TestBoard(unittest.TestCase):
             legal_moves_bits = board.get_legal_moves_bits(c.white)
             self.assertEqual(legal_moves_bits, 0xA080)
 
-    def test_board_size_8_get_legal_moves_bits(self):
-        board = Board(8)
+    def test_listboard_size_8_get_legal_moves_bits(self):
+        board = PyListBoard(8)
         legal_moves_bits = board.get_legal_moves_bits(c.black)
         self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
@@ -391,8 +403,8 @@ class TestBoard(unittest.TestCase):
             legal_moves_bits = board.get_legal_moves_bits(c.black)
             self.assertEqual(legal_moves_bits, 0x0000102004080000)
 
-    def test_board_size_4_get_flippable_discs(self):
-        board = Board(4)
+    def test_listboard_size_4_get_flippable_discs(self):
+        board = PyListBoard(4)
         blank, black, white = d.blank, d.black, d.white
 
         board._board = [
@@ -487,8 +499,8 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board.get_flippable_discs(c.white, 3, 0), [(2, 1)])
             self.assertEqual(board.get_flippable_discs(c.white, 3, 1), [(2, 1)])
 
-    def test_board_size_8_get_flippable_discs(self):
-        board = Board(8)
+    def test_listboard_size_8_get_flippable_discs(self):
+        board = PyListBoard(8)
         blank, black, white = d.blank, d.black, d.white
 
         self.assertEqual(board.get_flippable_discs(c.black, 3, 2), [(3, 3)])
@@ -842,8 +854,8 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board.get_flippable_discs(c.black, 2, 5), [(3, 5)])
             self.assertEqual(board.get_flippable_discs(c.black, 6, 5), [(5, 5)])
 
-    def test_board_size_8_get_flippable_discs_in_direction(self):
-        board = Board(8)
+    def test_listboard_size_8_get_flippable_discs_in_direction(self):
+        board = PyListBoard(8)
         blank, black, white = d.blank, d.black, d.white
         board._board = [
             [blank, blank, blank, blank, blank, blank, blank, blank],
@@ -864,11 +876,11 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (0, 1)), [(3, 3), (3, 4), (3, 5)])
         self.assertEqual(board._get_flippable_discs_in_direction(c.black, 3, 2, (1, 1)), [])
 
-    def test_board_in_range(self):
+    def test_listboard_in_range(self):
         any_minus_value = -1
         min_size, max_size, step = 4, 26, 2
         for size in range(min_size, max_size+1, step):
-            board = Board(size)
+            board = PyListBoard(size)
             self.assertFalse(board._in_range(any_minus_value, any_minus_value))
             self.assertFalse(board._in_range(any_minus_value, 0))
             self.assertFalse(board._in_range(0, any_minus_value))
@@ -880,26 +892,26 @@ class TestBoard(unittest.TestCase):
             self.assertFalse(board._in_range(size-1, size))
             self.assertFalse(board._in_range(size, size))
 
-    def test_board_is_blank(self):
-        board = Board(4)
+    def test_listboard_is_blank(self):
+        board = PyListBoard(4)
         self.assertTrue(board._is_blank(0, 0))
         self.assertFalse(board._is_blank(1, 1))
         self.assertFalse(board._is_blank(2, 1))
 
-    def test_board_is_black(self):
-        board = Board(4)
+    def test_listboard_is_black(self):
+        board = PyListBoard(4)
         self.assertFalse(board._is_black(0, 0))
         self.assertFalse(board._is_black(1, 1))
         self.assertTrue(board._is_black(2, 1))
 
-    def test_board_is_white(self):
-        board = Board(4)
+    def test_listboard_is_white(self):
+        board = PyListBoard(4)
         self.assertFalse(board._is_white(0, 0))
         self.assertTrue(board._is_white(1, 1))
         self.assertFalse(board._is_white(2, 1))
 
-    def test_board_is_same_color(self):
-        board = Board(4)
+    def test_listboard_is_same_color(self):
+        board = PyListBoard(4)
         self.assertFalse(board._is_same_color(0, 0, c.black))
         self.assertFalse(board._is_same_color(0, 0, c.white))
         self.assertTrue(board._is_same_color(0, 0, c.blank))
@@ -931,10 +943,10 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board.put_disc(c.white, 3, 3), 0x0020)
             self.assertEqual(board.get_bitboard_info(), (4366, 61169, 0))
 
-    def test_board_update_score(self):
+    def test_listboard_update_score(self):
         min_size, max_size, step = 4, 26, 2
         for size in range(min_size, max_size+1, step):
-            board = Board(size)
+            board = PyListBoard(size)
             board._black_score = 0
             board._white_score = 0
             board.update_score()
@@ -973,8 +985,8 @@ class TestBoard(unittest.TestCase):
                 self.assertEqual(board._black_score, 3)
                 self.assertEqual(board._white_score, 2)
 
-    def test_board_get_bit_pos(self):
-        board = Board(4)
+    def test_listboard_get_bit_pos(self):
+        board = PyListBoard(4)
         flippable_discs = board.get_flippable_discs(c.black, 1, 0)
         self.assertEqual(board._get_bit_pos(flippable_discs), 0x0400)
 
@@ -1001,8 +1013,8 @@ class TestBoard(unittest.TestCase):
             board.put_disc(c.black, 5, 4)
             self.assertEqual(board.get_board_line_info(c.white), '---------------------------O*------***--------------------------O')
 
-    def test_board_size_4_get_bit_count(self):
-        board = Board(4)
+    def test_listboard_size_4_get_bit_count(self):
+        board = PyListBoard(4)
         blank, black, white = d.blank, d.black, d.white
         board._board = [
             [blank, blank, blank, blank],
@@ -1025,8 +1037,8 @@ class TestBoard(unittest.TestCase):
             legal_moves_bits = board.get_legal_moves_bits(c.white)
             self.assertEqual(board.get_bit_count(legal_moves_bits), 3)
 
-    def test_board_size_8_get_bit_count(self):
-        board = Board(8)
+    def test_listboard_size_8_get_bit_count(self):
+        board = PyListBoard(8)
         legal_moves_bits = board.get_legal_moves_bits(c.black)
         self.assertEqual(board.get_bit_count(legal_moves_bits), 4)
 
@@ -1188,7 +1200,7 @@ class TestBoard(unittest.TestCase):
                             break
 
         for _ in range(5):
-            board = Board()
+            board = PyListBoard()
             bitboard = BitBoard()
             black_player = TestPlayer(c.black, 'Random1', Random())
             white_player = TestPlayer(c.white, 'Random2', Random())

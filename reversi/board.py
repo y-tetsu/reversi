@@ -60,8 +60,20 @@ class BoardSizeError(Exception):
     pass
 
 
-class Board(AbstractBoard):
-    """Board
+def Board(size=8, hole=0x0, ini_black=None, ini_white=None, kind='BitBoard'):
+    if kind != 'BitBoard':
+        return PyListBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
+    return BitBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
+
+
+def BitBoard(size=8, hole=0x0, ini_black=None, ini_white=None):
+    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
+        return BitBoardMethods.CythonBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
+    return PyBitBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
+
+
+class PyListBoard(AbstractBoard):
+    """PyListBoard
     """
     def __init__(self, size=8, hole=0x0, ini_black=None, ini_white=None):
         if self._is_invalid_size(size):
@@ -382,12 +394,6 @@ class Board(AbstractBoard):
         for row in self._board:
             remain += row.count(d.blank)
         return remain
-
-
-def BitBoard(size=8, hole=0x0, ini_black=None, ini_white=None):
-    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
-        return BitBoardMethods.CythonBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
-    return PyBitBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
 
 
 class PyBitBoard(AbstractBoard):
