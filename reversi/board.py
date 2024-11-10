@@ -325,7 +325,7 @@ class PyListBoard(AbstractBoard):
 
         return board_info
 
-    def get_board_line_info(self, player, black='*', white='O', empty='-'):
+    def get_board_line_info(self, player, black='*', white='O', hole='_', empty='-'):
         """get_board_line_info
         """
         board_line_info = ''
@@ -336,6 +336,8 @@ class PyListBoard(AbstractBoard):
                     board_line_info += black
                 elif d.is_white(col):
                     board_line_info += white
+                elif d.is_hole(col):
+                    board_line_info += hole
                 else:
                     board_line_info += empty
         # player
@@ -543,7 +545,7 @@ class PyBitBoard(AbstractBoard):
         """
         return BitBoardMethods.get_board_info(self.size, self._black_bitboard, self._white_bitboard)
 
-    def get_board_line_info(self, player, black='*', white='O', empty='-'):
+    def get_board_line_info(self, player, black='*', white='O', hole='_', empty='-'):
         """get_board_line_info
         """
         board_line_info = ''
@@ -556,6 +558,8 @@ class PyBitBoard(AbstractBoard):
                     board_line_info += black
                 elif self._white_bitboard & mask:
                     board_line_info += white
+                elif self._hole_bitboard & mask:
+                    board_line_info += hole
                 else:
                     board_line_info += empty
                 mask >>= 1

@@ -1013,6 +1013,12 @@ class TestBoard(unittest.TestCase):
             board.put_disc(c.black, 5, 4)
             self.assertEqual(board.get_board_line_info(c.white), '---------------------------O*------***--------------------------O')
 
+    def test_board_get_board_line_info_with_hole(self):
+        size = 8
+        for board_class in self.board_classes:
+            board = board_class(size, hole=0x3C18C3E7E7C3183C)
+            self.assertEqual(board.get_board_line_info(c.black), '--____-----__---__----_____O*______*O_____----__---__-----____--*')
+
     def test_listboard_size_4_get_bit_count(self):
         board = PyListBoard(4)
         blank, black, white = d.blank, d.black, d.white
