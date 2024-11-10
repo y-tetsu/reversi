@@ -664,6 +664,20 @@ print(board)
 上記の実行結果は下記となります。<br>
 ![undo](https://raw.githubusercontent.com/y-tetsu/reversi/images/undo.png)
 
+###### move
+指定位置に石を配置し、取れる石をひっくり返します。
+第一引数に`color`、第二引数に石を置くX座標とY座標のタプルまたは、後述の`Move`オブジェクトを指定して下さい。
+
+```Python
+from reversi import Board
+
+board = Board()
+print(board)
+
+board.move('black', (5, 4))
+print(board)
+```
+
 #### colorオブジェクトの使い方
 これまでは、黒番や白番の手番の判別に'black'や'white'の文字列を使う方法を示しましたが<br>
 `color`オブジェクトを用いて指定することも可能です。
@@ -699,7 +713,7 @@ board = Board()
 board.put_disc(c.black, *m('f5'))
 print(board)
 
-board.put_disc(c.white, *m('f6'))
+board.move(c.white, m('f6'))
 print(board)
 ```
 

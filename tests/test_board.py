@@ -6,6 +6,7 @@ import unittest
 from reversi.board import AbstractBoard, BoardSizeError, Board, BitBoard, PyListBoard, PyBitBoard
 from reversi.color import C as c
 from reversi.disc import D as d
+from reversi.move import Move as m
 from reversi.game import Game
 from reversi.player import Player
 from reversi.strategies import Random
@@ -941,6 +942,48 @@ class TestBoard(unittest.TestCase):
             self.assertEqual(board.put_disc(c.white, 3, 2), 0x0220)
             self.assertEqual(board.put_disc(c.black, 3, 1), 0x0020)
             self.assertEqual(board.put_disc(c.white, 3, 3), 0x0020)
+            self.assertEqual(board.get_bitboard_info(), (4366, 61169, 0))
+
+    def test_board_size_4_move_tupple(self):
+        size = 4
+        for board_class in self.board_classes:
+            board = board_class(size)
+            self.assertEqual(board.move(c.black, (0, 0)), 0x0)     # can not flippable
+            board.undo()
+            self.assertEqual(board.move(c.black, (3, 5)), 0x0)     # out of range
+            self.assertEqual(board.move(c.black, (1, 0)), 0x0400)
+            self.assertEqual(board.move(c.white, (0, 0)), 0x0400)
+            self.assertEqual(board.move(c.black, (0, 1)), 0x0400)
+            self.assertEqual(board.move(c.white, (2, 0)), 0x4200)
+            self.assertEqual(board.move(c.black, (3, 0)), 0x0200)
+            self.assertEqual(board.move(c.white, (1, 3)), 0x0440)
+            self.assertEqual(board.move(c.black, (0, 3)), 0x0040)
+            self.assertEqual(board.move(c.white, (0, 2)), 0x0840)
+            self.assertEqual(board.move(c.black, (2, 3)), 0x0024)
+            self.assertEqual(board.move(c.white, (3, 2)), 0x0220)
+            self.assertEqual(board.move(c.black, (3, 1)), 0x0020)
+            self.assertEqual(board.move(c.white, (3, 3)), 0x0020)
+            self.assertEqual(board.get_bitboard_info(), (4366, 61169, 0))
+
+    def test_board_size_4_move_object(self):
+        size = 4
+        for board_class in self.board_classes:
+            board = board_class(size)
+            self.assertEqual(board.move(c.black, m(0, 0)), 0x0)     # can not flippable
+            board.undo()
+            self.assertEqual(board.move(c.black, m(3, 5)), 0x0)     # out of range
+            self.assertEqual(board.move(c.black, m(1, 0)), 0x0400)
+            self.assertEqual(board.move(c.white, m('a1')), 0x0400)
+            self.assertEqual(board.move(c.black, m('A2')), 0x0400)
+            self.assertEqual(board.move(c.white, m(2, 0)), 0x4200)
+            self.assertEqual(board.move(c.black, m(3, 0)), 0x0200)
+            self.assertEqual(board.move(c.white, m('B4')), 0x0440)
+            self.assertEqual(board.move(c.black, m(0, 3)), 0x0040)
+            self.assertEqual(board.move(c.white, m(0, 2)), 0x0840)
+            self.assertEqual(board.move(c.black, m(2, 3)), 0x0024)
+            self.assertEqual(board.move(c.white, m(3, 2)), 0x0220)
+            self.assertEqual(board.move(c.black, m(3, 1)), 0x0020)
+            self.assertEqual(board.move(c.white, m(3, 3)), 0x0020)
             self.assertEqual(board.get_bitboard_info(), (4366, 61169, 0))
 
     def test_listboard_update_score(self):

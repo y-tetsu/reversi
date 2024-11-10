@@ -53,6 +53,11 @@ class AbstractBoard(metaclass=abc.ABCMeta):
     def undo(self):
         pass
 
+    def move(self, color, move):
+        """move
+        """
+        return self.put_disc(color, *move)
+
 
 class BoardSizeError(Exception):
     """BoardSizeError
