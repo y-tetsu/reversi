@@ -665,7 +665,7 @@ print(board)
 ![undo](https://raw.githubusercontent.com/y-tetsu/reversi/images/undo.png)
 
 ###### move
-`put_disc`同様に、指定位置に石を配置し、取れる石をひっくり返します。(ただし、引数が異なります)
+`put_disc`同様に、指定位置に石を配置し、取れる石をひっくり返します(ただし、引数が異なります)。
 第一引数に`color`、第二引数に石を置くX座標とY座標のタプルまたは、後述の`Move`オブジェクトを指定して下さい。
 
 ```Python
