@@ -296,7 +296,6 @@ Specify the name of this file (in the above example, `. /simulator_setting.json`
 ```JSON
 {
     "board_size": 8,
-    "board_type": "bitboard",
     "matches": 100,
     "processes": 1,
     "parallel": "player",
@@ -312,7 +311,6 @@ Specify the name of this file (in the above example, `. /simulator_setting.json`
  |parameter name|description|
  |:---|:---|
  |board_size|Specify the size of the board. |
- |board_type|Select board type (board or bitboard). bitboard is faster and should usually be used. |
  |matches|Specify the number of games played between AIs. 100 means 100 games for each combination of AIs, one for the first move and one for the second move. |
  |processes|Specify the number of parallel runs. The larger the setting, the faster the simulation results may be obtained, depending on the number of cores in your PC. |
  |parallel|Specify the unit of parallel execution. If you specify "player" (default), parallel processing is performed for each combination of AI matches. If "game" is specified, the number of matches in "matches" is divided by the number of processes and parallel processing is performed. If the number of AI matchups to be simulated is smaller than the number of cores in your PC, you may get faster results by specifying "game". |
@@ -402,8 +400,8 @@ from reversi import Board
 board = Board()
 print(board.size)
 
-bitboard = Board(10)
-print(bitboard.size)
+board = Board(10)
+print(board.size)
 ```
 
 The results of the above execution are as follows.<br>
