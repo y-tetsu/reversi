@@ -672,10 +672,7 @@ print(board)
 from reversi import Board
 
 board = Board()
-print(board)
-
 board.move('black', (5, 4))
-print(board)
 ```
 
 #### colorオブジェクトの使い方
