@@ -498,11 +498,15 @@ from reversi import Board
 
 board = Board()
 print(board.size)
+
+board = Board(10)
+print(board.size)
 ```
 
 上記の実行結果は下記となります。
 ```
 8
+10
 ```
 
 ##### boardオブジェクトの標準出力
