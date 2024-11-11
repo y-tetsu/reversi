@@ -416,10 +416,11 @@ class Reversic:
         self._clear_screen()
 
         # ボード準備
-        hole = X[self.board_type][0]
-        ini_black = X[self.board_type][1]
-        ini_white = X[self.board_type][2]
-        board = BitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
+        size = X[self.board_type]['size']
+        hole = X[self.board_type]['hole']
+        ini_black = X[self.board_type]['ini_black']
+        ini_white = X[self.board_type]['ini_white']
+        board = BitBoard(size=size, hole=hole, ini_black=ini_black, ini_white=ini_white)
 
         # プレイヤー準備
         selected_players = {}

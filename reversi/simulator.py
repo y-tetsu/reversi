@@ -141,10 +141,10 @@ class Simulator:
         self.ini_black = None
         self.ini_white = None
         if self.board_name in X:
-            self.board_size = 8
-            self.hole = X[self.board_name][0]
-            self.ini_black = X[self.board_name][1]
-            self.ini_white = X[self.board_name][2]
+            self.board_size = X[self.board_name]['size']
+            self.hole = X[self.board_name]['hole']
+            self.ini_black = X[self.board_name]['ini_black']
+            self.ini_white = X[self.board_name]['ini_white']
             print(f'[{self.board_name}]')
 
         print(BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white))
