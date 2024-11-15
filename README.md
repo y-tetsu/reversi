@@ -42,6 +42,7 @@
         - [序盤の定石打ちを追加する方法](#序盤の定石打ちを追加する方法)
         - [手の進行に応じてAIを切り替える方法](#手の進行に応じてAIを切り替える方法)
         - [終盤に完全読みを追加する方法](#終盤に完全読みを追加する方法)
+        - [外部のリバーシAIを追加する方法](#外部のリバーシAIを追加する方法)
         - [対戦の開始前と終了後に特定の処理を入れる方法](#対戦の開始前と終了後に特定の処理を入れる方法)
 - [tkinterアプリケーションの遊び方](#tkinterアプリケーションの遊び方)
     - [ゲーム紹介](#ゲーム紹介)
@@ -1276,6 +1277,71 @@ Reversi(
         ),
     }
 ).start()
+```
+
+#### 外部のリバーシAIを追加する方法
+コンソール上で動くもの限定となりますが、外部のAIを対戦相手として追加する事も可能です。ここではいくつかのサンプルを示しますので、参考にして下さい。
+
+##### Edax
+以下のコードを元に、強豪リバーシAIの[Edax](https://github.com/abulmo/edax-reversi)を対戦相手として追加することが可能です。<br>
+詳細は、[Eadxの追加方法](https://qiita.com/y-tetsu/items/2a32a157567655fa12ac#edax)をご参照下さい。
+
+```Python
+import subprocess
+
+from reversi import strategies
+from reversi.strategies import AbstractStrategy
+from reversi.move import Move as m
+
+
+class Edax(AbstractStrategy):
+    def next_move(self, color, board):
+        if board.size != 8:
+            return strategies.Random.get_next_move(color, board)
+
+        with open('./board.txt', 'w') as f:
+            f.write(board.get_board_line_info(color))
+
+        if board._black_score + board._white_score < 56:
+            cmd = "./edax-4.4 -solve ./board.txt -l 8 -book-usage off -cpu"
+        else:
+            cmd = "./edax-4.4 -solve ./board.txt -cpu"
+
+        output_str = subprocess.run(cmd, capture_output=True, text=True).stdout
+        move = output_str.split('\n')[2][57:].split()[0]
+
+        return m(move)
+```
+
+##### Egaroucid
+以下のコードを元に、強豪リバーシAIの[Egaroucid](https://www.egaroucid.nyanyan.dev/ja/)を対戦相手として追加可能です。<br>
+詳細は、[Egaroucidの追加方法](https://qiita.com/y-tetsu/items/2a32a157567655fa12ac#egaroucid)をご参照下さい。
+
+```Python
+import subprocess
+
+from reversi import strategies
+from reversi.strategies import AbstractStrategy
+from reversi.move import Move as m
+
+
+class Egaroucid(AbstractStrategy):
+    def next_move(self, color, board):
+        if board.size != 8:
+            return strategies.Random.get_next_move(color, board)
+
+        with open('./board.txt', 'w') as f:
+            f.write(board.get_board_line_info(color))
+
+        if board._black_score + board._white_score < 56:
+            cmd = "./Egaroucid_for_Console.exe -solve ./board.txt -l 8 -nobook -t 1"
+        else:
+            cmd = "./Egaroucid_for_Console.exe -solve ./board.txt -t 1"
+
+        output_str = subprocess.run(cmd, capture_output=True, text=True).stdout
+        move = output_str.split('\n')[1][46:46+2]
+
+        return m(move)
 ```
 
 #### 対戦の開始前と終了後に特定の処理を入れる方法
