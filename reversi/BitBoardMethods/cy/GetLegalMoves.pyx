@@ -1,5 +1,5 @@
 #cython: language_level=3
-"""GetLegalMovesFast
+"""GetLegalMoves
 """
 
 import sys

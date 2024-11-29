@@ -1,5 +1,5 @@
 #cython: language_level=3
-"""PutDiscFast
+"""PutDisc
 """
 
 import sys

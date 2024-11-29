@@ -16,7 +16,7 @@ try:
         if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from reversi.BitBoardMethods.cy.GetLegalMovesFast import get_legal_moves, get_legal_moves_bits, get_bit_count
+    from reversi.BitBoardMethods.cy.GetLegalMoves import get_legal_moves, get_legal_moves_bits, get_bit_count
     SLOW_MODE1 = False
 except ImportError:
     from reversi.BitBoardMethods.GetLegalMoves import get_legal_moves, get_legal_moves_bits, get_bit_count
@@ -26,7 +26,7 @@ try:
         if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from reversi.BitBoardMethods.cy.GetFlippableDiscsFast import get_flippable_discs
+    from reversi.BitBoardMethods.cy.GetFlippableDiscs import get_flippable_discs
     SLOW_MODE2 = False
 except ImportError:
     from reversi.BitBoardMethods.GetFlippableDiscs import get_flippable_discs
@@ -36,7 +36,7 @@ try:
         if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from reversi.BitBoardMethods.cy.GetBoardInfoFast import get_board_info
+    from reversi.BitBoardMethods.cy.GetBoardInfo import get_board_info
     SLOW_MODE3 = False
 except ImportError:
     from reversi.BitBoardMethods.GetBoardInfo import get_board_info
@@ -46,7 +46,7 @@ try:
         if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from reversi.BitBoardMethods.cy.UndoFast import undo
+    from reversi.BitBoardMethods.cy.Undo import undo
     SLOW_MODE4 = False
 except ImportError:
     from reversi.BitBoardMethods.Undo import undo
@@ -56,7 +56,7 @@ try:
         if os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from reversi.BitBoardMethods.cy.PutDiscFast import put_disc
+    from reversi.BitBoardMethods.cy.PutDisc import put_disc
     SLOW_MODE5 = False
 except ImportError:
     from reversi.BitBoardMethods.PutDisc import put_disc

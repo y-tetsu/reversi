@@ -1,5 +1,5 @@
 #cython: language_level=3
-"""GetBoardInfoFast
+"""GetBoardInfo
 """
 
 import sys
