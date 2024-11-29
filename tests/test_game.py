@@ -28,7 +28,7 @@ class TestGame(unittest.TestCase):
         game = Game(black, white)
         self.assertIsInstance(game.black_player.strategy, Black)
         self.assertIsInstance(game.white_player.strategy, White)
-        self.assertIsInstance(game.board, BitBoardMethods.CyBoard8_64bit.CythonBitBoard)
+        self.assertIsInstance(game.board, BitBoardMethods.cy.CyBoard8_64bit.CythonBitBoard)
         self.assertEqual(game.players, [black, white])
         self.assertEqual(game.black_player, game.players[0])
         self.assertEqual(game.white_player, game.players[1])

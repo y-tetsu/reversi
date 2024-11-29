@@ -1747,5 +1747,5 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(reversi.BitBoardMethods.CYBOARD_ERROR)
         # -------------------------------
         self.assertIsInstance(BitBoard(4), PyBitBoard)
-        self.assertIsInstance(BitBoard(), reversi.board.BitBoardMethods.CyBoard8_64bit.CythonBitBoard)
+        self.assertIsInstance(BitBoard(), reversi.board.BitBoardMethods.cy.CyBoard8_64bit.CythonBitBoard)
         self.assertIsInstance(BitBoard(26), PyBitBoard)
