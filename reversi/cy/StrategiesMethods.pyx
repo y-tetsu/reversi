@@ -1,5 +1,5 @@
 #cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
-"""Next Move(Size8,64bit) of EndGame strategy
+"""Cython Strategies Methods
 """
 
 import time
@@ -49,15 +49,15 @@ cdef:
     signed int taker_sign
 
 
-def next_move(color, board, depth, pid, timer, measure, role):
-    """next_move
+def endgame_next_move(color, board, depth, pid, timer, measure, role):
+    """endgame_next_move
     """
     if pid is None:
         timer, measure = False, False
     return _next_move(color, board, depth, pid, timer, measure, role)
 
 
-def get_best_move(color, board, moves, alpha, beta, depth, pid, timer, measure, role, recorder):
+def endgame_get_best_move(color, board, moves, alpha, beta, depth, pid, timer, measure, role, recorder):
     """get_best_move
     """
     if pid is None:
