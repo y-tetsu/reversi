@@ -499,7 +499,7 @@ class TestWindow(unittest.TestCase):
         self.assertTrue(extradialog.event.is_set())
 
     def test_window_screenboard_init(self):
-        reversi.BitBoardMethods.SLOW_MODE1 = True
+        reversi.BitBoardMethods.CYTHON = True
         test_size = 4
         test_cputime = 5.0
         test_assist = 'ON'
@@ -550,7 +550,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(screenboard._ylines, test_ylines)
         self.assertIsNone(screenboard.move)
         self.assertFalse(screenboard.event.is_set())
-        reversi.BitBoardMethods.SLOW_MODE1 = False
+        reversi.BitBoardMethods.CYTHON = False
 
     def test_window_screenboard_draw_squares(self):
         test_size = 26

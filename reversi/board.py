@@ -72,7 +72,7 @@ def Board(size=8, hole=0x0, ini_black=None, ini_white=None, kind='BitBoard'):
 
 
 def BitBoard(size=8, hole=0x0, ini_black=None, ini_white=None):
-    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYBOARD_ERROR:
+    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYTHON:
         return BitBoardMethods.CythonBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
     return PyBitBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
 
