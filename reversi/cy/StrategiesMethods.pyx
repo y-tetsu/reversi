@@ -5,6 +5,8 @@
 import sys
 import time
 
+from libc.stdlib cimport rand
+
 from reversi.strategies.common import Timer, Measure
 from reversi.recorder import Recorder
 
@@ -29,6 +31,9 @@ DEF MAXSIZE64 = 2**63 - 1
 
 cdef:
     unsigned long long measure_count
+    unsigned long long[64] legal_moves_bit_list
+    unsigned int[64] legal_moves_x
+    unsigned int[64] legal_moves_y
     unsigned long long bb
     unsigned long long wb
     unsigned long long rec_bb
@@ -56,6 +61,11 @@ cdef:
     signed int rec_score
     unsigned int timer_timeout
     signed int timer_timeout_value
+    signed int[64] montecarlo_scores
+    unsigned long tx = 123456789;
+    unsigned long ty = 362436069;
+    unsigned long tz = 521288629;
+    unsigned long tw = 88675123;
     signed int taker_sign
     signed int corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     # {{{ -- signed int[8][8] t_table= [ --
@@ -201,18 +211,28 @@ def table_get_score(table, board):
     return _table_get_score(table, board)
 
 
+def montecarlo_next_move(color, board, count, pid, timer, measure):
+    """next_move
+    """
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _montecarlo_next_move(color, board, count, pid, timer, measure)
+
+
+def playout(color, board, move):
+    """playout
+    """
+    return _board_playout(color, board, move)
+
+
 # -------------------------------------------------- #
 # _next_move
 cdef inline tuple _next_move(str name, str color, board, int depth, str pid, int timer, int measure, str role, params):
-    global is_timer_enabled, timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, hb, bs, ws, max_depth, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
+    global is_timer_enabled, timer_deadline, timer_timeout, timer_timeout_value, measure_count,legal_moves_bit_list, legal_moves_x, legal_moves_y, bb, wb, hb, bs, ws, max_depth, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
         signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INFINITY
         unsigned int int_color = 0
         unsigned int x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
-        unsigned long long[64] legal_moves_bit_list
-        unsigned int[64] legal_moves_x
-        unsigned int[64] legal_moves_y
     # タイマーとメジャー準備
     measure_count = 0
     timer_timeout = <unsigned int>0
@@ -1498,6 +1518,158 @@ cdef inline signed int _table_get_score(table, board):
 
 
 # -------------------------------------------------- #
+# MonteCarlo Methods
+cdef inline tuple _montecarlo_next_move(str color, board, unsigned int count, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, montecarlo_scores, bb, wb, hb, bs, ws
+    cdef:
+        unsigned long long b, w, h
+        unsigned int tbs
+        unsigned int tws
+        unsigned int int_color = 0
+        unsigned int i, x, y, index = 0
+        unsigned long long legal_moves, mask = 0x8000000000000000
+        signed int max_score
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        measure_count = Measure.count[pid]
+    if color == 'black':
+        int_color = <unsigned int>1
+    b, w, h = board.get_bitboard_info()
+    tbs = board._black_score
+    tws = board._white_score
+    legal_moves = _get_legal_moves_bits(int_color, b, w, h)
+    for y in range(8):
+        for x in range(8):
+            if legal_moves & mask:
+                legal_moves_bit_list[index] = mask
+                legal_moves_x[index] = x
+                legal_moves_y[index] = y
+                montecarlo_scores[index] = 0
+                index += 1
+            mask >>= 1
+    # seed
+    init_rand(<unsigned long>time.time())
+    for j in range(count):
+        for i in range(index):
+            # ボード情報取得
+            bb, wb, hb = b, w, h
+            bs = tbs
+            ws = tws
+            montecarlo_scores[i] += _playout(int_color, legal_moves_bit_list[i])
+            # 探索ノード数カウント
+            measure_count += 1
+        if timer and check_timeout():
+            break
+    max_score = montecarlo_scores[0];
+    best_move = (legal_moves_x[0], legal_moves_y[0])
+    for i in range(index):
+        if montecarlo_scores[i] > max_score:
+            max_score = montecarlo_scores[i]
+            best_move = (legal_moves_x[i], legal_moves_y[i])
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
+    return best_move
+
+
+cdef inline signed int _playout(unsigned int int_color, unsigned long long move_bit):
+    global bb, wb, hb, bs, ws
+    cdef:
+        unsigned int turn
+        unsigned int x, y, pass_count = 0, random_index
+        unsigned long long random_put, legal_moves_bits, count
+        signed int ret
+    # 1手打つ
+    _put_disc_no_prev(int_color, move_bit)
+    # 決着までランダムに打つ
+    turn = int_color
+    while True:
+        # 次の手番
+        turn = <unsigned int>0 if turn else <unsigned int>1
+        # 合法手を取得
+        legal_moves_bits = _get_legal_moves_bits(turn, bb, wb, hb)
+        # 打てる場所なし
+        if not legal_moves_bits:
+            pass_count += 1
+            if pass_count == 2:
+                break
+        # 打てる場所あり
+        else:
+            pass_count = 0
+            # ランダムに手を選ぶ
+            count = _popcount(legal_moves_bits)
+            random_index = rand_int() % count + 1
+            for _ in range(random_index):
+                random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+                legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
+            # 1手打つ
+            _put_disc_no_prev(turn, random_put)
+    # 結果を返す
+    ret = -2
+    if (int_color and bs > ws) or (not int_color and ws > bs):
+        ret = 2
+    elif bs == ws:
+        ret = 1
+    return ret
+
+
+cdef inline signed int _board_playout(str color, board, move):
+    global bb, wb, hb, bs, ws
+    cdef:
+        unsigned int int_color = 0, turn
+        unsigned int x, y, pass_count = 0, random_index
+        unsigned long long random_put, legal_moves_bits
+        signed int ret
+    # ボード情報取得
+    bb, wb, hb = board.get_bitboard_info()
+    bs = board._black_score
+    ws = board._white_score
+    # 手番
+    if color == 'black':
+        int_color = <unsigned int>1
+    # 1手打つ
+    x, y = move
+    _put_disc_no_prev(int_color, <unsigned long long>1 << (63-(y*8+x)))
+    # 決着までランダムに打つ
+    turn = int_color
+    while True:
+        # 次の手番
+        turn = <unsigned int>0 if turn else <unsigned int>1
+        # 合法手を取得
+        legal_moves_bits = _get_legal_moves_bits(turn, bb, wb, hb)
+        # 打てる場所なし
+        if not legal_moves_bits:
+            pass_count += 1
+            if pass_count == 2:
+                break
+        # 打てる場所あり
+        else:
+            pass_count = 0
+            # ランダムに手を選ぶ
+            count = _popcount(legal_moves_bits)
+            random_index = rand() % count + 1
+            for _ in range(random_index):
+                random_put = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+                legal_moves_bits ^= random_put                         # 一番右のONしているビットをOFFする
+            # 1手打つ
+            _put_disc_no_prev(turn, random_put)
+    # 結果を返す
+    ret = -2
+    if (int_color and bs > ws) or (not int_color and ws > bs):
+        ret = 2
+    elif bs == ws:
+        ret = 1
+    return ret
+
+
+# -------------------------------------------------- #
 # BitBoard Methods
 cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long h):
     """_get_legal_moves_bits
@@ -1584,8 +1756,30 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
         ws += <unsigned int>1 + <unsigned int>count
 
 
+cdef inline void _put_disc_no_prev(unsigned int int_color, unsigned long long move):
+    """_put_disc
+    """
+    global bb, wb, bs, ws, fd
+    cdef:
+        unsigned long long count
+        signed int lshift
+    # ひっくり返せる石を取得
+    fd = _get_flippable_discs_num(int_color, bb, wb, move)
+    count = _popcount(fd)
+    # 自分の石を置いて相手の石をひっくり返す
+    if int_color:
+        bb ^= move | fd
+        wb ^= fd
+        bs += <unsigned int>1 + <unsigned int>count
+        ws -= <unsigned int>count
+    else:
+        wb ^= move | fd
+        bb ^= fd
+        bs -= <unsigned int>count
+        ws += <unsigned int>1 + <unsigned int>count
+
 cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
-    """_get_flippable_discs_size8_64bit
+    """_get_flippable_discs_num
     """
     cdef:
         unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
@@ -1872,3 +2066,44 @@ cdef inline signed int check_timeout():
         timer_timeout = <unsigned int>1
         return timer_timeout_value
     return <signed int>0
+
+
+# -------------------------------------------------- #
+# rand_int Methods
+cdef unsigned long set_s(unsigned long s):
+    """_set_s
+    """
+    s = (s * 1812433253) + 1
+    s ^= s << 13
+    s ^= s >> 17
+    return s
+
+
+cdef init_rand(unsigned long s):
+    """init_rand
+    """
+    while True:
+        s = set_s(s)
+        tx = 123464980 ^ s
+        s = set_s(s)
+        ty = 3447902351 ^ s
+        s = set_s(s)
+        tz = 2859490775 ^ s
+        s = set_s(s)
+        tw = 47621719 ^ s
+        if not ((tx == 0) and (ty == 0) and (tz == 0) and (tw == 0)):
+            break
+
+
+cdef unsigned long rand_int():
+    """rand_int
+    """
+    global tx, ty, tz, tw
+    cdef:
+        unsigned long tt
+    tt = tx ^ (tx << 11)
+    tx = ty
+    ty = tz
+    tz = tw
+    tw = (tw ^ (tw >> 19)) ^ (tt ^ (tt>>8))
+    return tw
