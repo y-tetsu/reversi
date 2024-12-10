@@ -10,7 +10,8 @@ try:
         if os.environ['FORCE_BLANKMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from ...strategies.BlankMethods.NextMoveSize8_64bit import next_move, get_best_move
+    from ...cy.StrategiesMethods import blank_next_move as next_move
+    from ...cy.StrategiesMethods import blank_get_best_move as get_best_move
     BLANK_SIZE8_64BIT_ERROR = False
 except ImportError:
     pass
