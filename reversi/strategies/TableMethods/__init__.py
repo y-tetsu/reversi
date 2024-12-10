@@ -10,7 +10,7 @@ try:
         if os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from ...strategies.TableMethods.GetScoreFast import get_score
+    from ...cy.StrategiesMethods import table_get_score as get_score
     SLOW_MODE = False
 except ImportError:
     from ...strategies.TableMethods.GetScore import get_score

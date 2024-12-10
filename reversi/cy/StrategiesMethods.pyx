@@ -2,6 +2,7 @@
 """Cython Strategies Methods
 """
 
+import sys
 import time
 
 from reversi.strategies.common import Timer, Measure
@@ -22,6 +23,8 @@ DEF MAX_POSSIBILITY = 40  # 着手可能数の最大(想定)
 DEF POSSIBILITY_RANGE = MAX_POSSIBILITY * 2 + 1
 DEF BUCKET_SIZE = MAX_POSSIBILITY
 DEF TRANSPOSITION_TABLE_DEPTH = 3  # 置換表を有効にする残りの探索深さ
+
+DEF MAXSIZE64 = 2**63 - 1
 
 
 cdef:
@@ -186,6 +189,16 @@ def blank_get_best_move(color, board, params, moves, alpha, beta, depth, pid, ti
     """
     timer, measure = (False, False) if pid is None else (timer, measure)
     return _get_best_move_wrap('blank', color, board, moves, alpha, beta, depth, pid, timer, measure, None, 0, params)
+
+
+def table_get_score(table, board):
+    """table_get_score
+    """
+    if board.size == 8:
+        if sys.maxsize == MAXSIZE64:
+            if hasattr(board, '_black_bitboard'):
+                return _table_get_score_size8_64bit(table, board)
+    return _table_get_score(table, board)
 
 
 # -------------------------------------------------- #
@@ -1442,6 +1455,45 @@ cdef inline signed int _get_b():
         rb_l <<= 1
         if rb_l & blank:
             score += wb3 * rb_l_sign
+    return score
+
+
+# -------------------------------------------------- #
+# Table Methods
+cdef inline signed int _table_get_score_size8_64bit(table, board):
+    """_table_get_score_size8_64bit
+    """
+    cdef:
+        unsigned long long b, w
+        unsigned long long mask = 0x8000000000000000
+        unsigned int x, y
+        signed int score = 0
+    b = board._black_bitboard
+    w = board._white_bitboard
+    for y in range(8):
+        for x in range(8):
+            if b & mask:
+                score += <signed int>table[y][x]
+            elif w & mask:
+                score -= <signed int>table[y][x]
+            mask >>= 1
+
+    return score
+
+
+cdef inline signed int _table_get_score(table, board):
+    """_table_get_score
+    """
+    cdef:
+        unsigned int x, y, size
+        signed int score
+    board_info = board.get_board_info()
+    size = board.size
+    score = 0
+    for y in range(size):
+        for x in range(size):
+            score += table[y][x] * board_info[y][x]
+
     return score
 
 
