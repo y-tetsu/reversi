@@ -1,6 +1,5 @@
 #cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
-"""Cython Strategies Methods
-"""
+# Cython Strategies Methods
 
 import sys
 import time
@@ -173,102 +172,88 @@ cdef:
     dict tp_table = {}  # Trans Position Table
 
 
+# ================================================== #
+# for Python
+
+# -------------------------------------------------- #
+# next_move
 def endgame_next_move(color, board, depth, pid, timer, measure, role):
-    """endgame_next_move
-    """
     timer, measure = (False, False) if pid is None else (timer, measure)
     return _next_move('endgame', color, board, depth, pid, timer, measure, role, None)
 
 
-def endgame_get_best_move(color, board, moves, alpha, beta, depth, pid, timer, measure, role, recorder):
-    """endgame_get_best_move
-    """
-    timer, measure = (False, False) if pid is None else (timer, measure)
-    return _get_best_move_wrap('endgame', color, board, moves, alpha, beta, depth, pid, timer, measure, role, recorder, None)
-
-
 def blank_next_move(color, board, params, depth, pid, timer, measure):
-    """blank_next_move
-    """
     timer, measure = (False, False) if pid is None else (timer, measure)
     return _next_move('blank', color, board, depth, pid, timer, measure, None, params)
 
 
+def negascout_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _negascout_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure)
+
+
+def montecarlo_next_move(color, board, count, pid, timer, measure):
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _montecarlo_next_move(color, board, count, pid, timer, measure)
+
+
+# -------------------------------------------------- #
+# get_best_move
+def endgame_get_best_move(color, board, moves, alpha, beta, depth, pid, timer, measure, role, recorder):
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _get_best_move_wrap('endgame', color, board, moves, alpha, beta, depth, pid, timer, measure, role, recorder, None)
+
+
 def blank_get_best_move(color, board, params, moves, alpha, beta, depth, pid, timer, measure):
-    """blank_get_best_move
-    """
     timer, measure = (False, False) if pid is None else (timer, measure)
     return _get_best_move_wrap('blank', color, board, moves, alpha, beta, depth, pid, timer, measure, None, 0, params)
 
 
+def negascout_get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure):
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _negascout_get_best_move_wrap(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
+
+
+# -------------------------------------------------- #
+# get_score
 def negascout_get_score(negascout, color, board, alpha, beta, depth, pid):
-    """negascout_get_score
-    """
     if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
         return _negascout_get_score_size8_64bit(_negascout_get_score_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
     return _negascout_get_score(_negascout_get_score, negascout, color, board, alpha, beta, depth, pid)
 
 
 def negascout_get_score_measure(negascout, color, board, alpha, beta, depth, pid):
-    """negascout_get_score_measure
-    """
     if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
         return _negascout_get_score_measure_size8_64bit(_negascout_get_score_measure_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
     return _negascout_get_score_measure(_negascout_get_score_measure, negascout, color, board, alpha, beta, depth, pid)
 
 
 def negascout_get_score_timer(negascout, color, board, alpha, beta, depth, pid):
-    """negascout_get_score_timer
-    """
     if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
         return _negascout_get_score_timer_size8_64bit(_negascout_get_score_timer_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
     return _negascout_get_score_timer(_negascout_get_score_timer, negascout, color, board, alpha, beta, depth, pid)
 
 
 def negascout_get_score_measure_timer(negascout, color, board, alpha, beta, depth, pid):
-    """negascout_get_score_measure_timer
-    """
     if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
         return _negascout_get_score_measure_timer_size8_64bit(_negascout_get_score_measure_timer_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
     return _negascout_get_score_measure_timer(_negascout_get_score_measure_timer, negascout, color, board, alpha, beta, depth, pid)
 
 
-def negascout_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
-    """negascout_next_move
-    """
-    timer, measure = (False, False) if pid is None else (timer, measure)
-    return _negascout_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure)
-
-
-def negascout_get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure):
-    """negascout_get_best_move
-    """
-    timer, measure = (False, False) if pid is None else (timer, measure)
-    return _negascout_get_best_move_wrap(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
-
-
 def table_get_score(table, board):
-    """table_get_score
-    """
-    if board.size == 8:
-        if sys.maxsize == MAXSIZE64:
-            if hasattr(board, '_black_bitboard'):
-                return _table_get_score_size8_64bit(table, board)
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _table_get_score_size8_64bit(table, board)
     return _table_get_score(table, board)
 
 
-def montecarlo_next_move(color, board, count, pid, timer, measure):
-    """next_move
-    """
-    timer, measure = (False, False) if pid is None else (timer, measure)
-    return _montecarlo_next_move(color, board, count, pid, timer, measure)
-
-
+# -------------------------------------------------- #
+# playout
 def playout(color, board, move):
-    """playout
-    """
     return _board_playout(color, board, move)
 
+
+# ================================================== #
+# for Cython
 
 # -------------------------------------------------- #
 # _next_move
@@ -524,8 +509,6 @@ cdef inline signed int _set_role(str role, signed int beta):
 
 
 cdef inline signed int _endgame_get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, unsigned int pas):
-    """_endgame_get_score
-    """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail, is_timer_enabled, max_depth
     cdef:
         signed int timeout
@@ -582,8 +565,6 @@ cdef inline signed int _endgame_get_score(unsigned int int_color, signed int alp
 
 
 cdef inline signed int _endgame_get_score_taker(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, unsigned int pas):
-    """_endgame_get_score_taker
-    """
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail, is_timer_enabled, rol, taker_sign, max_depth
     cdef:
         signed int timeout
@@ -661,8 +642,6 @@ cdef inline void _save_record(signed int score, unsigned int depth):
 # -------------------------------------------------- #
 # Blank Methods
 cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, unsigned int pas):
-    """_blank_get_score
-    """
     global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail, tp_table, is_timer_enabled
     cdef:
         signed int null_window
@@ -680,16 +659,13 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
         signed int score
         unsigned long long bits_count
         signed int upper, lower, score_max = NEGATIVE_INFINITY, alpha_ini = alpha
-
     # タイムアウト判定
     if is_timer_enabled:
         timeout = check_timeout()
         if timeout:
             return timeout
-
     # 探索ノード数カウント
     measure_count += 1
-
     # 置換表に結果が存在する場合、その値を返す
     key = (bb, wb, int_color)
     if depth >= TRANSPOSITION_TABLE_DEPTH:
@@ -705,7 +681,6 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
                 alpha = lower
             if upper < beta:
                 beta = upper
-
     # 合法手を取得
     # {{{ -- _get_legal_moves_bits(int_color, bb, wb, hb) --
     player, opponent = wb, bb
@@ -745,12 +720,10 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
     tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
     legal_moves_bits =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
     # -- _get_legal_moves_bits(int_color, bb, wb, hb) -- }}}
-
     # 次の手番
     if int_color:
         int_color_next = <unsigned int>0
         sign = <signed int>1
-
     # パスの場合
     if not legal_moves_bits:
         # 前回もパスの場合ゲーム終了
@@ -763,9 +736,7 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
                 score -= ww
             return score * sign
             # --- return _evaluate(int_color, <signed int>0, <signed int>0) * sign --- }}}
-
         return -_blank_get_score(int_color_next, -beta, -alpha, depth, <unsigned int>1)
-
     # 最大深さに到達
     if not depth:
         # 相手の着手可能数を取得
@@ -805,14 +776,12 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
         tmp_d2 |= diagonal & ((tmp_d2 << 7) | (tmp_d2 >> 7))
         legal_moves_bits_opponent =  blank & ((tmp_h << 1) | (tmp_h >> 1) | (tmp_v << 8) | (tmp_v >> 8) | (tmp_d1 << 9) | (tmp_d1 >> 9) | (tmp_d2 << 7) | (tmp_d2 >> 7))
         # -- _get_legal_moves_bits((<unsigned int>0 if int_color else <unsigned int>1, bb, wb, hb) -- }}}
-
         if int_color:
             legal_moves_b_bits = legal_moves_bits
             legal_moves_w_bits = legal_moves_bits_opponent
         else:
             legal_moves_b_bits = legal_moves_bits_opponent
             legal_moves_w_bits = legal_moves_bits
-
         if legal_moves_b_bits:
             # {{{ -- _popcount --
             bits = legal_moves_b_bits
@@ -823,7 +792,6 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_b_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount -- }}}
-
         if legal_moves_w_bits:
             # {{{ -- _popcount --
             bits = legal_moves_w_bits
@@ -834,7 +802,6 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
             bits = bits + (bits >> <unsigned int>16)
             legal_moves_w_bits = (bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F
             # -- _popcount -- }}}
-
         # 評価値を返す
         # {{{ --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign ---
         # 勝敗が決まっている場合
@@ -849,13 +816,11 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
         score = _get_t() + _get_p(<signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) + _get_e() + _get_b()
         return score * sign
         # --- return _evaluate(int_color, <signed int>legal_moves_b_bits, <signed int>legal_moves_w_bits) * sign --- }}}
-
     # 合法手と着手可能数の格納
     while (legal_moves_bits):
         move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
         next_moves_list[count] = move
         b, w = bb, wb
-
         # ひっくり返せる石を取得
         # {{{ -- _get_flippable_discs_num --
         flippable_discs_num = 0
@@ -909,7 +874,6 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
         if lt & player:
             flippable_discs_num |= bf_lt
         # -- _get_flippable_discs_num -- }}}
-
         # 自分の石を置いて相手の石をひっくり返す
         if int_color:
             b ^= move | flippable_discs_num
@@ -917,7 +881,6 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
         else:
             w ^= move | flippable_discs_num
             b ^= flippable_discs_num
-
         # 着手可能数を格納
         # {{{ -- _get_legal_moves_bits(int_color, b, w, hb) --
         player, opponent = w, b
@@ -965,13 +928,10 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
         bits = bits + (bits >> <unsigned int>16)
         possibilities[count] = -<signed int>((bits + (bits >> <unsigned int>32)) & <unsigned long long>0x000000000000007F)
         # -- _popcount -- }}}
-
         count += 1
         legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
-
     # 着手可能数に応じて並び替え
     _sort_moves_by_possibility(count, next_moves_list, possibilities)
-
     # 次の手の探索
     for i in range(count):
         # 一手打つ
@@ -1062,7 +1022,6 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
             bs -= <unsigned int>bits_count
             ws += <unsigned int>1 + <unsigned int>bits_count
         # --- _put_disc(int_color, next_moves_list[i]) --- }}}
-
         # Null Window Search
         null_window = beta if not i else alpha + 1
         score = -_blank_get_score(int_color_next, -null_window, -alpha, depth-1, <unsigned int>0)
@@ -1070,37 +1029,29 @@ cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha
             if i and score <= null_window:
                 score = -_blank_get_score(int_color_next, -beta, -score, depth-1, <unsigned int>0)
             alpha = score
-
         # 手を戻す
         _undo()
-
         # タイムアウト判定
         if timer_timeout:
             return alpha
-
         # 最大値の更新
         if alpha > score_max:
             score_max = alpha
-
         # beta cut
         if score_max >= beta:
             if depth >= TRANSPOSITION_TABLE_DEPTH:
                 tp_table[key] = (score_max, POSITIVE_INFINITY)
             return score_max
-
     if depth >= TRANSPOSITION_TABLE_DEPTH:
         # 置換表に結果を格納
         if score_max > alpha_ini:
             tp_table[key] = (score_max, score_max)
         else:
             tp_table[key] = (NEGATIVE_INFINITY, score_max)
-
     return score_max
 
 
 cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
-    """_sort_moves_by_possibility
-    """
     if count >= 2:
         if count <= BUCKET_SIZE:
             _bucket_sort(count, next_moves_list, possibilities)
@@ -1109,8 +1060,6 @@ cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long lo
 
 
 cdef inline void _bucket_sort(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
-    """_bucket_sort
-    """
     cdef:
         unsigned int i, j, k = 0, pos, index
         unsigned long long[POSSIBILITY_RANGE*BUCKET_SIZE] bucket
@@ -1133,8 +1082,6 @@ cdef inline void _bucket_sort(unsigned int count, unsigned long long[64] next_mo
 
 
 cdef inline void _merge_sort(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
-    """_merge_sort
-    """
     cdef:
         unsigned int len1, len2, i
         unsigned long long[32] array_move1
@@ -1156,8 +1103,6 @@ cdef inline void _merge_sort(unsigned int count, unsigned long long[64] next_mov
 
 
 cdef inline void _merge(unsigned int len1, unsigned int len2, unsigned long long[32] array_move1, signed int[32] array_p1, unsigned long long[32] array_move2, signed int[32] array_p2, unsigned long long[64] next_moves_list, signed int[64] possibilities):
-    """_merge
-    """
     cdef:
         unsigned int i = 0, j = 0
     while i < len1 or j < len2:
@@ -1240,7 +1185,6 @@ cdef inline signed int _set_t_table():
     t_table[7][5] = a2
     t_table[7][6] = c
     t_table[7][7] = corner
-
     # 事前計算
     for row in range(8):
         for bit8 in range(256):
@@ -1254,8 +1198,7 @@ cdef inline signed int _set_t_table():
 
 
 cdef inline signed int _get_t():
-    """テーブルによる評価値
-    """
+    """テーブルによる評価値"""
     global bb, wb, table_values
     cdef:
         unsigned long long mask = 0x00000000000000FF, tb, tw
@@ -1270,15 +1213,13 @@ cdef inline signed int _get_t():
 
 
 cdef inline signed int _get_p(signed int pos_b, signed int pos_w):
-    """着手可能数による評価値
-    """
+    """着手可能数による評価値"""
     global wp
     return (pos_b - pos_w) * wp
 
 
 cdef inline signed int _get_e():
-    """辺の確定石による評価値
-    """
+    """辺の確定石による評価値"""
     global bb, wb, we
     cdef:
         signed int score = 0
@@ -1376,8 +1317,7 @@ cdef inline signed int _get_e():
 
 
 cdef inline signed int _get_b():
-    """空きマスのパターンによる評価値
-    """
+    """空きマスのパターンによる評価値"""
     global bb, wb, wb1, wb2, wb3
     cdef:
         signed int score = 0
@@ -1527,11 +1467,8 @@ cdef inline signed int _get_b():
 # -------------------------------------------------- #
 # NegaScout Methods
 cdef _negascout_get_score(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
-    """_negascout_get_score
-    """
     cdef:
         unsigned int is_game_end
-
     # ゲーム終了 or 最大深さに到達
     legal_moves_b_bits = board.get_legal_moves_bits('black')
     legal_moves_w_bits = board.get_legal_moves_bits('white')
@@ -1539,13 +1476,11 @@ cdef _negascout_get_score(func, negascout, color, board, alpha, beta, unsigned i
     sign = 1 if color == 'black' else -1
     if is_game_end or depth == <unsigned int>0:
         return negascout.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
-
     # パスの場合
     legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
     next_color = 'white' if color == 'black' else 'black'
     if not legal_moves_bits:
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid=pid)
-
     # 着手可能数に応じて手を並び替え
     tmp = []
     size = board.size
@@ -1559,9 +1494,7 @@ cdef _negascout_get_score(func, negascout, color, board, alpha, beta, unsigned i
                 tmp += [((x, y), (possibility_b - possibility_w) * sign)]
                 board.undo()
             mask >>= 1
-
     next_moves = [i[0] for i in sorted(tmp, reverse=True, key=lambda x:x[1])]
-
     # NegaScout法
     cdef:
         unsigned int index = 0
@@ -1571,88 +1504,63 @@ cdef _negascout_get_score(func, negascout, color, board, alpha, beta, unsigned i
             board.put_disc(color, *move)
             tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid=pid)
             board.undo()
-
             if alpha < tmp:
                 if tmp <= null_window and index:
                     board.put_disc(color, *move)
                     alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid=pid)
                     board.undo()
-
                     if Timer.is_timeout(pid):
                         return alpha
                 else:
                     alpha = tmp
-
             null_window = alpha + 1
         else:
             break
-
         index += <unsigned int>1
-
     return alpha
 
 
 cdef _negascout_get_score_measure(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
-    """_negascout_get_score_measure
-    """
     measure(pid)
-
     return _negascout_get_score(func, negascout, color, board, alpha, beta, depth, pid)
 
 
 cdef _negascout_get_score_timer(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
-    """_negascout_get_score_timer
-    """
     cdef:
         signed int timeout
     timeout = timer(pid)
-
     return timeout if timeout else _negascout_get_score(func, negascout, color, board, alpha, beta, depth, pid)
 
 
 cdef _negascout_get_score_measure_timer(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
-    """_negascout_get_score_measure_timer
-    """
     cdef:
         signed int timeout
     measure(pid)
     timeout = timer(pid)
-
     return timeout if timeout else _negascout_get_score(func, negascout, color, board, alpha, beta, depth, pid)
 
 
 cdef double _negascout_get_score_measure_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_negascout_get_score_measure_size8_64bit
-    """
     measure(pid)
-
     return _negascout_get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
 
 
 cdef double _negascout_get_score_timer_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_negascout_get_score_timer_size8_64bit
-    """
     cdef:
         signed int timeout
     timeout = timer(pid)
-
     return timeout if timeout else _negascout_get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
 
 
 cdef double _negascout_get_score_measure_timer_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_negascout_get_score_measure_timer_size8_64bit
-    """
     cdef:
         signed int timeout
     measure(pid)
     timeout = timer(pid)
-
     return timeout if timeout else _negascout_get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
 
 
 cdef inline measure(pid):
-    """measure
-    """
     if pid:
         if pid not in Measure.count:
             Measure.count[pid] = 0
@@ -1660,19 +1568,14 @@ cdef inline measure(pid):
 
 
 cdef inline signed int timer(pid):
-    """timer
-    """
     if pid:
         if time.time() > Timer.deadline[pid]:
             Timer.timeout_flag[pid] = True  # タイムアウト発生
             return Timer.timeout_value[pid]
-
     return <signed int>0
 
 
 cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
-    """_negascout_get_score_size8_64bit
-    """
     cdef:
         double score, tmp, null_window
         unsigned long long b, w, h, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
@@ -1681,7 +1584,6 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
         unsigned int next_moves_y[64]
         signed int sign
         signed int possibilities[64]
-
     # ゲーム終了 or 最大深さに到達
     b = board._black_bitboard
     w = board._white_bitboard
@@ -1689,7 +1591,6 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
     legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, b, w, h)
     legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, b, w, h)
     is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
-
     if color == 'black':
         color_num = <unsigned int>1
         sign = <signed int>1
@@ -1700,14 +1601,11 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
         sign = <signed int>-1
         legal_moves_bits = legal_moves_w_bits
         next_color = 'black'
-
     if is_game_end or depth == <unsigned int>0:
         return negascout.evaluator.evaluate(color=color, board=board, possibility_b=_popcount(legal_moves_b_bits), possibility_w=_popcount(legal_moves_w_bits)) * sign  # noqa: E501
-
     # パスの場合
     if not legal_moves_bits:
         return -func(func, negascout, next_color, board, -beta, -alpha, depth, pid)
-
     # 着手可能数に応じて手を並び替え
     count = 0
     mask = 1 << 63
@@ -1719,9 +1617,7 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
                 possibilities[count] = _negascout_get_possibility_size8_64bit(board, color_num, x, y, sign)
                 count += 1
             mask >>= 1
-
     _negascout_sort_moves_by_possibility(count, next_moves_x, next_moves_y, possibilities)
-
     # 次の手の探索
     null_window = beta
     for i in range(count):
@@ -1729,39 +1625,30 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
             _negascout_put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
             tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
             _negascout_undo(board)
-
             if alpha < tmp:
                 if tmp <= null_window and index:
                     _negascout_put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
                     alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
                     _negascout_undo(board)
-
                     if Timer.is_timeout(pid):
                         return alpha
                 else:
                     alpha = tmp
-
             null_window = alpha + 1
         else:
             return alpha
-
         index += <unsigned int>1
-
     return alpha
 
 
 cdef inline unsigned long long _negascout_put_disc_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y):
-    """_negascout_put_disc_size8_64bit
-    """
     cdef:
         unsigned long long put, black_bitboard, white_bitboard, flippable_discs_num, flippable_discs_count
         unsigned int black_score, white_score
         signed int shift_size
-
     # 配置位置を整数に変換
     shift_size = (63-(y*8+x))
     put = <unsigned long long>1 << shift_size
-
     # ひっくり返せる石を取得
     black_bitboard = board._black_bitboard
     white_bitboard = board._white_bitboard
@@ -1769,10 +1656,8 @@ cdef inline unsigned long long _negascout_put_disc_size8_64bit(board, unsigned i
     white_score = board._white_score
     flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, put)
     flippable_discs_count = _popcount(flippable_discs_num)
-
     # 打つ前の状態を格納
     board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
-
     # 自分の石を置いて相手の石をひっくり返す
     if color:
         black_bitboard ^= put | flippable_discs_num
@@ -1784,39 +1669,30 @@ cdef inline unsigned long long _negascout_put_disc_size8_64bit(board, unsigned i
         black_bitboard ^= flippable_discs_num
         black_score -= <unsigned int>flippable_discs_count
         white_score += <unsigned int>1 + <unsigned int>flippable_discs_count
-
     board._black_bitboard = black_bitboard
     board._white_bitboard = white_bitboard
     board._black_score = black_score
     board._white_score = white_score
     board._flippable_discs_num = flippable_discs_num
-
     return flippable_discs_num
 
 
 cdef inline _negascout_undo(board):
-    """_negascout_undo
-    """
     (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
 
 
 cdef inline signed int _negascout_get_possibility_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y, signed int sign):
-    """_negascout_get_possibility_size8_64bit
-    """
     cdef:
         unsigned long long put, black_bitboard, white_bitboard, hole_bitboard, flippable_discs_num
         signed int shift_size, possibility_b, possibility_w
-
     # 配置位置を整数に変換
     shift_size = (63-(y*8+x))
     put = <unsigned long long>1 << shift_size
-
     # ひっくり返せる石を取得
     black_bitboard = board._black_bitboard
     white_bitboard = board._white_bitboard
     hole_bitboard = board._hole_bitboard
     flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, put)
-
     # 自分の石を置いて相手の石をひっくり返す
     if color:
         black_bitboard ^= put | flippable_discs_num
@@ -1824,16 +1700,12 @@ cdef inline signed int _negascout_get_possibility_size8_64bit(board, unsigned in
     else:
         white_bitboard ^= put | flippable_discs_num
         black_bitboard ^= flippable_discs_num
-
     possibility_b = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>1, black_bitboard, white_bitboard, hole_bitboard))
     possibility_w = <signed int>_popcount(_get_legal_moves_bits(<unsigned int>0, black_bitboard, white_bitboard, hole_bitboard))
-
     return (possibility_b - possibility_w) * sign
 
 
 cdef inline _negascout_sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
-    """_negascout_sort_moves_by_possibility
-    """
     cdef:
         unsigned int len1, len2, i
         unsigned int array_x1[64]
@@ -1842,7 +1714,6 @@ cdef inline _negascout_sort_moves_by_possibility(unsigned int count, unsigned in
         unsigned int array_y2[64]
         signed int array_p1[64]
         signed int array_p2[64]
-
     # merge sort
     if count > 1:
         len1 = <unsigned int>(count / 2)
@@ -1861,8 +1732,6 @@ cdef inline _negascout_sort_moves_by_possibility(unsigned int count, unsigned in
 
 
 cdef inline _negascout_merge(unsigned int len1, unsigned int len2, unsigned int *array_x1, unsigned int *array_y1, signed int *array_p1, unsigned int *array_x2, unsigned int *array_y2, signed int *array_p2, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
-    """_negascout_merge
-    """
     cdef:
         unsigned int i = 0, j = 0
 
@@ -1971,8 +1840,6 @@ cdef inline _negascout_get_best_move(unsigned int int_color, board, moves, doubl
 
 
 cdef inline double _negascout_get_score_board(unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, int t, unsigned int pas):
-    """_negascout_get_score_board
-    """
     global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
@@ -2052,8 +1919,6 @@ cdef inline double _negascout_get_score_board(unsigned int int_color, board, dou
 
 
 cdef inline signed int _negascout_get_possibility(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move, signed int sign):
-    """_negascout_get_possibility
-    """
     global hb
     cdef:
         unsigned long long flippable_discs_num
@@ -2075,8 +1940,6 @@ cdef inline signed int _negascout_get_possibility(unsigned int int_color, unsign
 # -------------------------------------------------- #
 # Table Methods
 cdef inline signed int _table_get_score_size8_64bit(table, board):
-    """_table_get_score_size8_64bit
-    """
     cdef:
         unsigned long long b, w
         unsigned long long mask = 0x8000000000000000
@@ -2091,13 +1954,10 @@ cdef inline signed int _table_get_score_size8_64bit(table, board):
             elif w & mask:
                 score -= <signed int>table[y][x]
             mask >>= 1
-
     return score
 
 
 cdef inline signed int _table_get_score(table, board):
-    """_table_get_score
-    """
     cdef:
         unsigned int x, y, size
         signed int score
@@ -2107,7 +1967,6 @@ cdef inline signed int _table_get_score(table, board):
     for y in range(size):
         for x in range(size):
             score += table[y][x] * board_info[y][x]
-
     return score
 
 
@@ -2266,8 +2125,6 @@ cdef inline signed int _board_playout(str color, board, move):
 # -------------------------------------------------- #
 # BitBoard Methods
 cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long h):
-    """_get_legal_moves_bits
-    """
     cdef:
         unsigned long long player = w, opponent = b
     if int_color:
@@ -2311,8 +2168,6 @@ cdef inline unsigned long long _get_legal_moves_bits(unsigned int int_color, uns
 
 
 cdef inline unsigned long long _popcount(unsigned long long bits):
-    """_popcount
-    """
     bits = bits - ((bits >> <unsigned int>1) & <unsigned long long>0x5555555555555555)
     bits = (bits & <unsigned long long>0x3333333333333333) + ((bits >> <unsigned int>2) & <unsigned long long>0x3333333333333333)
     bits = (bits + (bits >> <unsigned int>4)) & <unsigned long long>0x0F0F0F0F0F0F0F0F
@@ -2322,8 +2177,6 @@ cdef inline unsigned long long _popcount(unsigned long long bits):
 
 
 cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
-    """_put_disc
-    """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         unsigned long long count
@@ -2351,8 +2204,6 @@ cdef inline void _put_disc(unsigned int int_color, unsigned long long move):
 
 
 cdef inline void _put_disc_no_prev(unsigned int int_color, unsigned long long move):
-    """_put_disc
-    """
     global bb, wb, bs, ws, fd
     cdef:
         unsigned long long count
@@ -2374,8 +2225,6 @@ cdef inline void _put_disc_no_prev(unsigned int int_color, unsigned long long mo
 
 
 cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
-    """_get_flippable_discs_num
-    """
     cdef:
         unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
         unsigned long long m_t_, m_rt, m_r_, m_rb, m_b_, m_lb, m_l_, m_lt
@@ -2641,8 +2490,6 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
 
 
 cdef inline void _undo():
-    """_undo
-    """
     global bb, wb, bs, ws, pbb, pwb, pbs, pws, tail
     tail -= 1
     bb = pbb[tail]
@@ -2654,8 +2501,6 @@ cdef inline void _undo():
 # -------------------------------------------------- #
 # Timeout Methods
 cdef inline signed int check_timeout():
-    """check_timeout
-    """
     global timer_deadline, timer_timeout, timer_timeout_value
     if time.time() > timer_deadline:
         timer_timeout = <unsigned int>1
@@ -2666,8 +2511,6 @@ cdef inline signed int check_timeout():
 # -------------------------------------------------- #
 # rand_int Methods
 cdef unsigned long set_s(unsigned long s):
-    """_set_s
-    """
     s = (s * 1812433253) + 1
     s ^= s << 13
     s ^= s >> 17
@@ -2675,8 +2518,6 @@ cdef unsigned long set_s(unsigned long s):
 
 
 cdef init_rand(unsigned long s):
-    """init_rand
-    """
     while True:
         s = set_s(s)
         tx = 123464980 ^ s
@@ -2691,8 +2532,6 @@ cdef init_rand(unsigned long s):
 
 
 cdef unsigned long rand_int():
-    """rand_int
-    """
     global tx, ty, tz, tw
     cdef:
         unsigned long tt
