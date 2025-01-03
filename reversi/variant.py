@@ -1,0 +1,26 @@
+"""Variant
+"""
+V = {
+    'X':          {'size': 8, 'hole': 0x3C18C3E7E7C3183C, 'ini_black': None,               'ini_white': None},
+    'x':          {'size': 8, 'hole': 0x3C1842C3C342183C, 'ini_black': None,               'ini_white': None},
+    'Square-8':   {'size': 8, 'hole': 0x0000000000000000, 'ini_black': None,               'ini_white': None},
+    'Square-6':   {'size': 8, 'hole': 0xFF818181818181FF, 'ini_black': None,               'ini_white': None},
+    'Square-4':   {'size': 8, 'hole': 0xFFFFC3C3C3C3FFFF, 'ini_black': None,               'ini_white': None},
+    'Octagon':    {'size': 8, 'hole': 0xC3810000000081C3, 'ini_black': None,               'ini_white': None},
+    'Diamond':    {'size': 8, 'hole': 0xE7C381000081C3E7, 'ini_black': None,               'ini_white': None},
+    'Clover':     {'size': 8, 'hole': 0x8100000000000081, 'ini_black': None,               'ini_white': None},
+    'Cross':      {'size': 8, 'hole': 0xC3C300000000C3C3, 'ini_black': None,               'ini_white': None},
+    'Plus':       {'size': 8, 'hole': 0xE7E7E70000E7E7E7, 'ini_black': None,               'ini_white': None},
+    'Drone':      {'size': 8, 'hole': 0x1800008181000018, 'ini_black': None,               'ini_white': None},
+    'Kazaguruma': {'size': 8, 'hole': 0x8F808080010101F1, 'ini_black': None,               'ini_white': None},
+    'Manji':      {'size': 8, 'hole': 0x0404E40000272020, 'ini_black': None,               'ini_white': None},
+    'Rectangle':  {'size': 8, 'hole': 0xFFFF00000000FFFF, 'ini_black': None,               'ini_white': None},
+    'Heart':      {'size': 8, 'hole': 0xFF9900000081C3E7, 'ini_black': None,               'ini_white': None},
+    'T':          {'size': 8, 'hole': 0x00000000C3C3C3C3, 'ini_black': 0x0022440000081000, 'ini_white': 0x0044220000100800},
+    'Torus':      {'size': 8, 'hole': 0xC180001818000183, 'ini_black': 0x0000002244000000, 'ini_white': 0x0000004422000000},
+    'Two':        {'size': 8, 'hole': 0x0000999999990000, 'ini_black': 0x0000002244000000, 'ini_white': 0x0000004422000000},
+    'Equal':      {'size': 8, 'hole': 0x000000FFFF000000, 'ini_black': 0x0022440000224400, 'ini_white': 0x0044220000442200},
+    'Xhole':      {'size': 8, 'hole': 0x8142241818244281, 'ini_black': 0x0008102244081000, 'ini_white': 0x0010084422100800},
+    'Inside':     {'size': 8, 'hole': 0x0000000000000000, 'ini_black': 0x00000C0C30300000, 'ini_white': 0x000030300C0C0000},
+    'Outside':    {'size': 8, 'hole': 0x0000000000000000, 'ini_black': 0x0F71414182828EF0, 'ini_white': 0xF08E82824141710F},
+}
