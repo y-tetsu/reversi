@@ -29,146 +29,28 @@ DEF MAXSIZE64 = 2**63 - 1
 
 
 cdef:
-    unsigned long long measure_count
-    unsigned long long[64] legal_moves_bit_list
-    unsigned int[64] legal_moves_x
-    unsigned int[64] legal_moves_y
-    unsigned long long bb
-    unsigned long long wb
-    unsigned long long rec_bb
-    unsigned long long rec_wb
-    unsigned long long hb
-    unsigned long long fd
-    unsigned long long[64] pbb
-    unsigned long long[64] pwb
-    unsigned long long[64] rec_pbb
-    unsigned long long[64] rec_pwb
-    unsigned int rol
-    unsigned int rec
-    unsigned int rec_depth
-    unsigned int bs
-    unsigned int ws
-    unsigned int max_depth
-    unsigned int start_depth
-    unsigned int[64] pbs
-    unsigned int[64] pws
-    unsigned int[64] rec_pbs
-    unsigned int[64] rec_pws
-    unsigned int tail
-    unsigned int is_timer_enabled
     double timer_deadline
-    signed int rec_score
-    unsigned int timer_timeout
-    signed int timer_timeout_value
-    signed int[64] montecarlo_scores
-    unsigned long tx = 123456789;
-    unsigned long ty = 362436069;
-    unsigned long tz = 521288629;
-    unsigned long tw = 88675123;
-    signed int taker_sign
-    signed int corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
-    # {{{ -- signed int[8][8] t_table= [ --
-    signed int[8][8] t_table= [
-        [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-    # -- signed int[8][8] t_table= [ -- }}}
+    unsigned long long[64] legal_moves_bit_list, pbb, pwb, rec_pbb, rec_pwb
+    unsigned long long bb, wb, hb, fd, rec_bb, rec_wb, measure_count
+    unsigned long tx = 123456789, ty = 362436069, tz = 521288629, tw = 88675123
+    unsigned int[64] legal_moves_x, legal_moves_y, pbs, pws, rec_pbs, rec_pws
+    unsigned int rol, rec, rec_depth, bs, ws, max_depth, start_depth, tail, is_timer_enabled, timer_timeout
+    signed int[8][8] t_table= [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]]
     # {{{ --- signed int[8][256] table_values= [ ---
     signed int[8][256] table_values= [
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
-        [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        ],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
     # --- signed int[8][256] table_values= [ --- }}}
-    # {{{ -- signed int[256] edge_table8 = [ --
-    signed int[256] edge_table8 = [
-        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 4,
-        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 5,
-        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 4,
-        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 6,
-        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 4,
-        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 5,
-        1, 1, 1, 2, 1, 1, 1, 3, 1, 1, 1, 2, 1, 1, 1, 4, 1, 1, 1, 2, 1, 1, 1, 3, 1, 1, 1, 2, 1, 1, 1, 5,
-        2, 2, 2, 3, 2, 2, 2, 4, 2, 2, 2, 3, 2, 2, 2, 5, 3, 3, 3, 4, 3, 3, 3, 5, 4, 4, 4, 5, 5, 5, 6, 13
-    ]
-    # -- signed int[256] edge_table8 = [ -- }}}
+    signed int[256] edge_table8 = [0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 5, 1, 1, 1, 2, 1, 1, 1, 3, 1, 1, 1, 2, 1, 1, 1, 4, 1, 1, 1, 2, 1, 1, 1, 3, 1, 1, 1, 2, 1, 1, 1, 5, 2, 2, 2, 3, 2, 2, 2, 4, 2, 2, 2, 3, 2, 2, 2, 5, 3, 3, 3, 4, 3, 3, 3, 5, 4, 4, 4, 5, 5, 5, 6, 13]
+    signed int[64] montecarlo_scores
+    signed int rec_score, timer_timeout_value, taker_sign, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     dict tp_table = {}  # Trans Position Table
 
 
@@ -294,10 +176,9 @@ def playout(color, board, move):
 cdef inline tuple _next_move(str name, str color, board, int depth, str pid, int timer, int measure, str role, params):
     global is_timer_enabled, timer_deadline, timer_timeout, timer_timeout_value, measure_count,legal_moves_bit_list, legal_moves_x, legal_moves_y, bb, wb, hb, bs, ws, max_depth, corner, c, a1, a2, b1, b2, b3, wx, o1, o2, wp, ww, we, wb1, wb2, wb3
     cdef:
-        signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INFINITY
-        unsigned int int_color = 0
-        unsigned int x, y, index = 0
         unsigned long long legal_moves, mask = 0x8000000000000000
+        unsigned int int_color = 0, x, y, index = 0
+        signed int alpha = NEGATIVE_INFINITY, beta = POSITIVE_INFINITY
     # タイマーとメジャー準備
     measure_count = 0
     timer_timeout = <unsigned int>0
@@ -370,10 +251,9 @@ cdef inline _get_best_move_wrap(str name, str color, board, moves, signed int al
     global is_timer_enabled, timer_deadline, timer_timeout, timer_timeout_value, measure_count, bb, wb, hb, bs, ws, max_depth, rec, rec_depth, rec_bb, rec_wb, rec_pbb, rec_pbs, rec_pwb, rec_pws
     cdef:
         unsigned long long[64] moves_bit_list
-        unsigned int[64] moves_x
-        unsigned int[64] moves_y
-        unsigned int x, y, i, index = 0, int_color = 0
         unsigned long long put
+        unsigned int[64] moves_x, moves_y
+        unsigned int x, y, i, index = 0, int_color = 0
         signed int lshift
         list prev
     # タイマーとメジャー準備
@@ -449,8 +329,8 @@ cdef inline _get_best_move_wrap(str name, str color, board, moves, signed int al
 cdef inline _get_best_move(str name, unsigned int int_color, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, signed int alpha, signed int beta, int depth):
     global timer_timeout, rol, tp_table
     cdef:
-        signed int score = alpha
         unsigned int int_color_next = 1, i, best = 64
+        signed int score = alpha
     scores, tp_table = {}, {}
     # 手番
     if int_color:
@@ -545,11 +425,9 @@ cdef inline signed int _set_role(str role, signed int beta):
 cdef inline signed int _endgame_get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, unsigned int pas):
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail, is_timer_enabled, max_depth
     cdef:
-        signed int timeout
-        signed int score
         unsigned long long legal_moves_bits, move, count
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y
-        signed int sign = -1
+        signed int timeout, score, sign = -1
     # タイムアウト判定
     if is_timer_enabled:
         timeout = check_timeout()
@@ -601,11 +479,9 @@ cdef inline signed int _endgame_get_score(unsigned int int_color, signed int alp
 cdef inline signed int _endgame_get_score_taker(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, unsigned int pas):
     global timer_timeout, measure_count, bb, wb, bs, ws, pbb, pwb, pbs, pws, fd, tail, is_timer_enabled, rol, taker_sign, max_depth
     cdef:
-        signed int timeout
-        signed int score
         unsigned long long legal_moves_bits, move, count
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y, reward
-        signed int sign = -1
+        signed int timeout, score, sign = -1
     # タイムアウト判定
     if is_timer_enabled:
         timeout = check_timeout()
@@ -678,21 +554,11 @@ cdef inline void _save_record(signed int score, unsigned int depth):
 cdef inline signed int _blank_get_score(unsigned int int_color, signed int alpha, signed int beta, unsigned int depth, unsigned int pas):
     global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail, tp_table, is_timer_enabled
     cdef:
-        signed int null_window
-        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
-        unsigned int i, int_color_next = 1, count = 0
-        signed int timeout, sign = -1
         unsigned long long[64] next_moves_list
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move, flippable_discs_num, b, w, bits, t_, rt, r_, rb, b_, lb, l_, lt, bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0, player, opponent, blank, horizontal, vertical, diagonal, tmp_h, tmp_v, tmp_d1, tmp_d2, legal_moves_bits_opponent, bits_count
+        unsigned int i, int_color_next = 1, count = 0
         signed int[64] possibilities
-        unsigned long long flippable_discs_num, b, w, bits
-        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
-        unsigned long long bf_t_ = 0, bf_rt = 0, bf_r_ = 0, bf_rb = 0, bf_b_ = 0, bf_lb = 0, bf_l_ = 0, bf_lt = 0
-        unsigned long long player, opponent
-        unsigned long long blank, horizontal, vertical, diagonal, tmp_h, tmp_v, tmp_d1, tmp_d2
-        unsigned long long legal_moves_bits_opponent
-        signed int score
-        unsigned long long bits_count
-        signed int upper, lower, score_max = NEGATIVE_INFINITY, alpha_ini = alpha
+        signed int null_window, timeout, sign = -1, score, upper, lower, score_max = NEGATIVE_INFINITY, alpha_ini = alpha
     # タイムアウト判定
     if is_timer_enabled:
         timeout = check_timeout()
@@ -1095,9 +961,9 @@ cdef inline void _sort_moves_by_possibility(unsigned int count, unsigned long lo
 
 cdef inline void _bucket_sort(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
     cdef:
-        unsigned int i, j, k = 0, pos, index
         unsigned long long[POSSIBILITY_RANGE*BUCKET_SIZE] bucket
         unsigned int[POSSIBILITY_RANGE] possibility_count
+        unsigned int i, j, k = 0, pos, index
     for i in range(POSSIBILITY_RANGE):
         possibility_count[i] = <unsigned int>0
     # バケツに入れる
@@ -1117,11 +983,9 @@ cdef inline void _bucket_sort(unsigned int count, unsigned long long[64] next_mo
 
 cdef inline void _merge_sort(unsigned int count, unsigned long long[64] next_moves_list, signed int[64] possibilities):
     cdef:
+        unsigned long long[32] array_move1, array_move2
         unsigned int len1, len2, i
-        unsigned long long[32] array_move1
-        unsigned long long[32] array_move2
-        signed int[32] array_p1
-        signed int[32] array_p2
+        signed int[32] array_p1, array_p2
     if count >= 2:
         len1 = <unsigned int>(count / 2)
         len2 = <unsigned int>(count - len1)
@@ -1256,8 +1120,8 @@ cdef inline signed int _get_e():
     """辺の確定石による評価値"""
     global bb, wb, we
     cdef:
-        signed int score = 0
         unsigned long long all_bitboard, bit_pos, lt, rt, lb, rb, b_t, w_t, b_b, w_b, b_l, w_l, b_r, w_r
+        signed int score = 0
     all_bitboard = bb | wb
     bit_pos = <unsigned long long>0x8000000000000000
     lt = <unsigned long long>0x8000000000000000
@@ -1354,16 +1218,10 @@ cdef inline signed int _get_b():
     """空きマスのパターンによる評価値"""
     global bb, wb, wb1, wb2, wb3
     cdef:
-        signed int score = 0
-        unsigned long long blackwhite, blank
-        unsigned long long horizontal, vertical, diagonal
-        unsigned long long l_blank, r_blank, t_blank, b_blank, lt_blank, rt_blank, lb_blank, rb_blank
-        unsigned long long lt_x, rt_x, lb_x, rb_x
-        unsigned long long lt_r, lt_b, rt_l, rt_b, lb_t, lb_r, rb_t, rb_l
-        signed int lt_r_sign = 1, lt_b_sign = 1, rt_l_sign = 1, rt_b_sign = 1, lb_t_sign = 1, lb_r_sign = 1, rb_t_sign = 1, rb_l_sign = 1
-        unsigned int i;
-        unsigned long long[8] blanks;
-        unsigned long long bits;
+        unsigned long long[8] blanks
+        unsigned long long blackwhite, blank, horizontal, vertical, diagonal, l_blank, r_blank, t_blank, b_blank, lt_blank, rt_blank, lb_blank, rb_blank, lt_x, rt_x, lb_x, rb_x, lt_r, lt_b, rt_l, rt_b, lb_t, lb_r, rb_t, rb_l, bits
+        unsigned int i
+        signed int score = 0, lt_r_sign = 1, lt_b_sign = 1, rt_l_sign = 1, rt_b_sign = 1, lb_t_sign = 1, lb_r_sign = 1, rb_t_sign = 1, rb_l_sign = 1
     black = bb
     white = wb
     blackwhite = black | white
@@ -1661,10 +1519,8 @@ cdef inline tuple _alphabeta_next_move(str color, board, signed int param_min, s
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, legal_moves_x, legal_moves_y
     cdef:
         double alpha = param_min, beta = param_max
-        unsigned long long b, w, h
-        unsigned int int_color = 0
-        unsigned int x, y, index = 0
-        unsigned long long legal_moves, mask = 0x8000000000000000
+        unsigned long long b, w, h, legal_moves, mask = 0x8000000000000000
+        unsigned int int_color = 0, x, y, index = 0
     measure_count = 0
     timer_timeout = <unsigned int>0
     if timer and pid:
@@ -1698,10 +1554,9 @@ cdef inline _alphabeta_get_best_move_wrap(str color, board, moves, double alpha,
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count
     cdef:
         unsigned long long[64] moves_bit_list
-        unsigned int[64] moves_x
-        unsigned int[64] moves_y
-        unsigned int x, y, index = 0, int_color = 0
         unsigned long long put
+        unsigned int[64] moves_x, moves_y
+        unsigned int x, y, index = 0, int_color = 0
         signed int lshift
     measure_count = 0
     timer_timeout = <unsigned int>0
@@ -1773,11 +1628,10 @@ cdef inline _alphabeta_get_best_move(unsigned int int_color, board, unsigned int
 cdef inline double _alphabeta_get_score_evaluator(unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, int t, unsigned int pas):
     global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
-        signed int timeout
         double score
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, is_game_end = 0, int_color_next = 1, x, y
-        signed int sign = -1
+        signed int timeout, sign = -1
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -1932,11 +1786,10 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
     cdef:
         double score, tmp, null_window
         unsigned long long b, w, h, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
+        unsigned int[64] next_moves_x, next_moves_y
         unsigned int is_game_end, color_num, x, y, i, count, index = 0
-        unsigned int next_moves_x[64]
-        unsigned int next_moves_y[64]
+        signed int[64] possibilities
         signed int sign
-        signed int possibilities[64]
     # ゲーム終了 or 最大深さに到達
     b = board._black_bitboard
     w = board._white_bitboard
@@ -2020,13 +1873,9 @@ cdef inline signed int _negascout_get_possibility_size8_64bit(board, unsigned in
 
 cdef inline _negascout_sort_moves_by_possibility(unsigned int count, unsigned int *next_moves_x, unsigned int *next_moves_y, signed int *possibilities):
     cdef:
+        unsigned int[64] array_x1, array_x2, array_y1, array_y2
         unsigned int len1, len2, i
-        unsigned int array_x1[64]
-        unsigned int array_x2[64]
-        unsigned int array_y1[64]
-        unsigned int array_y2[64]
-        signed int array_p1[64]
-        signed int array_p2[64]
+        signed int[64] array_p1, array_p2
     # merge sort
     if count > 1:
         len1 = <unsigned int>(count / 2)
@@ -2114,8 +1963,8 @@ cdef inline _negascout_get_best_move(unsigned int int_color, board, moves, doubl
     global timer_timeout, bb, wb, hb, bs, ws
     cdef:
         double score = alpha
-        unsigned int int_color_next = 1, board_bs, board_ws
         unsigned long long board_bb, board_wb
+        unsigned int int_color_next = 1, board_bs, board_ws
     scores = {}
     # 手番
     if int_color:
@@ -2156,11 +2005,11 @@ cdef inline double _negascout_get_score_board(unsigned int int_color, board, dou
     global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail
     cdef:
         double score, tmp, null_window
+        unsigned long long[64] next_moves_list
         unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
         unsigned int i, is_game_end = 0, int_color_next = 1, count = 0, index = 0
-        signed int timeout, sign = -1
-        unsigned long long[64] next_moves_list
         signed int[64] possibilities
+        signed int timeout, sign = -1
     # タイムアウト判定
     if t:
         timeout = check_timeout()
@@ -2254,8 +2103,7 @@ cdef inline signed int _negascout_get_possibility(unsigned int int_color, unsign
 # Table Methods
 cdef inline signed int _table_get_score_size8_64bit(table, board):
     cdef:
-        unsigned long long b, w
-        unsigned long long mask = 0x8000000000000000
+        unsigned long long b, w, mask = 0x8000000000000000
         unsigned int x, y
         signed int score = 0
     b = board._black_bitboard
@@ -2288,12 +2136,8 @@ cdef inline signed int _table_get_score(table, board):
 cdef inline tuple _montecarlo_next_move(str color, board, unsigned int count, str pid, int timer, int measure):
     global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, montecarlo_scores, bb, wb, hb, bs, ws
     cdef:
-        unsigned long long b, w, h
-        unsigned int tbs
-        unsigned int tws
-        unsigned int int_color = 0
-        unsigned int i, x, y, index = 0
-        unsigned long long legal_moves, mask = 0x8000000000000000
+        unsigned long long b, w, h, legal_moves, mask = 0x8000000000000000
+        unsigned int tbs, tws, int_color = 0, i, x, y, index = 0
         signed int max_score
     measure_count = 0
     timer_timeout = <unsigned int>0
@@ -2332,7 +2176,7 @@ cdef inline tuple _montecarlo_next_move(str color, board, unsigned int count, st
             measure_count += 1
         if timer and check_timeout():
             break
-    max_score = montecarlo_scores[0];
+    max_score = montecarlo_scores[0]
     best_move = (legal_moves_x[0], legal_moves_y[0])
     for i in range(index):
         if montecarlo_scores[i] > max_score:
@@ -2348,9 +2192,8 @@ cdef inline tuple _montecarlo_next_move(str color, board, unsigned int count, st
 cdef inline signed int _playout(unsigned int int_color, unsigned long long move_bit):
     global bb, wb, hb, bs, ws
     cdef:
-        unsigned int turn
-        unsigned int x, y, pass_count = 0, random_index
         unsigned long long random_put, legal_moves_bits, count
+        unsigned int turn, x, y, pass_count = 0, random_index
         signed int ret
     # 1手打つ
     _put_disc_no_prev(int_color, move_bit)
@@ -2389,9 +2232,8 @@ cdef inline signed int _playout(unsigned int int_color, unsigned long long move_
 cdef inline signed int _board_playout(str color, board, move):
     global bb, wb, hb, bs, ws
     cdef:
-        unsigned int int_color = 0, turn
-        unsigned int x, y, pass_count = 0, random_index
         unsigned long long random_put, legal_moves_bits
+        unsigned int int_color = 0, turn, x, y, pass_count = 0, random_index
         signed int ret
     # ボード情報取得
     bb, wb, hb = board.get_bitboard_info()
@@ -2539,9 +2381,7 @@ cdef inline void _put_disc_no_prev(unsigned int int_color, unsigned long long mo
 
 cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, unsigned long long b, unsigned long long w, unsigned long long move):
     cdef:
-        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt
-        unsigned long long m_t_, m_rt, m_r_, m_rb, m_b_, m_lb, m_l_, m_lt
-        unsigned long long player = w, opponent = b, flippable_discs_num = 0
+        unsigned long long t_, rt, r_, rb, b_, lb, l_, lt, m_t_, m_rt, m_r_, m_rb, m_b_, m_lb, m_l_, m_lt, player = w, opponent = b, flippable_discs_num = 0
         unsigned int x, other = 0
     if int_color:
         player = b
@@ -2619,7 +2459,7 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
             if (<unsigned long long>0x00FFFFFFFFFFFFFF & (b_ >> <unsigned int>8)) & player:
                 flippable_discs_num |= b_
         else:
-            other = 1;
+            other = 1
     elif x <= <unsigned int>0x02:
         # (2)g1, h1, g2, h2
         if move >= <unsigned long long>0x0001000000000000:
@@ -2690,7 +2530,7 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
             if (<unsigned long long>0xFFFFFFFFFFFFFF00 & (t_ << <unsigned int>8)) & player:
                 flippable_discs_num |= t_
         else:
-            other = 1;
+            other = 1
     elif x <= <unsigned int>0x20 and x >= <unsigned int>0x04:
         # (5)c1-f1, c2-f2
         if move >= <unsigned long long>0x0004000000000000:
@@ -2753,10 +2593,9 @@ cdef inline unsigned long long _get_flippable_discs_num(unsigned int int_color, 
             if (<unsigned long long>0x7F7F7F7F7F7F7F7F & (r_ >> <unsigned int>1)) & player:
                 flippable_discs_num |= r_
         else:
-            other = 1;
+            other = 1
     else:
         other = 1
-
     if other:
         m_t_ = <unsigned long long>0xFFFFFFFFFFFFFF00 & opponent
         m_rt = <unsigned long long>0x7F7F7F7F7F7F7F00 & opponent
