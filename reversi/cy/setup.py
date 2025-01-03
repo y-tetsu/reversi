@@ -6,6 +6,7 @@ from Cython.Distutils import build_ext
 module_names = [
     'BitBoardMethods',
     'StrategiesMethods',
+    'CoordinatorMethods',
 ]
 
 ext_modules = []
