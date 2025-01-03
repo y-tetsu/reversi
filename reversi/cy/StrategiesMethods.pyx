@@ -187,6 +187,11 @@ def blank_next_move(color, board, params, depth, pid, timer, measure):
     return _next_move('blank', color, board, depth, pid, timer, measure, None, params)
 
 
+def alphabeta_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _alphabeta_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure)
+
+
 def negascout_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure):
     timer, measure = (False, False) if pid is None else (timer, measure)
     return _negascout_next_move(color, board, param_min, param_max, depth, evaluator, pid, timer, measure)
@@ -209,6 +214,11 @@ def blank_get_best_move(color, board, params, moves, alpha, beta, depth, pid, ti
     return _get_best_move_wrap('blank', color, board, moves, alpha, beta, depth, pid, timer, measure, None, 0, params)
 
 
+def alphabeta_get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure):
+    timer, measure = (False, False) if pid is None else (timer, measure)
+    return _alphabeta_get_best_move_wrap(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
+
+
 def negascout_get_best_move(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure):
     timer, measure = (False, False) if pid is None else (timer, measure)
     return _negascout_get_best_move_wrap(color, board, moves, alpha, beta, depth, evaluator, pid, timer, measure)
@@ -216,6 +226,30 @@ def negascout_get_best_move(color, board, moves, alpha, beta, depth, evaluator, 
 
 # -------------------------------------------------- #
 # get_score
+def alphabeta_get_score(alphabeta, color, board, alpha, beta, depth, pid):
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _alphabeta_get_score_size8_64bit(alphabeta, color, board, alpha, beta, depth, pid, 0, 0)
+    return _alphabeta_get_score(alphabeta, color, board, alpha, beta, depth, pid, 0, 0)
+
+
+def alphabeta_get_score_measure(alphabeta, color, board, alpha, beta, depth, pid):
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _alphabeta_get_score_size8_64bit(alphabeta, color, board, alpha, beta, depth, pid, 1, 0)
+    return _alphabeta_get_score(alphabeta, color, board, alpha, beta, depth, pid, 1, 0)
+
+
+def alphabeta_get_score_timer(alphabeta, color, board, alpha, beta, depth, pid):
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _alphabeta_get_score_size8_64bit(alphabeta, color, board, alpha, beta, depth, pid, 0, 1)
+    return _alphabeta_get_score(alphabeta, color, board, alpha, beta, depth, pid, 0, 1)
+
+
+def alphabeta_get_score_measure_timer(alphabeta, color, board, alpha, beta, depth, pid):
+    if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
+        return _alphabeta_get_score_size8_64bit(alphabeta, color, board, alpha, beta, depth, pid, 1, 1)
+    return _alphabeta_get_score(alphabeta, color, board, alpha, beta, depth, pid, 1, 1)
+
+
 def negascout_get_score(negascout, color, board, alpha, beta, depth, pid):
     if board.size == 8 and sys.maxsize == MAXSIZE64 and hasattr(board, '_black_bitboard'):
         return _negascout_get_score_size8_64bit(_negascout_get_score_size8_64bit, negascout, color, board, alpha, beta, depth, pid)
@@ -1465,6 +1499,340 @@ cdef inline signed int _get_b():
 
 
 # -------------------------------------------------- #
+# Search Common Methods
+cdef inline measure(pid):
+    if pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        Measure.count[pid] += 1
+
+
+cdef inline signed int timer(pid):
+    if pid:
+        if time.time() > Timer.deadline[pid]:
+            Timer.timeout_flag[pid] = True  # タイムアウト発生
+            return Timer.timeout_value[pid]
+    return <signed int>0
+
+
+cdef inline unsigned long long _put_disc_board_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y):
+    cdef:
+        unsigned long long put, black_bitboard, white_bitboard, flippable_discs_num, flippable_discs_count
+        unsigned int black_score, white_score
+        signed int shift_size
+    # 配置位置を整数に変換
+    shift_size = (63-(y*8+x))
+    put = <unsigned long long>1 << shift_size
+    # ひっくり返せる石を取得
+    black_bitboard = board._black_bitboard
+    white_bitboard = board._white_bitboard
+    black_score = board._black_score
+    white_score = board._white_score
+    flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, put)
+    flippable_discs_count = _popcount(flippable_discs_num)
+    # 打つ前の状態を格納
+    board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
+    # 自分の石を置いて相手の石をひっくり返す
+    if color:
+        black_bitboard ^= put | flippable_discs_num
+        white_bitboard ^= flippable_discs_num
+        black_score += <unsigned int>1 + <unsigned int>flippable_discs_count
+        white_score -= <unsigned int>flippable_discs_count
+    else:
+        white_bitboard ^= put | flippable_discs_num
+        black_bitboard ^= flippable_discs_num
+        black_score -= <unsigned int>flippable_discs_count
+        white_score += <unsigned int>1 + <unsigned int>flippable_discs_count
+    board._black_bitboard = black_bitboard
+    board._white_bitboard = white_bitboard
+    board._black_score = black_score
+    board._white_score = white_score
+    board._flippable_discs_num = flippable_discs_num
+    return flippable_discs_num
+
+
+cdef inline _undo_board(board):
+    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
+
+
+# -------------------------------------------------- #
+# AlphaBeta Methods
+cdef _alphabeta_get_score(alphabeta, color, board, alpha, beta, unsigned int depth, pid, unsigned int m, unsigned int t):
+    cdef:
+        unsigned int is_game_end
+        signed int timeout
+    # 前処理
+    if m:
+        measure(pid)
+    if t:
+        timeout = timer(pid)
+        if timeout:
+            return timeout
+    # ゲーム終了 or 最大深さに到達
+    legal_moves_b_bits = board.get_legal_moves_bits('black')
+    legal_moves_w_bits = board.get_legal_moves_bits('white')
+    is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
+    if is_game_end or depth == <unsigned int>0:
+        sign = 1 if color == 'black' else -1
+        return alphabeta.evaluator.evaluate(color=color, board=board, possibility_b=board.get_bit_count(legal_moves_b_bits), possibility_w=board.get_bit_count(legal_moves_w_bits)) * sign  # noqa: E501
+    # パスの場合
+    legal_moves_bits = legal_moves_b_bits if color == 'black' else legal_moves_w_bits
+    next_color = 'white' if color == 'black' else 'black'
+    if not legal_moves_bits:
+        return -_alphabeta_get_score(alphabeta, next_color, board, -beta, -alpha, depth, pid, m, t)
+    # 評価値を算出
+    cdef:
+        unsigned int skip
+    size = board.size
+    mask = 1 << ((size**2)-1)
+    for y in range(size):
+        skip = <unsigned int>0
+        for x in range(size):
+            if legal_moves_bits & mask:
+                board.put_disc(color, x, y)
+                score = -_alphabeta_get_score(alphabeta, next_color, board, -beta, -alpha, depth-1, pid, m, t)
+                board.undo()
+                if Timer.is_timeout(pid):
+                    return alpha
+                alpha = max(alpha, score)  # 最大値を選択
+                if alpha >= beta:  # 枝刈り
+                    skip = <unsigned int>1
+                    break
+            mask >>= 1
+        if skip:
+            break
+    return alpha
+
+
+cdef double _alphabeta_get_score_size8_64bit(alphabeta, color, board, double alpha, double beta, unsigned int depth, pid, unsigned int m, unsigned int t):
+    cdef:
+        double score
+        unsigned long long b, w, h, legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, mask
+        unsigned int is_game_end, color_num, x, y
+        signed int sign, timeout
+    # 前処理
+    if m:
+        measure(pid)
+    if t:
+        timeout = timer(pid)
+        if timeout:
+            return timeout
+    # ゲーム終了 or 最大深さに到達
+    b = board._black_bitboard
+    w = board._white_bitboard
+    h = board._hole_bitboard
+    legal_moves_b_bits = _get_legal_moves_bits(1, b, w, h)
+    legal_moves_w_bits = _get_legal_moves_bits(0, b, w, h)
+    is_game_end = <unsigned int>1 if not legal_moves_b_bits and not legal_moves_w_bits else <unsigned int>0
+    if color == 'black':
+        color_num = <unsigned int>1
+        sign = <signed int>1
+        legal_moves_bits = legal_moves_b_bits
+        next_color = 'white'
+    else:
+        color_num = <unsigned int>0
+        sign = <signed int>-1
+        legal_moves_bits = legal_moves_w_bits
+        next_color = 'black'
+    if is_game_end or depth == <unsigned int>0:
+        return alphabeta.evaluator.evaluate(color=color, board=board, possibility_b=_popcount(legal_moves_b_bits), possibility_w=_popcount(legal_moves_w_bits)) * sign  # noqa: E501
+    # パスの場合
+    if not legal_moves_bits:
+        return -_alphabeta_get_score_size8_64bit(alphabeta, next_color, board, -beta, -alpha, depth, pid, m, t)
+    # 評価値を算出
+    mask = 1 << 63
+    for y in range(8):
+        for x in range(8):
+            if legal_moves_bits & mask:
+                _put_disc_board_size8_64bit(board, color_num, x, y)
+                score = -_alphabeta_get_score_size8_64bit(alphabeta, next_color, board, -beta, -alpha, depth-1, pid, m, t)
+                _undo_board(board)
+                if score > alpha:
+                    alpha = score
+                if Timer.is_timeout(pid):
+                    return alpha
+                if alpha >= beta:  # 枝刈り
+                    return alpha
+            mask >>= 1
+    return alpha
+
+
+cdef inline tuple _alphabeta_next_move(str color, board, signed int param_min, signed int param_max, int depth, evaluator, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count, legal_moves_bit_list, legal_moves_x, legal_moves_y
+    cdef:
+        double alpha = param_min, beta = param_max
+        unsigned long long b, w, h
+        unsigned int int_color = 0
+        unsigned int x, y, index = 0
+        unsigned long long legal_moves, mask = 0x8000000000000000
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        measure_count = Measure.count[pid]
+    if color == 'black':
+        int_color = <unsigned int>1
+    b, w, h = board.get_bitboard_info()
+    legal_moves = _get_legal_moves_bits(int_color, b, w, h)
+    for y in range(8):
+        for x in range(8):
+            if legal_moves & mask:
+                legal_moves_bit_list[index] = mask
+                legal_moves_x[index] = x
+                legal_moves_y[index] = y
+                index += 1
+            mask >>= 1
+    best_move, _ = _alphabeta_get_best_move(int_color, board, index, legal_moves_bit_list, legal_moves_x, legal_moves_y, alpha, beta, depth, evaluator, timer)
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
+    return best_move
+
+
+cdef inline _alphabeta_get_best_move_wrap(str color, board, moves, double alpha, double beta, int depth, evaluator, str pid, int timer, int measure):
+    global timer_deadline, timer_timeout, timer_timeout_value, measure_count
+    cdef:
+        unsigned long long[64] moves_bit_list
+        unsigned int[64] moves_x
+        unsigned int[64] moves_y
+        unsigned int x, y, index = 0, int_color = 0
+        unsigned long long put
+        signed int lshift
+    measure_count = 0
+    timer_timeout = <unsigned int>0
+    if timer and pid:
+        timer_deadline = Timer.deadline[pid]
+        timer_timeout_value = Timer.timeout_value[pid]
+    if measure and pid:
+        if pid not in Measure.count:
+            Measure.count[pid] = 0
+        measure_count = Measure.count[pid]
+    for x, y in moves:
+        lshift = (63-(y*8+x))
+        put = <unsigned long long>1 << lshift
+        moves_bit_list[index] = put
+        moves_x[index] = x
+        moves_y[index] = y
+        index += 1
+    if color == 'black':
+        int_color = <unsigned int>1
+    best_move, scores = _alphabeta_get_best_move(int_color, board, index, moves_bit_list, moves_x, moves_y, alpha, beta, depth, evaluator, timer)
+    if measure and pid:
+        Measure.count[pid] = measure_count
+    if timer and pid and timer_timeout:
+        Timer.timeout_flag[pid] = True  # タイムアウト発生
+    return (best_move, scores)
+
+
+cdef inline _alphabeta_get_best_move(unsigned int int_color, board, unsigned int index, unsigned long long[64] moves_bit_list, unsigned int[64] moves_x, unsigned int[64] moves_y, double alpha, double beta, int depth, evaluator, int timer):
+    global timer_timeout, bb, wb, hb, bs, ws
+    cdef:
+        double score = alpha
+        unsigned int int_color_next = 1, i, best = 64
+    scores = {}
+    # 手番
+    if int_color:
+        int_color_next = <unsigned int>0
+    # ボード情報取得
+    bb, wb, hb = board.get_bitboard_info()
+    bs = board._black_score
+    ws = board._white_score
+    # ボード情報退避
+    board_bb = bb
+    board_wb = wb
+    board_bs = bs
+    board_ws = ws
+    board_prev = [(item[0], item[1], item[2], item[3]) for item in board.prev]
+    # 各手のスコア取得
+    for i in range(index):
+        _put_disc(int_color, moves_bit_list[i])
+        score = -_alphabeta_get_score_evaluator(int_color_next, board, -beta, -alpha, depth-1, evaluator, timer, <unsigned int>0)
+        _undo()
+        scores[(moves_x[i], moves_y[i])] = score
+        if timer_timeout:  # タイムアウト判定
+            if best == 64:
+                best = i
+            break
+        if score > alpha:  # 最善手を更新
+            alpha = score
+            best = i
+    # ボードを元に戻す
+    board._black_bitboard = board_bb
+    board._white_bitboard = board_wb
+    board._black_score = board_bs
+    board._white_score = board_ws
+    board.prev = [(item[0], item[1], item[2], item[3]) for item in board_prev]
+    return (moves_x[best], moves_y[best]), scores
+
+
+cdef inline double _alphabeta_get_score_evaluator(unsigned int int_color, board, double alpha, double beta, unsigned int depth, evaluator, int t, unsigned int pas):
+    global timer_timeout, measure_count, bb, wb, hb, bs, ws, pbb, pwb, pbs, pws, fd, tail
+    cdef:
+        signed int timeout
+        double score
+        unsigned long long legal_moves_b_bits, legal_moves_w_bits, legal_moves_bits, move
+        unsigned int i, is_game_end = 0, int_color_next = 1, x, y
+        signed int sign = -1
+    # タイムアウト判定
+    if t:
+        timeout = check_timeout()
+        if timeout:
+            return timeout
+    # 探索ノード数カウント
+    measure_count += 1
+    # 合法手を取得
+    legal_moves_bits = _get_legal_moves_bits(int_color, bb, wb, hb)
+    # 前回パス and 打てる場所なし の場合ゲーム終了
+    if pas and not legal_moves_bits:
+        is_game_end = <unsigned int>1
+    # 最大深さに到達 or ゲーム終了
+    if not depth or is_game_end:
+        if int_color:
+            legal_moves_b_bits = legal_moves_bits
+            legal_moves_w_bits = _get_legal_moves_bits(<unsigned int>0, bb, wb, hb)
+            sign = <signed int>1
+            str_color = 'black'
+        else:
+            legal_moves_b_bits = _get_legal_moves_bits(<unsigned int>1, bb, wb, hb)
+            legal_moves_w_bits = legal_moves_bits
+            str_color = 'white'
+        board._black_bitboard = bb
+        board._white_bitboard = wb
+        board._black_score = bs
+        board._white_score = ws
+        board._flippable_discs_num = fd
+        board.prev = []
+        for i in range(tail):
+            board.prev += [(pbb[i], pwb[i], pbs[i], pws[i])]
+        return evaluator.evaluate(str_color, board, _popcount(legal_moves_b_bits), _popcount(legal_moves_w_bits)) * sign
+    # 次の手番
+    if int_color:
+        int_color_next = <unsigned int>0
+    # パスの場合
+    if not legal_moves_bits:
+        return -_alphabeta_get_score_evaluator(int_color_next, board, -beta, -alpha, depth, evaluator, t, <unsigned int>1)
+    # 評価値を算出
+    while (legal_moves_bits):
+        move = legal_moves_bits & (~legal_moves_bits+1)  # 一番右のONしているビットのみ取り出す
+        _put_disc(int_color, move)
+        score = -_alphabeta_get_score_evaluator(int_color_next, board, -beta, -alpha, depth-1, evaluator, t, <unsigned int>0)
+        _undo()
+        legal_moves_bits ^= move  # 一番右のONしているビットをOFFする
+        if score > alpha:
+            alpha = score
+        if timer_timeout:
+            return alpha
+        if alpha >= beta:  # 枝刈り
+            return alpha
+    return alpha
+
+
+# -------------------------------------------------- #
 # NegaScout Methods
 cdef _negascout_get_score(func, negascout, color, board, alpha, beta, unsigned int depth, pid):
     cdef:
@@ -1560,21 +1928,6 @@ cdef double _negascout_get_score_measure_timer_size8_64bit(func, negascout, colo
     return timeout if timeout else _negascout_get_score_size8_64bit(func, negascout, color, board, alpha, beta, depth, pid)
 
 
-cdef inline measure(pid):
-    if pid:
-        if pid not in Measure.count:
-            Measure.count[pid] = 0
-        Measure.count[pid] += 1
-
-
-cdef inline signed int timer(pid):
-    if pid:
-        if time.time() > Timer.deadline[pid]:
-            Timer.timeout_flag[pid] = True  # タイムアウト発生
-            return Timer.timeout_value[pid]
-    return <signed int>0
-
-
 cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, double alpha, double beta, unsigned int depth, pid):
     cdef:
         double score, tmp, null_window
@@ -1622,14 +1975,14 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
     null_window = beta
     for i in range(count):
         if alpha < beta:
-            _negascout_put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
+            _put_disc_board_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
             tmp = -func(func, negascout, next_color, board, -null_window, -alpha, depth-1, pid)
-            _negascout_undo(board)
+            _undo_board(board)
             if alpha < tmp:
                 if tmp <= null_window and index:
-                    _negascout_put_disc_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
+                    _put_disc_board_size8_64bit(board, color_num, next_moves_x[i], next_moves_y[i])
                     alpha = -func(func, negascout, next_color, board, -beta, -tmp, depth-1, pid)
-                    _negascout_undo(board)
+                    _undo_board(board)
                     if Timer.is_timeout(pid):
                         return alpha
                 else:
@@ -1639,46 +1992,6 @@ cdef double _negascout_get_score_size8_64bit(func, negascout, color, board, doub
             return alpha
         index += <unsigned int>1
     return alpha
-
-
-cdef inline unsigned long long _negascout_put_disc_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y):
-    cdef:
-        unsigned long long put, black_bitboard, white_bitboard, flippable_discs_num, flippable_discs_count
-        unsigned int black_score, white_score
-        signed int shift_size
-    # 配置位置を整数に変換
-    shift_size = (63-(y*8+x))
-    put = <unsigned long long>1 << shift_size
-    # ひっくり返せる石を取得
-    black_bitboard = board._black_bitboard
-    white_bitboard = board._white_bitboard
-    black_score = board._black_score
-    white_score = board._white_score
-    flippable_discs_num = _get_flippable_discs_num(color, black_bitboard, white_bitboard, put)
-    flippable_discs_count = _popcount(flippable_discs_num)
-    # 打つ前の状態を格納
-    board.prev += [(black_bitboard, white_bitboard, black_score, white_score)]
-    # 自分の石を置いて相手の石をひっくり返す
-    if color:
-        black_bitboard ^= put | flippable_discs_num
-        white_bitboard ^= flippable_discs_num
-        black_score += <unsigned int>1 + <unsigned int>flippable_discs_count
-        white_score -= <unsigned int>flippable_discs_count
-    else:
-        white_bitboard ^= put | flippable_discs_num
-        black_bitboard ^= flippable_discs_num
-        black_score -= <unsigned int>flippable_discs_count
-        white_score += <unsigned int>1 + <unsigned int>flippable_discs_count
-    board._black_bitboard = black_bitboard
-    board._white_bitboard = white_bitboard
-    board._black_score = black_score
-    board._white_score = white_score
-    board._flippable_discs_num = flippable_discs_num
-    return flippable_discs_num
-
-
-cdef inline _negascout_undo(board):
-    (board._black_bitboard, board._white_bitboard, board._black_score, board._white_score) = board.prev.pop()
 
 
 cdef inline signed int _negascout_get_possibility_size8_64bit(board, unsigned int color, unsigned int x, unsigned int y, signed int sign):
