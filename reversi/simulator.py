@@ -278,8 +278,8 @@ class Simulator:
                     p.strategy.get_result(game.result)
 
             if self.perfect_check:
-                from reversi import Elucidator
-                Elucidator(board=board).make_perfect_win_txt(self.perfect_win_txt)
+                from reversi import Solver
+                Solver(board=board).make_perfect_win_txt(self.perfect_win_txt)
         return ret
 
     def _totalize_results(self):

@@ -114,7 +114,7 @@ The examples to be copied are below.
 - [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - A example of Reversi minmax  strategy
 - [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - A example of Reversi alpha beta AI strategy
 - [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - A example for discovering the parameters of a reversi strategy using a genetic algorithm
-- [10_x_elucidator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_x_elucidator.py) - Analysis tool for deformation boards
+- [10_variant_board_solver.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_variant_board_solver.py) - Analysis tool for variant boards
 
 
 You can run examples below.
@@ -129,7 +129,7 @@ $ python 06_table_strategy.py
 $ python 07_minmax_strategy.py
 $ python 08_alphabeta_strategy.py
 $ python 09_genetic_algorithm.py
-$ python 10_x_elucidator.py
+$ python 10_variant_board_solver.py
 ```
 
 ## How to use the library

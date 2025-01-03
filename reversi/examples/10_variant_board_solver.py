@@ -1,11 +1,11 @@
-"""A example of variant-board elucidator
+"""A example of variant-board solver
 """
 
 import os
 import re
 import json
 
-from reversi import BitBoard, Elucidator
+from reversi import BitBoard, Solver
 from reversi import C as c
 
 
@@ -218,51 +218,51 @@ if __name__ == '__main__':
             print('skip Pioneer')
             continue
 
-        elucidator = Elucidator(name, size, first, hole, ini_black, ini_white)
+        solver = Solver(name, size, first, hole, ini_black, ini_white)
 
-        squares = elucidator.squares
-        blanks = elucidator.blanks
+        squares = solver.squares
+        blanks = solver.blanks
         conf['squares'] = squares
         conf['blanks'] = blanks
         print('squares       :', squares)
         print('blanks        :', blanks)
 
         if CONTROLL[name][0] and DO_RANDOM_MOVE_MATCHES:
-            conf['random_10000_matches'] = elucidator.get_random_match_result(RANDOM_MATCH)
+            conf['random_10000_matches'] = solver.get_random_match_result(RANDOM_MATCH)
 
         if CONTROLL[name][1] and DO_BEST:
-            conf["best_match_winner"], conf["best_match_score"], conf["best_match_record"] = elucidator.get_best_match_winner()
+            conf["best_match_winner"], conf["best_match_score"], conf["best_match_record"] = solver.get_best_match_winner()
 
         if CONTROLL[name][2] and DO_MAX:
-            conf["black_max_score"], conf["black_max_record"], conf["white_max_score"], conf["white_max_record"] = elucidator.get_max_winner()
+            conf["black_max_score"], conf["black_max_record"], conf["white_max_score"], conf["white_max_record"] = solver.get_max_winner()
 
         if CONTROLL[name][3] and DO_SHORTEST:
-            conf["black_shortest_move_count"], conf["black_shortest_record"], conf["white_shortest_move_count"], conf["white_shortest_record"] = elucidator.get_shortest_winner()  # noqa: E501
+            conf["black_shortest_move_count"], conf["black_shortest_record"], conf["white_shortest_move_count"], conf["white_shortest_record"] = solver.get_shortest_winner()  # noqa: E501
 
         if VERIFY_RECORD:
             if conf["best_match_record"] != "?":
                 score = conf["best_match_score"]
                 black_score, white_score = get_scores(score)
                 print('\n>>> verify best_match_record :', conf["best_match_record"])
-                elucidator.verify_record(conf["best_match_record"], black_score=black_score, white_score=white_score)
+                solver.verify_record(conf["best_match_record"], black_score=black_score, white_score=white_score)
             if conf["black_max_record"] != "?":
                 score = conf["black_max_score"]
                 black_score, white_score = get_scores(score)
                 print('\n>>> verify black_max_record :', conf["black_max_record"])
-                elucidator.verify_record(conf["black_max_record"], black_score=black_score, white_score=white_score)
+                solver.verify_record(conf["black_max_record"], black_score=black_score, white_score=white_score)
             if conf["white_max_record"] != "?":
                 score = conf["white_max_score"]
                 black_score, white_score = get_scores(score)
                 print('\n>>> verify white_max_record :', conf["white_max_record"])
-                elucidator.verify_record(conf["white_max_record"], black_score=black_score, white_score=white_score)
+                solver.verify_record(conf["white_max_record"], black_score=black_score, white_score=white_score)
             if conf["black_shortest_record"] != "?":
                 move_count = conf["black_shortest_move_count"]
                 print('\n>>> verify black_shortest_record :', conf["black_shortest_record"])
-                elucidator.verify_record(conf["black_shortest_record"], move_count=move_count)
+                solver.verify_record(conf["black_shortest_record"], move_count=move_count)
             if conf["white_shortest_record"] != "?":
                 move_count = conf["white_shortest_move_count"]
                 print('\n>>> verify white_shortest_record :', conf["white_shortest_record"])
-                elucidator.verify_record(conf["white_shortest_record"], move_count=move_count)
+                solver.verify_record(conf["white_shortest_record"], move_count=move_count)
 
     print('-------------------------------')
 

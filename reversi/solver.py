@@ -1,4 +1,4 @@
-"""Elucidator
+"""Solver
 """
 
 import os
@@ -10,10 +10,8 @@ from reversi import C as c
 from reversi.strategies import Random, _EndGame_
 
 
-class Elucidator:
-    """
-    ボード解明ツール
-    """
+class Solver:
+    """ボード解析ツール"""
     def __init__(self, name=None, size=None, first=None, hole=None, ini_black=None, ini_white=None, board=None):
         self.name = name
         self.size = size

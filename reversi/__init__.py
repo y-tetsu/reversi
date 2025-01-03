@@ -9,7 +9,7 @@ from .window import Window
 from .error_message import ErrorMessage
 from .recorder import Recorder
 from .app import Reversi, Reversic
-from .elucidator import Elucidator
+from .solver import Solver
 from .simulator import Simulator
 from . import strategies
 from . import genetic_algorithm
@@ -37,7 +37,7 @@ __all__ = [
     'Reversi',
     'Reversic',
     'Recorder',
-    'Elucidator',
+    'Solver',
     'Simulator',
     'strategies',
     'genetic_algorithm',
