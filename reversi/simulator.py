@@ -5,7 +5,7 @@ import json
 import itertools
 from multiprocessing import Pool
 
-from reversi import BitBoard, PyListBoard, Player, NoneDisplay, Game, X
+from reversi import BitBoard, PyListBoard, Player, NoneDisplay, Game, V
 from reversi.strategies import RandomOpening
 
 
@@ -140,11 +140,11 @@ class Simulator:
         self.hole = 0x0000000000000000
         self.ini_black = None
         self.ini_white = None
-        if self.board_name in X:
-            self.board_size = X[self.board_name]['size']
-            self.hole = X[self.board_name]['hole']
-            self.ini_black = X[self.board_name]['ini_black']
-            self.ini_white = X[self.board_name]['ini_white']
+        if self.board_name in V:
+            self.board_size = V[self.board_name]['size']
+            self.hole = V[self.board_name]['hole']
+            self.ini_black = V[self.board_name]['ini_black']
+            self.ini_white = V[self.board_name]['ini_white']
             print(f'[{self.board_name}]')
 
         print(BitBoard(self.board_size, hole=self.hole, ini_black=self.ini_black, ini_white=self.ini_white))

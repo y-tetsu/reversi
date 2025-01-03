@@ -9,7 +9,7 @@ import json
 import threading
 from platform import system
 
-from reversi import BitBoard, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, X, Recorder
+from reversi import BitBoard, Player, Window, WindowDisplay, ConsoleDisplay, Game, ErrorMessage, strategies, V, Recorder
 
 
 class Reversi:
@@ -375,7 +375,7 @@ class Reversic:
         """
         self._clear_screen()
 
-        board_list = list(X.keys())
+        board_list = list(V.keys())
 
         print('select board type')
         print('-----------------------------')
@@ -416,10 +416,10 @@ class Reversic:
         self._clear_screen()
 
         # ボード準備
-        size = X[self.board_type]['size']
-        hole = X[self.board_type]['hole']
-        ini_black = X[self.board_type]['ini_black']
-        ini_white = X[self.board_type]['ini_white']
+        size = V[self.board_type]['size']
+        hole = V[self.board_type]['hole']
+        ini_black = V[self.board_type]['ini_black']
+        ini_white = V[self.board_type]['ini_white']
         board = BitBoard(size=size, hole=hole, ini_black=ini_black, ini_white=ini_white)
 
         # プレイヤー準備

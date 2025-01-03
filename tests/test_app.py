@@ -7,7 +7,7 @@ import os
 import re
 from pathlib import Path
 
-from reversi import Reversi, Reversic, Window, ErrorMessage, X
+from reversi import Reversi, Reversic, Window, ErrorMessage, V
 from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
 
 
@@ -901,7 +901,7 @@ class TestApp(unittest.TestCase):
         app._clear_screen = lambda: False
 
         # normal pattern
-        for i, _ in enumerate(X.keys()):
+        for i, _ in enumerate(V.keys()):
             with captured_stdout() as stdout:
                 with captured_stdin() as stdin:
                     stdin.write(str(i+1))
@@ -938,7 +938,7 @@ class TestApp(unittest.TestCase):
             with self.assertRaises(IndexError):
                 print(lines[26])
 
-            self.assertEqual(ret, list(X.keys())[i])
+            self.assertEqual(ret, list(V.keys())[i])
 
     def test_reversic_get_player(self):
         app = Reversic()
