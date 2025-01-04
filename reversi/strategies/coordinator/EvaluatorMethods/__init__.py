@@ -10,7 +10,7 @@ try:
         if os.environ['FORCE_EVALUATORMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from ....cy.CoordinatorMethods import evaluate_tpw, evaluate_tpwe
+    from ....cy.ReversiMethods import evaluate_tpw, evaluate_tpwe
     SLOW_MODE = False
 except ImportError:
     from ....strategies.coordinator.EvaluatorMethods.Evaluate import evaluate_tpw, evaluate_tpwe

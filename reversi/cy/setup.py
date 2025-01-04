@@ -6,7 +6,6 @@ from Cython.Distutils import build_ext
 module_names = [
     'BitBoardMethods',
     'ReversiMethods',
-    'CoordinatorMethods',
 ]
 
 ext_modules = []
