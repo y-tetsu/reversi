@@ -10,8 +10,8 @@ try:
         if os.environ['FORCE_ENDGAMEMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from ...cy.StrategiesMethods import endgame_next_move as next_move
-    from ...cy.StrategiesMethods import endgame_get_best_move as get_best_move
+    from ...cy.ReversiMethods import endgame_next_move as next_move
+    from ...cy.ReversiMethods import endgame_get_best_move as get_best_move
     ENDGAME_SIZE8_64BIT_ERROR = False
 except ImportError:
     pass

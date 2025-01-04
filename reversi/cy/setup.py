@@ -5,7 +5,7 @@ from Cython.Distutils import build_ext
 # Cythonized Methods
 module_names = [
     'BitBoardMethods',
-    'StrategiesMethods',
+    'ReversiMethods',
     'CoordinatorMethods',
 ]
 

@@ -12,7 +12,7 @@ try:
         if os.environ['FORCE_MONTECARLOMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from ...cy.StrategiesMethods import playout
+    from ...cy.ReversiMethods import playout
     SLOW_MODE = False
     MONTECARLO_SIZE8_64BIT_ERROR = False
 except ImportError:
@@ -23,7 +23,7 @@ try:
         if os.environ['FORCE_MONTECARLOMETHODS_IMPORT_ERROR'] == 'RAISE':
             raise ImportError
 
-    from ...cy.StrategiesMethods import montecarlo_next_move as next_move
+    from ...cy.ReversiMethods import montecarlo_next_move as next_move
     SLOW_MODE = False
     MONTECARLO_SIZE8_64BIT_ERROR = False
 except ImportError:
