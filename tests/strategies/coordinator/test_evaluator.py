@@ -357,7 +357,8 @@ class TestEvaluator(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_EVALUATORMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.coordinator.EvaluatorMethods)
         self.assertTrue(reversi.strategies.coordinator.EvaluatorMethods.SLOW_MODE)
         # -------------------------------
@@ -425,7 +426,8 @@ class TestEvaluator(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_EVALUATORMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.coordinator.EvaluatorMethods)
         self.assertFalse(reversi.strategies.coordinator.EvaluatorMethods.SLOW_MODE)
         # -------------------------------

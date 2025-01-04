@@ -223,7 +223,8 @@ class TestEndGame(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_ENDGAMEMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.EndGameMethods)
         self.assertTrue(reversi.strategies.EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR)
         # -------------------------------
@@ -244,7 +245,8 @@ class TestEndGame(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_ENDGAMEMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.EndGameMethods)
         self.assertFalse(reversi.strategies.EndGameMethods.ENDGAME_SIZE8_64BIT_ERROR)
         # -------------------------------

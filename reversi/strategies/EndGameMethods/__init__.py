@@ -1,20 +1,13 @@
-import os
-import pyximport
-pyximport.install()
+from ... import cy
 
 
 ENDGAME_SIZE8_64BIT_ERROR = True
 
-try:
-    if 'FORCE_ENDGAMEMETHODS_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_ENDGAMEMETHODS_IMPORT_ERROR'] == 'RAISE':
-            raise ImportError
 
+if cy.IMPORTED:
     from ...cy.ReversiMethods import endgame_next_move as next_move
     from ...cy.ReversiMethods import endgame_get_best_move as get_best_move
     ENDGAME_SIZE8_64BIT_ERROR = False
-except ImportError:
-    pass
 
 
 __all__ = [

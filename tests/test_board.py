@@ -1654,9 +1654,9 @@ class TestBoard(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] = 'RAISE'
-        importlib.reload(reversi.BitBoardMethods)
-        self.assertTrue(reversi.BitBoardMethods.CYTHON)
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
+        self.assertFalse(reversi.cy.IMPORTED)
         # -------------------------------
 
         # get_board_info
@@ -1712,9 +1712,9 @@ class TestBoard(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR']
-        importlib.reload(reversi.BitBoardMethods)
-        self.assertFalse(reversi.BitBoardMethods.CYTHON)
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
+        self.assertTrue(reversi.cy.IMPORTED)
         # -------------------------------
 
     def test_cyboard_force_import_error(self):
@@ -1724,9 +1724,9 @@ class TestBoard(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR'] = 'RAISE'
-        importlib.reload(reversi.BitBoardMethods)
-        self.assertTrue(reversi.BitBoardMethods.CYTHON)
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
+        self.assertFalse(reversi.cy.IMPORTED)
         # -------------------------------
         self.assertIsInstance(BitBoard(4), PyBitBoard)
         self.assertIsInstance(BitBoard(), PyBitBoard)
@@ -1734,10 +1734,10 @@ class TestBoard(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_BITBOARDMETHODS_IMPORT_ERROR']
-        importlib.reload(reversi.BitBoardMethods)
-        self.assertFalse(reversi.BitBoardMethods.CYTHON)
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
+        self.assertTrue(reversi.cy.IMPORTED)
         # -------------------------------
         self.assertIsInstance(BitBoard(4), PyBitBoard)
-        self.assertIsInstance(BitBoard(), reversi.cy.BitBoardMethods.CythonBitBoard)
+        self.assertIsInstance(BitBoard(), reversi.cy.ReversiMethods.CythonBitBoard)
         self.assertIsInstance(BitBoard(26), PyBitBoard)

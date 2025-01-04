@@ -95,7 +95,8 @@ class TestBlank(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_BLANKMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.BlankMethods)
         self.assertTrue(reversi.strategies.BlankMethods.BLANK_SIZE8_64BIT_ERROR)
         # -------------------------------
@@ -124,7 +125,8 @@ class TestBlank(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_BLANKMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.BlankMethods)
         self.assertFalse(reversi.strategies.BlankMethods.BLANK_SIZE8_64BIT_ERROR)
         # -------------------------------

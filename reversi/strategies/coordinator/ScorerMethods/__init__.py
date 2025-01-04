@@ -1,18 +1,13 @@
-import os
-import pyximport
-pyximport.install()
+from .... import cy
 
 
 SLOW_MODE = True
 
-try:
-    if 'FORCE_SCORERMETHODS_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_SCORERMETHODS_IMPORT_ERROR'] == 'RAISE':
-            raise ImportError
 
+if cy.IMPORTED:
     from ....cy.ReversiMethods import get_blank_score
     SLOW_MODE = False
-except ImportError:
+else:
     from ....strategies.coordinator.ScorerMethods.GetScore import get_blank_score
 
 

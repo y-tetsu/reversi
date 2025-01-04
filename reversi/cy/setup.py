@@ -4,7 +4,6 @@ from Cython.Distutils import build_ext
 
 # Cythonized Methods
 module_names = [
-    'BitBoardMethods',
     'ReversiMethods',
 ]
 
@@ -13,7 +12,7 @@ for name in module_names:
     ext_modules.append(Extension(name, [name + '.pyx']))
 
 setup(
-    name='cython_methods',
+    name='cython_reversi_methods',
     cmdclass={'build_ext': build_ext},
     ext_modules=ext_modules
 )

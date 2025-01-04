@@ -8,11 +8,10 @@ import threading
 import re
 
 import reversi.board as board
-import reversi.BitBoardMethods as BitBoardMethods
-import reversi.strategies as strategies
-import reversi.strategies.TableMethods as TableMethods
-import reversi.strategies.AlphaBetaMethods as AlphaBetaMethods
-import reversi.strategies.NegaScoutMethods as NegaScoutMethods
+import reversi.cy as cy
+
+from reversi.strategies import CPU_TIME
+
 
 WINDOW_TITLE = 'reversi'  # ウィンドウのタイトル
 WINDOW_WIDTH = 1320       # ウィンドウ幅
@@ -94,8 +93,6 @@ LANGUAGE_MENU = ['English', 'Japanese']  # 表示言語
 CANCEL_MENU = ['OK']                     # ゲームのキャンセル
 
 CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
-CPU_TIME = strategies.common.cputime.CPU_TIME  # CPUの持ち時間
-
 EXTRA_MENU = ['Set']  # プレイヤー追加設定の変更
 
 DISC_MARK = '●'      # 石のマーク
@@ -272,7 +269,7 @@ class Window(tk.Frame):
         self.canvas.coords(self.board.record_text, RECORD_OFFSET_X+dw, RECORD_OFFSET_Y)
 
         # SLOWMODE
-        if BitBoardMethods.CYTHON or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE:  # noqa: E501
+        if not cy.IMPORTED:
             self.canvas.coords(self.board.slowmode_text, SLOWMODE_OFFSET_X+dw, SLOWMODE_OFFSET_Y)
 
         # START
@@ -578,7 +575,7 @@ class ScreenBoard:
 
         # 低速モードの表示
         slowmode_text = '■'
-        if BitBoardMethods.CYTHON or TableMethods.SLOW_MODE or AlphaBetaMethods.SLOW_MODE or NegaScoutMethods.SLOW_MODE:  # noqa: E501
+        if not cy.IMPORTED:
             self.slowmode_text = self.canvas.create_text(
                 SLOWMODE_OFFSET_X+dw,
                 SLOWMODE_OFFSET_Y,

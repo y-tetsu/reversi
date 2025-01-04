@@ -6,7 +6,7 @@ from reversi.strategies.table import Table
 import reversi.strategies.coordinator.ScorerMethods as ScorerMethods
 
 from reversi.board import PyBitBoard
-from reversi.BitBoardMethods import CythonBitBoard
+from reversi.cy.ReversiMethods import CythonBitBoard
 
 
 class TableScorer(AbstractScorer):

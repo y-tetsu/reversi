@@ -97,7 +97,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(['English', 'Japanese'], reversi.window.LANGUAGE_MENU)
         self.assertEqual(['OK'], reversi.window.CANCEL_MENU)
         self.assertEqual(['Set'], reversi.window.CPUTIME_MENU)
-        self.assertEqual(reversi.strategies.common.cputime.CPU_TIME, reversi.window.CPU_TIME)
+        self.assertEqual(reversi.strategies.CPU_TIME, reversi.window.CPU_TIME)
         self.assertEqual(['Set'], reversi.window.EXTRA_MENU)
         self.assertEqual('●', reversi.window.DISC_MARK)
         self.assertEqual(8, reversi.window.DEFAULT_BOARD_SIZE)
@@ -499,7 +499,7 @@ class TestWindow(unittest.TestCase):
         self.assertTrue(extradialog.event.is_set())
 
     def test_window_screenboard_init(self):
-        reversi.BitBoardMethods.CYTHON = True
+        reversi.cy.IMPORTED = False
         test_size = 4
         test_cputime = 5.0
         test_assist = 'ON'

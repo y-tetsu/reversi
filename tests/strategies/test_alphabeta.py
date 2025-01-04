@@ -184,7 +184,8 @@ class TestAlphaBeta(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_ALPHABETAMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.AlphaBetaMethods)
         self.assertTrue(reversi.strategies.AlphaBetaMethods.SLOW_MODE)
         self.assertTrue(reversi.strategies.AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR)
@@ -249,7 +250,8 @@ class TestAlphaBeta(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_ALPHABETAMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.AlphaBetaMethods)
         self.assertFalse(reversi.strategies.AlphaBetaMethods.SLOW_MODE)
         self.assertFalse(reversi.strategies.AlphaBetaMethods.ALPHABETA_SIZE8_64BIT_ERROR)

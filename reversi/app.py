@@ -199,7 +199,7 @@ class Reversi:
             players[color] = Player(color, name, self.players_info[name])
 
         # ウィンドウの設定をゲームに反映
-        strategies.common.Timer.time_limit = self.window.cputime
+        strategies.Timer.time_limit = self.window.cputime
 
         Game(
             players['black'],

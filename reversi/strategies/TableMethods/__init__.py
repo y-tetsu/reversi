@@ -1,18 +1,13 @@
-import os
-import pyximport
-pyximport.install()
+from ... import cy
 
 
 SLOW_MODE = True
 
-try:
-    if 'FORCE_TABLEMETHODS_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR'] == 'RAISE':
-            raise ImportError
 
+if cy.IMPORTED:
     from ...cy.ReversiMethods import table_get_score as get_score
     SLOW_MODE = False
-except ImportError:
+else:
     from ...strategies.TableMethods.GetScore import get_score
 
 

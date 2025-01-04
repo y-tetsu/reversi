@@ -5,7 +5,6 @@ import math
 import gc
 
 from reversi import C as c
-from reversi import BitBoard
 from reversi.strategies.common import Timer, Measure, AbstractStrategy
 from reversi.strategies.MonteCarloMethods import playout
 
@@ -80,6 +79,7 @@ class Node:
     def copy_board(self, board):
         """盤面の複製
         """
+        from reversi import BitBoard
         size = board.size
         b, w, h = board.get_bitboard_info()
         return BitBoard(size, h, b, w)

@@ -1,20 +1,13 @@
-import os
-import pyximport
-pyximport.install()
+from ... import cy
 
 
 BLANK_SIZE8_64BIT_ERROR = True
 
-try:
-    if 'FORCE_BLANKMETHODS_IMPORT_ERROR' in os.environ:
-        if os.environ['FORCE_BLANKMETHODS_IMPORT_ERROR'] == 'RAISE':
-            raise ImportError
 
+if cy.IMPORTED:
     from ...cy.ReversiMethods import blank_next_move as next_move
     from ...cy.ReversiMethods import blank_get_best_move as get_best_move
     BLANK_SIZE8_64BIT_ERROR = False
-except ImportError:
-    pass
 
 
 __all__ = [

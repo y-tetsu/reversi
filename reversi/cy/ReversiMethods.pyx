@@ -1,8 +1,9 @@
 #cython: language_level=3, profile=False, boundscheck=False, wraparound=False, initializedcheck=False, cdivision=True
-# Cython Strategies Methods
+# Cython Reversi Methods
 
 import sys
 import time
+from collections import namedtuple
 
 from libc.stdlib cimport rand
 
@@ -26,6 +27,9 @@ DEF BUCKET_SIZE = MAX_POSSIBILITY
 DEF TRANSPOSITION_TABLE_DEPTH = 3  # 置換表を有効にする残りの探索深さ
 
 DEF MAXSIZE64 = 2**63 - 1
+
+DEF MIN_BOARD_SIZE = 4
+DEF MAX_BOARD_SIZE = 26
 
 
 cdef:
@@ -3132,3 +3136,509 @@ cdef inline signed int _get_blank_score(board, signed int w1, signed int w2, sig
                                             value += w3  # 隅の反対の縦横方向に空きマスがある場合
                 score += value * board_info[x][y]
     return score
+
+
+# =========================================== #
+# BitBoardMethods
+def get_legal_moves(color, size, b, w, h, mask):
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _get_legal_moves_size8_64bit(color, b, w, h)
+    return _get_legal_moves(color, size, b, w, h, mask)
+
+
+def get_legal_moves_bits(color, size, b, w, h, mask):
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _get_legal_moves_bits(color == 'black', b, w, h)
+    return _get_legal_moves_bits_sizable(color, size, b, w, h, mask)
+
+
+def get_bit_count(size, bits):
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _popcount(bits)
+    return _get_bit_count(size, bits)
+
+
+def get_flippable_discs(color, size, black_bitboard, white_bitboard, x, y, mask):
+    if size == 8:
+        if sys.maxsize == MAXSIZE64:
+            return _get_flippable_discs_size8_64bit(color == 'black', black_bitboard, white_bitboard, x, y)
+        return _get_flippable_discs_size8(color, black_bitboard, white_bitboard, x, y)
+    return _get_flippable_discs_sizable(color, size, black_bitboard, white_bitboard, x, y, mask)
+
+
+def put_disc(board, color, x, y):
+    size = board.size
+    if size == 8 and sys.maxsize == MAXSIZE64:
+        return _put_disc_board_size8_64bit(board, color == 'black', x, y)
+    return _put_disc_board_sizable(size, board, color, x, y)
+
+
+def get_board_info(size, b, w):
+    if size == 8:
+        if sys.maxsize == MAXSIZE64:
+            return _get_board_info_size8_64bit(b, w)
+        return _get_board_info_size8(b, w)
+    return _get_board_info_sizable(size, b, w)
+
+
+def undo(board):
+    _undo_board(board)
+
+
+cdef inline _get_legal_moves_size8_64bit(str color, unsigned long long b, unsigned long long w, unsigned long long h):
+    cdef:
+        unsigned long long legal_moves, mask = 0x8000000000000000
+        unsigned int x, y
+    legal_moves = _get_legal_moves_bits(color == 'black', b, w, h)
+    ret = []
+    for y in range(8):
+        for x in range(8):
+            if legal_moves & mask:
+                ret += [(x, y)]
+            mask >>= 1
+    return ret
+
+
+cdef _get_legal_moves(color, size, b, w, h, mask):
+    legal_moves_bits = _get_legal_moves_bits_sizable(color, size, b, w, h, mask)
+    # 石が置ける場所を格納
+    ret = []
+    check = 1 << (size * size - 1)
+    for y in range(size):
+        for x in range(size):
+            # 石が置ける場合
+            if legal_moves_bits & check:
+                ret += [(x, y)]
+            check >>= 1
+    return ret
+
+
+cdef _get_legal_moves_bits_sizable(color, size, b, w, h, mask):
+    # 前準備
+    player, opponent = (b, w) if color == 'black' else (w, b)  # プレイヤーと相手を決定
+    legal_moves_bits = 0                                       # 石が置ける場所
+    horizontal = opponent & mask.h                             # 水平方向のチェック値
+    vertical = opponent & mask.v                               # 垂直方向のチェック値
+    diagonal = opponent & mask.d                               # 斜め方向のチェック値
+    blank = ~(player | opponent | h)                           # 空きマス位置
+    # 置ける場所を探す
+    legal_moves_bits |= _get_legal_moves_lshift(size, horizontal, player, blank, 1)     # 左方向
+    legal_moves_bits |= _get_legal_moves_rshift(size, horizontal, player, blank, 1)     # 右方向
+    legal_moves_bits |= _get_legal_moves_lshift(size, vertical, player, blank, size)    # 上方向
+    legal_moves_bits |= _get_legal_moves_rshift(size, vertical, player, blank, size)    # 下方向
+    legal_moves_bits |= _get_legal_moves_lshift(size, diagonal, player, blank, size+1)  # 左斜め上方向
+    legal_moves_bits |= _get_legal_moves_lshift(size, diagonal, player, blank, size-1)  # 右斜め上方向
+    legal_moves_bits |= _get_legal_moves_rshift(size, diagonal, player, blank, size-1)  # 左斜め下方向
+    legal_moves_bits |= _get_legal_moves_rshift(size, diagonal, player, blank, size+1)  # 右斜め下方向
+    return legal_moves_bits
+
+
+cdef _get_legal_moves_lshift(size, mask, player, blank, shift_size):
+    """左シフトで石が置ける場所を取得"""
+    tmp = mask & (player << shift_size)
+    for _ in range(size-3):
+        tmp |= mask & (tmp << shift_size)
+    return blank & (tmp << shift_size)
+
+
+cdef _get_legal_moves_rshift(size, mask, player, blank, shift_size):
+    """右シフトで石が置ける場所を取得"""
+    tmp = mask & (player >> shift_size)
+    for _ in range(size-3):
+        tmp |= mask & (tmp >> shift_size)
+    return blank & (tmp >> shift_size)
+
+
+cdef _get_bit_count(size, bits):
+    count = 0
+    mask = 1 << ((size**2)-1)
+    for y in range(size):
+        for x in range(size):
+            if bits & mask:
+                count += 1
+            mask >>= 1
+    return count
+
+
+cdef inline _get_flippable_discs_size8_64bit(unsigned int color, unsigned long long black_bitboard, unsigned long long white_bitboard, unsigned int x, unsigned int y):
+    cdef:
+        unsigned long long move = <unsigned long long>1 << (63-(y*8+x)), flippable_discs = 0, mask = 0x8000000000000000
+    ret = []
+    flippable_discs = _get_flippable_discs_num(color, black_bitboard, white_bitboard, move)
+    for y in range(8):
+        for x in range(8):
+            if flippable_discs & mask:
+                ret += [(x, y)]
+            mask >>= 1
+    return ret
+
+
+cdef _get_flippable_discs_size8(color, black_bitboard, white_bitboard, unsigned int x, unsigned int y):
+    player, opponent = (black_bitboard, white_bitboard) if color == 'black' else (white_bitboard, black_bitboard)
+    player |= 0x10000000000000000    # 32bit以下でもシフトできるよう対策
+    opponent |= 0x10000000000000000
+    cdef:
+        unsigned int p0 = (player >> 32) & 0xFFFFFFFF    # プレイヤー石(上位)
+        unsigned int p1 = player & 0xFFFFFFFF            # プレイヤー石(下位)
+        unsigned int o0 = (opponent >> 32) & 0xFFFFFFFF  # 相手石(上位)
+        unsigned int o1 = opponent & 0xFFFFFFFF          # 相手石(上位)
+        unsigned int put0 = 0                            # 石を置く場所(上位)
+        unsigned int put1 = 0                            # 石を置く場所(下位)
+        unsigned int flippable_discs0 = 0                # ひっくり返せる場所(上位)
+        unsigned int flippable_discs1 = 0                # ひっくり返せる場所(下位)
+        unsigned int direction, next0, next1, buff0, buff1, mask0 = 0x80000000, mask1 = 0x80000000
+    # 石を置く場所
+    if y < 4:
+        put0 = 1 << (31-(y*8+x))
+    else:
+        put1 = 1 << (31-((y-4)*8+x))
+    # 8方向を順番にチェック
+    for direction in range(8):
+        buff0, buff1 = 0, 0
+        next0, next1 = _get_next_put_size8(put0, put1, direction)
+        # 相手の石が存在する限り位置を記憶
+        while (next0 & o0) or (next1 & o1):
+            buff0 |= next0
+            buff1 |= next1
+            next0, next1 = _get_next_put_size8(next0, next1, direction)
+        # 自分の石で囲まれている場合は結果を格納する
+        if (next0 & p0) or (next1 & p1):
+            flippable_discs0 |= buff0
+            flippable_discs1 |= buff1
+    # 配列に変換
+    ret = []
+    for y in range(8):
+        # ビットボード上位32bit
+        if y < 4:
+            for x in range(8):
+                if flippable_discs0 & mask0:
+                    ret += [(x, y)]
+                mask0 >>= 1
+        # ビットボード下位32bit
+        else:
+            for x in range(8):
+                if flippable_discs1 & mask1:
+                    ret += [(x, y)]
+                mask1 >>= 1
+    return ret
+
+
+cdef _get_next_put_size8(unsigned int put0, unsigned int put1, unsigned int direction):
+    """指定位置から指定方向に1マス分移動した場所を返す(ボードサイズ8限定)
+    """
+    cdef:
+        unsigned int upper, lower
+    if direction == 0:     # 上
+        upper = 0xFFFFFFFF & ((put0 << 8) | (put1 >> 24))
+        lower = 0xFFFFFF00 & (put1 << 8)
+    elif direction == 1:  # 右上
+        upper = 0x7F7F7F7F & ((put0 << 7) | (put1 >> 25))
+        lower = 0x7F7F7F00 & (put1 << 7)
+    elif direction == 2:   # 右
+        upper = 0x7F7F7F7F & (put0 >> 1)
+        lower = 0x7F7F7F7F & (put1 >> 1)
+    elif direction == 3:  # 右下
+        upper = 0x007F7F7F & (put0 >> 9)
+        lower = 0x7F7F7F7F & ((put1 >> 9) | (put0 << 23))
+    elif direction == 4:   # 下
+        upper = 0x00FFFFFF & (put0 >> 8)
+        lower = 0xFFFFFFFF & ((put1 >> 8) | (put0 << 24))
+    elif direction == 5:  # 左下
+        upper = 0x00FEFEFE & (put0 >> 7)
+        lower = 0xFEFEFEFE & ((put1 >> 7) | (put0 << 25))
+    elif direction == 6:   # 左
+        upper = 0xFEFEFEFE & (put0 << 1)
+        lower = 0xFEFEFEFE & (put1 << 1)
+    elif direction == 7:  # 左上
+        upper = 0xFEFEFEFE & ((put0 << 9) | (put1 >> 23))
+        lower = 0xFEFEFE00 & (put1 << 9)
+    else:
+        upper, lower = 0, 0
+    return upper, lower
+
+
+cdef _get_flippable_discs_sizable(color, size, black_bitboard, white_bitboard, x, y, mask):
+    ret = []
+    flippable_discs = 0
+    player, opponent = (black_bitboard, white_bitboard) if color == 'black' else (white_bitboard, black_bitboard)
+    # 石を置く場所
+    put = 1 << ((size*size-1)-(y*size+x))
+    # 8方向を順番にチェック
+    for direction in ('U', 'UR', 'R', 'BR', 'B', 'BL', 'L', 'UL'):
+        tmp = 0
+        check = _get_next_put(size, put, direction, mask)
+        # 相手の石が存在する限り位置を記憶
+        while check & opponent:
+            tmp |= check
+            check = _get_next_put(size, check, direction, mask)
+        # 自分の石で囲まれている場合は結果を格納する
+        if check & player:
+            flippable_discs |= tmp
+    # 配列に変換
+    check = 1 << (size*size-1)
+    for y in range(size):
+        for x in range(size):
+            if flippable_discs & check:
+                ret += [(x, y)]
+            check >>= 1
+    return ret
+
+
+cdef _get_next_put(size, put, direction, mask):
+    """指定位置から指定方向に1マス分移動した場所を返す(ボードサイズ8以外)"""
+    if direction == 'U':     # 上
+        return (put << size) & mask.u
+    elif direction == 'UR':  # 右上
+        return (put << (size-1)) & mask.ur
+    elif direction == 'R':   # 右
+        return (put >> 1) & mask.r
+    elif direction == 'BR':  # 右下
+        return (put >> (size+1)) & mask.br
+    elif direction == 'B':   # 下
+        return (put >> size) & mask.b
+    elif direction == 'BL':  # 左下
+        return (put >> (size-1)) & mask.bl
+    elif direction == 'L':   # 左
+        return (put << 1) & mask.l
+    elif direction == 'UL':  # 左上
+        return (put << (size+1)) & mask.ul
+    else:
+        return 0
+
+
+cdef inline _put_disc_board_sizable(size, board, color, unsigned int x, unsigned int y):
+    cdef:
+        unsigned int tmp_x, tmp_y
+    # 配置位置を整数に変換
+    shift_size = ((size*size-1)-(y*size+x))
+    if shift_size < 0 or shift_size > size**2-1:
+        return 0
+    put = 1 << ((size*size-1)-(y*size+x))
+    # 反転位置を整数に変換
+    flippable_discs = board.get_flippable_discs(color, x, y)
+    flippable_discs_num = 0
+    for tmp_x, tmp_y in flippable_discs:
+        flippable_discs_num |= 1 << ((size*size-1)-(tmp_y*size+tmp_x))
+    # 打つ前の状態を格納
+    board.prev += [(board._black_bitboard, board._white_bitboard, board._black_score, board._white_score)]
+    # 自分の石を置いて相手の石をひっくり返す
+    if color == 'black':
+        board._black_bitboard ^= put | flippable_discs_num
+        board._white_bitboard ^= flippable_discs_num
+        board._black_score += 1 + len(flippable_discs)
+        board._white_score -= len(flippable_discs)
+    else:
+        board._white_bitboard ^= put | flippable_discs_num
+        board._black_bitboard ^= flippable_discs_num
+        board._black_score -= len(flippable_discs)
+        board._white_score += 1 + len(flippable_discs)
+    board._flippable_discs_num = flippable_discs_num
+    return flippable_discs_num
+
+
+cdef inline _get_board_info_size8_64bit(unsigned long long b, unsigned long long w):
+    cdef:
+        unsigned long long mask = 0x8000000000000000
+        unsigned int x, y
+        signed int[8][8] board_info
+    for y in range(8):
+        for x in range(8):
+            if b & mask:
+                board_info[y][x] = 1
+            elif w & mask:
+                board_info[y][x] = -1
+            else:
+                board_info[y][x] = 0
+            mask >>= 1
+    return board_info
+
+
+cdef _get_board_info_size8(b, w):
+    cdef:
+        unsigned int x, y, b0 = ((0x10000000000000000 | b) >> 32) & 0xFFFFFFFF, b1 = b & 0xFFFFFFFF, w0 = ((0x10000000000000000 | w) >> 32) & 0xFFFFFFFF, w1 = w & 0x00000000FFFFFFFF, mask0 = 0x80000000, mask1 = 0x80000000
+    board_info = []
+    for y in range(8):
+        tmp = []
+        # ビットボード上位32bit
+        if y < 4:
+            for x in range(8):
+                if b0 & mask0:
+                    tmp += [1]
+                elif w0 & mask0:
+                    tmp += [-1]
+                else:
+                    tmp += [0]
+                mask0 >>= 1
+        # ビットボード下位32bit
+        else:
+            for x in range(8):
+                if b1 & mask1:
+                    tmp += [1]
+                elif w1 & mask1:
+                    tmp += [-1]
+                else:
+                    tmp += [0]
+                mask1 >>= 1
+        board_info += [tmp]
+    return board_info
+
+
+cdef _get_board_info_sizable(size, b, w):
+    board_info = []
+    mask = 1 << (size * size - 1)
+    for y in range(size):
+        tmp = []
+        for x in range(size):
+            if b & mask:
+                tmp += [1]
+            elif w & mask:
+                tmp += [-1]
+            else:
+                tmp += [0]
+            mask >>= 1
+        board_info += [tmp]
+    return board_info
+
+
+cdef class CythonBitBoard():
+    cdef readonly size
+    cdef public _black_score, _white_score, prev, _green_bitboard, _black_bitboard, _white_bitboard, _hole_bitboard, _ini_green, _ini_black, _ini_white, _mask, _flippable_discs_num
+
+    def __init__(self, hole=0x0, ini_black=None, ini_white=None):
+        self.size = 8
+        self.prev = []
+        self._green_bitboard = 0
+        self._black_bitboard = 0
+        self._white_bitboard = 0
+        # 初期配置
+        size = self.size
+        center = size // 2
+        self._ini_black = 1 << ((size*size-1)-(size*(center-1)+center))
+        self._ini_black |= 1 << ((size*size-1)-(size*center+(center-1)))
+        self._ini_white = 1 << ((size*size-1)-(size*(center-1)+(center-1)))
+        self._ini_white |= 1 << ((size*size-1)-(size*center+center))
+        if ini_black is not None:
+            self._ini_black = ini_black
+        if ini_white is not None:
+            self._ini_white = ini_white
+        self._ini_green = self._ini_black & self._ini_white
+        self._ini_black &= ~self._ini_green
+        self._ini_white &= ~self._ini_green
+        self._green_bitboard |= self._ini_green
+        self._black_bitboard |= self._ini_black
+        self._white_bitboard |= self._ini_white
+        self._hole_bitboard = hole
+        # 置ける場所の検出用マスク
+        BitMask = namedtuple('BitMask', 'h v d u ur r br b bl l ul')
+        self._mask = BitMask(
+            int(''.join((['0'] + ['1'] * (size-2) + ['0']) * size), 2),                                      # 水平方向のマスク値
+            int(''.join(['0'] * size + ['1'] * size * (size-2) + ['0'] * size), 2),                          # 垂直方向のマスク値
+            int(''.join(['0'] * size + (['0'] + (['1'] * (size-2)) + ['0']) * (size-2) + ['0'] * size), 2),  # 斜め方向のマスク値
+            int(''.join(['1'] * size * (size-1) + ['0'] * size), 2),                                         # 上方向のマスク値
+            int(''.join((['0'] + ['1'] * (size-1)) * (size-1) + ['0'] * size), 2),                           # 右上方向のマスク値
+            int(''.join((['0'] + ['1'] * (size-1)) * size), 2),                                              # 右方向のマスク値
+            int(''.join(['0'] * size + (['0'] + ['1'] * (size-1)) * (size-1)), 2),                           # 右下方向のマスク値
+            int(''.join(['0'] * size + ['1'] * size * (size-1)), 2),                                         # 下方向のマスク値
+            int(''.join(['0'] * size + (['1'] * (size-1) + ['0']) * (size-1)), 2),                           # 左下方向のマスク値
+            int(''.join((['1'] * (size-1) + ['0']) * size), 2),                                              # 左方向のマスク値
+            int(''.join((['1'] * (size-1) + ['0']) * (size-1) + ['0'] * size), 2)                            # 左上方向のマスク値
+        )
+        # 穴をあける
+        self._green_bitboard &= ~self._hole_bitboard
+        self._black_bitboard &= ~self._hole_bitboard
+        self._white_bitboard &= ~self._hole_bitboard
+        self.update_score()
+
+    def _is_invalid_size(self, size):
+        return not(MIN_BOARD_SIZE <= size <= MAX_BOARD_SIZE and size % 2 == 0)
+
+    def __str__(self):
+        header = '   ' + ' '.join([chr(97 + i) for i in range(8)]) + '\n'
+        board = [['□' for _ in range(8)] for _ in range(8)]
+        mask = 1 << 63
+        for y in range(8):
+            for x in range(8):
+                if self._hole_bitboard & mask:
+                    board[y][x] = '　'
+                elif self._black_bitboard & mask:
+                    board[y][x] = '〇'
+                elif self._white_bitboard & mask:
+                    board[y][x] = '●'
+                elif self._green_bitboard & mask:
+                    board[y][x] = '◎'
+                mask >>= 1
+        body = ''
+        for num, row in enumerate(board, 1):
+            body += f'{num:2d}' + ''.join([value for value in row]) + '\n'
+        return header + body
+
+    def get_legal_moves(self, str color):
+        return _get_legal_moves_size8_64bit(color, self._black_bitboard, self._white_bitboard, self._hole_bitboard)
+
+    def get_legal_moves_bits(self, str color):
+        return _get_legal_moves_bits(color == 'black', self._black_bitboard, self._white_bitboard, self._hole_bitboard)
+
+    def get_flippable_discs(self, str color, x, y):
+        return _get_flippable_discs_size8_64bit(color == 'black', self._black_bitboard, self._white_bitboard, x, y)
+
+    def put_disc(self, str color, x, y):
+        return _put_disc_board_size8_64bit(self, color == 'black', x, y)
+
+    def update_score(self):
+        self._black_score, self._white_score = 0, 0
+        mask = 1 << 63
+        for y in range(8):
+            for x in range(8):
+                if self._black_bitboard & mask:
+                    self._black_score += 1
+                elif self._white_bitboard & mask:
+                    self._white_score += 1
+                mask >>= 1
+
+    def get_board_info(self):
+        return _get_board_info_size8_64bit(self._black_bitboard, self._white_bitboard)
+
+    def get_board_line_info(self, player, black='*', white='O', hole='_', empty='-'):
+        board_line_info = ''
+        # board
+        size = self.size
+        mask = 1 << (size * size - 1)
+        for y in range(size):
+            for x in range(size):
+                if self._black_bitboard & mask:
+                    board_line_info += black
+                elif self._white_bitboard & mask:
+                    board_line_info += white
+                elif self._hole_bitboard & mask:
+                    board_line_info += hole
+                else:
+                    board_line_info += empty
+                mask >>= 1
+        # player
+        if player == 'black':
+            board_line_info += black
+        elif player == 'white':
+            board_line_info += white
+        else:
+            board_line_info += empty
+        return board_line_info
+
+    def get_bit_count(self, bits):
+        return _popcount(bits)
+
+    def get_bitboard_info(self):
+        return self._black_bitboard, self._white_bitboard, self._hole_bitboard
+
+    def undo(self):
+        (self._black_bitboard, self._white_bitboard, self._black_score, self._white_score) = self.prev.pop()
+
+    def get_remain(self):
+        size = self.size
+        mask = 1 << (size * size - 1)
+        remain = size * size
+        hole = self._hole_bitboard
+        green = self._green_bitboard
+        black = self._black_bitboard
+        white = self._white_bitboard
+        not_blank = hole | green | black | white
+        return remain - self.get_bit_count(not_blank)

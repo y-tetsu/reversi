@@ -5,6 +5,7 @@ import unittest
 
 from reversi.board import Board
 from reversi.strategies import Table
+import reversi.strategies.TableMethods as TableMethods
 
 
 class TestTable(unittest.TestCase):
@@ -145,9 +146,10 @@ class TestTable(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR'] = 'RAISE'
-        importlib.reload(reversi.strategies.TableMethods)
-        self.assertTrue(reversi.strategies.TableMethods.SLOW_MODE)
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
+        importlib.reload(TableMethods)
+        self.assertTrue(TableMethods.SLOW_MODE)
         # -------------------------------
 
         # size8
@@ -163,7 +165,8 @@ class TestTable(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_TABLEMETHODS_IMPORT_ERROR']
-        importlib.reload(reversi.strategies.TableMethods)
-        self.assertFalse(reversi.strategies.TableMethods.SLOW_MODE)
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
+        importlib.reload(TableMethods)
+        self.assertFalse(TableMethods.SLOW_MODE)
         # -------------------------------

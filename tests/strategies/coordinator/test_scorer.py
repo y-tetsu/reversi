@@ -340,7 +340,8 @@ class TestScorer(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_SCORERMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.coordinator.ScorerMethods)
         self.assertTrue(reversi.strategies.coordinator.ScorerMethods.SLOW_MODE)
         # -------------------------------
@@ -391,7 +392,8 @@ class TestScorer(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_SCORERMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.coordinator.ScorerMethods)
         self.assertFalse(reversi.strategies.coordinator.ScorerMethods.SLOW_MODE)
         # -------------------------------

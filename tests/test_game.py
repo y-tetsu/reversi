@@ -5,7 +5,8 @@ import unittest
 from test.support import captured_stdout
 
 from reversi.game import Game
-from reversi.board import Board, PyListBoard, PyBitBoard, BitBoardMethods
+from reversi.board import Board, PyListBoard, PyBitBoard
+from reversi.cy.ReversiMethods import CythonBitBoard
 from reversi.player import Player
 from reversi.display import NoneDisplay
 from reversi.strategies.common import AbstractStrategy
@@ -28,7 +29,7 @@ class TestGame(unittest.TestCase):
         game = Game(black, white)
         self.assertIsInstance(game.black_player.strategy, Black)
         self.assertIsInstance(game.white_player.strategy, White)
-        self.assertIsInstance(game.board, BitBoardMethods.CythonBitBoard)
+        self.assertIsInstance(game.board, CythonBitBoard)
         self.assertEqual(game.players, [black, white])
         self.assertEqual(game.black_player, game.players[0])
         self.assertEqual(game.white_player, game.players[1])

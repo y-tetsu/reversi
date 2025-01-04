@@ -79,7 +79,8 @@ class TestMonteCarlo(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_MONTECARLOMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.MonteCarloMethods)
         self.assertTrue(reversi.strategies.MonteCarloMethods.SLOW_MODE)
         self.assertTrue(reversi.strategies.MonteCarloMethods.MONTECARLO_SIZE8_64BIT_ERROR)
@@ -96,21 +97,22 @@ class TestMonteCarlo(unittest.TestCase):
         key = montecarlo.__class__.__name__ + str(os.getpid())
         print()
         print(key)
-        print(' count(120)  :', Measure.count[key])
+        print(' count(30)   :', Measure.count[key])
         print(' min         :', Measure.elp_time[key]['min'], '(s)')
         print(' max         :', Measure.elp_time[key]['max'], '(s)')
         print(' ave         :', Measure.elp_time[key]['ave'], '(s)')
 
-        montecarlo = MonteCarlo(count=100, by_move=False)
+        montecarlo = MonteCarlo(count=20, by_move=False)
         key = montecarlo.__class__.__name__ + str(os.getpid())
         Measure.count[key] = 0
         montecarlo.next_move('white', board)
         print()
-        print(' not_by_move(count=100) :', Measure.count[key])
+        print(' not_by_move(count=20) :', Measure.count[key])
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_MONTECARLOMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.MonteCarloMethods)
         self.assertFalse(reversi.strategies.MonteCarloMethods.SLOW_MODE)
         self.assertFalse(reversi.strategies.MonteCarloMethods.MONTECARLO_SIZE8_64BIT_ERROR)

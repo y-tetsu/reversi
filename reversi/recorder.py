@@ -1,9 +1,6 @@
 """Recorder
 """
 
-from reversi import BitBoard, PyListBoard, Move, LOWER, UPPER
-from reversi import C as c
-
 
 class Recorder:
     """
@@ -19,6 +16,7 @@ class Recorder:
         return self.record
 
     def get_record(self, board):
+        from reversi import PyListBoard
         if isinstance(board, PyListBoard):
             record = self.get_record_for_listboard(board)
         else:
@@ -26,6 +24,8 @@ class Recorder:
         return record
 
     def get_record_for_listboard(self, board):
+        from reversi import Move, UPPER, LOWER
+        from reversi import C as c
         record = []
         for i in board.prev:
             case = UPPER if i['color'] == c.black else LOWER
@@ -37,6 +37,7 @@ class Recorder:
         return self.get_record_by_custom(board.size, board._black_bitboard, board._white_bitboard, board.prev)
 
     def get_record_by_custom(self, size, last_bb, last_wb, prev):
+        from reversi import Move, UPPER, LOWER
         record = []
         for index, (board_b, board_w, score_b, _) in enumerate(prev):
             next_board_b = prev[index+1][0] if index < len(prev) - 1 else last_bb
@@ -68,6 +69,8 @@ class Recorder:
         return -1, -1
 
     def play(self, record=None, board=None, show_moves=True, show_result=True):
+        from reversi import BitBoard, Move
+        from reversi import C as c
         if record is None:
             record = self.record
         else:

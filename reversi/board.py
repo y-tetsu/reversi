@@ -7,6 +7,7 @@ from collections import namedtuple
 
 from reversi.color import C as c
 from reversi.disc import D as d
+import reversi.cy as cy
 import reversi.BitBoardMethods as BitBoardMethods
 
 
@@ -72,8 +73,8 @@ def Board(size=8, hole=0x0, ini_black=None, ini_white=None, kind='BitBoard'):
 
 
 def BitBoard(size=8, hole=0x0, ini_black=None, ini_white=None):
-    if size == 8 and sys.maxsize == MAXSIZE64 and not BitBoardMethods.CYTHON:
-        return BitBoardMethods.CythonBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
+    if size == 8 and sys.maxsize == MAXSIZE64 and cy.IMPORTED:
+        return cy.ReversiMethods.CythonBitBoard(hole=hole, ini_black=ini_black, ini_white=ini_white)
     return PyBitBoard(size, hole=hole, ini_black=ini_black, ini_white=ini_white)
 
 

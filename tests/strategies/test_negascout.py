@@ -192,7 +192,8 @@ class TestNegaScout(unittest.TestCase):
 
         # -------------------------------
         # switch environ and reload module
-        os.environ['FORCE_NEGASCOUTMETHODS_IMPORT_ERROR'] = 'RAISE'
+        os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR'] = 'RAISE'
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.NegaScoutMethods)
         self.assertTrue(reversi.strategies.NegaScoutMethods.SLOW_MODE)
         self.assertTrue(reversi.strategies.NegaScoutMethods.NEGASCOUT_SIZE8_64BIT_ERROR)
@@ -279,7 +280,8 @@ class TestNegaScout(unittest.TestCase):
 
         # -------------------------------
         # recover environment and reload module
-        del os.environ['FORCE_NEGASCOUTMETHODS_IMPORT_ERROR']
+        del os.environ['FORCE_CYTHONMETHODS_IMPORT_ERROR']
+        importlib.reload(reversi.cy)
         importlib.reload(reversi.strategies.NegaScoutMethods)
         self.assertFalse(reversi.strategies.NegaScoutMethods.SLOW_MODE)
         self.assertFalse(reversi.strategies.NegaScoutMethods.NEGASCOUT_SIZE8_64BIT_ERROR)
