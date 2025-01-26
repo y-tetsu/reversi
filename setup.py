@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='reversi',
-    version='0.0.56',
+    version='0.0.57',
     license='MIT License',
     install_requires=[
         'cython',
@@ -14,6 +14,7 @@ setup(
     packages=[
         'reversi',
         'reversi.BitBoardMethods',
+        'reversi.cy',
         'reversi.strategies',
         'reversi.strategies.common',
         'reversi.strategies.coordinator',
