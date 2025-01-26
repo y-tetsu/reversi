@@ -96,21 +96,21 @@
 1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールして下さい。<br>
 2. 下記を実行して**reversi**をインストールして下さい。
 ```
-$ pip install git+https://github.com/y-tetsu/reversi
+pip install git+https://github.com/y-tetsu/reversi
 ```
 
 
 ## アンインストール方法
 **reversi**をアンインストールする場合は、下記を実行して下さい。
 ```
-$ pip uninstall reversi
+pip uninstall reversi
 ```
 
 
 ## サンプル
 **reversi**をインストール後、任意のフォルダで下記コマンドを実行すると、サンプルをコピーできます。
 ```
-$ install_reversi_examples
+install_reversi_examples
 ```
 
 コピーされるサンプルは下記のとおりです。
@@ -126,19 +126,64 @@ $ install_reversi_examples
 - [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
 - [10_variant_board_solver.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_variant_board_solver.py) - 変則ボードの解析ツール
 
-サンプルの実行方法はそれぞれ下記のとおりです。
+
+以下でフォルダ移動後に、各サンプルを実行してください。
+
 ```
-$ cd reversi_examples
-$ python 01_tkinter_app.py
-$ python 02_console_app.py
-$ 03_create_exe.bat
-$ python 04_reversi_simulator.py
-$ python 05_manual_strategy.py
-$ python 06_table_strategy.py
-$ python 07_minmax_strategy.py
-$ python 08_alphabeta_strategy.py
-$ python 09_genetic_algorithm.py
-$ python 10_variant_board_solver.py
+cd reversi_examples
+```
+
+### サンプル01
+```
+python 01_tkinter_app.py
+```
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="250px">
+
+### サンプル02
+```
+python 02_console_app.py
+```
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo5.gif" width="250px">
+
+### サンプル03
+```
+03_create_exe.bat
+```
+### サンプル04
+```
+python 04_reversi_simulator.py
+```
+
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="250px">
+
+### サンプル05
+```
+python 05_manual_strategy.py
+```
+
+### サンプル06
+```
+python 06_table_strategy.py
+```
+
+### サンプル07
+```
+python 07_minmax_strategy.py
+```
+
+### サンプル08
+```
+python 08_alphabeta_strategy.py
+```
+
+### サンプル09
+```
+python 09_genetic_algorithm.py
+```
+
+### サンプル10
+```
+python 10_variant_board_solver.py
 ```
 
 
@@ -1624,7 +1669,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 
 インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
 ```
-$ python --version
+python --version
 Python 3.7.6
 ```
 
@@ -1632,7 +1677,7 @@ Python 3.7.6
 **reversi**をPythonから実行するためにはいくつかの外部パッケージが必要となります。<br>
 正しくインストールできるようにするために下記を実行してpipをアップデートして下さい。<br>
 ```
-$ pip install --upgrade pip
+pip install --upgrade pip
  :
 Successfully installed pip-20.0.2
 ```
@@ -1642,7 +1687,7 @@ Successfully installed pip-20.0.2
 **reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
 事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいて下さい。<br>
 ```
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行して下さい。
 
@@ -1659,7 +1704,7 @@ $ pip install -r requirements.txt
 **reversi**を実行するためにはcythonという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。
 ```
-$ pip install cython
+pip install cython
  :
 Successfully installed cython-0.29.15
 ```
@@ -1668,14 +1713,14 @@ Successfully installed cython-0.29.15
 **reversi**のexeを生成するためにはpyinstallerという外部パッケージが必要となります。<br>
 下記を実行してインストールして下さい。不要な場合は省略しても構いません。
 ```
-$ pip install pyinstaller
+pip install pyinstaller
  :
 Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-3.6 pywin32-ctypes-0.2.0
 ```
 
 うまくいかない場合は下記を実行後に、再度上記を試してみて下さい。
 ```
-$ pip install wheel
+pip install wheel
 ```
 
 インストール完了後、pyinstallerを実行できるようにするために環境変数に下記を追加して下さい。
