@@ -86,7 +86,7 @@
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(MacOSは3.11)以上<br>
+- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(Ubuntuは3.8、MacOSは3.11)以上<br>
     - cython 0.29.15<br>
     - pyinstaller 3.6<br>
 - [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(Python3.7以外のWindowsの場合)<br>
