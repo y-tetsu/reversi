@@ -57,6 +57,7 @@
     - [プレイヤーを変更する](#プレイヤーを変更する)
     - [手を打つ](#手を打つ)
 - [インストールがうまくいかない場合](#インストールがうまくいかない場合)
+- [Cythonモジュールのビルド方法](#Cythonモジュールのビルド方法)
 - [参考書籍](#参考書籍)
 - [参考サイト](#参考サイト)
 - [脚注](#脚注)
@@ -86,7 +87,6 @@
 - Python(Windowsは3.7、Ubuntuは3.8、MacOSは3.11)以上<br>
     - cython<br>
     - pyinstaller<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(Windowsの場合)<br>
 
 
 ## インストール方法
@@ -1733,6 +1733,35 @@ pip install wheel
 ```
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
+
+
+---
+## Cythonモジュールのビルド方法
+**reversi**では処理の高速化のため、ボードやAIの処理ロジックにCythonを利用しています。**Windowsの環境**でこれらの処理を変更して公開したい場合は、ビルドの実行が必要となります。<br>
+
+本環境ではMicrosoft Visual C++を使用しています。同様の環境を使用する場合は事前に以下をインストールしておいてください。
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+### 1. フォルダの移動
+下記を実行して、Cythonモジュールが置いてあるフォルダへ移動して下さい。
+```
+cd reversi\cy
+```
+
+### 2. ビルドの実行
+下記を実行して、Cythonモジュールの`ReversiMethods.pyx`をビルドして下さい。
+```
+build.bat
+```
+
+上記実行後に、再ビルドが行われます。pydファイルが更新されればOKです。コミットしておいて下さい。
+
+なお、任意のPythonバージョン向けにビルドしたい場合は以下を実行してください。
+```
+py -3.x setup.py build_ext --inplace
+```
+`x`は任意のバージョンを指定して下さい。
+
 
 ---
 ## 参考書籍

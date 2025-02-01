@@ -51,6 +51,7 @@ You can easily program reversi AI and create applications.<br>
     - [Change Player](#Change-Player)
     - [Make a move](#Make-a-move)
 - [If the installation does not work](#If-the-installation-does-not-work)
+- [How to build Cython module](How-to-build-Cython-module)
 - [Footnotes](#Footnotes)
 - [License](#License)
 
@@ -78,14 +79,13 @@ This one allows you to play a game of reversi for free immediately after downloa
 - Display size 1366x768
 - Processor 1.6GHz
 - Memory 4.00GB
-- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(3.11 for MacOS)<br>
-    - cython 0.29.15<br>
-    - pyinstaller 3.6<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(When developing on Windows)<br>
+- Python<br>
+    - cython<br>
+    - pyinstaller<br>
 
 
 ## How to Install
-1. install [Python 3.7.6](https://www.python.org/downloads/release/python-376/) or higher<br>
+1. install [Python](https://www.python.org/downloads/)<br>
 2. install **reversi**(run the following)
 ```
 $ pip install git+https://github.com/y-tetsu/reversi
@@ -625,6 +625,39 @@ The above execution produces the following output.<br>
 f5
 F6
 ```
+
+
+---
+## How to build Cython module
+For speeding up processing, **reversi** uses Cython for the processing logic of the board and AI. if you want to modify these processes and publish them in a **Windows environment**, you will need to run the build.
+
+This environment uses Microsoft Visual C++. If you wish to use a similar environment, please install the following beforehand.
+
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+### 1. change the folder
+Run the following to navigate to the folder where the Cython module is located.
+```
+cd reversi\cy
+```
+
+### 2. execute build
+Build the Cython module ``ReversiMethods.pyx`` by executing the following.
+
+
+```
+build.bat
+```
+
+After the above, a rebuild will be performed, and the pyd file should be updated. If the pyd-file is updated, it is OK.
+
+If you want to build for any Python version, run the following.
+
+```
+py -3.x setup.py build_ext --inplace
+```
+The `x` can be any version.
+
 
 ---
 ## Footnotes
