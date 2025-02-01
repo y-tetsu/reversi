@@ -84,7 +84,7 @@
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- Python(Windowsは3.7、Ubuntuは3.8、MacOSは3.11)以上<br>
+- Python3.12まで(Windows:3.7～/Ubuntu:3.8～/MacOS:3.11～)<br>
     - cython<br>
     - pyinstaller<br>
 
