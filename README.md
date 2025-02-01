@@ -93,7 +93,7 @@
 
 
 ## インストール方法
-1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールして下さい。<br>
+1. [Python](https://www.python.org/downloads/)をインストールして下さい。<br>
 2. 下記を実行して**reversi**をインストールして下さい。
 ```
 pip install git+https://github.com/y-tetsu/reversi

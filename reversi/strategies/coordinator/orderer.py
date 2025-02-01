@@ -72,7 +72,7 @@ class Orderer_P(Orderer):
             opponent_p += [(move, board.get_bit_count(board.get_legal_moves_bits(opponent)))]
             board.undo()
 
-        return [i[0] for i in sorted(opponent_p, key=lambda x:x[1])]
+        return [i[0] for i in sorted(opponent_p, key=lambda x: x[1])]
 
 
 class Orderer_BC(AbstractOrderer):

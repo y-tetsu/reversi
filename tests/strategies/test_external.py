@@ -178,7 +178,7 @@ if __name__ == '__main__':
         self.assertEqual(move, (self.board1.size//2-1, self.board1.size//2-1))
 
     def test_external_next_move_cmd_illegal_finish_error(self):
-        cmd = 'py -3.7 ./exit1.py' if self.osname == 'nt' else 'python ./exit1.py'
+        cmd = 'py ./exit1.py' if self.osname == 'nt' else 'python ./exit1.py'
         external = External(cmd)
         external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
@@ -191,7 +191,7 @@ if __name__ == '__main__':
         self.assertEqual(move, (self.board1.size//2-1, self.board1.size//2-1))
 
     def test_external_next_move_cmd_unexpected_output1_error(self):
-        cmd = 'py -3.7 ./unexpected1.py' if self.osname == 'nt' else 'python ./unexpected1.py'
+        cmd = 'py ./unexpected1.py' if self.osname == 'nt' else 'python ./unexpected1.py'
         external = External(cmd)
         external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         self.assertEqual(move, (self.board1.size//2-1, self.board1.size//2-1))
 
     def test_external_next_move_cmd_unexpected_output2_error(self):
-        cmd = 'py -3.7 ./unexpected2.py' if self.osname == 'nt' else 'python ./unexpected2.py'
+        cmd = 'py ./unexpected2.py' if self.osname == 'nt' else 'python ./unexpected2.py'
         external = External(cmd)
         external.err_msg = TestErrMsg()
         with captured_stdout() as stdout:
@@ -213,7 +213,7 @@ if __name__ == '__main__':
         self.assertEqual(move, (self.board1.size//2-1, self.board1.size//2-1))
 
     def test_external_next_move(self):
-        cmd = 'py -3.7 ./topleft.py' if self.osname == 'nt' else 'python ./topleft.py'
+        cmd = 'py ./topleft.py' if self.osname == 'nt' else 'python ./topleft.py'
         external = External(cmd)
 
         self.assertEqual(external.next_move('white', self.board2), (2, 1))
