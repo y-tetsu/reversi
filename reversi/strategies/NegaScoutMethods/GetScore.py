@@ -87,7 +87,7 @@ def _get_score(func, negascout, color, board, alpha, beta, depth, pid):
                 board.undo()
             mask >>= 1
 
-    next_moves = [i[0] for i in sorted(tmp, reverse=True, key=lambda x:x[1])]
+    next_moves = [i[0] for i in sorted(tmp, reverse=True, key=lambda x: x[1])]
 
     # NegaScout法
     tmp, null_window, index = None, beta, 0

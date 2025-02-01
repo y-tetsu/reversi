@@ -57,6 +57,7 @@
     - [プレイヤーを変更する](#プレイヤーを変更する)
     - [手を打つ](#手を打つ)
 - [インストールがうまくいかない場合](#インストールがうまくいかない場合)
+- [Cythonモジュールのビルド方法](#Cythonモジュールのビルド方法)
 - [参考書籍](#参考書籍)
 - [参考サイト](#参考サイト)
 - [脚注](#脚注)
@@ -76,9 +77,6 @@
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
 
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo5.gif" width="550px">
-
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">
 
 
 ## 動作環境
@@ -86,59 +84,112 @@
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- [Python 3.7.6](https://www.python.org/downloads/release/python-376/)(MacOSは3.11)以上<br>
-    - cython 0.29.15<br>
-    - pyinstaller 3.6<br>
-- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)(Python3.7以外のWindowsの場合)<br>
+- Python(Windowsは3.7、Ubuntuは3.8、MacOSは3.11)以上<br>
+    - cython<br>
+    - pyinstaller<br>
 
 
 ## インストール方法
-1. [Python 3.7.6](https://www.python.org/downloads/release/python-376/)をインストールして下さい。<br>
+1. [Python](https://www.python.org/downloads/)をインストールして下さい。<br>
 2. 下記を実行して**reversi**をインストールして下さい。
 ```
-$ pip install git+https://github.com/y-tetsu/reversi
+pip install git+https://github.com/y-tetsu/reversi
 ```
 
 
 ## アンインストール方法
 **reversi**をアンインストールする場合は、下記を実行して下さい。
 ```
-$ pip uninstall reversi
+pip uninstall reversi
 ```
 
 
 ## サンプル
 **reversi**をインストール後、任意のフォルダで下記コマンドを実行すると、サンプルをコピーできます。
 ```
-$ install_reversi_examples
+install_reversi_examples
 ```
 
-コピーされるサンプルは下記のとおりです。
+以下でフォルダ移動後に、各サンプルを実行してください。
 
-- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) - tkinterを使ったGUIアプリケーション([#遊び方](#tkinterアプリケーションの遊び方))
-- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) - コンソール上で遊ぶアプリケーション([#遊び方](#コンソールアプリケーションの遊び方))
-- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) - GUIアプリケーションのexeファイルを作成するバッチファイル
-- [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) - AI同士を対戦させて結果を表示するシミュレータ
-- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) - 自作したAIを実装するサンプル
-- [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) - テーブルによる重みづけで手を選ぶAIを実装するサンプル
-- [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) - MinMax法で手を選ぶAIを実装するサンプル
-- [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - AlphaBeta法で手を選ぶAIを実装するサンプル
-- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
-- [10_variant_board_solver.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_variant_board_solver.py) - 変則ボードの解析ツール
-
-サンプルの実行方法はそれぞれ下記のとおりです。
 ```
-$ cd reversi_examples
-$ python 01_tkinter_app.py
-$ python 02_console_app.py
-$ 03_create_exe.bat
-$ python 04_reversi_simulator.py
-$ python 05_manual_strategy.py
-$ python 06_table_strategy.py
-$ python 07_minmax_strategy.py
-$ python 08_alphabeta_strategy.py
-$ python 09_genetic_algorithm.py
-$ python 10_variant_board_solver.py
+cd reversi_examples
+```
+
+コピーされるサンプルと実行方法は下記のとおりです。
+
+### サンプル01
+- [01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py) : tkinterを使ったGUIアプリケーション([#遊び方](#tkinterアプリケーションの遊び方))
+
+```
+python 01_tkinter_app.py
+```
+
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="250px">
+
+### サンプル02
+- [02_console_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/02_console_app.py) : コンソール上で遊ぶアプリケーション([#遊び方](#コンソールアプリケーションの遊び方))
+
+```
+python 02_console_app.py
+```
+
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo5.gif" width="250px">
+
+### サンプル03
+- [03_create_exe.bat](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/03_create_exe.bat) : GUIアプリケーションのexeファイルを作成するバッチファイル
+
+```
+03_create_exe.bat
+```
+### サンプル04
+- [04_reversi_simulator.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/04_reversi_simulator.py) : AI同士を対戦させて結果を表示するシミュレータ
+
+```
+python 04_reversi_simulator.py
+```
+
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="250px">
+
+### サンプル05
+- [05_manual_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/05_manual_strategy.py) : 自作したAIを実装するサンプル
+
+```
+python 05_manual_strategy.py
+```
+
+### サンプル06
+- [06_table_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/06_table_strategy.py) : テーブルによる重みづけで手を選ぶAIを実装するサンプル
+
+```
+python 06_table_strategy.py
+```
+
+### サンプル07
+- [07_minmax_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/07_minmax_strategy.py) : MinMax法で手を選ぶAIを実装するサンプル
+
+```
+python 07_minmax_strategy.py
+```
+
+### サンプル08
+- [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) : AlphaBeta法で手を選ぶAIを実装するサンプル
+
+```
+python 08_alphabeta_strategy.py
+```
+
+### サンプル09
+- [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) : 遺伝的アルゴリズムを使ってテーブルの重みを求めるサンプル
+
+```
+python 09_genetic_algorithm.py
+```
+
+### サンプル10
+- [10_variant_board_solver.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_variant_board_solver.py) : 変則ボードの解析ツール
+```
+python 10_variant_board_solver.py
 ```
 
 
@@ -1449,7 +1500,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 
  |名前|特徴|難易度|登録ファイル|開発言語|動作確認環境|
  |:---|:---|:---:|:---:|:---:|:---|
- |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Windows10 64bit<br>[Python 3.7.6](https://www.python.org/downloads/release/python-376/) |
+ |TopLeft |打てる手の中から一番上の左端を選びます。 | ★ | topleft.json | Python |Windows10 64bit<br>[Python](https://www.python.org/downloads/) |
  |BottomRight |打てる手の中から一番下の右端を選びます。 | ★ | bottomright.json | Perl |Windows10 64bit<br>[Strawberry Perl 5.30.1.1](http://strawberryperl.com/) |
  |RandomCorner |角が取れる時は必ず取ります。それ以外はランダムに手を選びます。 | ★ | randomcorner.json | VBScript |Windows10 64bit |
 
@@ -1527,7 +1578,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 ```
 {
     "name": "TopLeft",
-    "cmd": "py -3.7 ./extra/python/topleft/topleft.py",
+    "cmd": "py ./extra/python/topleft/topleft.py",
     "timeouttime": 60
 }
 ```
@@ -1619,8 +1670,8 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
 下記の手順(1～5)に従って環境を準備して下さい。
 
 ### 1. Pythonのインストール
-下記よりPythonの64bit版インストーラのexeをダウンロード後、インストールして下さい。<br>
-[Python 3.7.6](https://www.python.org/downloads/release/python-376/)<br>
+下記よりPythonの64bit版インストーラのexeをダウンロード後、インストールして下さい。(Python3.7.6の例)<br>
+[Python3.7.6](https://www.python.org/downloads/release/python-376/)<br>
 
 インストール後、コマンドプロンプトを立ち上げて下記の'$'以降を入力してEnterを押し、同じ結果が出ればOKです。
 ```
@@ -1642,7 +1693,7 @@ Successfully installed pip-20.0.2
 **reversi**の実行に必要なPythonのパッケージのインストールは下記で一括して行えます。<br>
 事前にコマンドプロンプトにてreversiフォルダ以下に移動しておいて下さい。<br>
 ```
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 もしうまくいかない場合は、以降の"(パッケージインストールの補足)"を個別に実行して下さい。
 
@@ -1675,13 +1726,41 @@ Successfully installed altgraph-0.17 future-0.18.2 pefile-2019.4.18 pyinstaller-
 
 うまくいかない場合は下記を実行後に、再度上記を試してみて下さい。
 ```
-$ pip install wheel
+pip install wheel
 ```
 
 インストール完了後、pyinstallerを実行できるようにするために環境変数に下記を追加して下さい。
 ```
 C:\Users\{あなたのユーザ名}\AppData\Local\Programs\Python\Python37\Scripts
 ```
+
+
+---
+## Cythonモジュールのビルド方法
+**reversi**では処理の高速化のため、ボードやAIの処理ロジックにCythonを利用しています。**Windowsの環境**でこれらの処理を変更して公開したい場合は、ビルドの実行が必要となります。<br>
+
+本環境ではMicrosoft Visual C++を使用しています。同様の環境を使用する場合は事前に以下をインストールしておいてください。
+- [Microsoft Visual C++ 2019](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=button+cta&utm_content=download+vs2019+rc)<br>
+
+### 1. フォルダの移動
+下記を実行して、Cythonモジュールが置いてあるフォルダへ移動して下さい。
+```
+cd reversi\cy
+```
+
+### 2. ビルドの実行
+下記を実行して、Cythonモジュールの`ReversiMethods.pyx`をビルドして下さい。
+```
+build.bat
+```
+
+上記実行後に、再ビルドが行われます。pydファイルが更新されればOKです。コミットしておいて下さい。
+
+なお、任意のPythonバージョン向けにビルドしたい場合は以下を実行してください。
+```
+py -3.x setup.py build_ext --inplace
+```
+`x`は任意のバージョンを指定して下さい。
 
 
 ---
