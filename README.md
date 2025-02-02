@@ -1,7 +1,4 @@
-<p align="center">
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_v0_0_15.png" width="500px">
-</p>
-
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_icon_512x512.png" width="50px">
 
 # reversi
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.en.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.md)]<br>
@@ -75,8 +72,9 @@
 また、本ライブラリを使って作成した[Windows版アプリケーション](#tkinterアプリケーションの遊び方)も用意しています。<br>
 こちらはダウンロード後、インストール不要で、すぐにリバーシのゲームを無料でプレイできます。
 
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
-
+<p align="center">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_v0_0_15.png" width="500px">
+</p>
 
 
 ## 動作環境

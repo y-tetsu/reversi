@@ -6,6 +6,8 @@ from test.support import captured_stdin, captured_stdout
 import os
 import re
 from pathlib import Path
+import tkinter as tk
+import importlib
 
 from reversi import Reversi, Reversic, Window, ErrorMessage, V
 from reversi.strategies import AbstractStrategy, WindowUserInput, ConsoleUserInput
@@ -22,6 +24,7 @@ class TestApp(unittest.TestCase):
     tmp = None
 
     def setUp(self):
+        importlib.reload(tk)
         with open('./not_json.json', 'w') as wf:
             wf.write('This is not a json file.\n')
 
@@ -180,6 +183,7 @@ class TestApp(unittest.TestCase):
         app.window = TestWindow()
         app._load_extra_file = _load_extra_file
         with captured_stdout() as stdout:
+            importlib.reload(tk)
             app._Reversi__init()
 
         lines = stdout.getvalue().splitlines()
@@ -195,6 +199,7 @@ class TestApp(unittest.TestCase):
         app.window.extra_file = 'extra_file'
         app._load_extra_file = _load_extra_file
         with captured_stdout() as stdout:
+            importlib.reload(tk)
             app._Reversi__init()
 
         lines = stdout.getvalue().splitlines()
