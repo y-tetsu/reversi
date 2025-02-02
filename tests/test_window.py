@@ -4,6 +4,7 @@
 import unittest
 import tkinter as tk
 import threading
+import importlib
 
 import reversi
 from reversi import Window
@@ -35,6 +36,9 @@ class TestCanvas:
 class TestWindow(unittest.TestCase):
     """window
     """
+    def setUp(self):
+        importlib.reload(tk)
+
     def test_window_const(self):
         self.assertEqual('reversi', reversi.window.WINDOW_TITLE)
         self.assertEqual(1320, reversi.window.WINDOW_WIDTH)

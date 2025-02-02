@@ -1,6 +1,4 @@
-<p align="center">
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_v0_0_15.png" width="500px">
-</p>
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_icon_512x512.png" width="50px">
 
 # reversi
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.en.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.md)]<br>
