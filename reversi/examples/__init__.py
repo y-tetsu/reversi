@@ -17,7 +17,7 @@ def install():
     os.makedirs(os.path.join(dst_dir, "extra/vbscript/randomcorner"))
     os.makedirs(os.path.join(dst_dir, "extra/sample_input"))
 
-    patterns = ["[0-5]*.py", "*.bat", "*.json", "extra/*.json", "extra/perl/bottomright/*.pl", "extra/python/topleft/*.py", "extra/vbscript/randomcorner/*.vbs", "extra/sample_input/*.txt"]  # noqa: E501
+    patterns = ["[0-5]*.py", "*.bat", "*.json", "*.ico", "extra/*.json", "extra/perl/bottomright/*.pl", "extra/python/topleft/*.py", "extra/vbscript/randomcorner/*.vbs", "extra/sample_input/*.txt"]  # noqa: E501
 
     for pattern in patterns:
         srcs = glob.glob(os.path.join(src_dir, pattern))
