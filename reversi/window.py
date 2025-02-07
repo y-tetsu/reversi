@@ -21,25 +21,6 @@ CANVAS_MERGINE = 4                              # キャンバスの余白
 CANVAS_WIDTH = WINDOW_WIDTH - CANVAS_MERGINE    # キャンバスの幅
 CANVAS_HEIGHT = WINDOW_HEIGHT - CANVAS_MERGINE  # キャンバスの高さ
 
-COLOR_BACKGROUND = 'slategray'    # 背景
-COLOR_BOARD = 'slategray'         # 盤面
-COLOR_PLAYER1_LABEL = 'black'     # 先手表示
-COLOR_PLAYER2_LABEL = 'white'     # 後手表示
-COLOR_PLAYER1_DISC = 'black'      # 先手石
-COLOR_PLAYER2_DISC = 'white'      # 後手石
-COLOR_CPUTIME_LABEL = 'white'     # CPU_TIMEラベル
-COLOR_ASSIST_LABEL = 'white'      # ASSISTラベル
-COLOR_CELL_NUMBER = 'white'       # セル番地
-COLOR_CELL_LINE = 'white'         # セルの枠線
-COLOR_CELL_MARK = 'white'         # セルの目印
-COLOR_TURN_MESSAGE = 'lightpink'  # 手番表示
-COLOR_START_MESSAGE1 = 'gold'     # スタート表示(フォーカスなし)
-COLOR_START_MESSAGE2 = 'tomato'   # スタート表示(フォーカスあり)
-COLOR_MOVE_HIGHLIGHT1 = 'khaki2'  # 着手箇所のハイライト(フォーカスなし)
-COLOR_MOVE_HIGHLIGHT2 = 'tomato'  # 着手箇所のハイライト(フォーカスあり)
-COLOR_REC_LABEL = 'tomato'        # レコーディング表示
-COLOR_LOWSPEED_LABEL = 'tomato'   # 低速表示
-
 INFO_OFFSET_X = {  # 表示テキストのXオフセット
     'black': WINDOW_WIDTH//7,
     'white': WINDOW_WIDTH-(WINDOW_WIDTH//7),
@@ -50,13 +31,6 @@ INFO_OFFSET_Y = {  # 表示テキストのYオフセット
     'winlose': 400,
     'turn':    500,
     'move':    600,
-}
-INFO_COLOR = {  # 表示テキストの色
-    'name':    {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
-    'score':   {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
-    'winlose': {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
-    'turn':    {'black': COLOR_TURN_MESSAGE, 'white': COLOR_TURN_MESSAGE},
-    'move':    {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
 }
 INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
     'name':     32,
@@ -100,6 +74,7 @@ TURN_DISC_WAIT = 0.1                                                   # 石を�
 
 ASSIST_MENU = ['ON', 'OFF']              # 打てる場所のハイライト表示の有無
 RECORD_MENU = ['ON', 'OFF']              # 棋譜保存の有無
+THEME_MENU = ['gray']                    # カラーテーマ
 LANGUAGE_MENU = ['English', 'Japanese']  # 表示言語
 CANCEL_MENU = ['OK']                     # ゲームのキャンセル
 
@@ -126,6 +101,29 @@ CPUTIME_DIALOG_HEIGHT = 90         # 高さ
 EXTRA_DIALOG_TITLE = 'Extra'  # タイトル
 EXTRA_DIALOG_WIDTH = 700      # 幅
 EXTRA_DIALOG_HEIGHT = 90      # 高さ
+
+THEME = {
+    THEME_MENU[0]: {
+        'COLOR_BACKGROUND': 'slategray',    # 背景
+        'COLOR_BOARD': 'slategray',         # 盤面
+        'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+        'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+        'COLOR_PLAYER1_DISC': 'black',      # 先手石
+        'COLOR_PLAYER2_DISC': 'white',      # 後手石
+        'COLOR_CPUTIME_LABEL': 'white',     # CPU_TIMEラベル
+        'COLOR_ASSIST_LABEL': 'white',      # ASSISTラベル
+        'COLOR_CELL_NUMBER': 'white',       # セル番地
+        'COLOR_CELL_LINE': 'white',         # セルの枠線
+        'COLOR_CELL_MARK': 'white',         # セルの目印
+        'COLOR_TURN_MESSAGE': 'lightpink',  # 手番表示
+        'COLOR_START_MESSAGE1': 'gold',     # スタート表示(フォーカスなし)
+        'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+        'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+        'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+        'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+        'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+    },
+}
 
 TEXTS = {
     LANGUAGE_MENU[0]: {                                                                # Engulish
@@ -426,6 +424,7 @@ class Window(tk.Frame):
         self.player = {'black': black_players[0], 'white': white_players[0]}
         self.assist = ASSIST_MENU[1]
         self.record = RECORD_MENU[0]
+        self.theme = THEME_MENU[0]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.cputime = CPU_TIME
@@ -450,7 +449,7 @@ class Window(tk.Frame):
         root.configure(menu=self.menu)
 
         # キャンバスを配置
-        self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height, bg=COLOR_BACKGROUND)
+        self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height, bg=THEME[self.theme]['COLOR_BACKGROUND'])
         self.canvas.grid(row=0, column=0)
 
         # 表示サイズと位置
@@ -463,10 +462,10 @@ class Window(tk.Frame):
     def init_screen(self):
         """ゲーム画面の初期化
         """
-        self.canvas.delete('all')                                                                                                        # 全オブジェクト削除
-        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.canvas_width, self.canvas_height)  # ボード配置
-        self.info = ScreenInfo(self.canvas, self.player, self.language, self.canvas_width)                                               # 情報表示テキスト配置
-        self.start = ScreenStart(self.canvas, self.language, self.canvas_width, self.canvas_height)                                      # スタートテキスト配置
+        self.canvas.delete('all')                                                                                                                    # 全オブジェクト削除
+        self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.theme, self.canvas_width, self.canvas_height)  # ボード配置
+        self.info = ScreenInfo(self.canvas, self.player, self.theme, self.language, self.canvas_width)                                               # noqa: E501 情報表示テキスト配置
+        self.start = ScreenStart(self.canvas, self.theme, self.language, self.canvas_width, self.canvas_height)                                      # noqa: E501 スタートテキスト配置
 
         # ウィンドウサイズ変更時のイベントをバインド
         self.root.bind("<Configure>", self.on_resize)
@@ -615,6 +614,7 @@ class Menu(tk.Menu):
         self.white_player = white_players[0]
         self.assist = ASSIST_MENU[1]
         self.record = RECORD_MENU[0]
+        self.theme = THEME_MENU[0]
         self.language = LANGUAGE_MENU[0]
         self.cancel = CANCEL_MENU[0]
         self.menu_items = {}
@@ -632,6 +632,7 @@ class Menu(tk.Menu):
         self.menu_items['extra'] = EXTRA_MENU
         self.menu_items['assist'] = ASSIST_MENU
         self.menu_items['record'] = RECORD_MENU
+        self.menu_items['theme'] = THEME_MENU
         self.menu_items['language'] = LANGUAGE_MENU
         self.menu_items['cancel'] = CANCEL_MENU
         self._create_menu_items()
@@ -667,6 +668,7 @@ class Menu(tk.Menu):
 
                 self.assist = item if name == 'assist' else self.assist
                 self.record = item if name == 'record' else self.record
+                self.theme = item if name == 'theme' else self.theme
                 self.language = item if name == 'language' else self.language
                 self.cancel = item if name == 'cancel' else self.cancel
                 self.event.set()  # ウィンドウへメニューの設定変更を通知
@@ -777,11 +779,12 @@ class ExtraDialog:
 class ScreenBoard:
     """ボードの表示
     """
-    def __init__(self, canvas, size, cputime, assist, record, canvas_width=CANVAS_WIDTH, canvas_height=CANVAS_HEIGHT):
+    def __init__(self, canvas, size, cputime, assist, record, theme, canvas_width=CANVAS_WIDTH, canvas_height=CANVAS_HEIGHT):
         self.size = size
         self.cputime = cputime
         self.assist = assist
         self.record = record
+        self.theme = theme
         self.canvas = canvas
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
@@ -811,7 +814,7 @@ class ScreenBoard:
             text=cputime_text,
             font=('', CPUTIME_FONT_SIZE),
             anchor='w',
-            fill=COLOR_CPUTIME_LABEL
+            fill=THEME[self.theme]['COLOR_CPUTIME_LABEL']
         )
 
         # アシスト表示
@@ -822,7 +825,7 @@ class ScreenBoard:
             text=assist_text,
             font=('', ASSIST_FONT_SIZE),
             anchor='w',
-            fill=COLOR_ASSIST_LABEL
+            fill=THEME[self.theme]['COLOR_ASSIST_LABEL']
         )
 
         # 棋譜出力表示
@@ -833,7 +836,7 @@ class ScreenBoard:
             text=record_text,
             font=('', RECORD_FONT_SIZE),
             anchor='w',
-            fill=COLOR_REC_LABEL
+            fill=THEME[self.theme]['COLOR_REC_LABEL']
         )
 
         # 低速モードの表示
@@ -845,7 +848,7 @@ class ScreenBoard:
                 text=slowmode_text,
                 font=('', SLOWMODE_FONT_SIZE),
                 anchor='w',
-                fill=COLOR_LOWSPEED_LABEL
+                fill=THEME[self.theme]['COLOR_LOWSPEED_LABEL']
             )
 
         # ボードの描画
@@ -881,7 +884,7 @@ class ScreenBoard:
         text_append, aappend, nappend = None, self._atexts.append, self._ntexts.append
 
         # 盤面の背景を描画
-        self.canvas.create_rectangle(min_x+dwc, min_y+dhc, max_x+dwc, max_y+dhc, fill=COLOR_BOARD, outline=COLOR_BOARD, tag='board')
+        self.canvas.create_rectangle(min_x+dwc, min_y+dhc, max_x+dwc, max_y+dhc, fill=THEME[self.theme]['COLOR_BOARD'], outline=THEME[self.theme]['COLOR_BOARD'], tag='board')  # noqa: E501
 
         # マス目の描画
         for num in range(size + 1):
@@ -903,11 +906,11 @@ class ScreenBoard:
 
                 # 番地
                 if num < size:
-                    text = self.canvas.create_text(text_x+dwc, text_y+dhc, fill=COLOR_CELL_NUMBER, text=label, font=('', SQUAREHEADER_FONT_SIZE))
+                    text = self.canvas.create_text(text_x+dwc, text_y+dhc, fill=THEME[self.theme]['COLOR_CELL_NUMBER'], text=label, font=('', SQUAREHEADER_FONT_SIZE))  # noqa: E501
                     text_append(text)
 
                 # マス目の線
-                line = self.canvas.create_line(square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc, fill=COLOR_CELL_LINE)
+                line = self.canvas.create_line(square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc, fill=THEME[self.theme]['COLOR_CELL_LINE'])
                 line_append(line)
 
             # 目印の描画
@@ -917,7 +920,7 @@ class ScreenBoard:
                     for y_offset in [w * (num - 4), w * num]:
                         mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
                         mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
-                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1+dhc, mark_x2+dwc, mark_y2+dhc, tag='mark', fill=COLOR_CELL_MARK, outline=COLOR_CELL_MARK)  # noqa: E501
+                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1+dhc, mark_x2+dwc, mark_y2+dhc, tag='mark', fill=THEME[self.theme]['COLOR_CELL_MARK'], outline=THEME[self.theme]['COLOR_CELL_MARK'])  # noqa: E501
                         self._4x4circle.append(oval)
 
         # 初期位置に石を置く
@@ -937,7 +940,7 @@ class ScreenBoard:
             w = self.oval_w1 * self.area_ratio
             x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
             label = self._get_label(color, index_x, index_y)
-            disc_color = COLOR_PLAYER1_DISC if color == 'black' else COLOR_PLAYER2_DISC
+            disc_color = THEME[self.theme]['COLOR_PLAYER1_DISC'] if color == 'black' else THEME[self.theme]['COLOR_PLAYER2_DISC']
             oval = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=disc_color, outline=disc_color)
             self._discs[(label, color, index_x, index_y)] = oval
 
@@ -946,8 +949,8 @@ class ScreenBoard:
             w1, w2 = self.oval_w1 * self.area_ratio, self.oval_w2 * self.area_ratio
             label1 = self._get_label(color + '1', index_x, index_y)
             label2 = self._get_label(color + '2', index_x, index_y)
-            color1 = COLOR_PLAYER2_DISC if color == 'turnblack' else COLOR_PLAYER1_DISC
-            color2 = COLOR_PLAYER1_DISC if color == 'turnblack' else COLOR_PLAYER2_DISC
+            color1 = THEME[self.theme]['COLOR_PLAYER2_DISC'] if color == 'turnblack' else THEME[self.theme]['COLOR_PLAYER1_DISC']
+            color2 = THEME[self.theme]['COLOR_PLAYER1_DISC'] if color == 'turnblack' else THEME[self.theme]['COLOR_PLAYER2_DISC']
 
             x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
             rect1 = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
@@ -1013,9 +1016,9 @@ class ScreenBoard:
             y1 = self.square_y_ini + square_w * y - self.offset
             y2 = y1 + square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_MOVE_HIGHLIGHT1, outline=COLOR_CELL_LINE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=THEME[self.theme]['COLOR_MOVE_HIGHLIGHT1'], outline=THEME[self.theme]['COLOR_CELL_LINE'], tag='moves')  # noqa: E501
             else:
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_BACKGROUND, outline=COLOR_CELL_LINE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=THEME[self.theme]['COLOR_BACKGROUND'], outline=THEME[self.theme]['COLOR_CELL_LINE'], tag='moves')  # noqa: E501
         self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
@@ -1034,7 +1037,7 @@ class ScreenBoard:
         x2 = x1 + square_w
         y1 = self.square_y_ini + square_w * y - self.offset
         y2 = y1 + square_w
-        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_MOVE_HIGHLIGHT2, outline=COLOR_CELL_LINE, tag='move')
+        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=THEME[self.theme]['COLOR_MOVE_HIGHLIGHT2'], outline=THEME[self.theme]['COLOR_CELL_LINE'], tag='move')  # noqa: E501
         self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
@@ -1065,7 +1068,7 @@ class ScreenBoard:
         """
         def _enter(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_MOVE_HIGHLIGHT2)
+                self.canvas.itemconfigure(square, fill=THEME[self.theme]['COLOR_MOVE_HIGHLIGHT2'])
         return _enter
 
     def _leave_selectable_moves(self, square):
@@ -1073,7 +1076,7 @@ class ScreenBoard:
         """
         def _leave(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_MOVE_HIGHLIGHT1)
+                self.canvas.itemconfigure(square, fill=THEME[self.theme]['COLOR_MOVE_HIGHLIGHT1'])
         return _leave
 
     def _press_selectable_moves(self, x, y):
@@ -1089,12 +1092,23 @@ class ScreenBoard:
 class ScreenInfo:
     """情報表示テキスト
     """
-    def __init__(self, canvas, player, language, canvas_width=CANVAS_WIDTH):
+    def __init__(self, canvas, player, theme, language, canvas_width=CANVAS_WIDTH):
         self.canvas = canvas
         self.player = player
+        self.theme = theme
         self.language = language
         self.canvas_width = canvas_width
         self.text = {}
+
+        # 表示テキストの色
+        t = THEME[self.theme]
+        self.info_color = {
+            'name':    {'black': t['COLOR_PLAYER1_LABEL'],  'white': t['COLOR_PLAYER2_LABEL']},
+            'score':   {'black': t['COLOR_PLAYER1_LABEL'],  'white': t['COLOR_PLAYER2_LABEL']},
+            'winlose': {'black': t['COLOR_PLAYER1_LABEL'],  'white': t['COLOR_PLAYER2_LABEL']},
+            'turn':    {'black': t['COLOR_TURN_MESSAGE'], 'white': t['COLOR_TURN_MESSAGE']},
+            'move':    {'black': t['COLOR_PLAYER1_LABEL'],  'white': t['COLOR_PLAYER2_LABEL']},
+        }
 
         # テキスト作成
         for name in INFO_OFFSET_Y.keys():
@@ -1113,7 +1127,7 @@ class ScreenInfo:
             INFO_OFFSET_Y[name],
             text=DEFAULT_INFO_TEXT[name][color](self),
             font=('', INFO_FONT_SIZE[name]),
-            fill=INFO_COLOR[name][color]
+            fill=self.info_color[name][color]
         )
 
     def set_text(self, color, name, text):
@@ -1174,8 +1188,9 @@ class ScreenInfo:
 class ScreenStart:
     """スタートテキスト
     """
-    def __init__(self, canvas, language, canvas_width=CANVAS_WIDTH, canvas_height=CANVAS_HEIGHT):
+    def __init__(self, canvas, theme, language, canvas_width=CANVAS_WIDTH, canvas_height=CANVAS_HEIGHT):
         self.canvas = canvas
+        self.theme = theme
         self.language = language
 
         area_size = max(min(canvas_width//2, canvas_height), CANVAS_HEIGHT)
@@ -1191,7 +1206,7 @@ class ScreenStart:
             START_OFFSET_Y+dhc+offset*2,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
-            fill=COLOR_START_MESSAGE1
+            fill=THEME[self.theme]['COLOR_START_MESSAGE1']
         )
 
         # イベント生成
@@ -1205,12 +1220,12 @@ class ScreenStart:
     def _enter_start(self, event):
         """カーソルが合った時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_START_MESSAGE2)
+        self.canvas.itemconfigure(self.text, fill=THEME[self.theme]['COLOR_START_MESSAGE2'])
 
     def _leave_start(self, event):
         """カーソルが離れた時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_START_MESSAGE1)
+        self.canvas.itemconfigure(self.text, fill=THEME[self.theme]['COLOR_START_MESSAGE1'])
 
     def _on_start(self, event):
         """スタートテキストを押した場合
