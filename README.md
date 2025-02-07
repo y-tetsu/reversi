@@ -2,12 +2,18 @@
 
 # reversi
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.en.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.md)]<br>
-**reversi**はリバーシ(オセロ)のPython用ライブラリです。<br>
+**reversi**はリバーシのPython用ライブラリです。<br>
 手軽にリバーシAIをプログラミングして、アプリケーションが作れます。<br>
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![unittest](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml/badge.svg)](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml)
 <br>
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_original.png" width="49%">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_classic2.png" width="49%"><br>
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_shogi2.png" width="49%">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_pastel.png" width="49%"><br>
+</p>
 
 ## 目次
 - [概要](#概要)
@@ -47,6 +53,7 @@
     - [メニュー一覧](#メニュー一覧)
     - [プレイヤー紹介](#プレイヤー紹介)
     - [プレイヤー追加機能](#プレイヤー追加機能)
+    - [カラーテーマ追加機能](#カラーテーマ追加機能)
 - [コンソールアプリケーションの遊び方](#コンソールアプリケーションの遊び方)
     - [ゲーム紹介](#ゲーム紹介)
     - [メニュー画面](#メニュー画面)
@@ -72,17 +79,12 @@
 また、本ライブラリを使って作成した[Windows版アプリケーション](#tkinterアプリケーションの遊び方)も用意しています。<br>
 こちらはダウンロード後、インストール不要で、すぐにリバーシのゲームを無料でプレイできます。
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_v0_0_15.png" width="500px">
-</p>
-
-
 ## 動作環境
-- Windows、Ubuntu、MacOS<br>
+- Windows / Ubuntu / MacOS<br>
 - ディスプレイサイズ 1366x768 以上
 - プロセッサ 1.6GHz 以上
 - メモリ 4.00GB 以上
-- Python3.12まで(Windows:3.7～/Ubuntu:3.8～/MacOS:3.11～)<br>
+- Python3.12まで(Windows:3.7～ / Ubuntu:3.8～ / MacOS:3.11～)<br>
     - cython<br>
     - pyinstaller<br>
 
@@ -1458,6 +1460,7 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
  |Cputime |CPUの持ち時間を設定します。デフォルトは0.5秒となっております。 |
  |Extra |外部プログラムのAIを追加します。Cputimeの持ち時間の設定は適用されません。 |
  |Assist |打てる手の候補をハイライト表示するかどうか選びます。 |
+ |Theme |カラーテーマを選びます。 |
  |Language |言語設定(English or 日本語)を選びます。 |
  |Cancel |ゲームを中断します。 |
 
@@ -1580,6 +1583,58 @@ Windows版のアプリケーションで遊ぶ場合は下記リンクをクリ�
     "timeouttime": 60
 }
 ```
+
+### カラーテーマ追加機能
+本アプリケーションはプログラミングにより、お好きなカラーを設定してゲームの見た目を変えることができます。
+
+Tkinterアプリケーションの`Reversi`呼び出し時に、`custom_theme`オプションを指定する事で実現できます。
+
+```pyton
+from reversi import Reversi, strategies
+
+Reversi(
+    {
+        'Unselfish': strategies.Unselfish(),
+        :
+        :
+    },
+    custom_theme={                               # ＜カスタムテーマ設定＞
+        'Pastel': {                              # テーマ名を「Pastel」とする
+            'COLOR_BACKGROUND': '#414141',       # 背景
+            'COLOR_BOARD': '#595959',            # 盤面
+            'COLOR_PLAYER1_LABEL': '#ffc6c6',    # 先手のラベル
+            'COLOR_PLAYER2_LABEL': '#c6ffc6',    # 後手のラベル
+            'COLOR_PLAYER1_DISC': '#ffbcbc',     # 先手の石
+            'COLOR_PLAYER2_DISC': '#bcffbc',     # 後手の石
+            'COLOR_CPUTIME_LABEL': '#f8f5e3',    # CPU_TIMEのラベル
+            'COLOR_ASSIST_LABEL': '#f8f5e3',     # ASSISTのラベル
+            'COLOR_CELL_NUMBER': '#f8f5e3',      # セルの番地
+            'COLOR_CELL_LINE': '#f8f5e3',        # セルの枠線
+            'COLOR_CELL_MARK': '#f8f5e3',        # セルの目印
+            'COLOR_TURN_MESSAGE': '#ffd3a8',     # 手番のメッセージ
+            'COLOR_START_MESSAGE1': '#dddddd',   # スタートのメッセージ(フォーカスなし)
+            'COLOR_START_MESSAGE2': '#c6ffff',   # スタートのメッセージ(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': '#808080',  # 打てる箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': '#ffffe5',  # 打てる箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': '#e2c6ff',        # RECのラベル
+            'COLOR_LOWSPEED_LABEL': '#e2c6ff',   # Cythonモジュール読み込み失敗の警告ラベル
+        },
+    }
+).start()
+```
+
+上記は、「Pastel」というテーマ名で設定を追加した例になります。`#xxxxxx`は色を示すカラーコードで、それぞれR,G,Bを2桁の16進数で表わしています。
+
+```python
+'COLOR_PLAYER1_DISC': '#ffbcbc',
+```
+例えば上記は、先手の石の色に(R:ff、G:bc、B:bc)を指定しています。
+
+「Theme」メニューから「Pastel」を選んだ時の見た目は以下のようになります。
+
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_pastel.png" width="250px">
+
+詳しくは、[01_tkinter_app.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/01_tkinter_app.py)のサンプルコードを参照してください。
 
 
 ---
