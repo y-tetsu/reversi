@@ -44,6 +44,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(1320, reversi.window.WINDOW_WIDTH)
         self.assertEqual(660, reversi.window.WINDOW_HEIGHT)
         self.assertEqual('slategray', reversi.window.COLOR_BACKGROUND)
+        self.assertEqual('slategray', reversi.window.COLOR_BOARD)
         self.assertEqual('black', reversi.window.COLOR_PLAYER1_LABEL)
         self.assertEqual('white', reversi.window.COLOR_PLAYER2_LABEL)
         self.assertEqual('black', reversi.window.COLOR_PLAYER1_DISC)
@@ -205,8 +206,8 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.board.assist, reversi.window.ASSIST_MENU[1])
         self.assertEqual(window.board.record, reversi.window.RECORD_MENU[0])
         self.assertEqual(window.board._squares, [[None for _ in range(window.board.size)] for _ in range(window.board.size)])
-        self.assertEqual(window.board._xlines, [7, 11, 15, 19, 23, 27, 31, 39, 41])
-        self.assertEqual(window.board._ylines, [5, 9, 13, 17, 21, 25, 29, 37, 40])
+        self.assertEqual(window.board._xlines, [8, 12, 16, 20, 24, 28, 32, 40, 42])
+        self.assertEqual(window.board._ylines, [6, 10, 14, 18, 22, 26, 30, 38, 41])
         self.assertEqual(window.board.move, None)
         self.assertEqual(window.board.event.is_set(), False)
         # info
@@ -518,6 +519,9 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_canvas_created_rectangle = [
+            ((408, 40, 908, 540), {'fill': reversi.window.COLOR_BOARD, 'outline': reversi.window.COLOR_BOARD, 'tag': 'board'}),
+        ]
         test_xlines = [
             ((408, 40, 908, 40), {'fill': 'white'}),
             ((408, 165, 908, 165), {'fill': 'white'}),
@@ -559,6 +563,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(screenboard.record, test_record)
         self.assertEqual(screenboard.canvas.created_text, test_canvas_created_text)
         self.assertEqual(screenboard.canvas.created_oval, test_canvas_created_oval)
+        self.assertEqual(screenboard.canvas.created_rectangle, test_canvas_created_rectangle)
         self.assertEqual(screenboard._squares, [[None for _ in range(test_size)] for _ in range(test_size)])
         self.assertEqual(screenboard._xlines, test_xlines)
         self.assertEqual(screenboard._ylines, test_ylines)
@@ -723,6 +728,7 @@ class TestWindow(unittest.TestCase):
             ((545.0, 302.0, 645.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b3'}),
         ]
         test_canvas_created_rectangle = [
+            ((408, 40, 908, 540), {'fill': reversi.window.COLOR_BOARD, 'outline': reversi.window.COLOR_BOARD, 'tag': 'board'}),
             ((583, 177.0, 595, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnblack1_b2'}),
             ((595, 177.0, 607, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnblack2_b2'}),
             ((583, 302.0, 595, 402.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnwhite1_b3'}),
@@ -746,6 +752,7 @@ class TestWindow(unittest.TestCase):
             ((545.0, 302.0, 645.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b3'}),
         ]
         test_canvas_created_rectangle = [
+            ((408, 40, 908, 540), {'fill': reversi.window.COLOR_BOARD, 'outline': reversi.window.COLOR_BOARD, 'tag': 'board'}),
             ((583, 177.0, 595, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnblack1_b2'}),
             ((595, 177.0, 607, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnblack2_b2'}),
         ]

@@ -22,6 +22,7 @@ CANVAS_WIDTH = WINDOW_WIDTH - CANVAS_MERGINE    # キャンバスの幅
 CANVAS_HEIGHT = WINDOW_HEIGHT - CANVAS_MERGINE  # キャンバスの高さ
 
 COLOR_BACKGROUND = 'slategray'    # 背景
+COLOR_BOARD = 'slategray'         # 盤面
 COLOR_PLAYER1_LABEL = 'black'     # 先手表示
 COLOR_PLAYER2_LABEL = 'white'     # 後手表示
 COLOR_PLAYER1_DISC = 'black'      # 先手石
@@ -540,6 +541,8 @@ class Window(tk.Frame):
         min_x, min_y = self.board.square_x_ini-offset, self.board.square_y_ini-offset
         max_x, max_y = min_x + square_w * self.size, min_y + square_w * self.size
         row_x, col_y = min_x - SQUAREHEADER_OFFSET_XY, min_y - SQUAREHEADER_OFFSET_XY
+        # - board
+        self.canvas.coords('board', min_x+dwc, min_y+dhc, max_x+dwc, max_y+dhc)
         # - x lines
         for num, xline in enumerate(self.board._xlines):
             square_x1, square_y1 = min_x, min_y + square_w * num
@@ -876,6 +879,9 @@ class ScreenBoard:
         square_x1, square_y1, square_x2, square_y2 = None, None, None, None
         line_append, xappend, yappend = None, self._xlines.append, self._ylines.append
         text_append, aappend, nappend = None, self._atexts.append, self._ntexts.append
+
+        # 盤面の背景を描画
+        self.canvas.create_rectangle(min_x+dwc, min_y+dhc, max_x+dwc, max_y+dhc, fill=COLOR_BOARD, outline=COLOR_BOARD, tag='board')
 
         # マス目の描画
         for num in range(size + 1):
