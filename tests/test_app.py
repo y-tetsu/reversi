@@ -683,6 +683,7 @@ class TestApp(unittest.TestCase):
                         self.white_player = 'WHITE2'
                         self.assist = True
                         self.record = True
+                        self.theme = 'orange'
                         self.language = 'Japanese'
 
                 self.menu = Menu()
@@ -691,6 +692,7 @@ class TestApp(unittest.TestCase):
                 self.player = {'black': 'BLACK', 'white': 'WHITE'}
                 self.assist = False
                 self.record = False
+                self.theme = 'green'
                 self.language = 'English'
 
         app = Reversi()
@@ -710,6 +712,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.window.player['white'], 'WHITE')
         self.assertEqual(app.window.assist, False)
         self.assertEqual(app.window.record, False)
+        self.assertEqual(app.window.theme, 'green')
         self.assertEqual(app.window.language, 'English')
         self.assertEqual(ret, False)
 
@@ -730,6 +733,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(app.window.player['white'], 'WHITE2')
         self.assertEqual(app.window.assist, True)
         self.assertEqual(app.window.record, True)
+        self.assertEqual(app.window.theme, 'orange')
         self.assertEqual(app.window.language, 'Japanese')
         self.assertEqual(ret, True)
 

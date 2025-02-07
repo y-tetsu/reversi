@@ -72,11 +72,11 @@ TURN_BLACK_PATTERN = [('white', 'turnwhite'), ('turnwhite', 'black')]  # 黒の�
 TURN_WHITE_PATTERN = [('black', 'turnblack'), ('turnblack', 'white')]  # 白の石をひっくり返すパターン
 TURN_DISC_WAIT = 0.1                                                   # 石をひっくり返す待ち時間(s)
 
-ASSIST_MENU = ['ON', 'OFF']              # 打てる場所のハイライト表示の有無
-RECORD_MENU = ['ON', 'OFF']              # 棋譜保存の有無
-THEME_MENU = ['gray']                    # カラーテーマ
-LANGUAGE_MENU = ['English', 'Japanese']  # 表示言語
-CANCEL_MENU = ['OK']                     # ゲームのキャンセル
+ASSIST_MENU = ['ON', 'OFF']                    # 打てる場所のハイライト表示の有無
+RECORD_MENU = ['ON', 'OFF']                    # 棋譜保存の有無
+THEME_MENU = ['Original', 'Classic', 'Shogi']  # カラーテーマ
+LANGUAGE_MENU = ['English', 'Japanese']        # 表示言語
+CANCEL_MENU = ['OK']                           # ゲームのキャンセル
 
 CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
 EXTRA_MENU = ['Set']  # プレイヤー追加設定の変更
@@ -103,7 +103,7 @@ EXTRA_DIALOG_WIDTH = 700      # 幅
 EXTRA_DIALOG_HEIGHT = 90      # 高さ
 
 THEME = {
-    THEME_MENU[0]: {
+    THEME_MENU[0]: {  # Original
         'COLOR_BACKGROUND': 'slategray',    # 背景
         'COLOR_BOARD': 'slategray',         # 盤面
         'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
@@ -122,6 +122,46 @@ THEME = {
         'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
         'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
         'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+    },
+    THEME_MENU[1]: {  # Classic
+        'COLOR_BACKGROUND': '#caae73',       # 背景
+        'COLOR_BOARD': '#387941',            # 盤面
+        'COLOR_PLAYER1_LABEL': '#121212',    # 先手表示
+        'COLOR_PLAYER2_LABEL': '#f9f9f9',    # 後手表示
+        'COLOR_PLAYER1_DISC': '#121212',     # 先手石
+        'COLOR_PLAYER2_DISC': '#f9f9f9',     # 後手石
+        'COLOR_CPUTIME_LABEL': '#121212',    # CPU_TIMEラベル
+        'COLOR_ASSIST_LABEL': '#121212',     # ASSISTラベル
+        'COLOR_CELL_NUMBER': '#204926',      # セル番地
+        'COLOR_CELL_LINE': '#204926',        # セルの枠線
+        'COLOR_CELL_MARK': '#204926',        # セルの目印
+        'COLOR_TURN_MESSAGE': '#9a4000',     # 手番表示
+        'COLOR_START_MESSAGE1': '#58230a',   # スタート表示(フォーカスなし)
+        'COLOR_START_MESSAGE2': '#9a4000',   # スタート表示(フォーカスあり)
+        'COLOR_MOVE_HIGHLIGHT1': '#c7c763',  # 着手箇所のハイライト(フォーカスなし)
+        'COLOR_MOVE_HIGHLIGHT2': '#9a4000',  # 着手箇所のハイライト(フォーカスあり)
+        'COLOR_REC_LABEL': '#f9f9f9',        # レコーディング表示
+        'COLOR_LOWSPEED_LABEL': '#f9f9f9',   # 低速表示
+    },
+    THEME_MENU[2]: {  # Shogi
+        'COLOR_BACKGROUND': '#c8b020',      # 背景
+        'COLOR_BOARD': '#dc9647',           # 盤面
+        'COLOR_PLAYER1_LABEL': '#121212',   # 先手表示
+        'COLOR_PLAYER2_LABEL': '#f9f9f9',   # 後手表示
+        'COLOR_PLAYER1_DISC': '#121212',    # 先手石
+        'COLOR_PLAYER2_DISC': '#f9f9f9',    # 後手石
+        'COLOR_CPUTIME_LABEL': '#f9f9f9',   # CPU_TIMEラベル
+        'COLOR_ASSIST_LABEL': '#f9f9f9',    # ASSISTラベル
+        'COLOR_CELL_NUMBER': '#e0e0e0',     # セル番地
+        'COLOR_CELL_LINE': '#e0e0e0',       # セルの枠線
+        'COLOR_CELL_MARK': '#e0e0e0',       # セルの目印
+        'COLOR_TURN_MESSAGE': '#9ddde6',    # 手番表示
+        'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+        'COLOR_START_MESSAGE2': '#9ddde6',  # スタート表示(フォーカスあり)
+        'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+        'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+        'COLOR_REC_LABEL': '#9ddde6',       # レコーディング表示
+        'COLOR_LOWSPEED_LABEL': '#9ddde6',  # 低速表示
     },
 }
 
@@ -463,6 +503,7 @@ class Window(tk.Frame):
         """ゲーム画面の初期化
         """
         self.canvas.delete('all')                                                                                                                    # 全オブジェクト削除
+        self.canvas.config(bg=THEME[self.theme]['COLOR_BACKGROUND'])
         self.board = ScreenBoard(self.canvas, self.size, self.cputime, self.assist, self.record, self.theme, self.canvas_width, self.canvas_height)  # ボード配置
         self.info = ScreenInfo(self.canvas, self.player, self.theme, self.language, self.canvas_width)                                               # noqa: E501 情報表示テキスト配置
         self.start = ScreenStart(self.canvas, self.theme, self.language, self.canvas_width, self.canvas_height)                                      # noqa: E501 スタートテキスト配置
@@ -1018,7 +1059,7 @@ class ScreenBoard:
             if self.assist == 'ON':
                 self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=THEME[self.theme]['COLOR_MOVE_HIGHLIGHT1'], outline=THEME[self.theme]['COLOR_CELL_LINE'], tag='moves')  # noqa: E501
             else:
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=THEME[self.theme]['COLOR_BACKGROUND'], outline=THEME[self.theme]['COLOR_CELL_LINE'], tag='moves')  # noqa: E501
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=THEME[self.theme]['COLOR_BOARD'], outline=THEME[self.theme]['COLOR_CELL_LINE'], tag='moves')  # noqa: E501
         self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):

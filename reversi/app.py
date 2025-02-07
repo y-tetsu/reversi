@@ -260,6 +260,7 @@ class Reversi:
             self.window.player['black'] = self.window.menu.black_player
             self.window.player['white'] = self.window.menu.white_player
             self.window.assist = self.window.menu.assist
+            self.window.theme = self.window.menu.theme
             self.window.language = self.window.menu.language
             self.window.record = self.window.menu.record
             self.window.menu.event.clear()
