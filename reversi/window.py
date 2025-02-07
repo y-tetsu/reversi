@@ -22,8 +22,10 @@ CANVAS_WIDTH = WINDOW_WIDTH - CANVAS_MERGINE    # キャンバスの幅
 CANVAS_HEIGHT = WINDOW_HEIGHT - CANVAS_MERGINE  # キャンバスの高さ
 
 COLOR_BACKGROUND = 'slategray'    # 背景
-COLOR_PLAYER1 = 'black'           # 先手
-COLOR_PLAYER2 = 'white'           # 後手
+COLOR_PLAYER1_LABEL = 'black'     # 先手表示
+COLOR_PLAYER2_LABEL = 'white'     # 後手表示
+COLOR_PLAYER1_DISC = 'black'      # 先手石
+COLOR_PLAYER2_DISC = 'white'      # 後手石
 COLOR_CPUTIME_LABEL = 'white'     # CPU_TIMEラベル
 COLOR_ASSIST_LABEL = 'white'      # ASSISTラベル
 COLOR_CELL_NUMBER = 'white'       # セル番地
@@ -49,11 +51,11 @@ INFO_OFFSET_Y = {  # 表示テキストのYオフセット
     'move':    600,
 }
 INFO_COLOR = {  # 表示テキストの色
-    'name':    {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
-    'score':   {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
-    'winlose': {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
+    'name':    {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
+    'score':   {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
+    'winlose': {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
     'turn':    {'black': COLOR_TURN_MESSAGE, 'white': COLOR_TURN_MESSAGE},
-    'move':    {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
+    'move':    {'black': COLOR_PLAYER1_LABEL,  'white': COLOR_PLAYER2_LABEL},
 }
 INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
     'name':     32,
@@ -929,7 +931,7 @@ class ScreenBoard:
             w = self.oval_w1 * self.area_ratio
             x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
             label = self._get_label(color, index_x, index_y)
-            disc_color = COLOR_PLAYER1 if color == 'black' else COLOR_PLAYER2
+            disc_color = COLOR_PLAYER1_DISC if color == 'black' else COLOR_PLAYER2_DISC
             oval = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=disc_color, outline=disc_color)
             self._discs[(label, color, index_x, index_y)] = oval
 
@@ -938,8 +940,8 @@ class ScreenBoard:
             w1, w2 = self.oval_w1 * self.area_ratio, self.oval_w2 * self.area_ratio
             label1 = self._get_label(color + '1', index_x, index_y)
             label2 = self._get_label(color + '2', index_x, index_y)
-            color1 = COLOR_PLAYER2 if color == 'turnblack' else COLOR_PLAYER1
-            color2 = COLOR_PLAYER1 if color == 'turnblack' else COLOR_PLAYER2
+            color1 = COLOR_PLAYER2_DISC if color == 'turnblack' else COLOR_PLAYER1_DISC
+            color2 = COLOR_PLAYER1_DISC if color == 'turnblack' else COLOR_PLAYER2_DISC
 
             x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
             rect1 = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
