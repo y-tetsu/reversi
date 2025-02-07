@@ -21,13 +21,21 @@ CANVAS_MERGINE = 4                              # キャンバスの余白
 CANVAS_WIDTH = WINDOW_WIDTH - CANVAS_MERGINE    # キャンバスの幅
 CANVAS_HEIGHT = WINDOW_HEIGHT - CANVAS_MERGINE  # キャンバスの高さ
 
-COLOR_SLATEGRAY = 'slategray'  # スレートグレイ
-COLOR_BLACK = 'black'          # 黒
-COLOR_WHITE = 'white'          # 白
-COLOR_LIGHTPINK = 'lightpink'  # ライトピンク
-COLOR_GOLD = 'gold'            # ゴールド
-COLOR_KHAKI = 'khaki2'         # カーキ
-COLOR_TOMATO = 'tomato'        # トマト
+COLOR_BACKGROUND = 'slategray'    # 背景
+COLOR_PLAYER1 = 'black'           # 先手
+COLOR_PLAYER2 = 'white'           # 後手
+COLOR_CPUTIME_LABEL = 'white'     # CPU_TIMEラベル
+COLOR_ASSIST_LABEL = 'white'      # ASSISTラベル
+COLOR_CELL_NUMBER = 'white'       # セル番地
+COLOR_CELL_LINE = 'white'         # セルの枠線
+COLOR_CELL_MARK = 'white'         # セルの目印
+COLOR_TURN_MESSAGE = 'lightpink'  # 手番表示
+COLOR_START_MESSAGE1 = 'gold'     # スタート表示(フォーカスなし)
+COLOR_START_MESSAGE2 = 'tomato'   # スタート表示(フォーカスあり)
+COLOR_MOVE_HIGHLIGHT1 = 'khaki2'  # 着手箇所のハイライト(フォーカスなし)
+COLOR_MOVE_HIGHLIGHT2 = 'tomato'  # 着手箇所のハイライト(フォーカスあり)
+COLOR_REC_LABEL = 'tomato'        # レコーディング表示
+COLOR_LOWSPEED_LABEL = 'tomato'   # 低速表示
 
 INFO_OFFSET_X = {  # 表示テキストのXオフセット
     'black': WINDOW_WIDTH//7,
@@ -41,11 +49,11 @@ INFO_OFFSET_Y = {  # 表示テキストのYオフセット
     'move':    600,
 }
 INFO_COLOR = {  # 表示テキストの色
-    'name':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
-    'score':   {'black': COLOR_BLACK,  'white': COLOR_WHITE},
-    'winlose': {'black': COLOR_BLACK,  'white': COLOR_WHITE},
-    'turn':    {'black': COLOR_LIGHTPINK, 'white': COLOR_LIGHTPINK},
-    'move':    {'black': COLOR_BLACK,  'white': COLOR_WHITE},
+    'name':    {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
+    'score':   {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
+    'winlose': {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
+    'turn':    {'black': COLOR_TURN_MESSAGE, 'white': COLOR_TURN_MESSAGE},
+    'move':    {'black': COLOR_PLAYER1,  'white': COLOR_PLAYER2},
 }
 INFO_FONT_SIZE = {  # 表示テキストのフォントサイズ
     'name':     32,
@@ -439,7 +447,7 @@ class Window(tk.Frame):
         root.configure(menu=self.menu)
 
         # キャンバスを配置
-        self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height, bg=COLOR_SLATEGRAY)
+        self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height, bg=COLOR_BACKGROUND)
         self.canvas.grid(row=0, column=0)
 
         # 表示サイズと位置
@@ -798,7 +806,7 @@ class ScreenBoard:
             text=cputime_text,
             font=('', CPUTIME_FONT_SIZE),
             anchor='w',
-            fill=COLOR_WHITE
+            fill=COLOR_CPUTIME_LABEL
         )
 
         # アシスト表示
@@ -809,7 +817,7 @@ class ScreenBoard:
             text=assist_text,
             font=('', ASSIST_FONT_SIZE),
             anchor='w',
-            fill=COLOR_WHITE
+            fill=COLOR_ASSIST_LABEL
         )
 
         # 棋譜出力表示
@@ -820,7 +828,7 @@ class ScreenBoard:
             text=record_text,
             font=('', RECORD_FONT_SIZE),
             anchor='w',
-            fill=COLOR_TOMATO
+            fill=COLOR_REC_LABEL
         )
 
         # 低速モードの表示
@@ -832,7 +840,7 @@ class ScreenBoard:
                 text=slowmode_text,
                 font=('', SLOWMODE_FONT_SIZE),
                 anchor='w',
-                fill=COLOR_TOMATO
+                fill=COLOR_LOWSPEED_LABEL
             )
 
         # ボードの描画
@@ -887,11 +895,11 @@ class ScreenBoard:
 
                 # 番地
                 if num < size:
-                    text = self.canvas.create_text(text_x+dwc, text_y+dhc, fill=COLOR_WHITE, text=label, font=('', SQUAREHEADER_FONT_SIZE))
+                    text = self.canvas.create_text(text_x+dwc, text_y+dhc, fill=COLOR_CELL_NUMBER, text=label, font=('', SQUAREHEADER_FONT_SIZE))
                     text_append(text)
 
                 # マス目の線
-                line = self.canvas.create_line(square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc, fill=COLOR_WHITE)
+                line = self.canvas.create_line(square_x1+dwc, square_y1+dhc, square_x2+dwc, square_y2+dhc, fill=COLOR_CELL_LINE)
                 line_append(line)
 
             # 目印の描画
@@ -901,7 +909,7 @@ class ScreenBoard:
                     for y_offset in [w * (num - 4), w * num]:
                         mark_x1, mark_y1 = min_x + x_offset - mark_w//2, min_y + y_offset - mark_w//2
                         mark_x2, mark_y2 = min_x + x_offset + mark_w//2, min_y + y_offset + mark_w//2
-                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1+dhc, mark_x2+dwc, mark_y2+dhc, tag='mark', fill=COLOR_WHITE, outline=COLOR_WHITE)
+                        oval = self.canvas.create_oval(mark_x1+dwc, mark_y1+dhc, mark_x2+dwc, mark_y2+dhc, tag='mark', fill=COLOR_CELL_MARK, outline=COLOR_CELL_MARK)  # noqa: E501
                         self._4x4circle.append(oval)
 
         # 初期位置に石を置く
@@ -921,7 +929,8 @@ class ScreenBoard:
             w = self.oval_w1 * self.area_ratio
             x1, y1, x2, y2 = x - w/2, y - w/2, x + w/2, y + w/2
             label = self._get_label(color, index_x, index_y)
-            oval = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=color, outline=color)
+            disc_color = COLOR_PLAYER1 if color == 'black' else COLOR_PLAYER2
+            oval = self.canvas.create_oval(x1, y1, x2, y2, tag=label, fill=disc_color, outline=disc_color)
             self._discs[(label, color, index_x, index_y)] = oval
 
         # ひっくり返す途中
@@ -929,8 +938,8 @@ class ScreenBoard:
             w1, w2 = self.oval_w1 * self.area_ratio, self.oval_w2 * self.area_ratio
             label1 = self._get_label(color + '1', index_x, index_y)
             label2 = self._get_label(color + '2', index_x, index_y)
-            color1 = 'white' if color == 'turnblack' else 'black'
-            color2 = 'black' if color == 'turnblack' else 'white'
+            color1 = COLOR_PLAYER2 if color == 'turnblack' else COLOR_PLAYER1
+            color2 = COLOR_PLAYER1 if color == 'turnblack' else COLOR_PLAYER2
 
             x1, y1, x2, y2 = x - w2, y - w1/2, x, y + w1/2
             rect1 = self.canvas.create_rectangle(x1, y1, x2, y2, tag=label1, fill=color1, outline=color1)
@@ -996,9 +1005,9 @@ class ScreenBoard:
             y1 = self.square_y_ini + square_w * y - self.offset
             y2 = y1 + square_w
             if self.assist == 'ON':
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_KHAKI, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_MOVE_HIGHLIGHT1, outline=COLOR_CELL_LINE, tag='moves')
             else:
-                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_SLATEGRAY, outline=COLOR_WHITE, tag='moves')
+                self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_BACKGROUND, outline=COLOR_CELL_LINE, tag='moves')
         self.canvas.tag_raise('mark', 'moves')
 
     def disable_moves(self, moves):
@@ -1017,7 +1026,7 @@ class ScreenBoard:
         x2 = x1 + square_w
         y1 = self.square_y_ini + square_w * y - self.offset
         y2 = y1 + square_w
-        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_TOMATO, outline=COLOR_WHITE, tag='move')
+        self._squares[y][x] = self.canvas.create_rectangle(x1+dw, y1+dh, x2+dw, y2+dh, fill=COLOR_MOVE_HIGHLIGHT2, outline=COLOR_CELL_LINE, tag='move')
         self.canvas.tag_raise('mark', 'move')
 
     def disable_move(self, x, y):
@@ -1048,7 +1057,7 @@ class ScreenBoard:
         """
         def _enter(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_TOMATO)
+                self.canvas.itemconfigure(square, fill=COLOR_MOVE_HIGHLIGHT2)
         return _enter
 
     def _leave_selectable_moves(self, square):
@@ -1056,7 +1065,7 @@ class ScreenBoard:
         """
         def _leave(event):
             if self.assist == 'ON':
-                self.canvas.itemconfigure(square, fill=COLOR_KHAKI)
+                self.canvas.itemconfigure(square, fill=COLOR_MOVE_HIGHLIGHT1)
         return _leave
 
     def _press_selectable_moves(self, x, y):
@@ -1174,7 +1183,7 @@ class ScreenStart:
             START_OFFSET_Y+dhc+offset*2,
             text=TEXTS[self.language]['START_TEXT'],
             font=('', START_FONT_SIZE),
-            fill=COLOR_GOLD
+            fill=COLOR_START_MESSAGE1
         )
 
         # イベント生成
@@ -1188,12 +1197,12 @@ class ScreenStart:
     def _enter_start(self, event):
         """カーソルが合った時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_TOMATO)
+        self.canvas.itemconfigure(self.text, fill=COLOR_START_MESSAGE2)
 
     def _leave_start(self, event):
         """カーソルが離れた時
         """
-        self.canvas.itemconfigure(self.text, fill=COLOR_GOLD)
+        self.canvas.itemconfigure(self.text, fill=COLOR_START_MESSAGE1)
 
     def _on_start(self, event):
         """スタートテキストを押した場合
