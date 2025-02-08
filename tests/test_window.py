@@ -82,6 +82,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(['ON', 'OFF'], reversi.window.ASSIST_MENU)
         self.assertEqual(['ON', 'OFF'], reversi.window.RECORD_MENU)
         self.assertEqual(['Original', 'Classic', 'Shogi'], reversi.window.THEME_MENU)
+        self.assertEqual(3, reversi.window.DEFAULT_THEME_NUM)
         self.assertEqual(['English', 'Japanese'], reversi.window.LANGUAGE_MENU)
         self.assertEqual(['OK'], reversi.window.CANCEL_MENU)
         self.assertEqual(['Set'], reversi.window.CPUTIME_MENU)
@@ -227,6 +228,106 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.canvas['width'], str(reversi.window.CANVAS_WIDTH))
         self.assertEqual(window.canvas['height'], str(reversi.window.CANVAS_HEIGHT))
         self.assertEqual(window.canvas['bg'], str(reversi.window.THEME[test_theme]['COLOR_BACKGROUND']))
+
+    def test_window_init_custom_theme_with_dict_default(self):
+        expected = {  # Custom(default)
+            'COLOR_BACKGROUND': '#387941',      # 背景
+            'COLOR_BOARD': '#387941',           # 盤面
+            'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+            'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+            'COLOR_PLAYER1_DISC': 'black',      # 先手石
+            'COLOR_PLAYER2_DISC': 'white',      # 後手石
+            'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+            'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+            'COLOR_CELL_NUMBER': '#555555',     # セル番地
+            'COLOR_CELL_LINE': 'black',         # セルの枠線
+            'COLOR_CELL_MARK': 'black',         # セルの目印
+            'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+            'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+            'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+            'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+        }
+        theme_name = 'Test1'
+        test_theme = {theme_name: {}}  # use Custom(default)
+        b, w = ['player1'], ['player2']
+        Window(root=tk.Tk(), black_players=b, white_players=w, custom_theme=test_theme)
+
+        self.assertEqual(reversi.window.THEME_MENU, ['Original', 'Classic', 'Shogi', theme_name])
+        self.assertTrue(theme_name in reversi.window.THEME)
+        self.assertEqual(reversi.window.THEME[theme_name], expected)
+
+    def test_window_init_custom_theme_with_dict(self):
+        expected1 = {  # Custom(default)
+            'COLOR_BACKGROUND': '#387941',      # 背景
+            'COLOR_BOARD': '#387941',           # 盤面
+            'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+            'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+            'COLOR_PLAYER1_DISC': 'black',      # 先手石
+            'COLOR_PLAYER2_DISC': 'white',      # 後手石
+            'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+            'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+            'COLOR_CELL_NUMBER': '#555555',     # セル番地
+            'COLOR_CELL_LINE': 'black',         # セルの枠線
+            'COLOR_CELL_MARK': 'black',         # セルの目印
+            'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+            'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+            'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+            'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+        }
+        expected2 = {  # Custom
+            'COLOR_BACKGROUND': '#012345',      # 背景
+            'COLOR_BOARD': '#6789ab',           # 盤面
+            'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+            'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+            'COLOR_PLAYER1_DISC': 'black',      # 先手石
+            'COLOR_PLAYER2_DISC': 'white',      # 後手石
+            'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+            'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+            'COLOR_CELL_NUMBER': '#555555',     # セル番地
+            'COLOR_CELL_LINE': 'black',         # セルの枠線
+            'COLOR_CELL_MARK': 'black',         # セルの目印
+            'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+            'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+            'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+            'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+        }
+        theme_name1 = 'Test2-1'
+        theme_name2 = 'Test2-2'
+        theme_name3 = 'Test2-3'
+        test_theme = {  # use Custom(partially update)
+            theme_name1: {},
+            theme_name2: {
+                'COLOR_BACKGROUND': '#012345',      # 背景
+                'COLOR_BOARD': '#6789ab',           # 盤面
+            },
+            theme_name3: 'not dict value',
+        }
+        b, w = ['player1'], ['player2']
+        Window(root=tk.Tk(), black_players=b, white_players=w, custom_theme=test_theme)
+
+        self.assertEqual(reversi.window.THEME_MENU, ['Original', 'Classic', 'Shogi', theme_name1, theme_name2])
+        self.assertTrue(theme_name1 in reversi.window.THEME)
+        self.assertTrue(theme_name2 in reversi.window.THEME)
+        self.assertTrue(theme_name3 not in reversi.window.THEME)
+        self.assertEqual(reversi.window.THEME[theme_name1], expected1)
+        self.assertEqual(reversi.window.THEME[theme_name2], expected2)
+
+    def test_window_init_custom_theme_without_dict(self):
+        test_theme = 'not dict value'
+        b, w = ['player1'], ['player2']
+        Window(root=tk.Tk(), black_players=b, white_players=w, custom_theme=test_theme)
+
+        self.assertEqual(reversi.window.THEME_MENU, ['Original', 'Classic', 'Shogi'])
+        self.assertTrue('Custom' not in reversi.window.THEME)
 
     def test_window_init_screen(self):
         test_theme = 'Classic'

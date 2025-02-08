@@ -78,6 +78,8 @@ THEME_MENU = ['Original', 'Classic', 'Shogi']  # カラーテーマ
 LANGUAGE_MENU = ['English', 'Japanese']        # 表示言語
 CANCEL_MENU = ['OK']                           # ゲームのキャンセル
 
+DEFAULT_THEME_NUM = len(THEME_MENU)  # 初期テーマの数
+
 CPUTIME_MENU = ['Set']                         # CPUの持ち時間の変更
 EXTRA_MENU = ['Set']  # プレイヤー追加設定の変更
 
@@ -454,7 +456,7 @@ DwgAOw==
 class Window(tk.Frame):
     """ウィンドウ
     """
-    def __init__(self, root=None, black_players=None, white_players=None):
+    def __init__(self, root=None, black_players=None, white_players=None, custom_theme=None):
         super().__init__(root)
         self.pack()
 
@@ -475,6 +477,39 @@ class Window(tk.Frame):
         self.pre_canvas_height = 0
         self.canvas_width_hist = [self.pre_canvas_width, self.canvas_width]
         self.canvas_height_hist = [self.pre_canvas_height, self.canvas_height]
+
+        # カスタムテーマのリセット
+        if len(THEME_MENU) > DEFAULT_THEME_NUM:
+            for t in THEME_MENU[DEFAULT_THEME_NUM:]:
+                THEME.pop(t, None)
+            del THEME_MENU[DEFAULT_THEME_NUM:]
+        # カスタムテーマの読み込み
+        if isinstance(custom_theme, dict):
+            for key, value in custom_theme.items():
+                if isinstance(value, dict):
+                    THEME_MENU.append(key)
+                    setting = {  # Custom(default)
+                        'COLOR_BACKGROUND': '#387941',      # 背景
+                        'COLOR_BOARD': '#387941',           # 盤面
+                        'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+                        'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+                        'COLOR_PLAYER1_DISC': 'black',      # 先手石
+                        'COLOR_PLAYER2_DISC': 'white',      # 後手石
+                        'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+                        'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+                        'COLOR_CELL_NUMBER': '#555555',     # セル番地
+                        'COLOR_CELL_LINE': 'black',         # セルの枠線
+                        'COLOR_CELL_MARK': 'black',         # セルの目印
+                        'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+                        'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+                        'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+                        'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+                        'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+                        'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+                        'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+                    }
+                    setting.update(value)
+                    THEME[key] = setting
 
         # アイコン設定
         iconphoto = tk.PhotoImage(data=ICON)
