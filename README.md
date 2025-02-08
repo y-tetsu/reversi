@@ -1445,7 +1445,7 @@ tkinterアプリケーションで遊ぶには、以下の2通りの方法がご
 Windows版のアプリケーションで遊ぶ場合は下記リンクをクリックし、<br>
 "reversi.zip"をダウンロードして下さい(無料)。<br>
 
-- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.0.20/reversi.zip) (Release Test20)
+- [reversi.zip](https://github.com/y-tetsu/reversi/releases/download/0.1.2/reversi.zip) (v0.1.2)
 
 "reversi.zip"を解凍後、reversi.exeをダブルクリックするとアプリケーションで遊ぶ事ができます。
 
