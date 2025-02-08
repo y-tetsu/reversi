@@ -86,5 +86,27 @@ Reversi(
         'TPWEB8_16': strategies.SwitchJ_Negascout8_TPWEB_EndGame16(),  # test sample
         'Blank8_16': strategies.SwitchJ_Blank8_EndGame16(),            # test sample
         'BlankI_16': strategies.SwitchJ_BlankI_EndGame16(),            # test sample
+    },
+    custom_theme={  # custom theme
+        'Pastel': {
+            'COLOR_BACKGROUND': '#414141',       # background
+            'COLOR_BOARD': '#595959',            # board
+            'COLOR_PLAYER1_LABEL': '#ffc6c6',    # player1 label
+            'COLOR_PLAYER2_LABEL': '#c6ffc6',    # player2 label
+            'COLOR_PLAYER1_DISC': '#ffbcbc',     # player1 disc
+            'COLOR_PLAYER2_DISC': '#bcffbc',     # player2 disc
+            'COLOR_CPUTIME_LABEL': '#f8f5e3',    # CPU_TIME label
+            'COLOR_ASSIST_LABEL': '#f8f5e3',     # ASSIST label
+            'COLOR_CELL_NUMBER': '#f8f5e3',      # cell number
+            'COLOR_CELL_LINE': '#f8f5e3',        # cell line
+            'COLOR_CELL_MARK': '#f8f5e3',        # cell mark
+            'COLOR_TURN_MESSAGE': '#ffd3a8',     # turn message
+            'COLOR_START_MESSAGE1': '#dddddd',   # start message(out focus)
+            'COLOR_START_MESSAGE2': '#c6ffff',   # start message(on focus)
+            'COLOR_MOVE_HIGHLIGHT1': '#808080',  # move highlight1(out focus)
+            'COLOR_MOVE_HIGHLIGHT2': '#ffffe5',  # move highlight2(on focus)
+            'COLOR_REC_LABEL': '#e2c6ff',        # recording label
+            'COLOR_LOWSPEED_LABEL': '#e2c6ff',   # low-speed-warning label
+        },
     }
 ).start()

@@ -43,13 +43,6 @@ class TestWindow(unittest.TestCase):
         self.assertEqual('reversi', reversi.window.WINDOW_TITLE)
         self.assertEqual(1320, reversi.window.WINDOW_WIDTH)
         self.assertEqual(660, reversi.window.WINDOW_HEIGHT)
-        self.assertEqual('slategray', reversi.window.COLOR_SLATEGRAY)
-        self.assertEqual('black', reversi.window.COLOR_BLACK)
-        self.assertEqual('white', reversi.window.COLOR_WHITE)
-        self.assertEqual('lightpink', reversi.window.COLOR_LIGHTPINK)
-        self.assertEqual('gold', reversi.window.COLOR_GOLD)
-        self.assertEqual('khaki2', reversi.window.COLOR_KHAKI)
-        self.assertEqual('tomato', reversi.window.COLOR_TOMATO)
         self.assertEqual(reversi.window.WINDOW_WIDTH//7, reversi.window.INFO_OFFSET_X['black'])
         self.assertEqual(reversi.window.WINDOW_WIDTH-(reversi.window.WINDOW_WIDTH//7), reversi.window.INFO_OFFSET_X['white'])
         self.assertEqual(80, reversi.window.INFO_OFFSET_Y['name'])
@@ -57,16 +50,6 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(400, reversi.window.INFO_OFFSET_Y['winlose'])
         self.assertEqual(500, reversi.window.INFO_OFFSET_Y['turn'])
         self.assertEqual(600, reversi.window.INFO_OFFSET_Y['move'])
-        self.assertEqual(reversi.window.COLOR_BLACK, reversi.window.INFO_COLOR['name']['black'])
-        self.assertEqual(reversi.window.COLOR_WHITE, reversi.window.INFO_COLOR['name']['white'])
-        self.assertEqual(reversi.window.COLOR_BLACK, reversi.window.INFO_COLOR['score']['black'])
-        self.assertEqual(reversi.window.COLOR_WHITE, reversi.window.INFO_COLOR['score']['white'])
-        self.assertEqual(reversi.window.COLOR_BLACK, reversi.window.INFO_COLOR['winlose']['black'])
-        self.assertEqual(reversi.window.COLOR_WHITE, reversi.window.INFO_COLOR['winlose']['white'])
-        self.assertEqual(reversi.window.COLOR_LIGHTPINK, reversi.window.INFO_COLOR['turn']['black'])
-        self.assertEqual(reversi.window.COLOR_LIGHTPINK, reversi.window.INFO_COLOR['turn']['white'])
-        self.assertEqual(reversi.window.COLOR_BLACK, reversi.window.INFO_COLOR['move']['black'])
-        self.assertEqual(reversi.window.COLOR_WHITE, reversi.window.INFO_COLOR['move']['white'])
         self.assertEqual(32, reversi.window.INFO_FONT_SIZE['name'])
         self.assertEqual(140, reversi.window.INFO_FONT_SIZE['score'])
         self.assertEqual(32, reversi.window.INFO_FONT_SIZE['winlose'])
@@ -98,6 +81,8 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(0.1, reversi.window.TURN_DISC_WAIT)
         self.assertEqual(['ON', 'OFF'], reversi.window.ASSIST_MENU)
         self.assertEqual(['ON', 'OFF'], reversi.window.RECORD_MENU)
+        self.assertEqual(['Original', 'Classic', 'Shogi'], reversi.window.THEME_MENU)
+        self.assertEqual(3, reversi.window.DEFAULT_THEME_NUM)
         self.assertEqual(['English', 'Japanese'], reversi.window.LANGUAGE_MENU)
         self.assertEqual(['OK'], reversi.window.CANCEL_MENU)
         self.assertEqual(['Set'], reversi.window.CPUTIME_MENU)
@@ -129,6 +114,65 @@ class TestWindow(unittest.TestCase):
         self.assertEqual('Extra', reversi.window.EXTRA_DIALOG_TITLE)
         self.assertEqual(700, reversi.window.EXTRA_DIALOG_WIDTH)
         self.assertEqual(90, reversi.window.EXTRA_DIALOG_HEIGHT)
+        # THEME
+        theme1 = reversi.window.THEME[reversi.window.THEME_MENU[0]]
+        self.assertEqual('slategray', theme1['COLOR_BACKGROUND'])
+        self.assertEqual('slategray', theme1['COLOR_BOARD'])
+        self.assertEqual('black', theme1['COLOR_PLAYER1_LABEL'])
+        self.assertEqual('white', theme1['COLOR_PLAYER2_LABEL'])
+        self.assertEqual('black', theme1['COLOR_PLAYER1_DISC'])
+        self.assertEqual('white', theme1['COLOR_PLAYER2_DISC'])
+        self.assertEqual('white', theme1['COLOR_CPUTIME_LABEL'])
+        self.assertEqual('white', theme1['COLOR_ASSIST_LABEL'])
+        self.assertEqual('white', theme1['COLOR_CELL_NUMBER'])
+        self.assertEqual('white', theme1['COLOR_CELL_LINE'])
+        self.assertEqual('white', theme1['COLOR_CELL_MARK'])
+        self.assertEqual('lightpink', theme1['COLOR_TURN_MESSAGE'])
+        self.assertEqual('gold', theme1['COLOR_START_MESSAGE1'])
+        self.assertEqual('tomato', theme1['COLOR_START_MESSAGE2'])
+        self.assertEqual('khaki2', theme1['COLOR_MOVE_HIGHLIGHT1'])
+        self.assertEqual('tomato', theme1['COLOR_MOVE_HIGHLIGHT2'])
+        self.assertEqual('tomato', theme1['COLOR_REC_LABEL'])
+        self.assertEqual('tomato', theme1['COLOR_LOWSPEED_LABEL'])
+        theme2 = reversi.window.THEME[reversi.window.THEME_MENU[1]]
+        self.assertEqual('#caae73', theme2['COLOR_BACKGROUND'])
+        self.assertEqual('#387941', theme2['COLOR_BOARD'])
+        self.assertEqual('#121212', theme2['COLOR_PLAYER1_LABEL'])
+        self.assertEqual('#f9f9f9', theme2['COLOR_PLAYER2_LABEL'])
+        self.assertEqual('#121212', theme2['COLOR_PLAYER1_DISC'])
+        self.assertEqual('#f9f9f9', theme2['COLOR_PLAYER2_DISC'])
+        self.assertEqual('#121212', theme2['COLOR_CPUTIME_LABEL'])
+        self.assertEqual('#121212', theme2['COLOR_ASSIST_LABEL'])
+        self.assertEqual('#204926', theme2['COLOR_CELL_NUMBER'])
+        self.assertEqual('#204926', theme2['COLOR_CELL_LINE'])
+        self.assertEqual('#204926', theme2['COLOR_CELL_MARK'])
+        self.assertEqual('#9a4000', theme2['COLOR_TURN_MESSAGE'])
+        self.assertEqual('#58230a', theme2['COLOR_START_MESSAGE1'])
+        self.assertEqual('#9a4000', theme2['COLOR_START_MESSAGE2'])
+        self.assertEqual('#c7c763', theme2['COLOR_MOVE_HIGHLIGHT1'])
+        self.assertEqual('#9a4000', theme2['COLOR_MOVE_HIGHLIGHT2'])
+        self.assertEqual('#f9f9f9', theme2['COLOR_REC_LABEL'])
+        self.assertEqual('#f9f9f9', theme2['COLOR_LOWSPEED_LABEL'])
+        theme3 = reversi.window.THEME[reversi.window.THEME_MENU[2]]
+        self.assertEqual('#c8b020', theme3['COLOR_BACKGROUND'])
+        self.assertEqual('#dc9647', theme3['COLOR_BOARD'])
+        self.assertEqual('#121212', theme3['COLOR_PLAYER1_LABEL'])
+        self.assertEqual('#f9f9f9', theme3['COLOR_PLAYER2_LABEL'])
+        self.assertEqual('#121212', theme3['COLOR_PLAYER1_DISC'])
+        self.assertEqual('#f9f9f9', theme3['COLOR_PLAYER2_DISC'])
+        self.assertEqual('#f9f9f9', theme3['COLOR_CPUTIME_LABEL'])
+        self.assertEqual('#f9f9f9', theme3['COLOR_ASSIST_LABEL'])
+        self.assertEqual('#e0e0e0', theme3['COLOR_CELL_NUMBER'])
+        self.assertEqual('#e0e0e0', theme3['COLOR_CELL_LINE'])
+        self.assertEqual('#e0e0e0', theme3['COLOR_CELL_MARK'])
+        self.assertEqual('#9ddde6', theme3['COLOR_TURN_MESSAGE'])
+        self.assertEqual('#dddddd', theme3['COLOR_START_MESSAGE1'])
+        self.assertEqual('#9ddde6', theme3['COLOR_START_MESSAGE2'])
+        self.assertEqual('khaki2', theme3['COLOR_MOVE_HIGHLIGHT1'])
+        self.assertEqual('tomato', theme3['COLOR_MOVE_HIGHLIGHT2'])
+        self.assertEqual('#9ddde6', theme3['COLOR_REC_LABEL'])
+        self.assertEqual('#9ddde6', theme3['COLOR_LOWSPEED_LABEL'])
+        # TEXTS
         self.assertEqual('Click to start', reversi.window.TEXTS[reversi.window.LANGUAGE_MENU[0]]['START_TEXT'])
         self.assertEqual('Your turn', reversi.window.TEXTS[reversi.window.LANGUAGE_MENU[0]]['TURN_ON'])
         self.assertEqual('', reversi.window.TEXTS[reversi.window.LANGUAGE_MENU[0]]['TURN_OFF'])
@@ -163,6 +207,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual('読み込む', reversi.window.TEXTS[reversi.window.LANGUAGE_MENU[1]]['EXTRA_LOAD_TEXT'])
 
     def test_window_init(self):
+        test_theme = 'Original'
         root = tk.Tk()
         b = ['Easy1', 'Normal1', 'Hard1']
         w = ['Easy2', 'Normal2', 'Hard2']
@@ -173,6 +218,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.player['black'], 'Easy1')
         self.assertEqual(window.player['white'], 'Easy2')
         self.assertEqual(window.assist, 'OFF')
+        self.assertEqual(window.theme, test_theme)
         self.assertEqual(window.language, 'English')
         self.assertEqual(window.cancel, 'OK')
         self.assertEqual(window.cputime, reversi.window.CPU_TIME)
@@ -181,28 +227,146 @@ class TestWindow(unittest.TestCase):
         self.assertIsInstance(window.canvas, tk.Canvas)
         self.assertEqual(window.canvas['width'], str(reversi.window.CANVAS_WIDTH))
         self.assertEqual(window.canvas['height'], str(reversi.window.CANVAS_HEIGHT))
-        self.assertEqual(window.canvas['bg'], str(reversi.window.COLOR_SLATEGRAY))
+        self.assertEqual(window.canvas['bg'], str(reversi.window.THEME[test_theme]['COLOR_BACKGROUND']))
+
+    def test_window_init_custom_theme_with_dict_default(self):
+        expected = {  # Custom(default)
+            'COLOR_BACKGROUND': '#387941',      # 背景
+            'COLOR_BOARD': '#387941',           # 盤面
+            'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+            'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+            'COLOR_PLAYER1_DISC': 'black',      # 先手石
+            'COLOR_PLAYER2_DISC': 'white',      # 後手石
+            'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+            'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+            'COLOR_CELL_NUMBER': '#555555',     # セル番地
+            'COLOR_CELL_LINE': 'black',         # セルの枠線
+            'COLOR_CELL_MARK': 'black',         # セルの目印
+            'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+            'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+            'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+            'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+        }
+        theme_name = 'Test1'
+        test_theme = {theme_name: {}}  # use Custom(default)
+        b, w = ['player1'], ['player2']
+        Window(root=tk.Tk(), black_players=b, white_players=w, custom_theme=test_theme)
+
+        self.assertEqual(reversi.window.THEME_MENU, ['Original', 'Classic', 'Shogi', theme_name])
+        self.assertTrue(theme_name in reversi.window.THEME)
+        self.assertEqual(reversi.window.THEME[theme_name], expected)
+
+    def test_window_init_custom_theme_with_dict(self):
+        expected1 = {  # Custom(default)
+            'COLOR_BACKGROUND': '#387941',      # 背景
+            'COLOR_BOARD': '#387941',           # 盤面
+            'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+            'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+            'COLOR_PLAYER1_DISC': 'black',      # 先手石
+            'COLOR_PLAYER2_DISC': 'white',      # 後手石
+            'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+            'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+            'COLOR_CELL_NUMBER': '#555555',     # セル番地
+            'COLOR_CELL_LINE': 'black',         # セルの枠線
+            'COLOR_CELL_MARK': 'black',         # セルの目印
+            'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+            'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+            'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+            'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+        }
+        expected2 = {  # Custom
+            'COLOR_BACKGROUND': '#012345',      # 背景
+            'COLOR_BOARD': '#6789ab',           # 盤面
+            'COLOR_PLAYER1_LABEL': 'black',     # 先手表示
+            'COLOR_PLAYER2_LABEL': 'white',     # 後手表示
+            'COLOR_PLAYER1_DISC': 'black',      # 先手石
+            'COLOR_PLAYER2_DISC': 'white',      # 後手石
+            'COLOR_CPUTIME_LABEL': '#dddddd',   # CPU_TIMEラベル
+            'COLOR_ASSIST_LABEL': '#dddddd',    # ASSISTラベル
+            'COLOR_CELL_NUMBER': '#555555',     # セル番地
+            'COLOR_CELL_LINE': 'black',         # セルの枠線
+            'COLOR_CELL_MARK': 'black',         # セルの目印
+            'COLOR_TURN_MESSAGE': 'gold',       # 手番表示
+            'COLOR_START_MESSAGE1': '#dddddd',  # スタート表示(フォーカスなし)
+            'COLOR_START_MESSAGE2': 'tomato',   # スタート表示(フォーカスあり)
+            'COLOR_MOVE_HIGHLIGHT1': 'khaki2',  # 着手箇所のハイライト(フォーカスなし)
+            'COLOR_MOVE_HIGHLIGHT2': 'tomato',  # 着手箇所のハイライト(フォーカスあり)
+            'COLOR_REC_LABEL': 'tomato',        # レコーディング表示
+            'COLOR_LOWSPEED_LABEL': 'tomato',   # 低速表示
+        }
+        theme_name1 = 'Test2-1'
+        theme_name2 = 'Test2-2'
+        theme_name3 = 'Test2-3'
+        test_theme = {  # use Custom(partially update)
+            theme_name1: {},
+            theme_name2: {
+                'COLOR_BACKGROUND': '#012345',      # 背景
+                'COLOR_BOARD': '#6789ab',           # 盤面
+            },
+            theme_name3: 'not dict value',
+        }
+        b, w = ['player1'], ['player2']
+        Window(root=tk.Tk(), black_players=b, white_players=w, custom_theme=test_theme)
+
+        self.assertEqual(reversi.window.THEME_MENU, ['Original', 'Classic', 'Shogi', theme_name1, theme_name2])
+        self.assertTrue(theme_name1 in reversi.window.THEME)
+        self.assertTrue(theme_name2 in reversi.window.THEME)
+        self.assertTrue(theme_name3 not in reversi.window.THEME)
+        self.assertEqual(reversi.window.THEME[theme_name1], expected1)
+        self.assertEqual(reversi.window.THEME[theme_name2], expected2)
+
+    def test_window_init_custom_theme_without_dict(self):
+        test_theme = 'not dict value'
+        b, w = ['player1'], ['player2']
+        Window(root=tk.Tk(), black_players=b, white_players=w, custom_theme=test_theme)
+
+        self.assertEqual(reversi.window.THEME_MENU, ['Original', 'Classic', 'Shogi'])
+        self.assertTrue('Custom' not in reversi.window.THEME)
 
     def test_window_init_screen(self):
+        test_theme = 'Classic'
         root = tk.Tk()
         b = ['Easy1', 'Normal1', 'Hard1']
         w = ['Easy2', 'Normal2', 'Hard2']
         window = Window(root=root, black_players=b, white_players=w)
+        window.theme = test_theme
         window.init_screen()
+        # canvas
+        self.assertEqual(window.canvas['bg'], reversi.window.THEME[test_theme]['COLOR_BACKGROUND'])
         # board
         self.assertEqual(window.board.size, reversi.window.DEFAULT_BOARD_SIZE)
         self.assertEqual(window.board.cputime, reversi.window.CPU_TIME)
         self.assertEqual(window.board.assist, reversi.window.ASSIST_MENU[1])
         self.assertEqual(window.board.record, reversi.window.RECORD_MENU[0])
+        self.assertEqual(window.board.theme, test_theme)
         self.assertEqual(window.board._squares, [[None for _ in range(window.board.size)] for _ in range(window.board.size)])
-        self.assertEqual(window.board._xlines, [7, 11, 15, 19, 23, 27, 31, 39, 41])
-        self.assertEqual(window.board._ylines, [5, 9, 13, 17, 21, 25, 29, 37, 40])
+        self.assertEqual(window.board._xlines, [8, 12, 16, 20, 24, 28, 32, 40, 42])
+        self.assertEqual(window.board._ylines, [6, 10, 14, 18, 22, 26, 30, 38, 41])
         self.assertEqual(window.board.move, None)
         self.assertEqual(window.board.event.is_set(), False)
         # info
+        t = reversi.window.THEME[test_theme]
+        self.assertEqual(window.info.info_color['name']['black'], t['COLOR_PLAYER1_LABEL'])
+        self.assertEqual(window.info.info_color['name']['white'], t['COLOR_PLAYER2_LABEL'])
+        self.assertEqual(window.info.info_color['score']['black'], t['COLOR_PLAYER1_LABEL'])
+        self.assertEqual(window.info.info_color['score']['white'], t['COLOR_PLAYER2_LABEL'])
+        self.assertEqual(window.info.info_color['winlose']['black'], t['COLOR_PLAYER1_LABEL'])
+        self.assertEqual(window.info.info_color['winlose']['white'], t['COLOR_PLAYER2_LABEL'])
+        self.assertEqual(window.info.info_color['turn']['black'], t['COLOR_TURN_MESSAGE'])
+        self.assertEqual(window.info.info_color['turn']['white'], t['COLOR_TURN_MESSAGE'])
+        self.assertEqual(window.info.info_color['move']['black'], t['COLOR_PLAYER1_LABEL'])
+        self.assertEqual(window.info.info_color['move']['white'], t['COLOR_PLAYER2_LABEL'])
         self.assertEqual(window.info.player, {'black': b[0], 'white': w[0]})
+        self.assertEqual(window.info.theme, test_theme)
         self.assertEqual(window.info.language, reversi.window.LANGUAGE_MENU[0])
         # start
+        self.assertEqual(window.start.theme, test_theme)
         self.assertEqual(window.start.language, reversi.window.LANGUAGE_MENU[0])
         self.assertEqual(window.start.event.is_set(), False)
 
@@ -239,6 +403,7 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.menu.white_player, w[0])
         self.assertEqual(window.menu.assist, reversi.window.ASSIST_MENU[1])
         self.assertEqual(window.menu.record, reversi.window.RECORD_MENU[0])
+        self.assertEqual(window.menu.theme, reversi.window.THEME_MENU[0])
         self.assertEqual(window.menu.language, reversi.window.LANGUAGE_MENU[0])
         self.assertEqual(window.menu.cancel, reversi.window.CANCEL_MENU[0])
         self.assertIsNone(window.menu.cputimedialog)
@@ -251,12 +416,13 @@ class TestWindow(unittest.TestCase):
         self.assertEqual(window.menu.menu_items['extra'], reversi.window.EXTRA_MENU)
         self.assertEqual(window.menu.menu_items['assist'], reversi.window.ASSIST_MENU)
         self.assertEqual(window.menu.menu_items['record'], reversi.window.RECORD_MENU)
+        self.assertEqual(window.menu.menu_items['theme'], reversi.window.THEME_MENU)
         self.assertEqual(window.menu.menu_items['language'], reversi.window.LANGUAGE_MENU)
         self.assertEqual(window.menu.menu_items['cancel'], reversi.window.CANCEL_MENU)
 
     def test_window_menu_create_menu_items(self):
         window = Window(root=tk.Tk(), black_players=['b'], white_players=['w'])
-        for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'language', 'cancel']:
+        for item in ['size', 'black', 'white', 'cputime', 'extra', 'assist', 'theme', 'language', 'cancel']:
             self.assertIsInstance(window.menu.menus[item], tk.Menu)
 
     def test_window_menu_command(self):
@@ -354,6 +520,19 @@ class TestWindow(unittest.TestCase):
 
         self.assertTrue(window.menu.event.is_set())
         self.assertEqual(window.menu.record, test_record)
+        window.menu.event.clear()
+
+        # theme
+        test_theme = 'another_theme'
+        command = window.menu._command('theme', test_theme)
+
+        self.assertFalse(window.menu.event.is_set())
+        self.assertEqual(window.menu.theme, reversi.window.THEME_MENU[0])
+
+        command()
+
+        self.assertTrue(window.menu.event.is_set())
+        self.assertEqual(window.menu.theme, test_theme)
         window.menu.event.clear()
 
         # language
@@ -508,6 +687,10 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_theme = 'Original'
+        test_canvas_created_rectangle = [
+                ((408, 40, 908, 540), {'fill': reversi.window.THEME[test_theme]['COLOR_BOARD'], 'outline': reversi.window.THEME[test_theme]['COLOR_BOARD'], 'tag': 'board'}),  # noqa: E501
+        ]
         test_xlines = [
             ((408, 40, 908, 40), {'fill': 'white'}),
             ((408, 165, 908, 165), {'fill': 'white'}),
@@ -542,13 +725,15 @@ class TestWindow(unittest.TestCase):
             ((545.0, 177.0, 645.0, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b2'}),
             ((670.0, 302.0, 770.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_c3'}),
         ]
-        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record, test_theme)
         self.assertEqual(screenboard.size, test_size)
         self.assertEqual(screenboard.cputime, test_cputime)
         self.assertEqual(screenboard.assist, test_assist)
         self.assertEqual(screenboard.record, test_record)
+        self.assertEqual(screenboard.theme, test_theme)
         self.assertEqual(screenboard.canvas.created_text, test_canvas_created_text)
         self.assertEqual(screenboard.canvas.created_oval, test_canvas_created_oval)
+        self.assertEqual(screenboard.canvas.created_rectangle, test_canvas_created_rectangle)
         self.assertEqual(screenboard._squares, [[None for _ in range(test_size)] for _ in range(test_size)])
         self.assertEqual(screenboard._xlines, test_xlines)
         self.assertEqual(screenboard._ylines, test_ylines)
@@ -561,6 +746,7 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_theme = 'Original'
         test_square_y_ini = 40
         test_square_w = 19
         test_square_x_ini = 411
@@ -691,7 +877,7 @@ class TestWindow(unittest.TestCase):
             ((640.5, 269.5, 655.5, 284.5), {'fill': 'white', 'outline': 'white', 'tag': 'white_m13'}),
             ((659.5, 288.5, 674.5, 303.5), {'fill': 'white', 'outline': 'white', 'tag': 'white_n14'}),
         ]
-        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record, test_theme)
         self.assertEqual(screenboard._squares, [[None for _ in range(test_size)] for _ in range(test_size)])
         self.assertEqual(screenboard.square_y_ini, test_square_y_ini)
         self.assertEqual(screenboard.square_w, test_square_w)
@@ -708,17 +894,19 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_theme = 'Original'
         test_canvas_created_oval = [
             ((545.0, 177.0, 645.0, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'black_b2'}),
             ((545.0, 302.0, 645.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b3'}),
         ]
         test_canvas_created_rectangle = [
+            ((408, 40, 908, 540), {'fill': reversi.window.THEME[test_theme]['COLOR_BOARD'], 'outline': reversi.window.THEME[test_theme]['COLOR_BOARD'], 'tag': 'board'}),  # noqa: E501
             ((583, 177.0, 595, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnblack1_b2'}),
             ((595, 177.0, 607, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnblack2_b2'}),
             ((583, 302.0, 595, 402.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnwhite1_b3'}),
             ((595, 302.0, 607, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnwhite2_b3'}),
         ]
-        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record, test_theme)
         screenboard.canvas.created_oval = []
         screenboard.put_disc('black', 1, 1)
         screenboard.put_disc('white', 1, 2)
@@ -732,14 +920,16 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_theme = 'Original'
         test_canvas_created_oval = [
             ((545.0, 302.0, 645.0, 402.0), {'fill': 'white', 'outline': 'white', 'tag': 'white_b3'}),
         ]
         test_canvas_created_rectangle = [
+            ((408, 40, 908, 540), {'fill': reversi.window.THEME[test_theme]['COLOR_BOARD'], 'outline': reversi.window.THEME[test_theme]['COLOR_BOARD'], 'tag': 'board'}),  # noqa: E501
             ((583, 177.0, 595, 277.0), {'fill': 'white', 'outline': 'white', 'tag': 'turnblack1_b2'}),
             ((595, 177.0, 607, 277.0), {'fill': 'black', 'outline': 'black', 'tag': 'turnblack2_b2'}),
         ]
-        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record, test_theme)
         screenboard.canvas.created_oval = []
         screenboard.put_disc('black', 1, 1)
         screenboard.put_disc('white', 1, 2)
@@ -757,10 +947,11 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_theme = 'Original'
         test_x = 2
         test_y = 3
         test_coordinate = (565, 257)
-        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record, test_theme)
         self.assertEqual(screenboard._get_coordinate(test_x, test_y), test_coordinate)
 
     def test_window_screenboard_get_label(self):
@@ -768,9 +959,10 @@ class TestWindow(unittest.TestCase):
         test_cputime = 5.0
         test_assist = 'ON'
         test_record = 'ON'
+        test_theme = 'Original'
         test_name = 'black'
         test_x = 2
         test_y = 4
         test_label = 'black_c5'
-        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record)
+        screenboard = reversi.window.ScreenBoard(TestCanvas(), test_size, test_cputime, test_assist, test_record, test_theme)
         self.assertEqual(screenboard._get_label(test_name, test_x, test_y), test_label)

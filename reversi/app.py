@@ -17,7 +17,7 @@ class Reversi:
     """
     INIT, DEMO, PLAY, END, REINIT = 'INIT', 'DEMO', 'PLAY', 'END', 'REINIT'
 
-    def __init__(self, players_info={}, turn_disc_wait=0.1, sleep_time_play=1.5, sleep_time_end=0.01, sleep_time_turn=0.3, sleep_time_move=0.3):
+    def __init__(self, players_info={}, turn_disc_wait=0.1, sleep_time_play=1.5, sleep_time_end=0.01, sleep_time_turn=0.3, sleep_time_move=0.3, custom_theme=None):  # noqa: E501
         root = tk.Tk()
         root.withdraw()  # 表示が整うまで隠す
 
@@ -25,7 +25,7 @@ class Reversi:
 
         b = ['User1'] + list(players_info.keys())
         w = ['User2'] + list(players_info.keys())
-        self.window = Window(root=root, black_players=b, white_players=w)
+        self.window = Window(root=root, black_players=b, white_players=w, custom_theme=custom_theme)
 
         players_info['User1'] = strategies.WindowUserInput(self.window)
         players_info['User2'] = strategies.WindowUserInput(self.window)
@@ -260,6 +260,7 @@ class Reversi:
             self.window.player['black'] = self.window.menu.black_player
             self.window.player['white'] = self.window.menu.white_player
             self.window.assist = self.window.menu.assist
+            self.window.theme = self.window.menu.theme
             self.window.language = self.window.menu.language
             self.window.record = self.window.menu.record
             self.window.menu.event.clear()
