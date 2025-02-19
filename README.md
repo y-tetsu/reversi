@@ -1,6 +1,5 @@
-<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_icon_512x512.png" width="50px">
 
-# reversi
+# <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_icon_512x512.png" width="50px"> reversi
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.en.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.md)]<br>
 **reversi**はリバーシのPython用ライブラリです。<br>
 手軽にリバーシAIをプログラミングして、アプリケーションが作れます。<br>
