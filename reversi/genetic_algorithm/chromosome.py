@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 染色体基底クラス
 """

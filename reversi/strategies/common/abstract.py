@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 基底クラス
 """

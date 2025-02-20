@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 CPUの持ち時間
 """
