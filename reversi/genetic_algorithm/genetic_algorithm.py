@@ -40,8 +40,13 @@ class GeneticAlgorithm:
         self.best = None
 
     def _load_setting(self, setting_json):
-        """
-        設定ファイルのロード
+        """設定ファイルのロード
+
+        Args:
+            setting_json (str): 設定ファイルのパス
+
+        Returns:
+            dict: 設定内容
         """
         setting = {
             "population_num": 0,
@@ -58,8 +63,7 @@ class GeneticAlgorithm:
         return setting
 
     def _generation_change(self):
-        """
-        世代交代(MGG-best2)
+        """世代交代(MGG-best2)
         """
         # 個体群の中から親を2つランダムに選ぶ
         parent1, parent2 = random.sample(self._population, 2)
@@ -79,8 +83,7 @@ class GeneticAlgorithm:
         self._population.extend((best1, best2))
 
     def _mutate(self):
-        """
-        変異
+        """変異
         """
         for individual in self._population:
             if self._generation and self._generation % self._setting["large_mutation"] == 0:
@@ -92,15 +95,16 @@ class GeneticAlgorithm:
                     individual.mutate()
 
     def _reset_fitness(self):
-        """
-        個体の適応度をリセット
+        """個体の適応度をリセット
         """
         for individual in self._population:
             individual.reset_fitness()
 
     def run(self):
-        """
-        実行
+        """実行
+
+        Returns:
+            object: 最良の個体
         """
         best = max(self._population, key=self._fitness_key)
 

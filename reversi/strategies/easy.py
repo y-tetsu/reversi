@@ -7,10 +7,17 @@ from reversi.strategies.common import AbstractStrategy
 
 
 class Random(AbstractStrategy):
-    """Random
+    """Random strategy
     """
     def next_move(self, color, board):
-        """next_move
+        """次の手をランダムに決定します
+
+        Args:
+            color: プレイヤーのディスクの色
+            board: 現在のボードの状態
+
+        Returns:
+            ランダムに選ばれた合法的な手
         """
         moves = board.get_legal_moves(color)
 
@@ -18,11 +25,19 @@ class Random(AbstractStrategy):
 
 
 class Greedy(AbstractStrategy):
-    """Greedy
-           Take as many as possible, random if multiple
+    """Greedy strategy
+    
+    可能な限り多くのディスクを取り、複数ある場合はランダムに選びます
     """
     def next_move(self, color, board):
-        """next_move
+        """次の手を貪欲に決定します
+
+        Args:
+            color: プレイヤーのディスクの色
+            board: 現在のボードの状態
+
+        Returns:
+            最大数のディスクをひっくり返す手
         """
         legal_moves = board.get_legal_moves(color)
         max_count = max([len(board.get_flippable_discs(color, *move)) for move in legal_moves])
@@ -32,11 +47,19 @@ class Greedy(AbstractStrategy):
 
 
 class Unselfish(AbstractStrategy):
-    """Unselfish
-           Take as little as possible, random if multiple
+    """Unselfish strategy
+    
+    可能な限り少ないディスクを取り、複数ある場合はランダムに選びます
     """
     def next_move(self, color, board):
-        """next_move
+        """次の手を控えめに決定します
+
+        Args:
+            color: プレイヤーのディスクの色
+            board: 現在のボードの状態
+
+        Returns:
+            最小数のディスクをひっくり返す手
         """
         legal_moves = board.get_legal_moves(color)
         min_count = min([len(board.get_flippable_discs(color, *move)) for move in legal_moves])
@@ -46,22 +69,30 @@ class Unselfish(AbstractStrategy):
 
 
 class SlowStarter(AbstractStrategy):
-    """SlowStarter
-           Unselfish if the stage is less than 15%, Greedy otherwise
+    """SlowStarter strategy
+    
+    ゲームの進行状況が15%未満の場合はUnselfish、それ以外はGreedyを使用します
     """
     def __init__(self):
         self.unselfish = Unselfish()
         self.greedy = Greedy()
 
     def next_move(self, color, board):
-        """next_move
+        """ゲームの進行状況に基づいて次の手を決定します
+
+        Args:
+            color: プレイヤーのディスクの色
+            board: 現在のボードの状態
+
+        Returns:
+            ゲームの進行状況に基づいて決定された手
         """
         squares = board.size**2
         blanks = sum([row.count(0) for row in board.get_board_info()])
 
-        # stage is less than 15%
+        # 進行状況が15%未満の場合
         if (squares-blanks)/squares < 0.15:
             return self.unselfish.next_move(color, board)
 
-        # otherwise
+        # それ以外の場合
         return self.greedy.next_move(color, board)
