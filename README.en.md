@@ -2,15 +2,20 @@
 
 # reversi
 [ [English](https://github.com/y-tetsu/reversi/blob/master/README.en.md) | [日本語](https://github.com/y-tetsu/reversi/blob/master/README.md)]<br>
-<br>
 **reversi** is a library for Reversi (Othello) for Python.<br>
 You can easily program reversi AI and create applications.<br>
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![unittest](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml/badge.svg)](https://github.com/y-tetsu/reversi/actions/workflows/unittest.yml)
 <br>
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_original.png" width="49%">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_classic2.png" width="49%"><br>
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_shogi2.png" width="49%">
+<img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/reversi_pastel.png" width="49%"><br>
+</p>
 
-## 目次
+## Table of Contents
 - [Overview](#Overview)
 - [System Requirements](#System-Requirements)
 - [How to Install](#How-to-Install)
@@ -27,7 +32,7 @@ You can easily program reversi AI and create applications.<br>
         - [How to use color object](#How-to-use-color-object)
         - [How to use move object](#How-to-use-move-object)
     - [AI class](#AI-class)
-        - [Simple-minded AI](#AI-class-Section)
+        - [Simple-minded AI](#Simple-minded-AI)
         - [AI that chooses moves based on the position of squares](#AI-that-chooses-moves-based-on-the-position-of-squares)
         - [AI that chooses moves with a good chance of winning after playing multiple moves at random](#AI-that-chooses-moves-with-a-good-chance-of-winning-after-playing-multiple-moves-at-random)
         - [AI that reads the board several moves ahead and chooses moves](#AI-that-reads-the-board-several-moves-ahead-and-chooses-moves)
@@ -49,10 +54,9 @@ You can easily program reversi AI and create applications.<br>
     - [Change Player](#Change-Player)
     - [Make a move](#Make-a-move)
 - [If the installation does not work](#If-the-installation-does-not-work)
-- [How to build Cython module](How-to-build-Cython-module)
+- [How to build Cython module](#How-to-build-Cython-module)
 - [Footnotes](#Footnotes)
 - [License](#License)
-
 
 ## Overview
 **reversi** is a Reversi library made in <a id="return1">Python</a><sup>[1](#note1)</sup> that can be used with Python.<br>
@@ -62,7 +66,7 @@ Other uses include
 - Create an application and play against your own AI.
 - Use simulators to test the strength of AIs by playing them against each other.
 
-[A Windows version of the application](#A-Windows-version-of-the-application) created using this library is also available.<br>
+[A Windows version of the application](#How-to-play-tkinter-application) created using this library is also available.<br>
 This one allows you to play a game of reversi for free immediately after downloading, with no installation required.<br>
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/tkinter_app_demo_v0_0_15.gif" width="550px">
@@ -70,7 +74,6 @@ This one allows you to play a game of reversi for free immediately after downloa
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/console_app_demo4.gif" width="550px">
 
 <img src="https://raw.githubusercontent.com/y-tetsu/reversi/images/simulator_demo.gif" width="550px">
-
 
 ## System Requirements
 - Windows, Ubuntu, MacOS<br>
@@ -80,7 +83,6 @@ This one allows you to play a game of reversi for free immediately after downloa
 - Python<br>
     - cython<br>
     - pyinstaller<br>
-
 
 ## How to Install
 1. install [Python](https://www.python.org/downloads/)<br>
@@ -113,7 +115,6 @@ The examples to be copied are below.
 - [08_alphabeta_strategy.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/08_alphabeta_strategy.py) - A example of Reversi alpha beta AI strategy
 - [09_genetic_algorithm.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/09_genetic_algorithm.py) - A example for discovering the parameters of a reversi strategy using a genetic algorithm
 - [10_variant_board_solver.py](https://github.com/y-tetsu/reversi/blob/master/reversi/examples/10_variant_board_solver.py) - Analysis tool for variant boards
-
 
 You can run examples below.
 ```
@@ -260,7 +261,6 @@ Reversi({'CORNER': Corner()}).start()
 After the above is done, "CORNER" can be selected as a player to play against.<br>
 If you actually play against a player, you will see that he will always take the corner when he can!
 
-
 #### Simulate a match between AIs
 The simulator in this library can be used to play AIs against each other multiple times to produce a winning percentage.<br>
 Use it to measure the strength of your own AI.<br>
@@ -314,7 +314,6 @@ Specify the name of this file (in the above example, `. /simulator_setting.json`
  |parallel|Specify the unit of parallel execution. If you specify "player" (default), parallel processing is performed for each combination of AI matches. If "game" is specified, the number of matches in "matches" is divided by the number of processes and parallel processing is performed. If the number of AI matchups to be simulated is smaller than the number of cores in your PC, you may get faster results by specifying "game". |
  |random_opening|From the start of the game until the specified number of moves, the AI will play random moves against each other. When the number of moves exceeds the specified number, the AI will play its original move. By randomizing the starting situation of the game, it reduces the bias of the result and makes it easier to measure the strength of the AI. If you don't need it, please specify 0. |
  |player_names|List the names of the AIs you want to play against. If specified, select one of the names included in the first argument "player information". If omitted, it is treated as the same as the first argument "player information". All listed AIs compete against each other in a round-robin game. |
-
 
 ##### Execution Result
 The simulation results can be seen in the printout below after the simulation is run (after the start method is executed).
@@ -624,8 +623,7 @@ f5
 F6
 ```
 
-
----
+--- 
 ## How to build Cython module
 For speeding up processing, **reversi** uses Cython for the processing logic of the board and AI. if you want to modify these processes and publish them in a **Windows environment**, you will need to run the build.
 
@@ -642,7 +640,6 @@ cd reversi\cy
 ### 2. execute build
 Build the Cython module ``ReversiMethods.pyx`` by executing the following.
 
-
 ```
 build.bat
 ```
@@ -656,13 +653,11 @@ py -3.x setup.py build_ext --inplace
 ```
 The `x` can be any version.
 
-
----
+--- 
 ## Footnotes
 <a id="note1">[1]</a>: Cython is used in some parts.<sup>[↑](#return1)</sup>
 
-
----
+--- 
 ## License
 The source code of this repository is [MIT License](http://www.opensource.org/licenses/MIT).
 Please feel free to use it for both commercial and non-commercial purposes.
